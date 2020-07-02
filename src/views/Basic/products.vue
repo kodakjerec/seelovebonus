@@ -1,26 +1,39 @@
 <template>
   <el-form>
     <el-table
-      :data="customersShow"
+      :data="productsShow"
       stripe
       border
       @row-click="handleClick"
       style="width: 100%">
       <el-table-column
         prop="ID"
-        :label="$t('__customer')+$t('__id')">
+        :label="$t('__product')+$t('__id')">
       </el-table-column>
       <el-table-column
         prop="Name"
-        :label="$t('__customer')+$t('__name')">
+        :label="$t('__product')+$t('__name')">
       </el-table-column>
       <el-table-column
-        prop="BusinessIDName"
-        :label="$t('__businessID')">
+        prop="AccountingName"
+        :label="$t('__accounting')+$t('__name')">
       </el-table-column>
       <el-table-column
-        prop="EmployeeIDName"
-        :label="$t('__refEmployeeID')">
+        prop="Qty"
+        :label="$t('__qty')">
+      </el-table-column>
+      <el-table-column
+        prop="UnitName"
+        :label="$t('__unit')+$t('__name')">
+      </el-table-column>
+      <el-table-column
+        prop="Price"
+        :label="$t('__price')"
+        :formatter="formatterMoney">
+      </el-table-column>
+      <el-table-column
+        prop="BOMName"
+        :label="$t('__bom')">
       </el-table-column>
     </el-table>
     <br/>
@@ -31,16 +44,21 @@
     v-if="dialogShow"
     :dialog-type="dialogType"
     :dialog-show="dialogShow"
-    :customer="customer"
+    :product="product"
     @dialog-cancel="dialogCancel()"
     @dialog-save="dialogSave()"></new-form>
   </el-form>
 </template>
 
 <script>
-import newForm from './components/customerNewForm'
+import newForm from './components/productNewForm'
+var formatter = new Intl.NumberFormat('en-US', {
+  style: 'currency',
+  currency: 'TWD',
+  minimumFractionDigits: 0
+})
 export default {
-  name: 'Customers',
+  name: 'Products',
   components: {
     newForm
   },
@@ -48,24 +66,27 @@ export default {
     return {
       dialogType: 'new',
       dialogShow: false,
-      customersShow: [],
-      customer: {}
+      productsShow: [],
+      product: {}
     }
   },
   mounted () {
     this.preLoading()
   },
   methods: {
+    formatterMoney: function (row, column, cellValue, index) {
+      return formatter.format(cellValue)
+    },
     // 讀入系統清單
     preLoading: async function () {
       // 顯示專用
-      const response2 = await this.$api.basic.customersShow()
-      this.customersShow = response2.data.result
+      const response2 = await this.$api.basic.productsShow()
+      this.productsShow = response2.data.result
     },
     handleClick: async function (row, column, event) {
       // 取得可以用的選單
-      let responseRow = await this.$api.basic.getObject({ type: 'customer', ID: row.ID })
-      this.customer = responseRow.data.result[0]
+      let responseRow = await this.$api.basic.getObject({ type: 'product', ID: row.ID })
+      this.product = responseRow.data.result[0]
 
       // 進入修改
       this.dialogType = 'edit'

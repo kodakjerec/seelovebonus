@@ -10,6 +10,17 @@ axios.interceptors.request.use(config => {
   // 若存在則統一在http請求的header都加上token
   const token = store.state.token
   token && (config.headers.Authorization = token)
+  switch (i18n.locale) {
+    case 'en':
+      config.headers.ClientLocale = 1
+      break
+    case 'tw':
+      config.headers.ClientLocale = 2
+      break
+    default:
+      config.headers.ClientLocale = 2
+  }
+
   return config
 }, (error) => {
   return Promise.reject(error)
@@ -57,6 +68,9 @@ const errorHandle = (status, response) => {
       break
     case 404:
       errorMessage(i18n.t('__error404') + '<br/>' + requestURL, status)
+      break
+    case 500:
+      errorMessage(response.data + '<br/>' + requestURL, status)
       break
     default:
       errorMessage('錯誤狀況: ' + status, status)

@@ -22,6 +22,9 @@
         <i class="el-icon-switch-button"></i>
         <span>{{$t('__logout')}}</span>
       </el-menu-item>
+      <el-menu-item>
+        {{userName}}, 你好
+      </el-menu-item>
     </el-menu>
 </template>
 
@@ -37,7 +40,7 @@ export default {
     }
   },
   computed: {
-    ...mapState(['isLogin', 'menuList'])
+    ...mapState(['isLogin', 'userName', 'menuList'])
   },
   methods: {
     handleSelect (key, keyPath) {

@@ -7,17 +7,25 @@
     <page-user
     :users="users"
     :prog-list="proglist"
+    @refresh="refresh"
     v-if="activeName==='first'"></page-user>
+    <page-group
+    :groups="groups"
+    :prog-list="proglist"
+    @refresh="refresh"
+    v-if="activeName==='second'"></page-group>
   </div>
 </template>
 
 <script>
-import pageUser from './components/usersPageUser'
+import pageUser from './components/pageUser'
+import pageGroup from './components/pageGroup'
 
 export default {
   name: 'Users',
   components: {
-    pageUser
+    pageUser,
+    pageGroup
   },
   data () {
     return {
@@ -37,6 +45,10 @@ export default {
       this.users = response.data.users
       this.groups = response.data.groups
       this.proglist = response.data.proglist
+    },
+    // 重整畫面
+    refresh: function () {
+      this.preLoading()
     }
   }
 }

@@ -55,7 +55,9 @@ export default {
     // 刷新到首頁時, 強制清空
     this.$store.dispatch('setAuth', {
       'token': '',
-      'isLogin': false
+      'isLogin': false,
+      'userID': '',
+      'userName': ''
     })
 
     // 取得語言設定
@@ -103,22 +105,22 @@ export default {
     // 送出登入API
     login: async function () {
       const response = await this.$api.login.login({
-        UserId: this.form.id,
+        UserID: this.form.id,
         Password: this.form.pwd
       })
-      let rows = response.data.rows
 
       // 成功登入
-      if (rows[0]['rowcount'] > 0) {
-        let result = response.data
+      if (response.status === 200) {
         this.$store.dispatch('setAuth', {
-          'token': result.token,
-          'isLogin': true
+          'token': response.data.token,
+          'isLogin': true,
+          'userID': response.data.result[0].UserID,
+          'userName': response.data.result[0].Name
         })
 
         // 讀入menu
         const response2 = await this.$api.login.getMenu({
-          UserId: this.form.id
+          UserID: this.form.id
         })
 
         this.$store.dispatch('setMenuList', response2.data)

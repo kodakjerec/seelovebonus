@@ -1,26 +1,18 @@
 <template>
-  <el-form>
+  <div>
     <el-table
-      :data="customersShow"
+      :data="groups"
       stripe
       border
       @row-click="handleClick"
       style="width: 100%">
       <el-table-column
-        prop="ID"
-        :label="$t('__customer')+$t('__id')">
+        prop="GroupID"
+        :label="$t('__groups')">
       </el-table-column>
       <el-table-column
         prop="Name"
-        :label="$t('__customer')+$t('__name')">
-      </el-table-column>
-      <el-table-column
-        prop="BusinessIDName"
-        :label="$t('__businessID')">
-      </el-table-column>
-      <el-table-column
-        prop="EmployeeIDName"
-        :label="$t('__refEmployeeID')">
+        :label="$t('__groupName')">
       </el-table-column>
     </el-table>
     <br/>
@@ -31,49 +23,73 @@
     v-if="dialogShow"
     :dialog-type="dialogType"
     :dialog-show="dialogShow"
-    :customer="customer"
+    :group="group"
+    :prog-list="progList"
     @dialog-cancel="dialogCancel()"
     @dialog-save="dialogSave()"></new-form>
-  </el-form>
+  </div>
 </template>
 
 <script>
-import newForm from './components/customerNewForm'
+import newForm from './groupNewForm'
 export default {
-  name: 'Customers',
+  name: 'PageUser',
   components: {
     newForm
+  },
+  props: {
+    groups: {
+      type: Array,
+      default: function () {
+        return []
+      }
+    },
+    progList: {
+      type: Array,
+      default: function () {
+        return []
+      }
+    }
   },
   data () {
     return {
       dialogType: 'new',
       dialogShow: false,
-      customersShow: [],
-      customer: {}
+      group: {},
+      checkedProgList: []
     }
   },
-  mounted () {
-    this.preLoading()
-  },
   methods: {
-    // 讀入系統清單
-    preLoading: async function () {
-      // 顯示專用
-      const response2 = await this.$api.basic.customersShow()
-      this.customersShow = response2.data.result
-    },
     handleClick: async function (row, column, event) {
       // 取得可以用的選單
-      let responseRow = await this.$api.basic.getObject({ type: 'customer', ID: row.ID })
-      this.customer = responseRow.data.result[0]
+      const response = await this.$api.settings.getGroupProg({ GroupID: row.GroupID })
+      this.userProg = response.data.userProg
+
+      // 篩選出有用的選單
+      this.progList.forEach(value => {
+        let findResult = this.userProg.find(value2 => { return value2.ProgID === value.ProgID })
+        if (findResult) {
+          value.checked = true
+        } else {
+          value.checked = false
+        }
+        this.checkedProgList.push(value)
+      })
 
       // 進入修改
       this.dialogType = 'edit'
       this.dialogShow = true
-      this.user = row
+      this.group = row
     },
     // 開啟表單
     showForm: function (eventType) {
+      // 篩選出有用的選單
+      this.progList.forEach(value => {
+        value.checked = false
+        this.checkedProgList.push(value)
+      })
+
+      // 進入新增
       this.dialogType = eventType
       this.dialogShow = true
     },
@@ -82,7 +98,7 @@ export default {
     },
     dialogSave: function () {
       this.dialogShow = false
-      this.preLoading()
+      this.$emit('refresh')
     }
   }
 }

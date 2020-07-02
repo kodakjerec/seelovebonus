@@ -8,12 +8,16 @@ export default new Vuex.Store({
   state: {
     token: '',
     isLogin: false,
+    userID: '',
+    userName: '',
     menuList: []
   },
   mutations: {
     SET_AUTH (state, options) {
       state.token = options.token
       state.isLogin = options.isLogin
+      state.userID = options.userID
+      state.userName = options.userName
     },
     SET_MENULIST (state, menu) {
       state.menuList = menu
@@ -23,7 +27,9 @@ export default new Vuex.Store({
     setAuth (context, options) {
       context.commit('SET_AUTH', {
         token: options.token,
-        isLogin: options.isLogin
+        isLogin: options.isLogin,
+        userID: options.userID,
+        userName: options.userName
       })
     },
     setMenuList (context, menu) {

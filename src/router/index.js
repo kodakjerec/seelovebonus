@@ -36,8 +36,33 @@ const routes = [
     component: () => import('../views/Basic/employees')
   },
   {
+    path: '/Basic/Products',
+    name: 'Products',
+    component: () => import('@/views/Basic/products')
+  },
+  {
+    path: '/Basic/Projects',
+    name: 'Projects',
+    component: () => import('../views/Basic/projects')
+  },
+  {
     path: '/Orders',
     name: 'Orders'
+  },
+  {
+    path: '/Orders/Orders',
+    name: 'Orders',
+    component: () => import('@/views/Orders/orders')
+  },
+  {
+    path: '/Orders/Invoices',
+    name: 'Invoices',
+    component: () => import('@/views/Orders/invoices')
+  },
+  {
+    path: '/Orders/CollectionRecords',
+    name: 'CollectionRecords',
+    component: () => import('@/views/Orders/collectionRecords')
   },
   {
     path: '/Reports',
@@ -57,6 +82,11 @@ const routes = [
     path: '/Settings/Users',
     name: 'Users',
     component: () => import('@/views/Settings/users')
+  },
+  {
+    path: '/Settings/Accounting',
+    name: 'Accounting',
+    component: () => import('@/views/Settings/accounting')
   }
 ]
 
