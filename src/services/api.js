@@ -182,13 +182,6 @@ export default {
         return data
       })
     },
-    productBOMShow: () => {
-      let rawData = { }
-      return req('post', 'http://localhost:3000/basic/productBOMShow', rawData).then(data => {
-        console.log(`%c <<< Response(/rest/basic/productBOMShow)⤵ `, 'background-color: #E0455D; color: white; font-size: 14px; font-weight: bold;', data)
-        return data
-      })
-    },
     productBOMNew: ({ form }) => {
       let rawData = { form }
       return req('post', 'http://localhost:3000/basic/productBOMNew', rawData).then(data => {
@@ -207,6 +200,90 @@ export default {
       let rawData = { form }
       return req('post', 'http://localhost:3000/basic/productBOMDelete', rawData).then(data => {
         console.log(`%c <<< Response(/rest/basic/productBOMDelete)⤵ `, 'background-color: #E0455D; color: white; font-size: 14px; font-weight: bold;', data)
+        return data
+      })
+    },
+    projectsShow: () => {
+      let rawData = { }
+      return req('post', 'http://localhost:3000/basic/projectsShow', rawData).then(data => {
+        console.log(`%c <<< Response(/rest/basic/projectsShow)⤵ `, 'background-color: #E0455D; color: white; font-size: 14px; font-weight: bold;', data)
+        return data
+      })
+    },
+    projectNew: ({ form }) => {
+      let rawData = { form }
+      return req('post', 'http://localhost:3000/basic/projectNew', rawData).then(data => {
+        console.log(`%c <<< Response(/rest/basic/projectNew)⤵ `, 'background-color: #E0455D; color: white; font-size: 14px; font-weight: bold;', data)
+        return data
+      })
+    },
+    projectEdit: ({ form }) => {
+      let rawData = { form }
+      return req('post', 'http://localhost:3000/basic/projectEdit', rawData).then(data => {
+        console.log(`%c <<< Response(/rest/basic/projectEdit)⤵ `, 'background-color: #E0455D; color: white; font-size: 14px; font-weight: bold;', data)
+        return data
+      })
+    },
+    projectDetailNew: ({ form }) => {
+      let rawData = { form }
+      return req('post', 'http://localhost:3000/basic/projectDetailNew', rawData).then(data => {
+        console.log(`%c <<< Response(/rest/basic/projectDetailNew)⤵ `, 'background-color: #E0455D; color: white; font-size: 14px; font-weight: bold;', data)
+        return data
+      })
+    },
+    projectDetailEdit: ({ form }) => {
+      let rawData = { form }
+      return req('post', 'http://localhost:3000/basic/projectDetailEdit', rawData).then(data => {
+        console.log(`%c <<< Response(/rest/basic/projectDetailEdit)⤵ `, 'background-color: #E0455D; color: white; font-size: 14px; font-weight: bold;', data)
+        return data
+      })
+    },
+    projectDetailDelete: ({ form }) => {
+      let rawData = { form }
+      return req('post', 'http://localhost:3000/basic/projectDetailDelete', rawData).then(data => {
+        console.log(`%c <<< Response(/rest/basic/projectDetailDelete)⤵ `, 'background-color: #E0455D; color: white; font-size: 14px; font-weight: bold;', data)
+        return data
+      })
+    },
+    projectPBonusNew: ({ form }) => {
+      let rawData = { form }
+      return req('post', 'http://localhost:3000/basic/projectPBonusNew', rawData).then(data => {
+        console.log(`%c <<< Response(/rest/basic/projectPBonusNew)⤵ `, 'background-color: #E0455D; color: white; font-size: 14px; font-weight: bold;', data)
+        return data
+      })
+    },
+    projectPBonusEdit: ({ form }) => {
+      let rawData = { form }
+      return req('post', 'http://localhost:3000/basic/projectPBonusEdit', rawData).then(data => {
+        console.log(`%c <<< Response(/rest/basic/projectPBonusEdit)⤵ `, 'background-color: #E0455D; color: white; font-size: 14px; font-weight: bold;', data)
+        return data
+      })
+    },
+    projectPBonusDelete: ({ form }) => {
+      let rawData = { form }
+      return req('post', 'http://localhost:3000/basic/projectPBonusDelete', rawData).then(data => {
+        console.log(`%c <<< Response(/rest/basic/projectPBonusDelete)⤵ `, 'background-color: #E0455D; color: white; font-size: 14px; font-weight: bold;', data)
+        return data
+      })
+    },
+    projectSuperBonusNew: ({ form }) => {
+      let rawData = { form }
+      return req('post', 'http://localhost:3000/basic/projectSuperBonusNew', rawData).then(data => {
+        console.log(`%c <<< Response(/rest/basic/projectSuperBonusNew)⤵ `, 'background-color: #E0455D; color: white; font-size: 14px; font-weight: bold;', data)
+        return data
+      })
+    },
+    projectSuperBonusEdit: ({ form }) => {
+      let rawData = { form }
+      return req('post', 'http://localhost:3000/basic/projectSuperBonusEdit', rawData).then(data => {
+        console.log(`%c <<< Response(/rest/basic/projectSuperBonusEdit)⤵ `, 'background-color: #E0455D; color: white; font-size: 14px; font-weight: bold;', data)
+        return data
+      })
+    },
+    projectSuperBonusDelete: ({ form }) => {
+      let rawData = { form }
+      return req('post', 'http://localhost:3000/basic/projectSuperBonusDelete', rawData).then(data => {
+        console.log(`%c <<< Response(/rest/basic/projectSuperBonusDelete)⤵ `, 'background-color: #E0455D; color: white; font-size: 14px; font-weight: bold;', data)
         return data
       })
     },

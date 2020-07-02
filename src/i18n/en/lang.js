@@ -74,6 +74,13 @@ export default {
   __bomSub: 'BOM Sub',
   __seq: 'Sequence',
   __productBOMWarrning: 'Please complete new-status before modifying the BOM architecture',
+  __projectDetailWarrning: 'Please complete new-status before modifying the project items',
+  __project: 'Project',
+  __detail: 'Detail',
+  __performanceBonus: 'Performance Bonus',
+  __superBonus: 'Super Bonus',
+  __percentage: 'Percentage',
+  __sumOfBusinessMin: 'Minimum Sum Of Business In the quarter',
   // 請在上方新增字串
   // 以下為錯誤處理專用
   __error400: 'Bad Request',

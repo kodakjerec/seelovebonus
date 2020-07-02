@@ -74,6 +74,13 @@ export default {
   __bomSub: 'BOM子結構',
   __seq: '順序',
   __productBOMWarrning: '請先完成新增再修改BOM架構',
+  __projectDetailWarrning: '請先完成新增再修改專案產品',
+  __project: '專案',
+  __detail: '明細',
+  __performanceBonus: '業務獎金',
+  __superBonus: '超級獎金',
+  __percentage: '比例',
+  __sumOfBusinessMin: '該季度營業額最小值(萬)',
   // 請在上方新增字串
   // 以下為錯誤處理專用
   __error400: '無法理解請求',

@@ -16,21 +16,33 @@
         </el-select>
       </el-form-item>
       <el-form-item :label="$t('__qty')">
+        <el-col :span="10">
           <el-input v-model="form.Qty" autocomplete="off"></el-input>
-      </el-form-item>
-      <el-form-item :label="$t('__unit')" prop="Unit">
-        <el-select v-model="form.Unit" value-key="value" :placeholder="$t('__plzChoice')">
-          <el-option v-for="item in ddlUnit" :key="item.ID" :label="item.Value" :value="item.ID">
-            <span style="float: left">{{ item.Value }}</span>
-            <span style="float: right; color: #8492a6; font-size: 13px">{{ item.ID }}</span>
-          </el-option>
-        </el-select>
+        </el-col>
+        <el-col :span="4" class="el-form-item__label">
+          {{$t('__unit')}}
+        </el-col>
+        <el-col :span="10">
+          <el-form-item prop="Unit">
+            <el-select v-model="form.Unit" value-key="value" :placeholder="$t('__plzChoice')">
+              <el-option v-for="item in ddlUnit" :key="item.ID" :label="item.Value" :value="item.ID">
+                <span style="float: left">{{ item.Value }}</span>
+                <span style="float: right; color: #8492a6; font-size: 13px">{{ item.ID }}</span>
+              </el-option>
+            </el-select>
+          </el-form-item>
+        </el-col>
       </el-form-item>
       <el-form-item :label="$t('__price')">
+        <el-col :span="10">
           <el-input v-model="form.Price" autocomplete="off"></el-input>
-      </el-form-item>
-      <el-form-item :label="$t('__cost')">
+        </el-col>
+        <el-col :span="4" class="el-form-item__label">
+          {{$t('__cost')}}
+        </el-col>
+        <el-col :span="10">
           <el-input v-model="form.Cost" autocomplete="off"></el-input>
+        </el-col>
       </el-form-item>
       <el-form-item :label="$t('__bom')">
         <el-select v-model="form.BOM" value-key="value" :placeholder="$t('__plzChoice')" disabled>
@@ -40,7 +52,7 @@
           </el-option>
         </el-select>
       </el-form-item>
-      <bom ref="bom" v-if="dialogType!=='new'" :productID="form.ID" :productBOM="productBOM" @dialog-save="save()"></bom>
+      <bom ref="bom" v-if="dialogType!=='new'" :productID="form.ID" :productBOM="productBOM"></bom>
       <el-form-item v-else>{{$t('__productBOMWarrning')}}</el-form-item>
     </el-form>
     <div slot="footer" class="dialog-footer">
@@ -127,7 +139,19 @@ export default {
     checkValidate: function () {
       this.$refs['form'].validate((valid) => {
         if (valid) {
-          this.$refs['bom'].beforeSave()
+          switch (this.dialogType) {
+            case 'new':
+              this.save()
+              break
+            case 'edit':
+              this.$refs['bom'].beforeSave()
+                .then(answer => {
+                  if (answer === 'success') {
+                    this.save()
+                  }
+                })
+              break
+          }
           return true
         } else {
           return false

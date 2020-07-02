@@ -1,6 +1,5 @@
 <template>
   <div>
-      <el-divider>{{$t('__bomSub')}}</el-divider>
       <el-table
       :data="subList"
       stripe
@@ -12,7 +11,7 @@
           width="60px">
         </el-table-column>
         <el-table-column
-          prop="SubID"
+          prop="ProductID"
           :label="$t('__product')+$t('__id')">
           <template slot-scope="scope">
             <el-select v-model="scope.row[scope.column.property]" :placeholder="$t('__plzChoice')" @change="(value)=>{ddlSubListChange(value, scope.row)}" style="display:block">
@@ -21,6 +20,14 @@
                 <span style="float: right; color: #8492a6; font-size: 13px">{{ item.ID }}</span>
               </el-option>
             </el-select>
+          </template>
+        </el-table-column>
+        <el-table-column
+          prop="Price"
+          :label="$t('__price')"
+          width="100px">
+          <template slot-scope="scope">
+            <el-input v-model="scope.row[scope.column.property]" autocomplete="off" @change="(value)=>{priceChange(value, scope.row)}"></el-input>
           </template>
         </el-table-column>
         <el-table-column
@@ -53,16 +60,16 @@
 
 <script>
 export default {
-  name: 'ProductBOM',
+  name: 'ProjectDetail',
   props: {
-    productID: { type: String },
-    productBOM: { type: Array }
+    projectID: { type: String },
+    projectDetail: { type: Array }
   },
   data () {
     return {
       // 子結構
       // Status: '', New, Modified, Deleted
-      subItem: { ProductID: '', Seq: 0, SubID: '', Qty: 1, Status: '' },
+      subItem: { ProjectID: '', Seq: 0, ProductID: '', Price: 0, Qty: 1, Status: '' },
       subList: [],
       subListDeleted: [],
       // 下拉是選單
@@ -70,8 +77,8 @@ export default {
     }
   },
   watch: {
-    productBOM: function () {
-      this.subList = this.productBOM
+    projectDetail: function () {
+      this.subList = this.projectDetail
     }
   },
   mounted () {
@@ -95,7 +102,7 @@ export default {
         let uploadResult = 0
         let row = finalResult[index]
         // 錯誤處理
-        if (row.ProductID === '' || row.SubID === '') {
+        if (row.ProjectID === '' || row.ProudctID === '') {
           continue
         }
         // 開始更新
@@ -133,19 +140,19 @@ export default {
       let isSuccess = false
       switch (type) {
         case 'new':
-          const responseNew = await this.$api.basic.productBOMNew({ form: row })
+          const responseNew = await this.$api.basic.projectDetailNew({ form: row })
           if (responseNew.status === 200) {
             isSuccess = true
           }
           break
         case 'edit':
-          const responseEdit = await this.$api.basic.productBOMEdit({ form: row })
+          const responseEdit = await this.$api.basic.projectDetailEdit({ form: row })
           if (responseEdit.status === 200) {
             isSuccess = true
           }
           break
         case 'delete':
-          const responseDelete = await this.$api.basic.productBOMDelete({ form: row })
+          const responseDelete = await this.$api.basic.projectDetailDelete({ form: row })
           if (responseDelete.status === 200) {
             isSuccess = true
           }
@@ -161,7 +168,7 @@ export default {
     // 新增子結構
     handleNew: function () {
       // 檢查是否已經有主結構
-      if (this.productID === '') {
+      if (this.projectID === '') {
         this.$refs['form'].validate()
         return
       }
@@ -176,7 +183,7 @@ export default {
         let highestSeq = Math.max(...amounts)
         nextSeq = highestSeq + 1
       }
-      newObj.ProductID = this.productID
+      newObj.ProjectID = this.projectID
       newObj.Seq = nextSeq
       newObj.Status = 'New'
       this.subList.push(newObj)
@@ -189,6 +196,11 @@ export default {
     },
     // 下拉式選擇商品
     ddlSubListChange: function (selected, row) {
+      if (row.Status === '') {
+        row.Status = 'Modified'
+      }
+    },
+    priceChange: function (selected, row) {
       if (row.Status === '') {
         row.Status = 'Modified'
       }
