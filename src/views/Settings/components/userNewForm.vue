@@ -1,5 +1,5 @@
 <template>
-  <el-dialog :title="myTitle" :visible="dialogShow" center :show-close="false">
+  <el-dialog :title="myTitle" :visible="dialogShow" center @close="cancel">
     <el-form ref="form" :model="form" :rules="rules" label-width="30%">
       <el-form-item :label="$t('__userId')" prop="UserID">
         <el-input v-model="form.UserID" autocomplete="off" :disabled="disableForm.UserID" maxlength="20" show-word-limit></el-input>

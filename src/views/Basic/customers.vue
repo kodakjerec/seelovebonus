@@ -70,7 +70,6 @@ export default {
       // 進入修改
       this.dialogType = 'edit'
       this.dialogShow = true
-      this.user = row
     },
     // 開啟表單
     showForm: function (eventType) {

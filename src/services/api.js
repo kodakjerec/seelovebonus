@@ -301,5 +301,84 @@ export default {
         return data
       })
     }
+  },
+  orders: {
+    ordersShow: () => {
+      let rawData = { }
+      return req('post', 'http://localhost:3000/orders/ordersShow', rawData).then(data => {
+        console.log(`%c <<< Response(/rest/orders/ordersShow)⤵ `, 'background-color: #E0455D; color: white; font-size: 14px; font-weight: bold;', data)
+        return data
+      })
+    },
+    orderNew: ({ form }) => {
+      let rawData = { form }
+      return req('post', 'http://localhost:3000/orders/orderNew', rawData).then(data => {
+        console.log(`%c <<< Response(/rest/orders/orderNew)⤵ `, 'background-color: #E0455D; color: white; font-size: 14px; font-weight: bold;', data)
+        return data
+      })
+    },
+    orderCustomerNew: ({ form }) => {
+      let rawData = { form }
+      return req('post', 'http://localhost:3000/orders/orderCustomerNew', rawData).then(data => {
+        console.log(`%c <<< Response(/rest/orders/orderCustomerNew)⤵ `, 'background-color: #E0455D; color: white; font-size: 14px; font-weight: bold;', data)
+        return data
+      })
+    },
+    orderCustomerEdit: ({ form }) => {
+      let rawData = { form }
+      return req('post', 'http://localhost:3000/orders/orderCustomerEdit', rawData).then(data => {
+        console.log(`%c <<< Response(/rest/orders/orderCustomerEdit)⤵ `, 'background-color: #E0455D; color: white; font-size: 14px; font-weight: bold;', data)
+        return data
+      })
+    },
+    orderDetailNew: ({ form }) => {
+      let rawData = { form }
+      return req('post', 'http://localhost:3000/orders/orderDetailNew', rawData).then(data => {
+        console.log(`%c <<< Response(/rest/orders/orderDetailNew)⤵ `, 'background-color: #E0455D; color: white; font-size: 14px; font-weight: bold;', data)
+        return data
+      })
+    },
+    collectionRecordsNew: ({ form }) => {
+      let rawData = { form }
+      return req('post', 'http://localhost:3000/orders/collectionRecordsNew', rawData).then(data => {
+        console.log(`%c <<< Response(/rest/orders/collectionRecordsNew)⤵ `, 'background-color: #E0455D; color: white; font-size: 14px; font-weight: bold;', data)
+        return data
+      })
+    },
+    collectionRecordsEdit: ({ form }) => {
+      let rawData = { form }
+      return req('post', 'http://localhost:3000/orders/collectionRecordsEdit', rawData).then(data => {
+        console.log(`%c <<< Response(/rest/orders/collectionRecordsEdit)⤵ `, 'background-color: #E0455D; color: white; font-size: 14px; font-weight: bold;', data)
+        return data
+      })
+    },
+    invoiceHeadNew: ({ form }) => {
+      let rawData = { form }
+      return req('post', 'http://localhost:3000/orders/invoiceHeadNew', rawData).then(data => {
+        console.log(`%c <<< Response(/rest/orders/invoiceHeadNew)⤵ `, 'background-color: #E0455D; color: white; font-size: 14px; font-weight: bold;', data)
+        return data
+      })
+    },
+    invoiceDetailNew: ({ form }) => {
+      let rawData = { form }
+      return req('post', 'http://localhost:3000/orders/invoiceDetailNew', rawData).then(data => {
+        console.log(`%c <<< Response(/rest/orders/invoiceDetailNew)⤵ `, 'background-color: #E0455D; color: white; font-size: 14px; font-weight: bold;', data)
+        return data
+      })
+    },
+    getDropdownList: ({ type }) => {
+      let rawData = { type }
+      return req('post', 'http://localhost:3000/orders/getDropdownList', rawData).then(data => {
+        console.log(`%c <<< Response(/rest/orders/getDropdownList)⤵ `, 'background-color: #E0455D; color: white; font-size: 14px; font-weight: bold;', data)
+        return data
+      })
+    },
+    getObject: ({ type, ID }) => {
+      let rawData = { type, ID }
+      return req('post', 'http://localhost:3000/orders/getObject', rawData).then(data => {
+        console.log(`%c <<< Response(/rest/orders/getObject)⤵ `, 'background-color: #E0455D; color: white; font-size: 14px; font-weight: bold;', data)
+        return data
+      })
+    }
   }
 }

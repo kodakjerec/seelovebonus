@@ -1,52 +1,50 @@
 <template>
-  <div>
-      <el-table
-      :data="subList"
-      stripe
-      border
-      style="width: 100%">
-        <el-table-column
-          prop="Seq"
-          :label="$t('__seq')"
-          width="60px">
-        </el-table-column>
-        <el-table-column
-          prop="Grade"
-          :label="$t('__grade')">
-          <template slot-scope="scope">
-            <el-select v-model="scope.row[scope.column.property]" :placeholder="$t('__plzChoice')" @change="(value)=>{ddlSubListChange(value, scope.row)}" style="display:block">
-              <el-option v-for="item in ddlSubList" :key="item.ID" :label="item.Value" :value="item.ID">
-                <span style="float: left">{{ item.Value }}</span>
-                <span style="float: right; color: #8492a6; font-size: 13px">{{ item.ID }}</span>
-              </el-option>
-            </el-select>
-          </template>
-        </el-table-column>
-        <el-table-column
-          prop="Percentage"
-          :label="$t('__performanceBonus')+$t('__percentage')+'(%)'">
-          <template slot-scope="scope">
-            <el-input v-model="scope.row[scope.column.property]" autocomplete="off" @change="(value)=>{percentageChange(value, scope.row)}"></el-input>
-          </template>
-        </el-table-column>
-        <el-table-column
-          align="right"
-          width="100px">
-          <template slot="header">
-            <el-button
-              type="primary"
-              size="large"
-              @click="handleNew()">{{$t('__new')}}</el-button>
-          </template>
-          <template slot-scope="scope">
-            <el-button
-              size="mini"
-              type="danger"
-              @click="handleDelete(scope.$index, scope.row)">{{$t('__delete')}}</el-button>
-          </template>
-        </el-table-column>
-      </el-table>
-  </div>
+  <el-table
+  :data="subList"
+  stripe
+  border
+  style="width: 100%">
+    <el-table-column
+      prop="Seq"
+      :label="$t('__seq')"
+      width="60px">
+    </el-table-column>
+    <el-table-column
+      prop="Grade"
+      :label="$t('__grade')">
+      <template slot-scope="scope">
+        <el-select v-model="scope.row[scope.column.property]" :placeholder="$t('__plzChoice')" @change="(value)=>{ddlSubListChange(value, scope.row)}" style="display:block">
+          <el-option v-for="item in ddlSubList" :key="item.ID" :label="item.Value" :value="item.ID">
+            <span style="float: left">{{ item.Value }}</span>
+            <span style="float: right; color: #8492a6; font-size: 13px">{{ item.ID }}</span>
+          </el-option>
+        </el-select>
+      </template>
+    </el-table-column>
+    <el-table-column
+      prop="Percentage"
+      :label="$t('__performanceBonus')+$t('__percentage')+'(%)'">
+      <template slot-scope="scope">
+        <el-input v-model="scope.row[scope.column.property]" autocomplete="off" @change="(value)=>{percentageChange(value, scope.row)}"></el-input>
+      </template>
+    </el-table-column>
+    <el-table-column
+      align="right"
+      width="100px">
+      <template slot="header">
+        <el-button
+          type="primary"
+          size="large"
+          @click="handleNew()">{{$t('__new')}}</el-button>
+      </template>
+      <template slot-scope="scope">
+        <el-button
+          size="mini"
+          type="danger"
+          @click="handleDelete(scope.$index, scope.row)">{{$t('__delete')}}</el-button>
+      </template>
+    </el-table-column>
+  </el-table>
 </template>
 
 <script>

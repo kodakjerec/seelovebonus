@@ -1,5 +1,5 @@
 <template>
-  <el-dialog :title="myTitle" :visible="dialogShow" center :show-close="false" width="80%">
+  <el-dialog :title="myTitle" :visible="dialogShow" center width="80%" @close="cancel">
     <el-form ref="form" :model="form" :rules="rules" label-width="20%">
       <el-form-item :label="$t('__project')+$t('__id')" prop="ID">
         <el-input v-model="form.ID" autocomplete="off" :disabled="disableForm.ID" maxlength="20" show-word-limit></el-input>
@@ -33,9 +33,9 @@
         </el-col>
       </el-form-item>
       <el-form-item :label="$t('__price')">
-          <el-input v-model="form.Price" autocomplete="off"></el-input>
+          <el-input v-model.number="form.Price"></el-input>
       </el-form-item>
-      <div v-if="dialogType!=='new'">
+      <template v-if="dialogType!=='new'">
         <el-tabs v-model="activeName">
           <el-tab-pane :label="$t('__project')+$t('__detail')" name="first"></el-tab-pane>
           <el-tab-pane :label="$t('__project')+$t('__performanceBonus')" name="second"></el-tab-pane>
@@ -44,7 +44,7 @@
         <bom v-show="activeName==='first'" ref="bom" :projectID="form.ID" :projectDetail="projectDetail"></bom>
         <p-bonus v-show="activeName==='second'" ref="pBonus" :projectID="form.ID" :projectPBonus="projectPBonus"></p-bonus>
         <super-bonus v-show="activeName==='third'" ref="superBonus" :projectID="form.ID" :projectSuperBonus="projectSuperBonus"></super-bonus>
-      </div>
+      </template>
       <el-form-item v-else>{{$t('__projectDetailWarrning')}}</el-form-item>
     </el-form>
     <div slot="footer" class="dialog-footer">

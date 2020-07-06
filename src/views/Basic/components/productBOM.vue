@@ -28,7 +28,7 @@
           :label="$t('__qty')"
           width="100px">
           <template slot-scope="scope">
-            <el-input v-model="scope.row[scope.column.property]" autocomplete="off" @change="(value)=>{qtyChange(value, scope.row)}"></el-input>
+            <el-input v-model.number="scope.row[scope.column.property]" @change="(value)=>{qtyChange(value, scope.row)}"></el-input>
           </template>
         </el-table-column>
         <el-table-column
@@ -122,10 +122,10 @@ export default {
       }
 
       if (isSuccess) {
-        return 'success'
+        return isSuccess
       } else {
         this.$alert(this.$t('__uploadFail'))
-        return 'fail'
+        return isSuccess
       }
     },
     // 存檔

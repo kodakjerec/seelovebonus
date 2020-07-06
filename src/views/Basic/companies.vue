@@ -9,6 +9,13 @@
       <el-table-column
         prop="ID"
         :label="$t('__company')+$t('__id')">
+        <template slot-scope="scope">
+          {{scope.row.ID}}
+          <el-tag
+            v-show="scope.row.DefaultCompanyID === 1"
+            :type="scope.row.DefaultCompanyID === 1 ? 'primary' : 'success'"
+            disable-transitions>{{$t('__default')}}</el-tag>
+        </template>
       </el-table-column>
       <el-table-column
         prop="Name"
@@ -45,6 +52,8 @@
 
 <script>
 import newForm from './components/companyNewForm'
+import { formatDate } from '@/setup/format.js'
+
 export default {
   name: 'Companies',
   components: {
@@ -63,7 +72,7 @@ export default {
   },
   methods: {
     formatterDate: function (row, column, cellValue, index) {
-      return cellValue.substring(0, 10)
+      return formatDate(cellValue)
     },
     // 讀入系統清單
     preLoading: async function () {
@@ -78,7 +87,6 @@ export default {
       // 進入修改
       this.dialogType = 'edit'
       this.dialogShow = true
-      this.user = row
     },
     // 開啟表單
     showForm: function (eventType) {

@@ -1,47 +1,45 @@
 <template>
-  <div>
-      <el-table
-      :data="subList"
-      stripe
-      border
-      style="width: 100%">
-        <el-table-column
-          prop="Seq"
-          :label="$t('__seq')"
-          width="60px">
-        </el-table-column>
-        <el-table-column
-          prop="Price"
-          :label="$t('__sumOfBusinessMin')">
-          <template slot-scope="scope">
-            <el-input v-model="scope.row[scope.column.property]" autocomplete="off" @change="(value)=>{priceChange(value, scope.row)}"></el-input>
-          </template>
-        </el-table-column>
-        <el-table-column
-          prop="Percentage"
-          :label="$t('__superBonus')+$t('__percentage')+'(%)'">
-          <template slot-scope="scope">
-            <el-input v-model="scope.row[scope.column.property]" autocomplete="off" @change="(value)=>{percentageChange(value, scope.row)}"></el-input>
-          </template>
-        </el-table-column>
-        <el-table-column
-          align="right"
-          width="100px">
-          <template slot="header">
-            <el-button
-              type="primary"
-              size="large"
-              @click="handleNew()">{{$t('__new')}}</el-button>
-          </template>
-          <template slot-scope="scope">
-            <el-button
-              size="mini"
-              type="danger"
-              @click="handleDelete(scope.$index, scope.row)">{{$t('__delete')}}</el-button>
-          </template>
-        </el-table-column>
-      </el-table>
-  </div>
+  <el-table
+  :data="subList"
+  stripe
+  border
+  style="width: 100%">
+    <el-table-column
+      prop="Seq"
+      :label="$t('__seq')"
+      width="60px">
+    </el-table-column>
+    <el-table-column
+      prop="Price"
+      :label="$t('__sumOfBusinessMin')">
+      <template slot-scope="scope">
+        <el-input v-model.number="scope.row[scope.column.property]" @change="(value)=>{priceChange(value, scope.row)}"></el-input>
+      </template>
+    </el-table-column>
+    <el-table-column
+      prop="Percentage"
+      :label="$t('__superBonus')+$t('__percentage')+'(%)'">
+      <template slot-scope="scope">
+        <el-input v-model="scope.row[scope.column.property]" autocomplete="off" @change="(value)=>{percentageChange(value, scope.row)}"></el-input>
+      </template>
+    </el-table-column>
+    <el-table-column
+      align="right"
+      width="100px">
+      <template slot="header">
+        <el-button
+          type="primary"
+          size="large"
+          @click="handleNew()">{{$t('__new')}}</el-button>
+      </template>
+      <template slot-scope="scope">
+        <el-button
+          size="mini"
+          type="danger"
+          @click="handleDelete(scope.$index, scope.row)">{{$t('__delete')}}</el-button>
+      </template>
+    </el-table-column>
+  </el-table>
 </template>
 
 <script>

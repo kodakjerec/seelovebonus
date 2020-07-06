@@ -1,5 +1,5 @@
 <template>
-  <el-dialog :title="myTitle" :visible="dialogShow" center :show-close="false" width="80%">
+  <el-dialog :title="myTitle" :visible="dialogShow" center width="80%" @close="cancel">
     <el-form ref="form" :model="form" :rules="rules" label-width="20%">
       <el-form-item :label="$t('__product')+$t('__id')" prop="ID">
         <el-input v-model="form.ID" autocomplete="off" :disabled="disableForm.ID" maxlength="20" show-word-limit></el-input>
@@ -17,7 +17,7 @@
       </el-form-item>
       <el-form-item :label="$t('__qty')">
         <el-col :span="10">
-          <el-input v-model="form.Qty" autocomplete="off"></el-input>
+          <el-input v-model.number="form.Qty" autocomplete="off"></el-input>
         </el-col>
         <el-col :span="4" class="el-form-item__label">
           {{$t('__unit')}}
@@ -35,13 +35,13 @@
       </el-form-item>
       <el-form-item :label="$t('__price')">
         <el-col :span="10">
-          <el-input v-model="form.Price" autocomplete="off"></el-input>
+          <el-input v-model.number="form.Price" autocomplete="off"></el-input>
         </el-col>
         <el-col :span="4" class="el-form-item__label">
           {{$t('__cost')}}
         </el-col>
         <el-col :span="10">
-          <el-input v-model="form.Cost" autocomplete="off"></el-input>
+          <el-input v-model.number="form.Cost" autocomplete="off"></el-input>
         </el-col>
       </el-form-item>
       <el-form-item :label="$t('__bom')">
@@ -137,19 +137,21 @@ export default {
     },
     // 檢查輸入
     checkValidate: function () {
-      this.$refs['form'].validate((valid) => {
+      let tempThis = this
+      this.$refs['form'].validate(async function (valid) {
         if (valid) {
-          switch (this.dialogType) {
+          switch (tempThis.dialogType) {
             case 'new':
-              this.save()
+              tempThis.save()
               break
             case 'edit':
-              this.$refs['bom'].beforeSave()
-                .then(answer => {
-                  if (answer === 'success') {
-                    this.save()
-                  }
-                })
+              let isSuccess = false
+
+              isSuccess = await tempThis.$refs['bom'].beforeSave()
+
+              if (isSuccess) {
+                tempThis.save()
+              }
               break
           }
           return true

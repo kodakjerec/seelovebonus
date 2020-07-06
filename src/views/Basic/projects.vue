@@ -46,11 +46,8 @@
 
 <script>
 import newForm from './components/projectNewForm'
-var formatter = new Intl.NumberFormat('en-US', {
-  style: 'currency',
-  currency: 'TWD',
-  minimumFractionDigits: 0
-})
+import { formatDate, formatMoney } from '@/setup/format.js'
+
 export default {
   name: 'Projects',
   components: {
@@ -69,10 +66,10 @@ export default {
   },
   methods: {
     formatterDate: function (row, column, cellValue, index) {
-      return cellValue.substring(0, 10)
+      return formatDate(cellValue)
     },
     formatterMoney: function (row, column, cellValue, index) {
-      return formatter.format(cellValue)
+      return formatMoney(cellValue)
     },
     // 讀入系統清單
     preLoading: async function () {
@@ -88,7 +85,6 @@ export default {
       // 進入修改
       this.dialogType = 'edit'
       this.dialogShow = true
-      this.user = row
     },
     // 開啟表單
     showForm: function (eventType) {

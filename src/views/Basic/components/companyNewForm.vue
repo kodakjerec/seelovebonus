@@ -1,8 +1,8 @@
 <template>
-  <el-dialog :title="myTitle" :visible="dialogShow" center :show-close="false" width="80%">
+  <el-dialog :title="myTitle" :visible="dialogShow" center width="80%" @close="cancel">
     <el-form ref="form" :model="form" :rules="rules" label-width="20%">
       <el-form-item :label="$t('__company')+$t('__id')" prop="ID">
-        <el-input v-model="form.ID" autocomplete="off" :disabled="disableForm.ID" maxlength="20" show-word-limit></el-input>
+        <el-input v-model="form.ID" autocomplete="off" :placeholder="$t('__palceholderCompanyID')" :disabled="disableForm.ID" maxlength="20" show-word-limit></el-input>
       </el-form-item>
       <el-form-item :label="$t('__company')+$t('__name')" prop="Name">
         <el-input v-model="form.Name" autocomplete="off" maxlength="40" show-word-limit></el-input>
@@ -114,6 +114,8 @@
 </template>
 
 <script>
+import validate from '@/setup/validate.js'
+
 export default {
   name: 'CompanyNewForm',
   props: {
@@ -122,87 +124,6 @@ export default {
     company: { type: Object }
   },
   data () {
-    var validatePhone = (rule, value, callback) => {
-      if (value === '') {
-        callback()
-      } else if (value[2] === '-') {
-        // 格式為 02-12345678, 03-1234567
-        if (!isNaN(value.substring(0, 2))) {
-          switch (value.substring(0, 2)) {
-            case '02':
-              if (value.substring(3, 11).length < 8) {
-                callback(new Error(this.$t('__pleaseInputPhoneLength')))
-              }
-              if (isNaN(value.substring(3, 11))) {
-                callback(new Error(this.$t('__pleaseInputNumber')))
-              }
-              break
-            default:
-              if (value.substring(3, 10).length < 7) {
-                callback(new Error(this.$t('__pleaseInputPhoneLength')))
-              }
-              if (isNaN(value.substring(3, 10))) {
-                callback(new Error(this.$t('__pleaseInputNumber')))
-              }
-          }
-          callback()
-        } else {
-          callback(new Error(this.$t('__pleaseInputNumber')))
-        }
-      } else if (value[3] === '-') {
-        // 格式為 037-123456, 049-1234567, 089-123456
-        if (!isNaN(value.substring(0, 3))) {
-          switch (value.substring(0, 3)) {
-            case '037':
-            case '089':
-              if (value.substring(4, 10).length < 6) {
-                callback(new Error(this.$t('__pleaseInputPhoneLength')))
-              }
-              if (isNaN(value.substring(4, 10))) {
-                callback(new Error(this.$t('__pleaseInputNumber')))
-              }
-              break
-            default:
-              if (value.substring(4, 11).length < 7) {
-                callback(new Error(this.$t('__pleaseInputPhoneLength')))
-              }
-              if (isNaN(value.substring(4, 11))) {
-                callback(new Error(this.$t('__pleaseInputNumber')))
-              }
-          }
-          callback()
-        } else {
-          callback(new Error(this.$t('__pleaseInputNumber')))
-        }
-      } else if (value[4] === '-') {
-        // 格式為 0836-12345
-        // 手機   0980-123456
-        if (!isNaN(value.substring(0, 4))) {
-          switch (value.substring(0, 4)) {
-            case '0836':
-              if (value.substring(5, 10).length < 5) {
-                callback(new Error(this.$t('__pleaseInputPhoneLength')))
-              }
-              if (isNaN(value.substring(5, 10))) {
-                callback(new Error(this.$t('__pleaseInputNumber')))
-              }
-              break
-            default:
-              if (value.substring(5, 11).length < 6) {
-                callback(new Error(this.$t('__pleaseInputPhoneLength')))
-              }
-              if (isNaN(value.substring(5, 11))) {
-                callback(new Error(this.$t('__pleaseInputNumber')))
-              }
-          }
-          callback()
-        } else {
-          callback(new Error(this.$t('__pleaseInputNumber')))
-        }
-      } else {
-        callback(new Error(this.$t('__pleaseInputPhoneStyle')))
-      }
-    }
     return {
       form: {
         ID: '',
@@ -224,8 +145,8 @@ export default {
         Name: [{ required: true, message: this.$t('__pleaseInput'), trigger: 'blur' }],
         StartDate: [{ required: true, message: this.$t('__pleaseInput'), trigger: 'blur' }],
         EndDate: [{ required: true, message: this.$t('__pleaseInput'), trigger: 'blur' }],
-        Tel1: [{ trigger: 'blur', validator: validatePhone }],
-        Tel2: [{ trigger: 'blur', validator: validatePhone }]
+        Tel1: [{ trigger: 'blur', validator: validate.validatePhone }],
+        Tel2: [{ trigger: 'blur', validator: validate.validatePhone }]
       },
       disableForm: {
         ID: false
