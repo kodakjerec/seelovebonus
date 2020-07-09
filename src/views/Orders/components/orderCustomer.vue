@@ -97,7 +97,8 @@ export default {
   props: {
     dialogType: { type: String, default: 'new' },
     orderID: { type: String },
-    orderCustomer: { type: Object }
+    orderCustomer: { type: Object },
+    ddlCustomerBefore: { tpye: Array }
   },
   data () {
     return {
@@ -146,10 +147,22 @@ export default {
     orderCustomer: function () {
       if (this.orderCustomer) {
         this.form = this.orderCustomer
+
+        this.ddlCityChange()
+
+        // 法定代理人
+        this.ddlAgentCityChange()
+      }
+    },
+    ddlCustomerBefore: function (value) {
+      if (this.ddlCustomerBefore) {
+        this.ddlCustomer = this.ddlCustomerBefore
       }
     }
   },
   mounted () {
+    this.preLoading()
+
     switch (this.dialogType) {
       case 'new':
         break
@@ -157,12 +170,24 @@ export default {
         this.disableForm.CustomerID = true
         break
     }
-    this.preLoading()
   },
   methods: {
     preLoading: async function () {
-      const response4 = await this.$api.orders.getDropdownList({ type: 'customer' })
-      this.ddlCustomer = response4.data.result
+      if (this.ddlCustomerBefore) {
+        this.ddlCustomer = this.ddlCustomerBefore
+      }
+
+      const response = await this.$api.basic.getDropdownList({ type: 'post' })
+      this.postData = response.data.result
+
+      const response1 = await this.$api.basic.getDropdownList({ type: 'country' })
+      this.ddlCountry = response1.data.result
+      const response2 = await this.$api.basic.getDropdownList({ type: 'city' })
+      this.ddlCity = response2.data.result
+
+      // 法定代理人
+      this.ddlAgentCountry = response1.data.result
+      this.ddlAgentCity = response2.data.result
     },
     // 選定客戶取得資料
     ddlCustomerChange: async function () {
@@ -184,18 +209,9 @@ export default {
       this.form.AgentAddress = row.AgentAddress
       this.form.BusinessID = row.BusinessID
 
-      const response = await this.$api.basic.getDropdownList({ type: 'post' })
-      this.postData = response.data.result
-
-      const response1 = await this.$api.basic.getDropdownList({ type: 'country' })
-      this.ddlCountry = response1.data.result
-      const response2 = await this.$api.basic.getDropdownList({ type: 'city' })
-      this.ddlCity = response2.data.result
       this.ddlCityChange()
 
       // 法定代理人
-      this.ddlAgentCountry = response1.data.result
-      this.ddlAgentCity = response2.data.result
       this.ddlAgentCityChange()
     },
     // 過濾郵遞區號

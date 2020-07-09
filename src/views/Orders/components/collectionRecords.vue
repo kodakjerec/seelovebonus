@@ -2,7 +2,7 @@
   <el-form ref="form" :model="form" :rules="rules">
     <h2>{{$t('__collectionRecords')}}</h2>
     <el-form-item :label="$t('__paymentMethod')" prop="PaymentMethod" label-width="100px" label-position="left">
-      <el-col :span="10">
+      <el-col :span="4">
       <el-select v-model="form.PaymentMethod" value-key="value" :placeholder="$t('__plzChoice')">
         <el-option v-for="item in ddlPaymentMethod" :key="item.ID" :label="item.Value" :value="item.ID">
           <span style="float: left">{{ item.Value }}</span>
@@ -13,7 +13,7 @@
       <el-col :span="4" class="el-form-item__label">
         {{$t('__received')+$t('__date')}}
       </el-col>
-      <el-col :span="10">
+      <el-col :span="6">
         <el-form-item prop="ReceivedDate">
             <el-date-picker
               v-model="form.ReceivedDate"
@@ -23,12 +23,25 @@
             </el-date-picker>
           </el-form-item>
       </el-col>
+      <el-col :span="4" class="el-form-item__label">
+        {{$t('__received')+$t('__operator')}}
+      </el-col>
+      <el-col :span="6">
+        <el-form-item prop="ReceivedID">
+            <el-select v-model="form.ReceivedID" value-key="value" :placeholder="$t('__plzChoice')">
+              <el-option v-for="item in ddlCreateID" :key="item.ID" :label="item.Value" :value="item.ID">
+                <span style="float: left">{{ item.Value }}</span>
+                <span style="float: right; color: #8492a6; font-size: 13px">{{ item.ID }}</span>
+              </el-option>
+            </el-select>
+          </el-form-item>
+      </el-col>
     </el-form-item>
-    <method1 ref="method1" v-if="form.PaymentMethod === 1" :form="form"></method1>
-    <method2 ref="method2" v-if="form.PaymentMethod === 2" :form="form" :ddlBankID="ddlBankID"></method2>
-    <method3 ref="method3" v-if="form.PaymentMethod === 3" :form="form"></method3>
-    <method4 ref="method4" v-if="form.PaymentMethod === 4" :form="form"></method4>
-    <method5 ref="method5" v-if="form.PaymentMethod === 5" :form="form"></method5>
+    <method1 ref="method1" v-if="form.PaymentMethod === '1'" :form="form"></method1>
+    <method2 ref="method2" v-if="form.PaymentMethod === '2'" :form="form" :ddlBankID="ddlBankID"></method2>
+    <method3 ref="method3" v-if="form.PaymentMethod === '3'" :form="form"></method3>
+    <method4 ref="method4" v-if="form.PaymentMethod === '4'" :form="form" :ddlBankID="ddlBankID"></method4>
+    <method5 ref="method5" v-if="form.PaymentMethod === '5'" :form="form" :ddlBankID="ddlBankID"></method5>
     <!-- 發票資訊 -->
     <invoice v-if="invoiceHead" ref="invoiceHead" :invoiceHead="invoiceHead"></invoice>
     <template v-else>
@@ -58,15 +71,17 @@ export default {
     method5
   },
   props: {
+    dialogType: { type: String },
     orderID: { type: String },
-    collectionRecords: { type: Object }
+    collectionRecords: { type: Object },
+    ddlCreateIDBefore: { tpye: Array }
   },
   data () {
     return {
       form: {
         InvoiceID: '',
-        InvoiceDate: '',
-        OrderID: '',
+        InvoiceDate: null,
+        OrderID: null,
         PaymentMethod: 4,
         ReceivedDate: null,
         Amount: null,
@@ -74,16 +89,18 @@ export default {
         BankID: null,
         Memo: null,
         ReceivedID: null,
-        ExpireDate: null
+        ChequeDate: null
       },
       rules: {
         PaymentMethod: [{ required: true, message: this.$t('__pleaseInput'), trigger: 'blur' }],
-        ReceivedDate: [{ required: true, message: this.$t('__pleaseInput'), trigger: 'blur' }]
+        ReceivedDate: [{ required: true, message: this.$t('__pleaseInput'), trigger: 'blur' }],
+        ReceivedID: [{ required: true, message: this.$t('__pleaseInput'), trigger: 'blur' }]
       },
       invoiceHead: {},
       // 以下為下拉式選單專用
       ddlPaymentMethod: [],
-      ddlBankID: []
+      ddlBankID: [],
+      ddlCreateID: []
     }
   },
   watch: {
@@ -92,9 +109,14 @@ export default {
         this.form.OrderID = value
       }
     },
-    collectionRecords: function () {
+    collectionRecords: function (value) {
       if (this.collectionRecords) {
         this.form = this.collectionRecords
+      }
+    },
+    ddlCreateIDBefore: function (value) {
+      if (this.ddlCreateIDBefore) {
+        this.ddlCreateID = this.ddlCreateIDBefore
       }
     }
   },
@@ -103,6 +125,13 @@ export default {
   },
   methods: {
     preLoading: async function () {
+      if (this.collectionRecords) {
+        this.form = this.collectionRecords
+      }
+      if (this.ddlCreateIDBefore) {
+        this.ddlCreateID = this.ddlCreateIDBefore
+      }
+
       const response1 = await this.$api.orders.getDropdownList({ type: 'paymentMethod' })
       this.ddlPaymentMethod = response1.data.result
       const response2 = await this.$api.orders.getDropdownList({ type: 'bankID' })
@@ -124,7 +153,7 @@ export default {
         Tax: null,
         CarrierNumber: null,
         Memo: null,
-        InvoiceIDFirst: null,
+        InvoiceIDFirst: '',
         RandomCode: null,
         CreateID: null,
         Status: null,
@@ -157,6 +186,7 @@ export default {
     // 存檔
     save: async function () {
       let isSuccess = false
+      console.log(this.form)
       switch (this.dialogType) {
         case 'new':
           const responseNew = await this.$api.orders.collectionRecordsNew({ form: this.form })

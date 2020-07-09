@@ -51,6 +51,9 @@ export default {
       }
     }
   },
+  mounted () {
+    this.bankIDFilter(null)
+  },
   methods: {
     // 下拉是選單過濾銀行代號
     bankIDFilter: function (selected) {

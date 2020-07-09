@@ -73,7 +73,7 @@ const errorHandle = (status, response) => {
       errorMessage(response.data + '<br/>' + requestURL, status)
       break
     default:
-      errorMessage('錯誤狀況: ' + status, status)
+      errorMessage('錯誤狀況: ' + response.data, status)
   }
 }
 

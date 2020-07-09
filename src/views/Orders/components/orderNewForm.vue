@@ -77,11 +77,23 @@
         </el-table-column>
       </el-table>
       <!-- 專案明細 -->
-      <order-detail ref="orderDetail" :orderID="form.ID" :orderDetail="orderDetail"></order-detail>
+      <order-detail ref="orderDetail"
+        :orderID="form.ID"
+        :orderDetail="orderDetail"></order-detail>
       <!-- 訂購者資料 -->
-      <order-customer ref="orderCustomer" :dialog-type="dialogType" :orderID="form.ID" :orderCustomer="orderCustomer"></order-customer>
+      <order-customer ref="orderCustomer"
+        :dialog-type="dialogType"
+        :orderID="form.ID"
+        :orderCustomer="orderCustomer"
+        :ddlCustomerBefore="ddlCustomer"></order-customer>
       <!-- 付款資訊 -->
-      <collection-records v-if="collectionRecords" ref="collectionRecords" :orderID="form.ID" :collectionRecords="collectionRecords"></collection-records>
+      <collection-records
+        v-if="collectionRecords"
+        ref="collectionRecords"
+        :dialogType="dialogTypeCollectionRecords"
+        :orderID="form.ID"
+        :collectionRecords="collectionRecords"
+        :ddlCreateIDBefore="ddlCreateID"></collection-records>
       <template v-else>
         <el-button-group>
           <el-button type="primary" icon="el-icon-plus" @click.prevent="addCollectionRecords()">{{$t('__new')+$t('__collectionRecords')}}</el-button>
@@ -144,11 +156,13 @@ export default {
       orderDetail: [],
       orderCustomer: {},
       collectionRecords: {},
+      dialogTypeCollectionRecords: 'new',
       // 以下為下拉式選單專用
       ddlOrderStatus: [],
       ddlProject: [],
       ddlAssistantID: [],
-      ddlCreateID: []
+      ddlCreateID: [],
+      ddlCustomer: []
     }
   },
   mounted () {
@@ -183,6 +197,8 @@ export default {
       const response3 = await this.$api.orders.getDropdownList({ type: 'employee' })
       this.ddlAssistantID = response3.data.result
       this.ddlCreateID = response3.data.result
+      const response4 = await this.$api.orders.getDropdownList({ type: 'customer' })
+      this.ddlCustomer = response4.data.result
 
       const responseDetail = await this.$api.orders.getObject({ type: 'orderDetail', ID: this.form.ID })
       this.orderDetail = responseDetail.data.result
@@ -190,6 +206,11 @@ export default {
       this.orderCustomer = responseCustomer.data.result[0]
       const responseRecords = await this.$api.orders.getObject({ type: 'collectionRecords', ID: this.form.ID })
       this.collectionRecords = responseRecords.data.result[0]
+      if (this.collectionRecords !== undefined) {
+        this.dialogTypeCollectionRecords = 'edit'
+      } else {
+        this.dialogTypeCollectionRecords = 'new'
+      }
     },
     // 切換專案, 填入明細
     ddlProjectChange: async function (selected) {
@@ -247,18 +268,20 @@ export default {
     },
     // 新增付款資訊
     addCollectionRecords: function () {
+      let targetProjectHead = this.projectHead[0]
+
       this.collectionRecords = {
         InvoiceID: '',
-        InvoiceDate: '',
-        OrderID: '',
+        InvoiceDate: null,
+        OrderID: this.form.ID,
         PaymentMethod: 4,
-        ReceivedDate: null,
-        Amount: null,
+        ReceivedDate: new Date(),
+        Amount: targetProjectHead.Amount,
         Account: null,
         BankID: null,
         Memo: null,
         ReceivedID: null,
-        ExpireDate: null
+        ChequeDate: null
       }
     },
     // 檢查輸入
@@ -301,13 +324,24 @@ export default {
           console.log('orderDetail save')
           isSuccess = await this.$refs['orderCustomer'].save()
           console.log('orderCustomer save')
+          if (this.collectionRecords) {
+            isSuccess = await this.$refs['collectionRecords'].save()
+            console.log('collectionRecords save')
+          }
           if (isSuccess) {
+            this.$alert(this.$t('__uploadSuccess'), 200)
             this.$emit('dialog-save')
           }
           break
         case 'edit':
           let isSuccessEdit = await this.save()
+          console.log('main save')
+          if (this.collectionRecords) {
+            isSuccessEdit = await this.$refs['collectionRecords'].save()
+            console.log('collectionRecords save')
+          }
           if (isSuccessEdit) {
+            this.$alert(this.$t('__uploadSuccess'), 200)
             this.$emit('dialog-save')
           }
           break
@@ -331,7 +365,6 @@ export default {
           }
           break
         case 'edit':
-          this.$alert(this.$t('__uploadSuccess'), 200)
           isSuccess = true
           break
       }

@@ -177,12 +177,12 @@ export default {
     },
     // 下拉式選擇商品
     priceChange: function (selected, row) {
-      if (row.Status === '') {
+      if (row.status === '') {
         row.Status = 'Modified'
       }
     },
     percentageChange: function (selected, row) {
-      if (row.Status === '') {
+      if (row.status === '') {
         row.Status = 'Modified'
       }
     }

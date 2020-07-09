@@ -14,9 +14,9 @@
         {{$t('__expire')+$t('__date')}}
       </el-col>
       <el-col :span="10">
-        <el-form-item prop="ExpireDate">
+        <el-form-item prop="ChequeDate">
             <el-date-picker
-              v-model="form.ExpireDate"
+              v-model="form.ChequeDate"
               type="date"
               :placeholder="$t('__plzChoice')+$t('__expire')+$t('__date')"
               format="yyyy - MM - dd">
@@ -39,7 +39,7 @@ export default {
       rules: {
         Account: [{ required: true, message: this.$t('__pleaseInput'), trigger: 'blur' }],
         Amount: [{ required: true, message: this.$t('__pleaseInput'), trigger: 'blur' }],
-        ExpireDate: [{ required: true, message: this.$t('__pleaseInput'), trigger: 'blur' }]
+        ChequeDate: [{ required: true, message: this.$t('__pleaseInput'), trigger: 'blur' }]
       }
     }
   },

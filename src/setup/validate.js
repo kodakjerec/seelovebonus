@@ -84,6 +84,10 @@ const validate = {
   },
   // 驗證信用卡
   validateCard: (rule, value, callback) => {
+    if (!value || value === null) {
+      callback(new Error(i18n.t('__plzInputCardNumber')))
+      return
+    }
     value = value.replace(/-/g, '')
     let regex = /[0-9]{16}/
     if (!regex.test(value)) {

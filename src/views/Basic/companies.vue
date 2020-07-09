@@ -12,8 +12,8 @@
         <template slot-scope="scope">
           {{scope.row.ID}}
           <el-tag
-            v-show="scope.row.DefaultCompanyID === 1"
-            :type="scope.row.DefaultCompanyID === 1 ? 'primary' : 'success'"
+            v-show="scope.row.DefaultCompanyID === '1'"
+            :type="scope.row.DefaultCompanyID === '1' ? 'primary' : 'success'"
             disable-transitions>{{$t('__default')}}</el-tag>
         </template>
       </el-table-column>
