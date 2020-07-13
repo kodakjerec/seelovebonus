@@ -5,7 +5,7 @@
         <el-input v-model="form.GroupID" autocomplete="off" :disabled="disableForm.GroupID" maxlength="20" show-word-limit></el-input>
       </el-form-item>
       <el-form-item :label="$t('__groupName')" required>
-        <el-input v-model="form.Name" autocomplete="off"></el-input>
+        <el-input v-model="form.Name" autocomplete="off" maxlength="40" show-word-limit></el-input>
       </el-form-item>
     </el-form>
     <el-table :data="progList" ref="multipleTable"  @selection-change="handleSelectionChange">

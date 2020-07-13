@@ -125,6 +125,7 @@ export default {
   __pleaseInputPassword: 'Please Input Password',
   __pleaseInput: 'Please Input',
   __pleaseInputNumber: 'Please Input Number',
+  __pleaseInputLength: 'Input Length must larger then ',
   __pleaseInputPhoneLength: 'Phone Number Length is not enough',
   __pleaseInputPhoneStyle: 'Style: 02-12345678, 037-123456, 0980-123456',
   __plzInputCardNumber: 'Style: 1234-0000-0000-5678',

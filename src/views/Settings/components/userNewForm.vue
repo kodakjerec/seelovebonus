@@ -5,27 +5,23 @@
         <el-input v-model="form.UserID" autocomplete="off" :disabled="disableForm.UserID" maxlength="20" show-word-limit></el-input>
       </el-form-item>
       <el-form-item :label="$t('__pwd')" prop="Password">
-        <el-input v-model="form.Password" autocomplete="off" :disabled="disableForm.Password"></el-input>
+        <el-input v-model="form.Password" autocomplete="off" :disabled="disableForm.Password" maxlength="20" show-word-limit></el-input>
       </el-form-item>
       <el-form-item :label="$t('__groups')" prop="GroupID">
-        <el-dropdown trigger="click" @command="handleCommandGroupID">
-          <el-button>
-            {{form.GroupID}}<i class="el-icon-arrow-down el-icon--right"></i>
-          </el-button>
-          <el-dropdown-menu slot="dropdown">
-            <el-dropdown-item v-for="item in groupList" :key="item.GroupID" :command="item.GroupID">{{item.GroupID}}|{{item.Name}}</el-dropdown-item>
-          </el-dropdown-menu>
-        </el-dropdown>
+        <el-select v-model="form.GroupID" value-key="value" :placeholder="$t('__plzChoice')">
+          <el-option v-for="item in ddlGroup" :key="item.ID" :label="item.Value" :value="item.ID">
+            <span style="float: left">{{ item.Value }}</span>
+            <span style="float: right; color: #8492a6; font-size: 13px">{{ item.ID }}</span>
+          </el-option>
+        </el-select>
       </el-form-item>
       <el-form-item :label="$t('__refEmployeeID')" prop="refEmployeeID">
-        <el-dropdown trigger="click" @command="handleCommandRefEmployeeID">
-          <el-button>
-            {{form.refEmployeeID}}<i class="el-icon-arrow-down el-icon--right"></i>
-          </el-button>
-          <el-dropdown-menu slot="dropdown">
-            <el-dropdown-item v-for="item in employeeList" :key="item.ID" :command="item.ID">{{item.ID}}|{{item.Name}}</el-dropdown-item>
-          </el-dropdown-menu>
-        </el-dropdown>
+        <el-select v-model="form.refEmployeeID" value-key="value" :placeholder="$t('__plzChoice')">
+          <el-option v-for="item in ddlEmployee" :key="item.ID" :label="item.Value" :value="item.ID">
+            <span style="float: left">{{ item.Value }}</span>
+            <span style="float: right; color: #8492a6; font-size: 13px">{{ item.ID }}</span>
+          </el-option>
+        </el-select>
       </el-form-item>
     </el-form>
     <!-- <el-table :data="progList" ref="multipleTable"  @selection-change="handleSelectionChange">
@@ -52,6 +48,7 @@
 </template>
 
 <script>
+import validate from '@/setup/validate.js'
 export default {
   name: 'UserNewForm',
   props: {
@@ -69,8 +66,8 @@ export default {
         refEmployeeID: ''
       },
       rules: {
-        UserID: [{ required: true, message: this.$t('__pleaseInput'), trigger: 'blur' }],
-        Password: [{ required: true, message: this.$t('__pleaseInput'), trigger: 'blur' }],
+        UserID: [{ required: true, validator: validate.validateUserIDAndPassword, trigger: 'blur' }],
+        Password: [{ required: true, validator: validate.validateUserIDAndPassword, trigger: 'blur' }],
         GroupID: [{ required: true, message: this.$t('__pleaseInput'), trigger: 'blur' }],
         refEmployeeID: [{ required: true, message: this.$t('__pleaseInput'), trigger: 'blur' }]
       },
@@ -79,8 +76,8 @@ export default {
         Password: false
       },
       myTitle: '',
-      groupList: [],
-      employeeList: []
+      ddlGroup: [],
+      ddlEmployee: []
     }
   },
   mounted () {
@@ -109,10 +106,10 @@ export default {
     // 取得群組清單
     getDropDownList: async function () {
       const response1 = await this.$api.settings.getSetting({ type: 'groups' })
-      this.groupList = response1.data.result
+      this.ddlGroup = response1.data.result
 
       const response2 = await this.$api.settings.getSetting({ type: 'employees' })
-      this.employeeList = response2.data.result
+      this.ddlEmployee = response2.data.result
     },
     toggleSelection: function (rows) {
       if (rows) {
@@ -125,14 +122,6 @@ export default {
     },
     handleSelectionChange: function (val) {
       this.multipleTable = val
-    },
-    // 下拉選單: groupID
-    handleCommandGroupID: function (command) {
-      this.form.GroupID = command
-    },
-    // 下拉選單: refEmployeeID
-    handleCommandRefEmployeeID: function (command) {
-      this.form.refEmployeeID = command
     },
     // 檢查輸入
     checkValidate: function () {

@@ -218,13 +218,13 @@ export default {
         NameEnglish: '',
         AgentID: '',
         AgentName: '',
-        AgentCountry: '1',
+        AgentCountry: '2',
         AgentCity: null,
         AgentPost: null,
         AgentAddress: '',
         TelHome: '',
         TelMobile: '',
-        Country: '1',
+        Country: '2',
         City: null,
         Post: null,
         Address: '',
@@ -328,13 +328,13 @@ export default {
     // 過濾推薦人種類
     ddlRefKindChange: function () {
       switch (this.form.refKind) {
-        case 1:
+        case '1':
           this.ddlReferrer = this.customersData
           break
-        case 2:
+        case '2':
           this.ddlReferrer = this.employeesData
           break
-        case 3:
+        case '3':
           this.ddlReferrer = this.companiesData
           break
       }

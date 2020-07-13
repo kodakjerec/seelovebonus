@@ -125,6 +125,7 @@ export default {
   __pleaseInputPassword: '請輸入密碼',
   __pleaseInput: '請輸入欄位值',
   __pleaseInputNumber: '請輸入數值',
+  __pleaseInputLength: '輸入長度請超過 ',
   __pleaseInputPhoneLength: '電話格式長度不足',
   __pleaseInputPhoneStyle: '格式: 02-12345678, 037-123456, 0980-123456',
   __plzInputCardNumber: '格式: 1234-0000-0000-5678',

@@ -126,6 +126,14 @@ const validate = {
       callback(new Error(i18n.t('__pleaseInputInvoiceID')))
     }
     callback()
+  },
+  // 驗證使用者帳號密碼
+  validateUserIDAndPassword: (rule, value, callback) => {
+    let regex = /^.{7,}$/
+    if (!regex.test(value)) {
+      callback(new Error(i18n.t('__pleaseInputLength') + '7'))
+    }
+    callback()
   }
 }
 

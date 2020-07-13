@@ -135,7 +135,7 @@ export default {
         StartDate: '',
         EndDate: '',
         Status: '1',
-        Country: null,
+        Country: '2',
         City: null,
         Post: null,
         Address: ''
