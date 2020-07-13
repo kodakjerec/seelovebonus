@@ -134,7 +134,7 @@ export default {
         Tel2: '',
         StartDate: '',
         EndDate: '',
-        Status: 1,
+        Status: '1',
         Country: null,
         City: null,
         Post: null,

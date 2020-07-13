@@ -1,6 +1,6 @@
 <template>
   <el-form ref="form" :model="form" :rules="rules">
-    <h2>{{$t('__orderCustomer')+$t('__data')}}</h2>
+    <h2 style="text-align:left">{{$t('__orderCustomer')+$t('__data')}}</h2>
     <el-form-item :label="$t('__orderCustomer')+$t('__name')" prop="CustomerID" label-width="100px" label-position="left">
       <el-col :span="8">
         <el-select v-model="form.CustomerID" value-key="value" :placeholder="$t('__plzChoice')" @change="ddlCustomerChange" :disabled="disableForm.CustomerID">

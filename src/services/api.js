@@ -359,6 +359,13 @@ export default {
         return data
       })
     },
+    invoiceHeadEdit: ({ form }) => {
+      let rawData = { form }
+      return req('post', 'http://localhost:3000/orders/invoiceHeadEdit', rawData).then(data => {
+        console.log(`%c <<< Response(/rest/orders/invoiceHeadEdit)⤵ `, 'background-color: #E0455D; color: white; font-size: 14px; font-weight: bold;', data)
+        return data
+      })
+    },
     invoiceDetailNew: ({ form }) => {
       let rawData = { form }
       return req('post', 'http://localhost:3000/orders/invoiceDetailNew', rawData).then(data => {

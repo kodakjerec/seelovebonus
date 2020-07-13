@@ -81,6 +81,8 @@ const validate = {
     } else {
       callback(new Error(i18n.t('__pleaseInputPhoneStyle')))
     }
+
+    callback()
   },
   // 驗證信用卡
   validateCard: (rule, value, callback) => {
@@ -109,6 +111,21 @@ const validate = {
     // if ((sum % 10) !== 0) {
     //   callback(new Error(i18n.t('__plzInputCardNumber')))
     // }
+
+    callback()
+  },
+  // 驗證身分證字號
+  // TODO
+  validatePersonalID: (rule, value, callback) => {
+    callback()
+  },
+  // 驗證發票號碼
+  validateInvoiceID: (rule, value, callback) => {
+    let regex = /^[a-zA-Z]{2}[-]?[0-9]{8}$/
+    if (!regex.test(value)) {
+      callback(new Error(i18n.t('__pleaseInputInvoiceID')))
+    }
+    callback()
   }
 }
 

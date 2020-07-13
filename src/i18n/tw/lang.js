@@ -106,6 +106,12 @@ export default {
   __operator: '人員',
   __expire: '到期',
   __cheque: '支票',
+  __clickToViewInvoice: '檢視發票資訊',
+  __kind: '類別',
+  __randomCode: '隨機碼',
+  __title: '抬頭',
+  __carrierNumber: '載具號碼',
+  __memo: '備註',
   // 請在上方新增字串
   // 以下為錯誤處理專用
   __error400: '無法理解請求',
@@ -121,5 +127,6 @@ export default {
   __pleaseInputNumber: '請輸入數值',
   __pleaseInputPhoneLength: '電話格式長度不足',
   __pleaseInputPhoneStyle: '格式: 02-12345678, 037-123456, 0980-123456',
-  __plzInputCardNumber: '格式: 1234-0000-0000-5678'
+  __plzInputCardNumber: '格式: 1234-0000-0000-5678',
+  __pleaseInputInvoiceID: '格式: AB12345678'
 }

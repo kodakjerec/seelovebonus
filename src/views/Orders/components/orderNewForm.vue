@@ -1,5 +1,6 @@
 <template>
-  <el-dialog :title="myTitle" :visible="dialogShow" center :show-close="false" fullscreen>
+  <div>
+    <h1>{{myTitle}}</h1>
     <el-form ref="form" :model="form" :rules="rules">
       <el-form-item :label="$t('__orderID')+'：'" label-width="100px" label-position="left">
         <el-col :span="6">
@@ -8,7 +9,7 @@
         <el-col :span="2" class="el-form-item__label">
           {{$t('__status')}}
         </el-col>
-        <el-col :span="2">
+        <el-col :span="3">
           <el-select v-model="form.Status" value-key="value" disabled>
             <el-option v-for="item in ddlOrderStatus" :key="item.ID" :label="item.Value" :value="item.ID">
               <span style="float: left">{{ item.Value }}</span>
@@ -16,7 +17,7 @@
             </el-option>
           </el-select>
         </el-col>
-        <el-col :span="8" class="el-form-item__label">
+        <el-col :span="7" class="el-form-item__label">
           {{$t('__order')+$t('__date')+'：'}}
         </el-col>
         <el-col :span="6">
@@ -103,10 +104,11 @@
 
     </el-form>
     <div slot="footer" class="dialog-footer">
+      <br/>
       <el-button @click="cancel">{{$t('__cancel')}}</el-button>
       <el-button type="primary" @click="checkValidate">{{$t('__save')}}</el-button>
     </div>
-  </el-dialog>
+  </div>
 </template>
 
 <script>
@@ -124,7 +126,6 @@ export default {
   },
   props: {
     dialogType: { type: String, default: 'new' },
-    dialogShow: { type: Boolean, default: false },
     order: { type: Object }
   },
   data () {
@@ -274,7 +275,7 @@ export default {
         InvoiceID: '',
         InvoiceDate: null,
         OrderID: this.form.ID,
-        PaymentMethod: 4,
+        PaymentMethod: '1',
         ReceivedDate: new Date(),
         Amount: targetProjectHead.Amount,
         Account: null,
@@ -299,11 +300,12 @@ export default {
       }
 
       // 檢查主表單
-      isSuccess = false
-      this.$refs['form'].validate((valid) => { isSuccess = valid })
-      if (isSuccess) {
-        this.beforeSave()
-      }
+      this.$refs['form'].validate((valid) => {
+        if (valid) {
+          this.beforeSave()
+          return true
+        }
+      })
     },
     beforeSave: async function () {
       // 驗證 訂單
@@ -319,14 +321,10 @@ export default {
       switch (this.dialogType) {
         case 'new':
           let isSuccess = await this.save()
-          console.log('main save')
           isSuccess = await this.$refs['orderDetail'].beforeSave()
-          console.log('orderDetail save')
           isSuccess = await this.$refs['orderCustomer'].save()
-          console.log('orderCustomer save')
           if (this.collectionRecords) {
             isSuccess = await this.$refs['collectionRecords'].save()
-            console.log('collectionRecords save')
           }
           if (isSuccess) {
             this.$alert(this.$t('__uploadSuccess'), 200)
@@ -335,21 +333,32 @@ export default {
           break
         case 'edit':
           let isSuccessEdit = await this.save()
-          console.log('main save')
           if (this.collectionRecords) {
             isSuccessEdit = await this.$refs['collectionRecords'].save()
-            console.log('collectionRecords save')
           }
           if (isSuccessEdit) {
-            this.$alert(this.$t('__uploadSuccess'), 200)
-            this.$emit('dialog-save')
+            this.$alert(this.$t('__uploadSuccess'), 200, {
+              callback: () => {
+                this.$router.push({
+                  name: 'Orders',
+                  params: {
+                    returnType: 'save'
+                  }
+                })
+              }
+            })
           }
           break
       }
     },
     // 取消
     cancel: function () {
-      this.$emit('dialog-cancel')
+      this.$router.push({
+        name: 'Orders',
+        params: {
+          returnType: 'cancel'
+        }
+      })
     },
     // 存檔
     save: async function () {

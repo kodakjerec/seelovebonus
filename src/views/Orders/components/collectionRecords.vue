@@ -1,27 +1,27 @@
 <template>
   <el-form ref="form" :model="form" :rules="rules">
-    <h2>{{$t('__collectionRecords')}}</h2>
+    <h2 style="text-align:left">{{$t('__collectionRecords')}}</h2>
     <el-form-item :label="$t('__paymentMethod')" prop="PaymentMethod" label-width="100px" label-position="left">
       <el-col :span="4">
-      <el-select v-model="form.PaymentMethod" value-key="value" :placeholder="$t('__plzChoice')">
-        <el-option v-for="item in ddlPaymentMethod" :key="item.ID" :label="item.Value" :value="item.ID">
-          <span style="float: left">{{ item.Value }}</span>
-          <span style="float: right; color: #8492a6; font-size: 13px">{{ item.ID }}</span>
-        </el-option>
-      </el-select>
+        <el-select v-model="form.PaymentMethod" value-key="value" :placeholder="$t('__plzChoice')">
+          <el-option v-for="item in ddlPaymentMethod" :key="item.ID" :label="item.Value" :value="item.ID">
+            <span style="float: left">{{ item.Value }}</span>
+            <span style="float: right; color: #8492a6; font-size: 13px">{{ item.ID }}</span>
+          </el-option>
+        </el-select>
       </el-col>
       <el-col :span="4" class="el-form-item__label">
         {{$t('__received')+$t('__date')}}
       </el-col>
       <el-col :span="6">
         <el-form-item prop="ReceivedDate">
-            <el-date-picker
-              v-model="form.ReceivedDate"
-              type="date"
-              :placeholder="$t('__plzChoice')+$t('__received')+$t('__date')"
-              format="yyyy - MM - dd">
-            </el-date-picker>
-          </el-form-item>
+          <el-date-picker
+            v-model="form.ReceivedDate"
+            type="date"
+            :placeholder="$t('__plzChoice')+$t('__received')+$t('__date')"
+            format="yyyy - MM - dd">
+          </el-date-picker>
+        </el-form-item>
       </el-col>
       <el-col :span="4" class="el-form-item__label">
         {{$t('__received')+$t('__operator')}}
@@ -42,8 +42,30 @@
     <method3 ref="method3" v-if="form.PaymentMethod === '3'" :form="form"></method3>
     <method4 ref="method4" v-if="form.PaymentMethod === '4'" :form="form" :ddlBankID="ddlBankID"></method4>
     <method5 ref="method5" v-if="form.PaymentMethod === '5'" :form="form" :ddlBankID="ddlBankID"></method5>
+    <el-form-item :label="$t('__memo')" label-width="100px" label-position="left">
+        <el-input v-model="form.Memo" autocomplete="off" maxlength="200" show-word-limit></el-input>
+    </el-form-item>
     <!-- 發票資訊 -->
-    <invoice v-if="invoiceHead" ref="invoiceHead" :invoiceHead="invoiceHead"></invoice>
+    <template v-if="invoiceHead">
+      <el-form-item :label="$t('__invoice')+$t('__id')" prop="InvoiceDate" label-width="100px" label-position="left">
+        <el-col :span="10">
+          <el-input v-model="invoiceHead.InvoiceID" autocomplete="off" disabled></el-input>
+        </el-col>
+        <el-col :span="4">
+          <el-tag effect="plain" @click="showInvoce()"><i class="el-icon-full-screen"></i> {{$t('__clickToViewInvoice')}}</el-tag>
+        </el-col>
+      </el-form-item>
+      <invoice
+      ref="invoiceHead"
+      v-if="dialogShowInvoice"
+      :dialogType="dialogTypeInvoice"
+      :dialogShow="dialogShowInvoice"
+      :invoiceHead="invoiceHead"
+      :ddlCreateID="ddlCreateID"
+      @dialog-cancel="dialogCancel()"
+      @dialog-save="dialogSave()"
+      ></invoice>
+    </template>
     <template v-else>
       <el-button-group>
         <el-button type="primary" icon="el-icon-plus" @click.prevent="addInvoice()">{{$t('__new')+$t('__invoice')}}</el-button>
@@ -97,6 +119,8 @@ export default {
         ReceivedID: [{ required: true, message: this.$t('__pleaseInput'), trigger: 'blur' }]
       },
       invoiceHead: {},
+      dialogTypeInvoice: 'new',
+      dialogShowInvoice: false,
       // 以下為下拉式選單專用
       ddlPaymentMethod: [],
       ddlBankID: [],
@@ -142,23 +166,33 @@ export default {
     // 新增發票資訊
     addInvoice: function () {
       this.invoiceHead = {
-        InvoiceID: '',
-        InvoiceDate: null,
+        InvoiceID: null,
+        InvoiceDate: this.form.ReceivedDate,
         OrderID: this.form.OrderID,
         Title: '',
         UniformNumber: '',
-        Amount: null,
-        ReceivedDate: null,
-        InvoiceKind: null,
-        Tax: null,
+        Amount: this.form.Amount,
+        ReceivedDate: this.form.ReceivedDate,
+        InvoiceKind: '6',
+        Tax: '1',
         CarrierNumber: null,
         Memo: null,
         InvoiceIDFirst: '',
         RandomCode: null,
-        CreateID: null,
-        Status: null,
+        CreateID: this.form.ReceivedID,
+        Status: '2',
         SalesReturnDate: null
       }
+
+      // 進入修改
+      this.dialogTypeInvoice = 'new'
+      this.dialogShowInvoice = true
+    },
+    // 修改發票資訊
+    showInvoce: function () {
+      // 進入修改
+      this.dialogTypeInvoice = 'edit'
+      this.dialogShowInvoice = true
     },
     // 檢查輸入
     checkValidate: function () {
@@ -186,7 +220,6 @@ export default {
     // 存檔
     save: async function () {
       let isSuccess = false
-      console.log(this.form)
       switch (this.dialogType) {
         case 'new':
           const responseNew = await this.$api.orders.collectionRecordsNew({ form: this.form })
@@ -203,6 +236,13 @@ export default {
       }
 
       return isSuccess
+    },
+    dialogCancel: function () {
+      this.dialogShowInvoice = false
+    },
+    dialogSave: function () {
+      this.dialogShowInvoice = false
+      this.preLoading()
     }
   }
 }

@@ -5,7 +5,7 @@
         <el-input v-model.number="form.Amount"></el-input>
     </el-form-item>
     <el-form-item :label="$t('__cheque')+$t('__id')" prop="BankID" label-position="left" label-width="100px">
-      <el-col :span="10">
+      <el-col :span="8">
         <el-form-item prop="Account">
           <el-input v-model="form.Account" :placeholder="$t('__pleaseInput')" maxlength="20" show-word-limit></el-input>
         </el-form-item>
@@ -13,7 +13,7 @@
       <el-col :span="4" class="el-form-item__label">
         {{$t('__expire')+$t('__date')}}
       </el-col>
-      <el-col :span="10">
+      <el-col :span="6">
         <el-form-item prop="ChequeDate">
             <el-date-picker
               v-model="form.ChequeDate"

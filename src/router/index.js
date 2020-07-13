@@ -46,13 +46,16 @@ const routes = [
     component: () => import('../views/Basic/projects')
   },
   {
-    path: '/Orders',
-    name: 'Orders'
-  },
-  {
     path: '/Orders/Orders',
     name: 'Orders',
-    component: () => import('@/views/Orders/orders')
+    component: () => import('@/views/Orders/orders'),
+    props: true
+  },
+  {
+    path: '/Orders/OrderNewForm',
+    name: 'OrderNewForm',
+    component: () => import('@/views/Orders/components/orderNewForm'),
+    props: true
   },
   {
     path: '/Orders/Invoices',

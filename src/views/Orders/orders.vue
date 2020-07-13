@@ -34,25 +34,14 @@
     <el-button-group>
       <el-button type="primary" icon="el-icon-plus" @click.prevent="showForm('new')">{{$t('__new')}}</el-button>
     </el-button-group>
-    <new-form
-    v-if="dialogShow"
-    :dialog-type="dialogType"
-    :dialog-show="dialogShow"
-    :order="order"
-    @dialog-cancel="dialogCancel()"
-    @dialog-save="dialogSave()"></new-form>
   </el-form>
 </template>
 
 <script>
-import newForm from './components/orderNewForm'
 import { formatMoney, formatDate } from '@/setup/format.js'
 
 export default {
   name: 'Orders',
-  components: {
-    newForm
-  },
   data () {
     return {
       dialogType: 'new',
@@ -83,13 +72,23 @@ export default {
       this.order = responseRow.data.result[0]
 
       // 進入修改
-      this.dialogType = 'edit'
-      this.dialogShow = true
+      this.$router.push({
+        name: 'OrderNewForm',
+        params: {
+          dialogType: 'edit',
+          order: this.order
+        }
+      })
     },
     // 開啟表單
     showForm: function (eventType) {
-      this.dialogType = eventType
-      this.dialogShow = true
+      this.$router.push({
+        name: 'OrderNewForm',
+        params: {
+          dialogType: eventType,
+          order: this.order
+        }
+      })
     },
     dialogCancel: function () {
       this.dialogShow = false

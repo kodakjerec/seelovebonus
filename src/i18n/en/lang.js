@@ -106,6 +106,12 @@ export default {
   __operator: 'operator',
   __expire: 'Expiry',
   __cheque: 'Date',
+  __clickToViewInvoice: 'Invoice detail',
+  __kind: 'Kind',
+  __randomCode: 'Random Code',
+  __title: 'Title',
+  __carrierNumber: 'Carrier number',
+  __memo: 'Memo',
   // 請在上方新增字串
   // 以下為錯誤處理專用
   __error400: 'Bad Request',
@@ -121,5 +127,6 @@ export default {
   __pleaseInputNumber: 'Please Input Number',
   __pleaseInputPhoneLength: 'Phone Number Length is not enough',
   __pleaseInputPhoneStyle: 'Style: 02-12345678, 037-123456, 0980-123456',
-  __plzInputCardNumber: 'Style: 1234-0000-0000-5678'
+  __plzInputCardNumber: 'Style: 1234-0000-0000-5678',
+  __pleaseInputInvoiceID: 'Style: AB12345678'
 }

@@ -4,7 +4,7 @@
         <el-input v-model.number="form.Amount"></el-input>
     </el-form-item>
     <el-form-item :label="$t('__bank')+$t('__id')" prop="BankID" label-position="left" label-width="100px">
-      <el-col :span="10">
+      <el-col :span="4">
         <el-select v-model="form.BankID" filterable :filter-method="bankIDFilter" :placeholder="$t('__plzChoice')">
           <el-option v-for="item in ddlBankIDFilter" :key="item.ID" :label="item.Value" :value="item.ID">
             <span style="float: left">{{ item.Value }}</span>

@@ -82,7 +82,7 @@ export default {
         AccountingID: '',
         AccountingName: '',
         Qty: 1,
-        Unit: 1,
+        Unit: '1',
         Price: 0,
         Cost: 0,
         BOM: 0
