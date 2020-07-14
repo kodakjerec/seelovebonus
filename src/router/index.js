@@ -1,6 +1,13 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
 
+// 解決Element-UI 在 vue 3.0 中重複路徑報錯問題
+// https://www.cnblogs.com/chenwan1218/p/13130410.html
+const originalPush = VueRouter.prototype.push
+VueRouter.prototype.push = function push (location) {
+  return originalPush.call(this, location).catch(err => err)
+}
+
 Vue.use(VueRouter)
 
 const routes = [
@@ -72,6 +79,11 @@ const routes = [
     name: 'Reports'
   },
   {
+    path: '/Reports/Employees',
+    name: 'ReportsEmployees',
+    component: () => import('@/views/Reports/reportsEmployees')
+  },
+  {
     path: '/Settings',
     name: 'Settings',
     component: () => import('@/views/Settings/setting')
@@ -96,6 +108,7 @@ const routes = [
 const router = new VueRouter({
   routes
 })
+
 router.beforeEach((to, from, next) => {
   if (to.meta.title) {
     document.title = to.meta.title

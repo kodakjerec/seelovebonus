@@ -1,6 +1,9 @@
 <template>
   <el-dialog :title="myTitle" :visible="dialogShow" center width="80%" @close="cancel">
     <el-form ref="invoiceForm" :model="form" :rules="rules">
+      <el-form-item :label="$t('__order')+$t('__id')" label-width="100px" label-position="left">
+          <el-input v-model="form.OrderID" autocomplete="off" disabled></el-input>
+      </el-form-item>
       <el-form-item :label="$t('__invoice')+$t('__kind')" prop="InvoiceKind" label-width="100px" label-position="left">
         <el-col :span="6">
           <el-select v-model="form.InvoiceKind" value-key="value" :placeholder="$t('__plzChoice')">
@@ -44,13 +47,13 @@
         </el-col>
       </el-form-item>
       <el-form-item :label="$t('__title')" label-width="100px" label-position="left">
-          <el-input v-model="form.Title" autocomplete="off"></el-input>
+          <el-input v-model="form.Title" autocomplete="off" maxlength="40" show-word-limit></el-input>
       </el-form-item>
       <el-form-item :label="$t('__uniformNumber')" label-width="100px" label-position="left">
-          <el-input v-model="form.UniformNumber" autocomplete="off"></el-input>
+          <el-input v-model="form.UniformNumber" autocomplete="off" maxlength="8" show-word-limit></el-input>
       </el-form-item>
       <el-form-item :label="$t('__carrierNumber')" label-width="100px" label-position="left">
-          <el-input v-model="form.CarrierNumber" autocomplete="off"></el-input>
+          <el-input v-model="form.CarrierNumber" autocomplete="off" maxlength="64" show-word-limit></el-input>
       </el-form-item>
       <el-form-item :label="$t('__received')+$t('__operator')" prop="CreateID" label-width="100px" label-position="left">
         <el-col :span="6">

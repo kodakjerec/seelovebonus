@@ -105,10 +105,10 @@ export default {
   methods: {
     // 取得群組清單
     getDropDownList: async function () {
-      const response1 = await this.$api.settings.getSetting({ type: 'groups' })
+      const response1 = await this.$api.settings.getSetting({ type: 'groupsList' })
       this.ddlGroup = response1.data.result
 
-      const response2 = await this.$api.settings.getSetting({ type: 'employees' })
+      const response2 = await this.$api.settings.getSetting({ type: 'employeesList' })
       this.ddlEmployee = response2.data.result
     },
     toggleSelection: function (rows) {

@@ -1,49 +1,49 @@
 <template>
   <el-form>
     <el-form-item :label="$t('__systemSettingsCategory')">
-      <el-select v-model="form.category" value-key="value" :placeholder="$t('__plzChoice')" @change="selectChange">
-        <el-option v-for="item in categories" :key="item.ID" :label="item.Value" :value="item.ID"></el-option>
+      <el-col :span="8">
+        <el-select v-model="form.category" value-key="value" :placeholder="$t('__plzChoice')" @change="selectChange">
+          <el-option v-for="item in categories" :key="item.ID" :label="item.Value" :value="item.ID"></el-option>
+        </el-select>
+      </el-col>
+      <el-col :span="4" class="el-form-item__label">
+        {{$t('__systemSettingsLanguage')}}
+      </el-col>
+      <el-col :span="8">
+        <el-select v-model="form.language" value-key="value" :placeholder="$t('__plzChoice')" @change="selectChange">
+          <el-option v-for="item in languages" :key="item.ID" :label="item.Value" :value="item.ID">
+            <span style="float: left">{{ item.Value }}</span>
+            <span style="float: right; color: #8492a6; font-size: 13px">{{ item.ID }}</span>
+          </el-option>
       </el-select>
+      </el-col>
     </el-form-item>
-
-    <el-form-item :label="$t('__systemSettingsLanguage')">
-      <el-select v-model="form.language" value-key="value" :placeholder="$t('__plzChoice')" @change="selectChange">
-        <el-option v-for="item in languages" :key="item.ID" :label="item.Value" :value="item.ID">
-          <span style="float: left">{{ item.Value }}</span>
-          <span style="float: right; color: #8492a6; font-size: 13px">{{ item.ID }}</span>
-        </el-option>
-      </el-select>
-    </el-form-item>
-
-    <el-form-item>
-      <el-table
-        :data="settings"
-        stripe
-        border
-        style="width: 100%">
-        <el-table-column
-          prop="Category"
-          :label="$t('__systemSettingsCategory')">
-        </el-table-column>
-        <el-table-column
-          prop="ParentID"
-          :label="$t('__systemSettingsParentID')">
-        </el-table-column>
-        <el-table-column
-          prop="ID"
-          :label="$t('__systemSettingsID')">
-        </el-table-column>
-        <el-table-column
-          prop="Value"
-          :label="$t('__systemSettingsValue')">
-        </el-table-column>
-        <el-table-column
-          prop="Language"
-          :label="$t('__systemSettingsLanguage')">
-        </el-table-column>
-      </el-table>
-    </el-form-item>
-
+    <el-table
+      :data="settings"
+      stripe
+      border
+      style="width: 100%">
+      <el-table-column
+        prop="Category"
+        :label="$t('__systemSettingsCategory')">
+      </el-table-column>
+      <el-table-column
+        prop="ParentID"
+        :label="$t('__systemSettingsParentID')">
+      </el-table-column>
+      <el-table-column
+        prop="ID"
+        :label="$t('__systemSettingsID')">
+      </el-table-column>
+      <el-table-column
+        prop="Value"
+        :label="$t('__systemSettingsValue')">
+      </el-table-column>
+      <el-table-column
+        prop="Language"
+        :label="$t('__systemSettingsLanguage')">
+      </el-table-column>
+    </el-table>
     <el-form-item>
       <el-button-group>
         <el-button type="primary" disabled icon="el-icon-plus" @click.prevent="showForm('new')">{{$t('__new')}}</el-button>

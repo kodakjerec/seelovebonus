@@ -10,6 +10,7 @@ export default {
   __search: 'Serach',
   __delete: 'Delete',
   __save: 'Save',
+  __print: 'Print',
   __theFollingIs: 'The folling is',
   __theAboveIs: 'The ablove is',
   __plzChoice: 'Please Choice',
@@ -112,6 +113,8 @@ export default {
   __title: 'Title',
   __carrierNumber: 'Carrier number',
   __memo: 'Memo',
+  __certificate1: 'Certificate1',
+  __certificate2: 'Certificate2',
   // 請在上方新增字串
   // 以下為錯誤處理專用
   __error400: 'Bad Request',

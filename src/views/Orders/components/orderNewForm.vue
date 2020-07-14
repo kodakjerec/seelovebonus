@@ -98,6 +98,12 @@
       <template v-else>
         <el-button-group>
           <el-button type="primary" icon="el-icon-plus" @click.prevent="addCollectionRecords()">{{$t('__new')+$t('__collectionRecords')}}</el-button>
+                <el-form-item :label="$t('__certificate1')" label-width="140px" label-position="left">
+        <el-input v-model="form.Certificate1" autocomplete="off" maxlength="40" show-word-limit></el-input>
+      </el-form-item>
+      <el-form-item :label="$t('__certificate2')" label-width="140px" label-position="left">
+          <el-input v-model="form.Certificate2" autocomplete="off" maxlength="40" show-word-limit></el-input>
+      </el-form-item>
         </el-button-group>
       </template>
       <!-- 蓋章區域 -->
@@ -126,7 +132,8 @@ export default {
   },
   props: {
     dialogType: { type: String, default: 'new' },
-    order: { type: Object }
+    order: { type: Object },
+    parent: { type: String, default: 'orders' }
   },
   data () {
     return {
@@ -340,7 +347,7 @@ export default {
             this.$alert(this.$t('__uploadSuccess'), 200, {
               callback: () => {
                 this.$router.push({
-                  name: 'Orders',
+                  name: this.parent,
                   params: {
                     returnType: 'save'
                   }
@@ -354,7 +361,7 @@ export default {
     // 取消
     cancel: function () {
       this.$router.push({
-        name: 'Orders',
+        name: this.parent,
         params: {
           returnType: 'cancel'
         }

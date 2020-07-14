@@ -2,7 +2,7 @@
   <el-form ref="form" :model="form" :rules="rules">
     <h2 style="text-align:left">{{$t('__orderCustomer')+$t('__data')}}</h2>
     <el-form-item :label="$t('__orderCustomer')+$t('__name')" prop="CustomerID" label-width="100px" label-position="left">
-      <el-col :span="8">
+      <el-col :span="6">
         <el-select v-model="form.CustomerID" value-key="value" :placeholder="$t('__plzChoice')" @change="ddlCustomerChange" :disabled="disableForm.CustomerID">
           <el-option v-for="item in ddlCustomer" :key="item.ID" :label="item.Value" :value="item.ID">
             <span style="float: left">{{ item.Value }}</span>
@@ -10,10 +10,10 @@
           </el-option>
         </el-select>
       </el-col>
-      <el-col :span="4" class="el-form-item__label">
+      <el-col :span="6" class="el-form-item__label">
         {{$t('__agent')}}
       </el-col>
-      <el-col :span="12">
+      <el-col :span="10">
         <el-input v-model="form.AgentName" autocomplete="off" disabled></el-input>
       </el-col>
     </el-form-item>

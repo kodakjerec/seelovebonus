@@ -76,7 +76,8 @@ export default {
         name: 'OrderNewForm',
         params: {
           dialogType: 'edit',
-          order: this.order
+          order: this.order,
+          parent: 'Orders'
         }
       })
     },
@@ -86,7 +87,8 @@ export default {
         name: 'OrderNewForm',
         params: {
           dialogType: eventType,
-          order: this.order
+          order: this.order,
+          parent: 'Orders'
         }
       })
     },

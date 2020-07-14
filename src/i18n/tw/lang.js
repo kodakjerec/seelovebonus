@@ -10,6 +10,7 @@ export default {
   __search: '查詢',
   __delete: '刪除',
   __save: '存檔',
+  __print: '列印',
   __theFollingIs: '以下為',
   __theAboveIs: '以上為',
   __plzChoice: '請選擇',
@@ -112,6 +113,8 @@ export default {
   __title: '抬頭',
   __carrierNumber: '載具號碼',
   __memo: '備註',
+  __certificate1: '越南供奉憑證編號',
+  __certificate2: '展雲換狀證明編號',
   // 請在上方新增字串
   // 以下為錯誤處理專用
   __error400: '無法理解請求',

@@ -45,6 +45,12 @@
     <el-form-item :label="$t('__memo')" label-width="100px" label-position="left">
         <el-input v-model="form.Memo" autocomplete="off" maxlength="200" show-word-limit></el-input>
     </el-form-item>
+    <el-form-item :label="$t('__certificate1')" label-width="150px" label-position="left">
+        <el-input v-model="form.Certificate1" autocomplete="off" maxlength="40" show-word-limit></el-input>
+    </el-form-item>
+    <el-form-item :label="$t('__certificate2')" label-width="150px" label-position="left">
+        <el-input v-model="form.Certificate2" autocomplete="off" maxlength="40" show-word-limit></el-input>
+    </el-form-item>
     <!-- 發票資訊 -->
     <template v-if="invoiceHead">
       <el-form-item :label="$t('__invoice')+$t('__id')" prop="InvoiceDate" label-width="100px" label-position="left">
