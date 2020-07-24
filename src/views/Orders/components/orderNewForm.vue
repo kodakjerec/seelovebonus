@@ -78,57 +78,120 @@
         </el-table-column>
       </el-table>
       <!-- 專案明細 -->
-      <order-detail ref="orderDetail"
+      <order-detail
+        ref="orderDetail"
+        :dialogType="dialogType"
         :orderID="form.ID"
+        :projectID="form.ProjectID"
         :orderDetail="orderDetail"></order-detail>
       <!-- 訂購者資料 -->
-      <order-customer ref="orderCustomer"
-        :dialog-type="dialogType"
+      <order-customer
+        ref="orderCustomer"
+        :dialogType="dialogType"
         :orderID="form.ID"
         :orderCustomer="orderCustomer"
         :ddlCustomerBefore="ddlCustomer"></order-customer>
-      <!-- 付款資訊 -->
-      <collection-records
-        v-if="collectionRecords"
-        ref="collectionRecords"
-        :dialogType="dialogTypeCollectionRecords"
-        :orderID="form.ID"
-        :collectionRecords="collectionRecords"
-        :ddlCreateIDBefore="ddlCreateID"></collection-records>
-      <template v-else>
-        <el-button-group>
-          <el-button type="primary" icon="el-icon-plus" @click.prevent="addCollectionRecords()">{{$t('__new')+$t('__collectionRecords')}}</el-button>
-                <el-form-item :label="$t('__certificate1')" label-width="140px" label-position="left">
-        <el-input v-model="form.Certificate1" autocomplete="off" maxlength="40" show-word-limit></el-input>
-      </el-form-item>
-      <el-form-item :label="$t('__certificate2')" label-width="140px" label-position="left">
-          <el-input v-model="form.Certificate2" autocomplete="off" maxlength="40" show-word-limit></el-input>
-      </el-form-item>
-        </el-button-group>
+      <template v-if="form.ID">
+        <!-- 供奉憑證 -->
+        <certificate1
+          :buttonsShow="buttonsShow"
+          :buttonsShowUser="buttonsShowUser"
+          :orderID="form.ID"></certificate1>
+        <!-- 換狀證明 -->
+        <certificate2
+          :buttonsShow="buttonsShow"
+          :buttonsShowUser="buttonsShowUser"
+          :orderID="form.ID"></certificate2>
+        <!-- 付款資訊 -->
+        <collection-records
+          ref="collectionRecords"
+          :buttonsShow="buttonsShow"
+          :buttonsShowUser="buttonsShowUser"
+          :orderID="form.ID"></collection-records>
+        <!-- 發票資訊 -->
+        <invoice
+          ref="invoice"
+          :buttonsShow="buttonsShow"
+          :buttonsShowUser="buttonsShowUser"
+          :orderID="form.ID"
+          @refreshCollectionRecords="refreshCollectionRecords()"></invoice>
+        <!-- 蓋章區域 -->
+        <el-table
+          :data="stampShow"
+          stripe
+          border
+          style="width: 100%">
+          <el-table-column :label="$t('__defaultCompanyName')">
+            <el-table-column
+              :label="$t('__orderSpace1')">
+            </el-table-column>
+            <el-table-column
+              :label="$t('__orderSpace2')">
+            </el-table-column>
+            <el-table-column
+              :label="$t('__orderCreateID')">
+              <template slot-scope="scope">
+                {{scope.row.CreateID}}<br/>{{scope.row.CreateIDName}}
+              </template>
+            </el-table-column>
+            <el-table-column
+              :label="$t('__refEmployeeID')">
+              <template slot-scope="scope">
+                {{scope.row.EmployeeID}}<br/>{{scope.row.EmployeeIDName}}
+              </template>
+            </el-table-column>
+          </el-table-column>
+          <el-table-column :label="$t('__defaultDepart')">
+            <el-table-column
+              :label="$t('__company')">
+              <template slot-scope="scope">
+                {{scope.row.CompanyID}}<br/>{{scope.row.CompanyName}}
+              </template>
+            </el-table-column>
+            <el-table-column
+              :label="$t('__referrer')">
+              <template slot-scope="scope">
+                {{scope.row.Referrer}}<br/>{{scope.row.ReferrerName}}
+              </template>
+            </el-table-column>
+            <el-table-column
+              :label="$t('__orderSpace3')">
+            </el-table-column>
+          </el-table-column>
+        </el-table>
       </template>
-      <!-- 蓋章區域 -->
+      <template v-else>
+        {{$t('__orderDetailWarrning')}}
+      </template>
 
     </el-form>
     <div slot="footer" class="dialog-footer">
       <br/>
       <el-button @click="cancel">{{$t('__cancel')}}</el-button>
-      <el-button type="primary" @click="checkValidate">{{$t('__save')}}</el-button>
+      <el-button type="primary" @click="checkValidate" v-show="buttonsShow.save && buttonsShowUser.save">{{$t('__save')}}</el-button>
+      <el-button type="danger" @click="delOrder" v-show="buttonsShow.delete && buttonsShowUser.delete">{{$t('__deleteFile')}}</el-button>
     </div>
   </div>
 </template>
 
 <script>
+import certificate1 from './certificate1'
+import certificate2 from './certificate2'
 import orderDetail from './orderDetail'
 import orderCustomer from './orderCustomer'
 import collectionRecords from './collectionRecords'
+import invoice from './invoice'
 import { formatMoney } from '@/setup/format.js'
 
 export default {
   name: 'OrderNewForm',
   components: {
+    certificate1,
+    certificate2,
     orderDetail,
     orderCustomer,
-    collectionRecords
+    collectionRecords,
+    invoice
   },
   props: {
     dialogType: { type: String, default: 'new' },
@@ -141,16 +204,32 @@ export default {
         ID: '',
         OrderDate: '',
         ProjectID: '',
-        Status: 1,
-        AssistantID: '',
-        CreateID: '',
-        Certificate1: '',
-        Certificate2: ''
+        Status: '1',
+        CreateID: this.$store.state.userID,
+        Price: 0,
+        Qty: 1,
+        Amount: 0
       },
       rules: {
         OrderDate: [{ required: true, message: this.$t('__pleaseInput'), trigger: 'blur' }],
         ProjectID: [{ required: true, message: this.$t('__pleaseInput'), trigger: 'blur' }],
         CreateID: [{ required: true, message: this.$t('__pleaseInput'), trigger: 'blur' }]
+      },
+      // 系統目前狀態權限
+      buttonsShow: {
+        new: 1,
+        edit: 0,
+        save: 1,
+        delete: 0,
+        search: 1
+      },
+      // 使用者能看到的權限
+      buttonsShowUser: {
+        new: 1,
+        edit: 1,
+        save: 1,
+        delete: 1,
+        search: 1
       },
       disableForm: {
         ID: true,
@@ -160,16 +239,23 @@ export default {
         CreateID: false
       },
       myTitle: '',
-      projectHead: [{ ProjectID: '', ProjectName: '', FirstItemName: '', Price: 0, Qty: 1, Amount: 0 }],
+      projectHead: [{
+        ProjectName: '',
+        FirstItemName: '',
+        Price: 0,
+        Qty: 1,
+        Amount: 0 }],
       orderDetail: [],
       orderCustomer: {},
-      collectionRecords: {},
-      dialogTypeCollectionRecords: 'new',
+      stampShow: [{
+        CreateIDName: null,
+        EmployeeIDName: null,
+        CompanyName: null,
+        ReferrerName: null
+      }],
       // 以下為下拉式選單專用
       ddlOrderStatus: [],
       ddlProject: [],
-      ddlAssistantID: [],
-      ddlCreateID: [],
       ddlCustomer: []
     }
   },
@@ -179,6 +265,13 @@ export default {
         this.myTitle = this.$t('__new') + this.$t('__orderPaper')
         this.disableForm.CreateID = true
         this.form.OrderDate = new Date()
+        this.buttonsShow = {
+          new: 1,
+          edit: 0,
+          save: 1,
+          delete: 0,
+          search: 1
+        }
         break
       case 'edit':
         this.myTitle = this.$t('__edit') + this.$t('__orderPaper')
@@ -188,6 +281,13 @@ export default {
         this.disableForm.OrderDate = true
         this.disableForm.CreateID = true
         this.ddlProjectChange(this.form.ProjectID)
+        this.buttonsShow = {
+          new: 1,
+          edit: 1,
+          save: 1,
+          delete: 1,
+          search: 1
+        }
         break
     }
     this.preloading()
@@ -202,9 +302,6 @@ export default {
       this.ddlOrderStatus = response1.data.result
       const response2 = await this.$api.orders.getDropdownList({ type: 'project' })
       this.ddlProject = response2.data.result
-      const response3 = await this.$api.orders.getDropdownList({ type: 'employee' })
-      this.ddlAssistantID = response3.data.result
-      this.ddlCreateID = response3.data.result
       const response4 = await this.$api.orders.getDropdownList({ type: 'customer' })
       this.ddlCustomer = response4.data.result
 
@@ -212,16 +309,15 @@ export default {
       this.orderDetail = responseDetail.data.result
       const responseCustomer = await this.$api.orders.getObject({ type: 'orderCustomer', ID: this.form.ID })
       this.orderCustomer = responseCustomer.data.result[0]
-      const responseRecords = await this.$api.orders.getObject({ type: 'collectionRecords', ID: this.form.ID })
-      this.collectionRecords = responseRecords.data.result[0]
-      if (this.collectionRecords !== undefined) {
-        this.dialogTypeCollectionRecords = 'edit'
-      } else {
-        this.dialogTypeCollectionRecords = 'new'
-      }
+      const responseStampShow = await this.$api.orders.getObject({ type: 'orderStampShow', ID: this.form.ID })
+      this.stampShow = responseStampShow.data.result
     },
     // 切換專案, 填入明細
     ddlProjectChange: async function (selected) {
+      // reset
+      this.orderDetail = []
+
+      // get Data
       const responseProject = await this.$api.orders.getObject({ type: 'project', ID: selected })
       let project = responseProject.data.result[0]
       const responseProjectDetail = await this.$api.orders.getObject({ type: 'projectDetail', ID: selected })
@@ -232,10 +328,13 @@ export default {
       targetProjectHead.ProjectName = project.Name
       targetProjectHead.FirstItemName = projectDetail[0].ProductName
       targetProjectHead.Price = project.Price
+      targetProjectHead.Qty = 1
       targetProjectHead.Amount = targetProjectHead.Price * targetProjectHead.Qty
 
       // 填入 orderHead
       this.form.ProjectID = selected
+      this.form.Price = targetProjectHead.Price
+      this.form.Qty = targetProjectHead.Qty
       this.form.Amount = targetProjectHead.Amount
 
       // 填入 orderDetail
@@ -259,7 +358,8 @@ export default {
           Name: product.ProductName,
           QtyOrigin: product.Qty,
           Qty: product.Qty,
-          UnitName: product.UnitName
+          UnitName: product.UnitName,
+          ItemType: 0
         })
       }
     },
@@ -269,27 +369,14 @@ export default {
       targetProjectHead.Qty = selected
       targetProjectHead.Amount = targetProjectHead.Price * targetProjectHead.Qty
 
+      // 填入 orderHead
+      this.form.Qty = targetProjectHead.Qty
+      this.form.Amount = targetProjectHead.Amount
+
+      // 填入 orderDetail
       for (let index = 0; index < this.orderDetail.length; index++) {
         let item = this.orderDetail[index]
         item.Qty = item.QtyOrigin * selected
-      }
-    },
-    // 新增付款資訊
-    addCollectionRecords: function () {
-      let targetProjectHead = this.projectHead[0]
-
-      this.collectionRecords = {
-        InvoiceID: '',
-        InvoiceDate: null,
-        OrderID: this.form.ID,
-        PaymentMethod: '1',
-        ReceivedDate: new Date(),
-        Amount: targetProjectHead.Amount,
-        Account: null,
-        BankID: null,
-        Memo: null,
-        ReceivedID: null,
-        ChequeDate: null
       }
     },
     // 檢查輸入
@@ -298,13 +385,6 @@ export default {
       let isSuccess = false
       isSuccess = await this.$refs['orderCustomer'].checkValidate()
       if (!isSuccess) { return }
-
-      // 檢查付款資訊
-      if (this.collectionRecords) {
-        isSuccess = false
-        isSuccess = await this.$refs['collectionRecords'].checkValidate()
-        if (!isSuccess) { return }
-      }
 
       // 檢查主表單
       this.$refs['form'].validate((valid) => {
@@ -319,30 +399,24 @@ export default {
       // (新增)存檔優先順序
       // 1. orderHead+orderDetail
       // 2. orderCustomer
-      // 3. collectionRecords
-      // 4. invoiceHead+invoiceDetail
       // (修改)存檔優先順序
-      // 3. collectionRecords
-      // 4. invoiceHead+invoiceDetail
+      // 1. orderHead+orderDetail
+      // 2. orderCustomer
 
       switch (this.dialogType) {
         case 'new':
-          let isSuccess = await this.save()
+          let isSuccess = await this.save(this.dialogType)
           isSuccess = await this.$refs['orderDetail'].beforeSave()
           isSuccess = await this.$refs['orderCustomer'].save()
-          if (this.collectionRecords) {
-            isSuccess = await this.$refs['collectionRecords'].save()
-          }
           if (isSuccess) {
             this.$alert(this.$t('__uploadSuccess'), 200)
             this.$emit('dialog-save')
           }
           break
         case 'edit':
-          let isSuccessEdit = await this.save()
-          if (this.collectionRecords) {
-            isSuccessEdit = await this.$refs['collectionRecords'].save()
-          }
+          let isSuccessEdit = await this.save(this.dialogType)
+          isSuccess = await this.$refs['orderDetail'].beforeSave()
+          isSuccess = await this.$refs['orderCustomer'].save()
           if (isSuccessEdit) {
             this.$alert(this.$t('__uploadSuccess'), 200, {
               callback: () => {
@@ -368,9 +442,9 @@ export default {
       })
     },
     // 存檔
-    save: async function () {
+    save: async function (type) {
       let isSuccess = false
-      switch (this.dialogType) {
+      switch (type) {
         case 'new':
           const responseNew = await this.$api.orders.orderNew({ form: this.form })
           if (responseNew.status === 200) {
@@ -380,12 +454,53 @@ export default {
             this.form.ID = responseNew.data.result[0].ID
           }
           break
-        case 'edit':
-          isSuccess = true
+        case 'delete':
+          const responseDelete = await this.$api.orders.orderDelete({ form: this.form })
+          if (responseDelete.status === 200) {
+            this.$alert(responseDelete.data.result[0].message, responseDelete.data.result[0].code)
+            isSuccess = true
+          }
           break
       }
 
       return isSuccess
+    },
+    // 作廢
+    delOrder: function () {
+      let myObject = this
+      this.$msgbox({
+        message: this.$t('__deleteFile'),
+        title: this.$t('__delete'),
+        showCancelButton: true,
+        confirmButtonText: this.$t('__ok'),
+        cancelButtonText: this.$t('__cancel'),
+        type: 'warning',
+        closeOnPressEscape: true,
+        callback: function (action, instance, done) {
+          switch (action) {
+            case 'confirm':
+              myObject.form.Status = '0'
+              myObject.buttonsShow = {
+                new: 0,
+                edit: 0,
+                save: 0,
+                delete: 0,
+                search: 0
+              }
+              setTimeout(() => {
+                myObject.save('delete')
+              }, 300)
+              break
+            case 'cancel':
+              break
+            case 'close':
+              break
+          }
+        }
+      })
+    },
+    refreshCollectionRecords: function () {
+      this.$refs['collectionRecords'].preLoading()
     }
   }
 }

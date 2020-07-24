@@ -1,5 +1,10 @@
 <template>
   <el-form>
+    <el-form-item>
+      <el-button-group>
+        <el-button type="primary" disabled icon="el-icon-plus" @click.prevent="showForm('new')">{{$t('__new')}}</el-button>
+      </el-button-group>
+    </el-form-item>
     <el-form-item :label="$t('__systemSettingsCategory')">
       <el-col :span="8">
         <el-select v-model="form.category" value-key="value" :placeholder="$t('__plzChoice')" @change="selectChange">
@@ -44,11 +49,6 @@
         :label="$t('__systemSettingsLanguage')">
       </el-table-column>
     </el-table>
-    <el-form-item>
-      <el-button-group>
-        <el-button type="primary" disabled icon="el-icon-plus" @click.prevent="showForm('new')">{{$t('__new')}}</el-button>
-      </el-button-group>
-    </el-form-item>
   </el-form>
 </template>
 

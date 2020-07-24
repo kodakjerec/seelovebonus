@@ -1,0 +1,72 @@
+/*
+Write your variables here. All available variables can be
+found in element-ui/packages/theme-chalk/src/common/var.scss.
+For example, to overwrite the theme color:
+*/
+// $--color-primary: teal;
+
+/* icon font path, required */
+$--font-path: '~element-ui/lib/theme-chalk/fonts';
+
+/* Colors
+-------------------------- */
+/// color|1|Brand Color|0
+$--color-primary: #409EFF !default;
+/// color|1|Background Color|4
+$--color-white: #FFFFFF !default;
+/// color|1|Background Color|4
+$--color-black: #000000 !default;
+/// color|1|Functional Color|1
+$--color-primary: #409EFF !default;
+/// color|1|Functional Color|1
+$--color-success: #67C23A !default;
+/// color|1|Functional Color|1
+$--color-warning: #E6A23C !default;
+/// color|1|Functional Color|1
+$--color-danger: #F56C6C !default;
+/// color|1|Functional Color|1
+$--color-info: #909399 !default;
+/// color|1|Font Color|2
+$--color-text-primary: #303133 !default;
+/// color|1|Font Color|2
+$--color-text-regular: #606266 !default;
+/// color|1|Font Color|2
+$--color-text-secondary: #909399 !default;
+/// color|1|Font Color|2
+$--color-text-placeholder: #606266 !default;
+/// color|1|Border Color|3
+$--border-color-base: #DCDFE6 !default;
+/// color|1|Border Color|3
+$--border-color-light: #E4E7ED !default;
+/// color|1|Border Color|3
+$--border-color-lighter: #EBEEF5 !default;
+/// color|1|Border Color|3
+$--border-color-extra-light: #F2F6FC !default;
+
+/* Border
+-------------------------- */
+$--border-color-hover: $--color-warning !default;
+
+/* Font
+-------------------------- */
+// $--font-color-disabled-base: #000000 !default;
+// $--font-size-base: 18px !default;
+// $--font-size-small: 14px !default;
+// $--font-size-large: 22px !default;
+
+/* Disable base
+-------------------------- */
+$--disabled-color-base: $--color-black !default;
+
+/* Table
+-------------------------- */
+$--table-border-color: $--color-black;
+
+/* Input
+-------------------------- */
+
+$--input-focus-fill: yellow !default;
+// $--input-medium-font-size: $--font-size-base !default;
+// $--input-small-font-size: $--font-size-small !default;
+
+@import "~element-ui/packages/theme-chalk/src/index";

@@ -1,5 +1,9 @@
 <template>
   <el-form>
+    <el-button-group>
+      <el-button type="primary" icon="el-icon-plus" @click.prevent="showForm('new')">{{$t('__new')}}</el-button>
+    </el-button-group>
+    <p/>
     <el-table
       :data="ordersShow"
       stripe
@@ -8,11 +12,11 @@
       style="width: 100%">
       <el-table-column
         prop="ID"
-        :label="$t('__order')+$t('__id')">
+        :label="$t('__orderID')">
       </el-table-column>
       <el-table-column
         prop="OrderDate"
-        :label="$t('__startDate')"
+        :label="$t('__order')+$t('__date')"
         :formatter="formatterDate">
       </el-table-column>
       <el-table-column
@@ -30,10 +34,6 @@
         width="100px">
       </el-table-column>
     </el-table>
-    <br/>
-    <el-button-group>
-      <el-button type="primary" icon="el-icon-plus" @click.prevent="showForm('new')">{{$t('__new')}}</el-button>
-    </el-button-group>
   </el-form>
 </template>
 

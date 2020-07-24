@@ -118,7 +118,9 @@ export default {
         AgentCity: null,
         AgentPost: null,
         AgentAddress: '',
-        BusinessID: null
+        refKind: null,
+        Referrer: null,
+        EmployeeID: null
       },
       rules: {
         CustomerID: [{ required: true, message: this.$t('__pleaseInput'), trigger: 'blur' }]
@@ -146,7 +148,7 @@ export default {
     },
     orderCustomer: function () {
       if (this.orderCustomer) {
-        this.form = this.orderCustomer
+        this.form = JSON.parse(JSON.stringify(this.orderCustomer))
 
         this.ddlCityChange()
 
@@ -156,7 +158,7 @@ export default {
     },
     ddlCustomerBefore: function (value) {
       if (this.ddlCustomerBefore) {
-        this.ddlCustomer = this.ddlCustomerBefore
+        this.ddlCustomer = JSON.parse(JSON.stringify(this.ddlCustomerBefore))
       }
     }
   },
@@ -207,7 +209,9 @@ export default {
       this.form.AgentCity = row.AgentCity
       this.form.AgentPost = row.AgentPost
       this.form.AgentAddress = row.AgentAddress
-      this.form.BusinessID = row.BusinessID
+      this.form.refKind = row.refKind
+      this.form.Referrer = row.Referrer
+      this.form.EmployeeID = row.EmployeeID
 
       this.ddlCityChange()
 

@@ -80,7 +80,7 @@ export default {
   },
   watch: {
     projectDetail: function () {
-      this.subList = this.projectDetail
+      this.subList = JSON.parse(JSON.stringify(this.projectDetail))
     }
   },
   mounted () {
@@ -130,12 +130,7 @@ export default {
         }
       }
 
-      if (isSuccess) {
-        return 'success'
-      } else {
-        this.$alert(this.$t('__uploadFail'))
-        return 'fail'
-      }
+      return isSuccess
     },
     // 存檔
     save: async function (type, row) {
@@ -175,7 +170,7 @@ export default {
         return
       }
 
-      let newObj = Object.assign({}, this.subItem)
+      let newObj = JSON.parse(JSON.stringify(this.subItem))
       // find Maximum Seq
       let nextSeq = 1
       if (this.subList.length === 0) {
@@ -198,17 +193,17 @@ export default {
     },
     // 下拉式選擇商品
     ddlSubListChange: function (selected, row) {
-      if (row.status === '') {
+      if (row.Status === '') {
         row.Status = 'Modified'
       }
     },
     priceChange: function (selected, row) {
-      if (row.status === '') {
+      if (row.Status === '') {
         row.Status = 'Modified'
       }
     },
     qtyChange: function (selected, row) {
-      if (row.status === '') {
+      if (row.Status === '') {
         row.Status = 'Modified'
       }
     }

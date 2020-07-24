@@ -12,6 +12,17 @@
     <el-table-column
       prop="ProductID"
       :label="$t('__product')+$t('__id')">
+      <template slot-scope="scope">
+        <el-select v-if="dialogType === 'new' && scope.row.ItemType === 1" v-model="scope.row[scope.column.property]" :placeholder="$t('__plzChoice')" @change="(value)=>{ddlSubListChange(value, scope.row)}" style="display:block">
+          <el-option v-for="item in ddlSubList" :key="item.ID" :label="item.Value" :value="item.ID">
+            <span style="float: left">{{ item.Value }}</span>
+            <span style="float: right; color: #8492a6; font-size: 13px">{{ item.ID }}</span>
+          </el-option>
+        </el-select>
+        <div v-else>
+          {{scope.row.ProductID}}
+        </div>
+      </template>
     </el-table-column>
     <el-table-column
       prop="Name"
@@ -21,11 +32,35 @@
       prop="Qty"
       :label="$t('__qty')"
       width="100px">
+      <template slot-scope="scope">
+        <el-input v-if="dialogType === 'new' && scope.row.ItemType === 1" v-model.number="scope.row[scope.column.property]" @change="(value)=>{qtyChange(value, scope.row)}"></el-input>
+        <div v-else>
+          {{scope.row.Qty}}
+        </div>
+      </template>
     </el-table-column>
     <el-table-column
       prop="UnitName"
       :label="$t('__unit')"
       width="60px">
+    </el-table-column>
+    <el-table-column
+      align="right"
+      width="100px">
+      <template slot="header">
+        <el-button
+          v-show="dialogType === 'new'"
+          type="primary"
+          size="large"
+          @click="handleNew()">{{$t('__new')}}</el-button>
+      </template>
+      <template slot-scope="scope">
+        <el-button
+          v-show="dialogType === 'new' && scope.row.ItemType === 1"
+          size="mini"
+          type="danger"
+          @click="handleDelete(scope.$index, scope.row)">{{$t('__delete')}}</el-button>
+      </template>
     </el-table-column>
   </el-table>
 </template>
@@ -34,37 +69,73 @@
 export default {
   name: 'OrderDetail',
   props: {
+
+    dialogType: { type: String, default: 'new' },
     orderID: { type: String },
+    projectID: { type: String },
     orderDetail: { type: Array }
   },
   data () {
     return {
-      subList: []
+      subItem: {
+        OrderID: this.orderID,
+        Seq: 0,
+        ProjectID: '',
+        ProductID: '',
+        Name: '',
+        QtyOrigin: 0,
+        Qty: 0,
+        UnitName: '',
+        ItemType: 0
+      },
+      subList: [],
+      subListDeleted: [],
+      // 下拉是選單
+      ddlSubList: []
     }
   },
   watch: {
-    orderID: function (value) {
-      if (value) {
-        this.subList.forEach((item) => { item.OrderID = value })
-      }
-    },
     orderDetail: function () {
-      this.subList = this.orderDetail
+      this.subList = JSON.parse(JSON.stringify(this.orderDetail))
     }
   },
+  mounted () {
+    this.preloading()
+  },
   methods: {
+    // 讀取預設資料
+    preloading: async function () {
+      // 取得所有原始資料
+      const response = await this.$api.basic.getDropdownList({ type: 'product' })
+      this.ddlSubList = response.data.result
+    },
     // 存檔-Detail
     beforeSave: async function () {
       let isSuccess = false
-      for (let index = 0; index < this.orderDetail.length; index++) {
+      // 結合已刪除單據
+      const finalResult = this.subList.concat(this.subListDeleted)
+      for (let index = 0; index < finalResult.length; index++) {
         let uploadResult = 0
-        let row = this.orderDetail[index]
+        let row = finalResult[index]
         // 錯誤處理
         if (row.OrderID === '') {
           continue
         }
-        // 送出查詢
-        uploadResult = await this.save('new', row)
+        // 開始更新
+        switch (row.Status) {
+          case 'New':
+            uploadResult = await this.save('new', row)
+            break
+          case 'Modified':
+            uploadResult = await this.save('edit', row)
+            break
+          case 'Deleted':
+            uploadResult = await this.save('delete', row)
+            break
+          case '':
+            uploadResult = 1
+            break
+        }
         // 檢查
         if (uploadResult === 0) {
           isSuccess = false
@@ -95,6 +166,54 @@ export default {
         return 1
       } else {
         return 0
+      }
+    },
+    // 新增子結構
+    handleNew: function () {
+      // 檢查是否已經有主結構
+      if (this.OrderID === '') {
+        this.$refs['form'].validate()
+        return
+      }
+
+      let newObj = JSON.parse(JSON.stringify(this.subItem))
+      // find Maximum Seq
+      let nextSeq = 1
+      if (this.subList.length === 0) {
+        nextSeq = 1
+      } else {
+        let amounts = this.subList.map(item => item.Seq)
+        let highestSeq = Math.max(...amounts)
+        nextSeq = highestSeq + 1
+      }
+      newObj.OrderID = this.orderID
+      newObj.ProjectID = this.projectID
+      newObj.Seq = nextSeq
+      newObj.ProjectID = ''
+      newObj.ItemType = 1
+      newObj.Status = 'New'
+      this.subList.push(newObj)
+    },
+    // 刪除子結構
+    handleDelete: function (index, row) {
+      row.Status = 'Deleted'
+      this.subListDeleted.push(row)
+      this.subList.splice(index, 1)
+    },
+    // 下拉式選擇商品
+    ddlSubListChange: function (selected, row) {
+      let findSubList = this.ddlSubList.find(item => item.ID === selected)
+      row.Name = findSubList.Value
+      row.Qty = 1
+      row.QtyOrigin = 1
+      row.UnitName = findSubList.UnitName
+      if (row.Status === '') {
+        row.Status = 'Modified'
+      }
+    },
+    qtyChange: function (selected, row) {
+      if (row.Status === '') {
+        row.Status = 'Modified'
       }
     }
   }

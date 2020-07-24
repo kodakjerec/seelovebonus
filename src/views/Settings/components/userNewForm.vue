@@ -160,7 +160,7 @@ export default {
       //     }
       //   }
       // })
-      let data = Object.assign({}, this.form)
+      let data = JSON.parse(JSON.stringify(this.form))
       let isSuccess = false
       switch (this.dialogType) {
         case 'new':

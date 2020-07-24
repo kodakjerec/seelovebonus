@@ -71,7 +71,7 @@ export default {
   },
   watch: {
     productBOM: function () {
-      this.subList = this.productBOM
+      this.subList = JSON.parse(JSON.stringify(this.productBOM))
     }
   },
   mounted () {
@@ -166,7 +166,7 @@ export default {
         return
       }
 
-      let newObj = Object.assign({}, this.subItem)
+      let newObj = JSON.parse(JSON.stringify(this.subItem))
       // find Maximum Seq
       let nextSeq = 1
       if (this.subList.length === 0) {
@@ -189,12 +189,12 @@ export default {
     },
     // 下拉式選擇商品
     ddlSubListChange: function (selected, row) {
-      if (row.status === '') {
+      if (row.Status === '') {
         row.Status = 'Modified'
       }
     },
     qtyChange: function (selected, row) {
-      if (row.status === '') {
+      if (row.Status === '') {
         row.Status = 'Modified'
       }
     }

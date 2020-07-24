@@ -90,8 +90,9 @@ const validate = {
       callback(new Error(i18n.t('__plzInputCardNumber')))
       return
     }
+    // 只驗證後四碼
     value = value.replace(/-/g, '')
-    let regex = /[0-9]{16}/
+    let regex = /[0-9]{4}/
     if (!regex.test(value)) {
       callback(new Error(i18n.t('__plzInputCardNumber')))
     }

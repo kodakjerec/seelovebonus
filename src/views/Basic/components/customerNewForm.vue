@@ -17,13 +17,36 @@
           </el-form-item>
         </el-col>
       </el-form-item>
-      <el-form-item :label="$t('__businessID')" prop="BusinessID">
-        <el-select v-model="form.BusinessID" value-key="value" :placeholder="$t('__plzChoice')">
-          <el-option v-for="item in ddlBusinessID" :key="item.ID" :label="item.Value" :value="item.ID">
+      <el-form-item :label="$t('__refEmployeeID')" prop="EmployeeID">
+        <el-select v-model="form.EmployeeID" value-key="value" :placeholder="$t('__plzChoice')">
+          <el-option v-for="item in ddlEmployeeID" :key="item.ID" :label="item.Value" :value="item.ID">
             <span style="float: left">{{ item.Value }}</span>
             <span style="float: right; color: #8492a6; font-size: 13px">{{ item.ID }}</span>
           </el-option>
         </el-select>
+      </el-form-item>
+      <el-form-item :label="$t('__refKind')">
+        <el-col :span="10">
+          <el-select v-model="form.refKind" value-key="value" :placeholder="$t('__plzChoice')" @change="ddlRefKindChange">
+            <el-option v-for="item in ddlRefKind" :key="item.ID" :label="item.Value" :value="item.ID">
+              <span style="float: left">{{ item.Value }}</span>
+              <span style="float: right; color: #8492a6; font-size: 13px">{{ item.ID }}</span>
+            </el-option>
+          </el-select>
+        </el-col>
+        <el-col :span="4" class="el-form-item__label">
+          {{$t('__referrer')}}
+        </el-col>
+        <el-col :span="10">
+          <el-form-item>
+            <el-select v-model="form.Referrer" value-key="value" :placeholder="$t('__plzChoice')">
+              <el-option v-for="item in ddlReferrer" :key="item.ID" :label="item.Value" :value="item.ID">
+                <span style="float: left">{{ item.Value }}</span>
+                <span style="float: right; color: #8492a6; font-size: 13px">{{ item.ID }}</span>
+              </el-option>
+            </el-select>
+          </el-form-item>
+        </el-col>
       </el-form-item>
       <el-form-item :label="$t('__home')+$t('__tel')">
         <el-col :span="10">
@@ -105,37 +128,6 @@
       <el-form-item :label="$t('__eMail')">
         <el-input v-model="form.EMail" autocomplete="off" maxlength="60" show-word-limit></el-input>
       </el-form-item>
-      <el-form-item :label="$t('__refKind')">
-        <el-col :span="10">
-          <el-select v-model="form.refKind" value-key="value" :placeholder="$t('__plzChoice')" @change="ddlRefKindChange">
-            <el-option v-for="item in ddlRefKind" :key="item.ID" :label="item.Value" :value="item.ID">
-              <span style="float: left">{{ item.Value }}</span>
-              <span style="float: right; color: #8492a6; font-size: 13px">{{ item.ID }}</span>
-            </el-option>
-          </el-select>
-        </el-col>
-        <el-col :span="4" class="el-form-item__label">
-          {{$t('__referrer')}}
-        </el-col>
-        <el-col :span="10">
-          <el-form-item>
-            <el-select v-model="form.Referrer" value-key="value" :placeholder="$t('__plzChoice')">
-              <el-option v-for="item in ddlReferrer" :key="item.ID" :label="item.Value" :value="item.ID">
-                <span style="float: left">{{ item.Value }}</span>
-                <span style="float: right; color: #8492a6; font-size: 13px">{{ item.ID }}</span>
-              </el-option>
-            </el-select>
-          </el-form-item>
-        </el-col>
-      </el-form-item>
-      <el-form-item :label="$t('__refEmployeeID')">
-        <el-select v-model="form.EmployeeID" value-key="value" :placeholder="$t('__plzChoice')">
-          <el-option v-for="item in ddlEmployeeID" :key="item.ID" :label="item.Value" :value="item.ID">
-            <span style="float: left">{{ item.Value }}</span>
-            <span style="float: right; color: #8492a6; font-size: 13px">{{ item.ID }}</span>
-          </el-option>
-        </el-select>
-      </el-form-item>
       <el-form-item :label="$t('__status')">
         <el-select v-model="form.Status" value-key="value" :placeholder="$t('__plzChoice')">
           <el-option v-for="item in ddlStatus" :key="item.ID" :label="item.Value" :value="item.ID">
@@ -145,53 +137,60 @@
         </el-select>
       </el-form-item>
       <!-- 以下為法定代理人 -->
-      <el-divider>{{$t('__theFollingIs')+'：'+$t('__customer')+$t('__agent')}}</el-divider>
-      <el-form-item :label="$t('__id')">
-        <el-input v-model="form.AgentID" autocomplete="off" :placeholder="$t('__palceholderCustomerID')" maxlength="20" show-word-limit></el-input>
-      </el-form-item>
-      <el-form-item :label="$t('__name')">
-        <el-input v-model="form.AgentName" autocomplete="off" maxlength="40" show-word-limit></el-input>
-      </el-form-item>
-      <el-form-item :label="$t('__country')">
-        <el-col :span="4">
-          <el-select v-model="form.AgentCountry" value-key="value" :placeholder="$t('__plzChoice')">
-            <el-option v-for="item in ddlAgentCountry" :key="item.ID" :label="item.Value" :value="item.ID">
-              <span style="float: left">{{ item.Value }}</span>
-              <span style="float: right; color: #8492a6; font-size: 13px">{{ item.ID }}</span>
-            </el-option>
-          </el-select>
-        </el-col>
-        <el-col :span="2" class="el-form-item__label">
-          {{$t('__city')}}
-        </el-col>
-        <el-col :span="4">
-          <el-form-item>
-            <el-select v-model="form.AgentCity" value-key="value" :placeholder="$t('__plzChoice')" @change="ddlAgentCityChange">
-              <el-option v-for="item in ddlAgentCity" :key="item.ID" :label="item.Value" :value="item.ID">
-                <span style="float: left">{{ item.Value }}</span>
-                <span style="float: right; color: #8492a6; font-size: 13px">{{ item.ID }}</span>
-              </el-option>
-            </el-select>
+      <el-collapse v-model="activeName" accordion="">
+        <el-collapse-item :title="$t('__customer')+$t('__agent')" name="1">
+          <el-form-item :label="$t('__id')">
+            <el-select v-model="form.AgentID" value-key="value" :placeholder="$t('__palceholderCustomerID')" @change="ddlAgentIDChange">
+                <el-option v-for="item in ddlAgentID" :key="item.ID" :label="item.Value" :value="item.ID">
+                  <span style="float: left">{{ item.Value }}</span>
+                  <span style="float: right; color: #8492a6; font-size: 13px">{{ item.ID }}</span>
+                </el-option>
+              </el-select>
           </el-form-item>
-        </el-col>
-        <el-col :span="4" class="el-form-item__label">
-          {{$t('__post')}}
-        </el-col>
-        <el-col :span="10">
-          <el-form-item>
-            <el-select v-model="form.AgentPost" value-key="value" :placeholder="$t('__plzChoice')">
-              <el-option v-for="item in ddlAgentPost" :key="item.ID" :label="item.Value" :value="item.ID">
-                <span style="float: left">{{ item.Value }}</span>
-                <span style="float: right; color: #8492a6; font-size: 13px">{{ item.ID }}</span>
-              </el-option>
-            </el-select>
+          <el-form-item :label="$t('__name')">
+            <el-input v-model="form.AgentName" autocomplete="off" maxlength="40" show-word-limit></el-input>
           </el-form-item>
-        </el-col>
-      </el-form-item>
-      <el-form-item :label="$t('__address')">
-        <el-input v-model="form.AgentAddress" autocomplete="off" maxlength="100" show-word-limit></el-input>
-      </el-form-item>
-      <el-divider>{{$t('__theAboveIs')+'：'+$t('__customer')+$t('__agent')}}</el-divider>
+          <el-form-item :label="$t('__country')">
+            <el-col :span="4">
+              <el-select v-model="form.AgentCountry" value-key="value" :placeholder="$t('__plzChoice')">
+                <el-option v-for="item in ddlAgentCountry" :key="item.ID" :label="item.Value" :value="item.ID">
+                  <span style="float: left">{{ item.Value }}</span>
+                  <span style="float: right; color: #8492a6; font-size: 13px">{{ item.ID }}</span>
+                </el-option>
+              </el-select>
+            </el-col>
+            <el-col :span="2" class="el-form-item__label">
+              {{$t('__city')}}
+            </el-col>
+            <el-col :span="4">
+              <el-form-item>
+                <el-select v-model="form.AgentCity" value-key="value" :placeholder="$t('__plzChoice')" @change="ddlAgentCityChange">
+                  <el-option v-for="item in ddlAgentCity" :key="item.ID" :label="item.Value" :value="item.ID">
+                    <span style="float: left">{{ item.Value }}</span>
+                    <span style="float: right; color: #8492a6; font-size: 13px">{{ item.ID }}</span>
+                  </el-option>
+                </el-select>
+              </el-form-item>
+            </el-col>
+            <el-col :span="4" class="el-form-item__label">
+              {{$t('__post')}}
+            </el-col>
+            <el-col :span="10">
+              <el-form-item>
+                <el-select v-model="form.AgentPost" value-key="value" :placeholder="$t('__plzChoice')">
+                  <el-option v-for="item in ddlAgentPost" :key="item.ID" :label="item.Value" :value="item.ID">
+                    <span style="float: left">{{ item.Value }}</span>
+                    <span style="float: right; color: #8492a6; font-size: 13px">{{ item.ID }}</span>
+                  </el-option>
+                </el-select>
+              </el-form-item>
+            </el-col>
+          </el-form-item>
+          <el-form-item :label="$t('__address')">
+            <el-input v-model="form.AgentAddress" autocomplete="off" maxlength="100" show-word-limit></el-input>
+          </el-form-item>
+        </el-collapse-item>
+      </el-collapse>
       <!-- 以上為法定代理人 -->
     </el-form>
     <div slot="footer" class="dialog-footer">
@@ -234,20 +233,20 @@ export default {
         Gender: '3',
         Status: '1',
         refKind: null,
-        Referrer: '',
-        BusinessID: ''
+        Referrer: ''
       },
       rules: {
         ID: [{ required: true, message: this.$t('__pleaseInput'), trigger: 'blur' }],
         Name: [{ required: true, message: this.$t('__pleaseInput'), trigger: 'blur' }],
         TelHome: [{ trigger: 'blur', validator: validate.validatePhone }],
         TelMobile: [{ trigger: 'blur', validator: validate.validatePhone }],
-        BusinessID: [{ required: true, message: this.$t('__pleaseInput'), trigger: 'blur' }]
+        EmployeeID: [{ required: true, message: this.$t('__pleaseInput'), trigger: 'blur' }]
       },
       disableForm: {
         ID: false
       },
       myTitle: '',
+      activeName: '',
       // 以下為下拉式選單專用
       // Settings資料
       postData: [],
@@ -262,7 +261,7 @@ export default {
       ddlEmployeeID: [],
       ddlRefKind: [],
       ddlReferrer: [],
-      ddlBusinessID: [],
+      ddlAgentID: [],
       // 法定代理人專用下拉式選單
       ddlAgentCountry: [],
       ddlAgentCity: [],
@@ -279,6 +278,10 @@ export default {
         this.myTitle = this.$t('__edit') + this.$t('__customer')
         this.form = this.customer
         this.disableForm.ID = true
+        // 有法定代理人打開面板
+        if (this.form.AgentID !== '') {
+          this.activeName = '1'
+        }
         break
     }
     this.preloading()
@@ -306,13 +309,13 @@ export default {
       this.ddlStatus = response3.data.result
       const response4 = await this.$api.basic.getDropdownList({ type: 'gender' })
       this.ddlGender = response4.data.result
-      const response5 = await this.$api.basic.getDropdownList({ type: 'refkind' })
+      const response5 = await this.$api.basic.getDropdownList({ type: 'refKind' })
       this.ddlRefKind = response5.data.result
       this.ddlRefKindChange()
       this.ddlEmployeeID = this.employeesData
-      this.ddlBusinessID = this.employeesData
 
       // 法定代理人
+      this.ddlAgentID = this.customersData
       this.ddlAgentCountry = response1.data.result
       this.ddlAgentCity = response2.data.result
       this.ddlAgentCityChange()
@@ -337,6 +340,19 @@ export default {
         case '3':
           this.ddlReferrer = this.companiesData
           break
+      }
+    },
+    // 切換 法定代理人
+    ddlAgentIDChange: async function (selectd) {
+      const responseCustomer = await this.$api.basic.getObject({ type: 'customer', ID: selectd })
+      let row = responseCustomer.data.result[0]
+      if (row !== undefined) {
+        this.form.AgentName = row.Name
+        this.form.AgentCountry = row.Country
+        this.form.AgentCity = row.City
+        this.ddlAgentCityChange()
+        this.form.AgentPost = row.Post
+        this.form.AgentAddress = row.Address
       }
     },
     // 檢查輸入

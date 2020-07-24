@@ -7,8 +7,8 @@
       @row-click="handleClick"
       style="width: 100%">
       <el-table-column
-        prop="InvoiceID"
-        :label="$t('__invoice')+$t('__id')">
+        prop="OrderID"
+        :label="$t('__orderID')">
       </el-table-column>
       <el-table-column
         prop="InvoiceDate"
@@ -16,8 +16,8 @@
         :formatter="formatterDate">
       </el-table-column>
       <el-table-column
-        prop="OrderID"
-        :label="$t('__order')+$t('__id')">
+        prop="InvoiceID"
+        :label="$t('__invoice')+$t('__id')">
       </el-table-column>
       <el-table-column
         prop="Title"

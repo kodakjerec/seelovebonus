@@ -7,6 +7,29 @@
       <el-form-item :label="$t('__company')+$t('__name')" prop="Name">
         <el-input v-model="form.Name" autocomplete="off" maxlength="40" show-word-limit></el-input>
       </el-form-item>
+      <el-form-item :label="$t('__refKind')">
+        <el-col :span="10">
+          <el-select v-model="form.refKind" value-key="value" :placeholder="$t('__plzChoice')" @change="ddlRefKindChange">
+            <el-option v-for="item in ddlRefKind" :key="item.ID" :label="item.Value" :value="item.ID">
+              <span style="float: left">{{ item.Value }}</span>
+              <span style="float: right; color: #8492a6; font-size: 13px">{{ item.ID }}</span>
+            </el-option>
+          </el-select>
+        </el-col>
+        <el-col :span="4" class="el-form-item__label">
+          {{$t('__referrer')}}
+        </el-col>
+        <el-col :span="10">
+          <el-form-item>
+            <el-select v-model="form.Referrer" value-key="value" :placeholder="$t('__plzChoice')">
+              <el-option v-for="item in ddlReferrer" :key="item.ID" :label="item.Value" :value="item.ID">
+                <span style="float: left">{{ item.Value }}</span>
+                <span style="float: right; color: #8492a6; font-size: 13px">{{ item.ID }}</span>
+              </el-option>
+            </el-select>
+          </el-form-item>
+        </el-col>
+      </el-form-item>
       <el-form-item :label="$t('__principal')">
         <el-col :span="10">
           <el-input v-model="form.Principal" autocomplete="off" maxlength="40" show-word-limit></el-input>
@@ -138,7 +161,9 @@ export default {
         Country: '2',
         City: null,
         Post: null,
-        Address: ''
+        Address: '',
+        refKind: null,
+        Referrer: null
       },
       rules: {
         ID: [{ required: true, message: this.$t('__pleaseInput'), trigger: 'blur' }],
@@ -156,7 +181,9 @@ export default {
       ddlCountry: [],
       ddlCity: [],
       ddlPost: [],
-      ddlStatus: []
+      ddlStatus: [],
+      ddlRefKind: [],
+      ddlReferrer: []
     }
   },
   mounted () {
@@ -188,10 +215,34 @@ export default {
 
       const response3 = await this.$api.basic.getDropdownList({ type: 'status' })
       this.ddlStatus = response3.data.result
+
+      const responseCustomers = await this.$api.basic.getDropdownList({ type: 'customers' })
+      this.customersData = responseCustomers.data.result
+      const responseEmployees = await this.$api.basic.getDropdownList({ type: 'customerEmployees' })
+      this.employeesData = responseEmployees.data.result
+      const responseCompanies = await this.$api.basic.getDropdownList({ type: 'companies' })
+      this.companiesData = responseCompanies.data.result
+      const response5 = await this.$api.basic.getDropdownList({ type: 'refKind' })
+      this.ddlRefKind = response5.data.result
+      this.ddlRefKindChange()
     },
     // 過濾郵遞區號
     ddlCityChange: function () {
       this.ddlPost = this.postData.filter(item => item.ParentID === this.form.City)
+    },
+    // 過濾推薦人種類
+    ddlRefKindChange: function () {
+      switch (this.form.refKind) {
+        case '1':
+          this.ddlReferrer = this.customersData
+          break
+        case '2':
+          this.ddlReferrer = this.employeesData
+          break
+        case '3':
+          this.ddlReferrer = this.companiesData
+          break
+      }
     },
     // 檢查輸入
     checkValidate: function () {

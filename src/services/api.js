@@ -2,7 +2,8 @@ import req from './auth' // 把request包裝
 import crypto from './crypto' // 加解密
 
 let seeloveNodeServer = {
-  ipHost: '192.168.1.20:3000'
+  // ipHost: '192.168.1.20:3000'
+  ipHost: 'localhost:3000'
 }
 
 export default {
@@ -321,6 +322,20 @@ export default {
         return data
       })
     },
+    orderEdit: ({ form }) => {
+      let rawData = { form }
+      return req('post', 'http://' + seeloveNodeServer.ipHost + '/orders/orderEdit', rawData).then(data => {
+        console.log(`%c <<< Response(/rest/orders/orderEdit)⤵ `, 'background-color: #E0455D; color: white; font-size: 14px; font-weight: bold;', data)
+        return data
+      })
+    },
+    orderDelete: ({ form }) => {
+      let rawData = { form }
+      return req('post', 'http://' + seeloveNodeServer.ipHost + '/orders/orderDelete', rawData).then(data => {
+        console.log(`%c <<< Response(/rest/orders/orderDelete)⤵ `, 'background-color: #E0455D; color: white; font-size: 14px; font-weight: bold;', data)
+        return data
+      })
+    },
     orderCustomerNew: ({ form }) => {
       let rawData = { form }
       return req('post', 'http://' + seeloveNodeServer.ipHost + '/orders/orderCustomerNew', rawData).then(data => {
@@ -342,6 +357,41 @@ export default {
         return data
       })
     },
+    orderDetailEdit: ({ form }) => {
+      let rawData = { form }
+      return req('post', 'http://' + seeloveNodeServer.ipHost + '/orders/orderDetailEdit', rawData).then(data => {
+        console.log(`%c <<< Response(/rest/orders/orderDetailEdit)⤵ `, 'background-color: #E0455D; color: white; font-size: 14px; font-weight: bold;', data)
+        return data
+      })
+    },
+    orderCertificate1New: ({ form }) => {
+      let rawData = { form }
+      return req('post', 'http://' + seeloveNodeServer.ipHost + '/orders/orderCertificate1New', rawData).then(data => {
+        console.log(`%c <<< Response(/rest/orders/orderCertificate1New)⤵ `, 'background-color: #E0455D; color: white; font-size: 14px; font-weight: bold;', data)
+        return data
+      })
+    },
+    orderCertificate2New: ({ form }) => {
+      let rawData = { form }
+      return req('post', 'http://' + seeloveNodeServer.ipHost + '/orders/orderCertificate2New', rawData).then(data => {
+        console.log(`%c <<< Response(/rest/orders/orderCertificate2New)⤵ `, 'background-color: #E0455D; color: white; font-size: 14px; font-weight: bold;', data)
+        return data
+      })
+    },
+    orderCertificate1Edit: ({ form }) => {
+      let rawData = { form }
+      return req('post', 'http://' + seeloveNodeServer.ipHost + '/orders/orderCertificate1Edit', rawData).then(data => {
+        console.log(`%c <<< Response(/rest/orders/orderCertificate1Edit)⤵ `, 'background-color: #E0455D; color: white; font-size: 14px; font-weight: bold;', data)
+        return data
+      })
+    },
+    orderCertificate2Edit: ({ form }) => {
+      let rawData = { form }
+      return req('post', 'http://' + seeloveNodeServer.ipHost + '/orders/orderCertificate2Edit', rawData).then(data => {
+        console.log(`%c <<< Response(/rest/orders/orderCertificate2Edit)⤵ `, 'background-color: #E0455D; color: white; font-size: 14px; font-weight: bold;', data)
+        return data
+      })
+    },
     collectionRecordsNew: ({ form }) => {
       let rawData = { form }
       return req('post', 'http://' + seeloveNodeServer.ipHost + '/orders/collectionRecordsNew', rawData).then(data => {
@@ -353,6 +403,20 @@ export default {
       let rawData = { form }
       return req('post', 'http://' + seeloveNodeServer.ipHost + '/orders/collectionRecordsEdit', rawData).then(data => {
         console.log(`%c <<< Response(/rest/orders/collectionRecordsEdit)⤵ `, 'background-color: #E0455D; color: white; font-size: 14px; font-weight: bold;', data)
+        return data
+      })
+    },
+    collectionRecordsDelete: ({ form }) => {
+      let rawData = { form }
+      return req('post', 'http://' + seeloveNodeServer.ipHost + '/orders/collectionRecordsDelete', rawData).then(data => {
+        console.log(`%c <<< Response(/rest/orders/collectionRecordsDelete)⤵ `, 'background-color: #E0455D; color: white; font-size: 14px; font-weight: bold;', data)
+        return data
+      })
+    },
+    collectionRecordsFunctions: ({ type, OrderID }) => {
+      let rawData = { type, OrderID }
+      return req('post', 'http://' + seeloveNodeServer.ipHost + '/orders/collectionRecordsFunctions', rawData).then(data => {
+        console.log(`%c <<< Response(/rest/orders/collectionRecordsFunctions)⤵ `, 'background-color: #E0455D; color: white; font-size: 14px; font-weight: bold;', data)
         return data
       })
     },
@@ -377,10 +441,31 @@ export default {
         return data
       })
     },
+    invoiceHeadInvalid: ({ form }) => {
+      let rawData = { form }
+      return req('post', 'http://' + seeloveNodeServer.ipHost + '/orders/invoiceHeadInvalid', rawData).then(data => {
+        console.log(`%c <<< Response(/rest/orders/invoiceHeadInvalid)⤵ `, 'background-color: #E0455D; color: white; font-size: 14px; font-weight: bold;', data)
+        return data
+      })
+    },
+    invoiceFunctions: ({ type, OrderID, InvoiceID, Seq }) => {
+      let rawData = { type, OrderID, InvoiceID, Seq }
+      return req('post', 'http://' + seeloveNodeServer.ipHost + '/orders/invoiceFunctions', rawData).then(data => {
+        console.log(`%c <<< Response(/rest/orders/invoiceFunctions)⤵ `, 'background-color: #E0455D; color: white; font-size: 14px; font-weight: bold;', data)
+        return data
+      })
+    },
     invoiceDetailNew: ({ form }) => {
       let rawData = { form }
       return req('post', 'http://' + seeloveNodeServer.ipHost + '/orders/invoiceDetailNew', rawData).then(data => {
         console.log(`%c <<< Response(/rest/orders/invoiceDetailNew)⤵ `, 'background-color: #E0455D; color: white; font-size: 14px; font-weight: bold;', data)
+        return data
+      })
+    },
+    invoiceDetailEdit: ({ form }) => {
+      let rawData = { form }
+      return req('post', 'http://' + seeloveNodeServer.ipHost + '/orders/invoiceDetailEdit', rawData).then(data => {
+        console.log(`%c <<< Response(/rest/orders/invoiceDetailEdit)⤵ `, 'background-color: #E0455D; color: white; font-size: 14px; font-weight: bold;', data)
         return data
       })
     },

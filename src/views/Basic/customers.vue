@@ -1,5 +1,9 @@
 <template>
   <el-form>
+    <el-button-group>
+      <el-button type="primary" icon="el-icon-plus" @click.prevent="showForm('new')">{{$t('__new')}}</el-button>
+    </el-button-group>
+    <p/>
     <el-table
       :data="customersShow"
       stripe
@@ -15,18 +19,14 @@
         :label="$t('__customer')+$t('__name')">
       </el-table-column>
       <el-table-column
-        prop="BusinessIDName"
-        :label="$t('__businessID')">
+        prop="RefferIDName"
+        :label="$t('__referrer')">
       </el-table-column>
       <el-table-column
         prop="EmployeeIDName"
         :label="$t('__refEmployeeID')">
       </el-table-column>
     </el-table>
-    <br/>
-    <el-button-group>
-      <el-button type="primary" icon="el-icon-plus" @click.prevent="showForm('new')">{{$t('__new')}}</el-button>
-    </el-button-group>
     <new-form
     v-if="dialogShow"
     :dialog-type="dialogType"

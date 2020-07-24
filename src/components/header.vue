@@ -23,7 +23,7 @@
         <span>{{$t('__logout')}}</span>
       </el-menu-item>
       <el-menu-item>
-        {{userName}}, 你好
+        {{userName}}, {{$t('__hello')}}
       </el-menu-item>
     </el-menu>
 </template>

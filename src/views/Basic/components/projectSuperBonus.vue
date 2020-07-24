@@ -61,7 +61,7 @@ export default {
   },
   watch: {
     projectSuperBonus: function () {
-      this.subList = this.projectSuperBonus
+      this.subList = JSON.parse(JSON.stringify(this.projectSuperBonus))
     }
   },
   mounted () {
@@ -83,7 +83,7 @@ export default {
         let uploadResult = 0
         let row = finalResult[index]
         // 錯誤處理
-        if (row.ProjectID === '') {
+        if (row.ProjectID === '' || row.Price === 0) {
           continue
         }
         // 開始更新
@@ -140,11 +140,7 @@ export default {
           break
       }
 
-      if (isSuccess) {
-        return 1
-      } else {
-        return 0
-      }
+      return isSuccess
     },
     // 新增子結構
     handleNew: function () {
@@ -154,7 +150,7 @@ export default {
         return
       }
 
-      let newObj = Object.assign({}, this.subItem)
+      let newObj = JSON.parse(JSON.stringify(this.subItem))
       // find Maximum Seq
       let nextSeq = 1
       if (this.subList.length === 0) {
@@ -177,12 +173,12 @@ export default {
     },
     // 下拉式選擇商品
     priceChange: function (selected, row) {
-      if (row.status === '') {
+      if (row.Status === '') {
         row.Status = 'Modified'
       }
     },
     percentageChange: function (selected, row) {
-      if (row.status === '') {
+      if (row.Status === '') {
         row.Status = 'Modified'
       }
     }

@@ -8,9 +8,17 @@ export function formatMoney (value) {
 }
 
 export function formatDate (value) {
-  return value.substring(0, 10)
+  if (value) {
+    return value.substring(0, 10)
+  } else {
+    return value
+  }
 }
 
 export function formatCard (value) {
-  return value.substring(0, 10)
+  if (value) {
+    return value.substring(0, 10)
+  } else {
+    return value
+  }
 }

@@ -120,35 +120,26 @@ export default {
       this.projectSuperBonus = response3.data.result
     },
     // 檢查輸入
-    checkValidate: function () {
+    checkValidate: async function () {
+      // check BOM
+      let isSuccess = false
+      isSuccess = await this.$refs['bom'].beforeSave()
+      if (!isSuccess) { return }
+
+      // check pBonus
+      isSuccess = false
+      isSuccess = await this.$refs['pBonus'].beforeSave()
+      if (!isSuccess) { return }
+
+      // check superBonus
+      isSuccess = false
+      isSuccess = await this.$refs['superBonus'].beforeSave()
+      if (!isSuccess) { return }
+
+      // 檢查主表單
       this.$refs['form'].validate((valid) => {
         if (valid) {
-          switch (this.dialogType) {
-            case 'new':
-              this.save()
-              break
-            case 'edit':
-              this.$refs['bom'].beforeSave()
-                .then(answer => {
-                  if (answer === 'success') {
-                    this.$refs['pBonus'].beforeSave()
-                      .then(answer => {
-                        if (answer === 'success') {
-                          this.$refs['superBonus'].beforeSave()
-                            .then(answer => {
-                              if (answer === 'success') {
-                                this.save()
-                              }
-                            })
-                        }
-                      })
-                  }
-                })
-              break
-          }
-          return true
-        } else {
-          return false
+          this.save()
         }
       })
     },

@@ -1,5 +1,9 @@
 <template>
   <el-form>
+    <el-button-group>
+      <el-button type="primary" icon="el-icon-plus" @click.prevent="showForm('new')">{{$t('__new')}}</el-button>
+    </el-button-group>
+    <p/>
     <el-table
       :data="projectsShow"
       stripe
@@ -30,10 +34,6 @@
         :formatter="formatterMoney">
       </el-table-column>
     </el-table>
-    <br/>
-    <el-button-group>
-      <el-button type="primary" icon="el-icon-plus" @click.prevent="showForm('new')">{{$t('__new')}}</el-button>
-    </el-button-group>
     <new-form
     v-if="dialogShow"
     :dialog-type="dialogType"
