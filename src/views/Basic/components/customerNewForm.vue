@@ -276,7 +276,7 @@ export default {
         break
       case 'edit':
         this.myTitle = this.$t('__edit') + this.$t('__customer')
-        this.form = this.customer
+        this.form = JSON.parse(JSON.stringify(this.customer))
         this.disableForm.ID = true
         // 有法定代理人打開面板
         if (this.form.AgentID !== '') {

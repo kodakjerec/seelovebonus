@@ -29,6 +29,10 @@
         :formatter="formatterMoney"
         width="100px">
       </el-table-column>
+      <el-table-column
+        prop="InvoiceStatusName"
+        :label="$t('__status')">
+      </el-table-column>
     </el-table>
   </el-form>
 </template>

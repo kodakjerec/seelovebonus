@@ -1,65 +1,92 @@
 <template>
   <el-form ref="form" :model="form" :rules="rules">
     <h2 style="text-align:left">{{$t('__orderCustomer')+$t('__data')}}</h2>
-    <el-form-item :label="$t('__orderCustomer')+$t('__name')" prop="CustomerID" label-width="100px" label-position="left">
-      <el-col :span="6">
-        <el-select v-model="form.CustomerID" value-key="value" :placeholder="$t('__plzChoice')" @change="ddlCustomerChange" :disabled="disableForm.CustomerID">
-          <el-option v-for="item in ddlCustomer" :key="item.ID" :label="item.Value" :value="item.ID">
-            <span style="float: left">{{ item.Value }}</span>
-            <span style="float: right; color: #8492a6; font-size: 13px">{{ item.ID }}</span>
-          </el-option>
-        </el-select>
-      </el-col>
-      <el-col :span="6" class="el-form-item__label">
-        {{$t('__agent')}}
-      </el-col>
-      <el-col :span="10">
-        <el-input v-model="form.AgentName" autocomplete="off" disabled></el-input>
-      </el-col>
-    </el-form-item>
-    <el-form-item :label="$t('__uniqueNumber')" label-width="100px" label-position="left">
-      <el-col :span="8">
-        <el-input v-model="form.CustomerID" autocomplete="off" disabled></el-input>
-      </el-col>
-      <el-col :span="4" class="el-form-item__label">
-        {{$t('__uniqueNumber')}}
-      </el-col>
-      <el-col :span="12">
-        <el-input v-model="form.AgentID" autocomplete="off" disabled></el-input>
-      </el-col>
-    </el-form-item>
-    <el-form-item :label="$t('__home')+'/'+$t('__mobile')+$t('__tel')" label-width="100px" label-position="left">
-      <el-col :span="8" class="elInputWidth">
-        <el-input v-model="form.TelHome" autocomplete="off" disabled></el-input>
-        <el-input v-model="form.TelMobile" autocomplete="off" disabled></el-input>
-      </el-col>
-      <el-col :span="4" class="el-form-item__label">
-        {{$t('__address')}}
-      </el-col>
-      <el-col :span="3">
-        <el-form-item>
-          <el-select v-model="form.AgentCity" value-key="value" :placeholder="$t('__plzChoice')" @change="ddlCityChange" disabled>
-            <el-option v-for="item in ddlAgentCity" :key="item.ID" :label="item.Value" :value="item.ID">
+    <!-- 有法定代理人資料, 要顯示 -->
+    <template v-if="showAgentData">
+      <el-form-item :label="$t('__orderCustomer')+$t('__name')" prop="CustomerID" label-width="100px" label-position="left">
+        <el-col :span="6">
+          <el-select v-model="form.CustomerID" value-key="value" :placeholder="$t('__plzChoice')" @change="ddlCustomerChange" :disabled="disableForm.CustomerID">
+            <el-option v-for="item in ddlCustomer" :key="item.ID" :label="item.Value" :value="item.ID">
               <span style="float: left">{{ item.Value }}</span>
               <span style="float: right; color: #8492a6; font-size: 13px">{{ item.ID }}</span>
             </el-option>
           </el-select>
-        </el-form-item>
         </el-col>
-      <el-col :span="3">
-        <el-form-item>
-          <el-select v-model="form.AgentPost" value-key="value" :placeholder="$t('__plzChoice')" disabled>
-            <el-option v-for="item in ddlAgentPost" :key="item.ID" :label="item.Value" :value="item.ID">
+        <el-col :span="6" class="el-form-item__label">
+          {{$t('__agent')}}
+        </el-col>
+        <el-col :span="10">
+          <el-input v-model="form.AgentName" autocomplete="off" disabled></el-input>
+        </el-col>
+      </el-form-item>
+      <el-form-item :label="$t('__uniqueNumber')" label-width="100px" label-position="left">
+        <el-col :span="8">
+          <el-input v-model="form.CustomerID" autocomplete="off" disabled></el-input>
+        </el-col>
+        <el-col :span="4" class="el-form-item__label">
+          {{$t('__uniqueNumber')}}
+        </el-col>
+        <el-col :span="12">
+          <el-input v-model="form.AgentID" autocomplete="off" disabled></el-input>
+        </el-col>
+      </el-form-item>
+      <el-form-item :label="$t('__home')+'/'+$t('__mobile')+$t('__tel')" label-width="100px" label-position="left">
+        <el-col :span="8" class="elInputWidth">
+          <el-input v-model="form.TelHome" autocomplete="off" disabled></el-input>
+          <el-input v-model="form.TelMobile" autocomplete="off" disabled></el-input>
+        </el-col>
+        <el-col :span="4" class="el-form-item__label">
+          {{$t('__address')}}
+        </el-col>
+        <el-col :span="3">
+          <el-form-item>
+            <el-select v-model="form.AgentCity" value-key="value" :placeholder="$t('__plzChoice')" @change="ddlCityChange" disabled>
+              <el-option v-for="item in ddlAgentCity" :key="item.ID" :label="item.Value" :value="item.ID">
+                <span style="float: left">{{ item.Value }}</span>
+                <span style="float: right; color: #8492a6; font-size: 13px">{{ item.ID }}</span>
+              </el-option>
+            </el-select>
+          </el-form-item>
+          </el-col>
+        <el-col :span="3">
+          <el-form-item>
+            <el-select v-model="form.AgentPost" value-key="value" :placeholder="$t('__plzChoice')" disabled>
+              <el-option v-for="item in ddlAgentPost" :key="item.ID" :label="item.Value" :value="item.ID">
+                <span style="float: left">{{ item.Value }}</span>
+                <span style="float: right; color: #8492a6; font-size: 13px">{{ item.ID }}</span>
+              </el-option>
+            </el-select>
+          </el-form-item>
+          </el-col>
+        <el-col :span="6">
+          <el-input v-model="form.AgentAddress" autocomplete="off" disabled></el-input>
+        </el-col>
+      </el-form-item>
+    </template>
+    <!-- 無法定代理人資料 -->
+    <template v-else>
+            <el-form-item :label="$t('__orderCustomer')+$t('__name')" prop="CustomerID" label-width="100px" label-position="left">
+        <el-col :span="6">
+          <el-select v-model="form.CustomerID" value-key="value" :placeholder="$t('__plzChoice')" @change="ddlCustomerChange" :disabled="disableForm.CustomerID">
+            <el-option v-for="item in ddlCustomer" :key="item.ID" :label="item.Value" :value="item.ID">
               <span style="float: left">{{ item.Value }}</span>
               <span style="float: right; color: #8492a6; font-size: 13px">{{ item.ID }}</span>
             </el-option>
           </el-select>
-        </el-form-item>
         </el-col>
-      <el-col :span="6">
-        <el-input v-model="form.AgentAddress" autocomplete="off" disabled></el-input>
-      </el-col>
-    </el-form-item>
+      </el-form-item>
+      <el-form-item :label="$t('__uniqueNumber')" label-width="100px" label-position="left">
+        <el-col :span="8">
+          <el-input v-model="form.CustomerID" autocomplete="off" disabled></el-input>
+        </el-col>
+      </el-form-item>
+      <el-form-item :label="$t('__home')+'/'+$t('__mobile')+$t('__tel')" label-width="100px" label-position="left">
+        <el-col :span="8" class="elInputWidth">
+          <el-input v-model="form.TelHome" autocomplete="off" disabled></el-input>
+          <el-input v-model="form.TelMobile" autocomplete="off" disabled></el-input>
+        </el-col>
+      </el-form-item>
+    </template>
     <el-form-item :label="$t('__eMail')" label-width="100px" label-position="left">
       <el-input v-model="form.EMail" autocomplete="off" disabled></el-input>
     </el-form-item>
@@ -128,6 +155,7 @@ export default {
       disableForm: {
         CustomerID: false
       },
+      showAgentData: true,
       // 以下為下拉式選單專用
       postData: [],
       ddlCountry: [],
@@ -150,6 +178,14 @@ export default {
       if (this.orderCustomer) {
         this.form = JSON.parse(JSON.stringify(this.orderCustomer))
 
+        // 是否顯示代理人區域
+        if (this.dialogType !== 'new') {
+          if (this.form.AgentID === '') {
+            this.showAgentData = false
+          }
+        }
+
+        // 切換城市下拉式選單
         this.ddlCityChange()
 
         // 法定代理人

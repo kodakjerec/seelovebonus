@@ -59,7 +59,7 @@ export default {
         break
       case 'edit':
         this.myTitle = this.$t('__edit') + this.$t('__groups')
-        this.form = this.group
+        this.form = JSON.parse(JSON.stringify(this.group))
         this.disableForm.GroupID = true
         break
     }

@@ -52,8 +52,8 @@
     </el-form>
     <div slot="footer" class="dialog-footer">
       <el-button @click="cancel">{{$t('__cancel')}}</el-button>
-      <el-button type="primary" @click="checkValidate">{{$t('__save')}}</el-button>
-      <el-button v-show="dialogType !== 'new'" type="danger" @click="delRecord">{{$t('__delete')}}</el-button>
+      <el-button v-show="buttonsShow.save" type="primary" @click="checkValidate">{{$t('__save')}}</el-button>
+      <el-button v-show="buttonsShow.delete" type="danger" @click="delRecord">{{$t('__delete')}}</el-button>
     </div>
   </el-dialog>
 </template>
@@ -98,6 +98,14 @@ export default {
         ReceivedDate: [{ required: true, message: this.$t('__pleaseInput'), trigger: 'blur' }],
         ReceivedID: [{ required: true, message: this.$t('__pleaseInput'), trigger: 'blur' }]
       },
+      // 系統目前狀態權限
+      buttonsShow: {
+        new: 1,
+        edit: 0,
+        save: 1,
+        delete: 0,
+        search: 1
+      },
       disableForm: {
         PaymentMethod: false,
         ReceivedDate: false,
@@ -115,7 +123,7 @@ export default {
     }
   },
   mounted () {
-    this.form = this.collectionRecord
+    this.form = JSON.parse(JSON.stringify(this.collectionRecord))
     switch (this.dialogType) {
       case 'new':
         this.myTitle = this.$t('__new') + this.$t('__collectionRecords')
@@ -129,6 +137,23 @@ export default {
         this.disableForm.BankID = true
         this.disableForm.ReceivedID = true
         this.disableForm.ChequeDate = true
+        if (this.form.Status === '0') {
+          this.buttonsShow = {
+            new: 0,
+            edit: 0,
+            save: 0,
+            delete: 0,
+            search: 0
+          }
+        } else {
+          this.buttonsShow = {
+            new: 1,
+            edit: 1,
+            save: 1,
+            delete: 1,
+            search: 1
+          }
+        }
         break
     }
     this.preloading()
@@ -207,10 +232,10 @@ export default {
     },
     // 刪除
     delRecord: async function () {
-      // if (this.form.InvoiceID !== '') {
-      //   this.$alert(this.$t('__collectioRecordsDeleteNo') + this.$t('__invoice') + this.$t('__number'), this.$t('__warrning'))
-      //   return
-      // }
+      if (this.form.InvoiceID !== '') {
+        this.$alert(this.$t('__collectioRecordsDeleteNo') + this.$t('__invoice') + this.$t('__number'), this.$t('__warrning'))
+        return
+      }
       let myObject = this
       this.$msgbox({
         message: this.$t('__delete') + this.$t('__collectionRecords'),

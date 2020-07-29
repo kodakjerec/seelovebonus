@@ -43,7 +43,7 @@
 </template>
 
 <script>
-import newForm from './collectionRecordsNewForm'
+import newForm from './certificate1NewForm'
 import { formatMoney, formatDate } from '@/setup/format.js'
 
 export default {
@@ -83,13 +83,13 @@ export default {
     preLoading: async function () {
       const responseRecords = await this.$api.orders.getObject({ type: 'certificate1Show', ID: this.orderID })
       this.certificate1Show = responseRecords.data.result
-      if (this.certificate1Show) {
+      if (this.certificate1Show && this.certificate1Show.length > 0) {
         this.activeName = '1'
       }
     },
     handleClick: async function (row, column, event) {
       // 取得可以用的選單
-      this.collectionRecord = row
+      this.certificate1 = row
 
       // 進入修改
       this.dialogType = 'edit'

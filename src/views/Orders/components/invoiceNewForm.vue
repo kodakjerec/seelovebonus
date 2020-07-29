@@ -80,6 +80,9 @@
       <el-form-item :label="$t('__memo')" label-width="100px" label-position="left">
           <el-input v-model="form.Memo" autocomplete="off" maxlength="200" show-word-limit></el-input>
       </el-form-item>
+      <el-form-item :label="$t('__amount')" label-width="100px" label-position="left">
+          <el-input v-model="form.Amount" autocomplete="off" disabled></el-input>
+      </el-form-item>
       <el-form-item>
         <el-collapse v-model="activeName" accordion="">
           <el-collapse-item :title="$t('__invoice')+$t('__detail')" name="1">
@@ -130,7 +133,7 @@
       <br/>
       <el-button @click="cancel">{{$t('__cancel')}}</el-button>
       <el-button v-show="buttonsShow.save" type="primary" @click="checkValidate">{{$t('__save')}}</el-button>
-      <el-button v-show="buttonsShow.delete && dialogType !== 'new'" type="danger" @click="delInvoice">{{$t('__invalid')+$t('__invoice')}}</el-button>
+      <el-button v-show="buttonsShow.delete" type="danger" @click="delInvoice">{{$t('__invalid')+$t('__invoice')}}</el-button>
     </div>
   </el-dialog>
 </template>
@@ -299,6 +302,9 @@ export default {
     // 選擇收款紀錄
     handleSelectionChange: function (selection) {
       this.multipleSelection = selection
+      let totalAmount = 0
+      this.multipleSelection.forEach(item => { totalAmount += item.Amount })
+      this.form.Amount = totalAmount
     },
     // 取消
     cancel: function () {

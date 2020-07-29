@@ -89,7 +89,7 @@ export default {
         break
       case 'edit':
         this.myTitle = this.$t('__edit') + this.$t('__users')
-        this.form = this.user
+        this.form = JSON.parse(JSON.stringify(this.user))
         this.disableForm.UserID = true
         this.disableForm.Password = true
         break

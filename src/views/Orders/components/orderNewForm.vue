@@ -275,18 +275,28 @@ export default {
         break
       case 'edit':
         this.myTitle = this.$t('__edit') + this.$t('__orderPaper')
-        this.form = this.order
+        this.form = JSON.parse(JSON.stringify(this.order))
         this.disableForm.ProjectID = true
         this.disableForm.Qty = true
         this.disableForm.OrderDate = true
         this.disableForm.CreateID = true
         this.ddlProjectChange(this.form.ProjectID)
-        this.buttonsShow = {
-          new: 1,
-          edit: 1,
-          save: 1,
-          delete: 1,
-          search: 1
+        if (this.form.Status === '0') {
+          this.buttonsShow = {
+            new: 0,
+            edit: 0,
+            save: 0,
+            delete: 0,
+            search: 0
+          }
+        } else {
+          this.buttonsShow = {
+            new: 1,
+            edit: 1,
+            save: 1,
+            delete: 1,
+            search: 1
+          }
         }
         break
     }
@@ -387,12 +397,12 @@ export default {
       if (!isSuccess) { return }
 
       // 檢查主表單
-      this.$refs['form'].validate((valid) => {
-        if (valid) {
-          this.beforeSave()
-          return true
-        }
-      })
+      await this.$refs['form'].validate((valid) => { isSuccess = valid })
+
+      if (isSuccess) {
+        this.beforeSave()
+        return true
+      }
     },
     beforeSave: async function () {
       // 驗證 訂單
@@ -415,8 +425,8 @@ export default {
           break
         case 'edit':
           let isSuccessEdit = await this.save(this.dialogType)
-          isSuccess = await this.$refs['orderDetail'].beforeSave()
-          isSuccess = await this.$refs['orderCustomer'].save()
+          isSuccessEdit = await this.$refs['orderDetail'].beforeSave()
+          isSuccessEdit = await this.$refs['orderCustomer'].save()
           if (isSuccessEdit) {
             this.$alert(this.$t('__uploadSuccess'), 200, {
               callback: () => {
@@ -448,7 +458,6 @@ export default {
         case 'new':
           const responseNew = await this.$api.orders.orderNew({ form: this.form })
           if (responseNew.status === 200) {
-            this.$alert(responseNew.data.result[0].message, responseNew.data.result[0].code)
             isSuccess = true
             // 取得單號回填後續資料
             this.form.ID = responseNew.data.result[0].ID
@@ -457,7 +466,6 @@ export default {
         case 'delete':
           const responseDelete = await this.$api.orders.orderDelete({ form: this.form })
           if (responseDelete.status === 200) {
-            this.$alert(responseDelete.data.result[0].message, responseDelete.data.result[0].code)
             isSuccess = true
           }
           break
@@ -487,8 +495,20 @@ export default {
                 delete: 0,
                 search: 0
               }
-              setTimeout(() => {
-                myObject.save('delete')
+              setTimeout(async () => {
+                let isSuccessEdit = await myObject.save('delete')
+                if (isSuccessEdit) {
+                  myObject.$alert(myObject.$t('__uploadSuccess'), 200, {
+                    callback: () => {
+                      myObject.$router.push({
+                        name: myObject.parent,
+                        params: {
+                          returnType: 'save'
+                        }
+                      })
+                    }
+                  })
+                }
               }, 300)
               break
             case 'cancel':

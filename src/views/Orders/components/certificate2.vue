@@ -7,13 +7,13 @@
         </el-button-group>
         <p/>
         <el-table
-          :data="certificae2Show"
+          :data="certificate2Show"
           stripe
           border
           @row-click="handleClick"
           style="width: 100%">
           <el-table-column
-            prop="Certificae2"
+            prop="Certificate2"
             :label="$t('__certificate2')">
           </el-table-column>
           <el-table-column
@@ -36,18 +36,18 @@
     v-if="dialogShow"
     :dialog-type="dialogType"
     :dialog-show="dialogShow"
-    :certificae2="certificae2"
+    :certificate2="certificate2"
     @dialog-cancel="dialogCancel()"
     @dialog-save="dialogSave()"></new-form>
   </el-form>
 </template>
 
 <script>
-import newForm from './collectionRecordsNewForm'
+import newForm from './certificate2NewForm'
 import { formatMoney, formatDate } from '@/setup/format.js'
 
 export default {
-  name: 'Certificae2',
+  name: 'Certificate2',
   components: {
     newForm
   },
@@ -60,8 +60,8 @@ export default {
     return {
       dialogType: 'new',
       dialogShow: false,
-      certificae2Show: [],
-      certificae2: {},
+      certificate2Show: [],
+      certificate2: {},
       activeName: ''
     }
   },
@@ -81,9 +81,9 @@ export default {
       return formatMoney(cellValue)
     },
     preLoading: async function () {
-      const responseRecords = await this.$api.orders.getObject({ type: 'certificae2Show', ID: this.orderID })
-      this.certificae2Show = responseRecords.data.result
-      if (this.certificae2Show) {
+      const responseRecords = await this.$api.orders.getObject({ type: 'certificate2Show', ID: this.orderID })
+      this.certificate2Show = responseRecords.data.result
+      if (this.certificate2Show && this.certificate2Show.length > 0) {
         this.activeName = '1'
       }
     },
@@ -97,9 +97,9 @@ export default {
     },
     // 開啟表單
     showForm: async function (eventType) {
-      this.certificae2 = {
+      this.certificate2 = {
         OrderID: this.orderID,
-        Certificae2: null,
+        Certificate2: null,
         PrintCount: 0,
         Status: '1'
       }
