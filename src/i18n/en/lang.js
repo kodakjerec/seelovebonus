@@ -13,6 +13,7 @@ export default {
   __invalid: 'Invalid',
   __save: 'Save',
   __print: 'Print',
+  __toExcel: 'Download Excel',
   __theFollingIs: 'The folling is',
   __theAboveIs: 'The ablove is',
   __plzChoice: 'Please Choice',
@@ -127,6 +128,7 @@ export default {
   __warrning: 'Warrning',
   __binding: 'Binding',
   __collectioRecordsDeleteNo: 'Can\'t delete record, please check ',
+  __refEmployeeIDForUser: 'Ref. ID',
   // 請在上方新增字串
   // 以下為錯誤處理專用
   __error400: 'Bad Request',
@@ -143,6 +145,7 @@ export default {
   __pleaseInputLength: 'Input Length must larger then ',
   __pleaseInputPhoneLength: 'Phone Number Length is not enough',
   __pleaseInputPhoneStyle: 'Style: 02-12345678, 037-123456, 0980-123456',
+  __pleaseInputPersonalID: 'ID style is\'t correct',
   __plzInputCardNumber: 'Input last 4 numbers, ex: 5678',
   __pleaseInputInvoiceID: 'Style: AB12345678',
   __pleaseSelectAtLeastOne: 'Select at least one '

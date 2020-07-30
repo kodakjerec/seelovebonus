@@ -15,7 +15,7 @@
           </el-option>
         </el-select>
       </el-form-item>
-      <el-form-item :label="$t('__refEmployeeID')" prop="refEmployeeID">
+      <el-form-item :label="$t('__refEmployeeIDForUser')" prop="refEmployeeID">
         <el-select v-model="form.refEmployeeID" value-key="value" :placeholder="$t('__plzChoice')">
           <el-option v-for="item in ddlEmployee" :key="item.ID" :label="item.Value" :value="item.ID">
             <span style="float: left">{{ item.Value }}</span>

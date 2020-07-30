@@ -1,8 +1,23 @@
 <template>
   <el-dialog :title="myTitle" :visible="dialogShow" center width="80%" @close="cancel">
     <el-form ref="form" :model="form" :rules="rules" label-width="20%">
-      <el-form-item :label="$t('__employee')+$t('__id')" prop="ID">
-        <el-input v-model="form.ID" autocomplete="off" :disabled="disableForm.ID" maxlength="20" show-word-limit></el-input>
+      <el-form-item :label="$t('__employee')+$t('__id')">
+        <el-col :span="4" v-show="!disableForm.ID">
+          <el-select v-model="IDType" value-key="value" :placeholder="$t('__plzChoice')">
+            <el-option v-for="item in ddlIDType" :key="item.ID" :label="item.Value" :value="item.ID">
+              <span style="float: left">{{ item.Value }}</span>
+              <span style="float: right; color: #8492a6; font-size: 13px">{{ item.ID }}</span>
+            </el-option>
+          </el-select>
+        </el-col>
+        <el-col :span="12">
+          <el-form-item prop="ID" v-if="IDType === '1'">
+            <el-input v-model="form.ID" autocomplete="off" maxlength="10" show-word-limit :disabled="disableForm.ID"></el-input>
+          </el-form-item>
+          <el-form-item v-else>
+            <el-input required v-model="form.ID" autocomplete="off" maxlength="20" show-word-limit :disabled="disableForm.ID"></el-input>
+          </el-form-item>
+        </el-col>
       </el-form-item>
       <el-form-item :label="$t('__employee')+$t('__name')" prop="Name">
           <el-input v-model="form.Name" autocomplete="off" maxlength="40" show-word-limit></el-input>
@@ -31,7 +46,7 @@
         </el-col>
       </el-form-item>
       <el-form-item :label="$t('__parent')+$t('__id')" prop="ParentID">
-        <el-select v-model="form.ParentID" value-key="value" :placeholder="$t('__plzChoice')">
+        <el-select v-model="form.ParentID" value-key="value" :placeholder="$t('__plzChoice')" :disabled="!(form.CompanyID !== null)">
           <el-option v-for="item in ddlParentID" :key="item.ID" :label="item.Value" :value="item.ID">
             <span style="float: left">{{ item.Value }}</span>
             <span style="float: right; color: #8492a6; font-size: 13px">{{ item.ID }}</span>
@@ -167,7 +182,7 @@ export default {
         Memo: ''
       },
       rules: {
-        ID: [{ required: true, message: this.$t('__pleaseInput'), trigger: 'blur' }],
+        ID: [{ trigger: 'blur', validator: validate.validatePersonalID }],
         Name: [{ required: true, message: this.$t('__pleaseInput'), trigger: 'blur' }],
         TelHome: [{ trigger: 'blur', validator: validate.validatePhone }],
         TelMobile: [{ trigger: 'blur', validator: validate.validatePhone }],
@@ -180,6 +195,7 @@ export default {
       disableForm: {
         ID: false
       },
+      IDType: '1',
       myTitle: '',
       // 以下為下拉式選單專用
       // Settings資料
@@ -192,7 +208,8 @@ export default {
       ddlStatus: [],
       ddlGrade: [],
       ddlCompanyID: [],
-      ddlParentID: []
+      ddlParentID: [],
+      ddlIDType: []
     }
   },
   mounted () {
@@ -205,6 +222,7 @@ export default {
         this.myTitle = this.$t('__edit') + this.$t('__employee')
         this.form = JSON.parse(JSON.stringify(this.employee))
         this.disableForm.ID = true
+        this.IDType = '2' // 修改狀態不要檢核ID
         break
     }
     this.preloading()
@@ -230,6 +248,9 @@ export default {
       this.ddlStatus = response3.data.result
       const response4 = await this.$api.basic.getDropdownList({ type: 'grade' })
       this.ddlGrade = response4.data.result
+      const response5 = await this.$api.basic.getDropdownList({ type: 'idType' })
+      this.ddlIDType = response5.data.result
+
       this.ddlCompanyID = this.companiesData
       this.ddlCompanyIDChange()
     },

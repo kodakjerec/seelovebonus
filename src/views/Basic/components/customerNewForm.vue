@@ -1,8 +1,23 @@
 <template>
   <el-dialog :title="myTitle" :visible="dialogShow" center width="80%" @close="cancel">
     <el-form ref="form" :model="form" :rules="rules" label-width="20%">
-      <el-form-item :label="$t('__customer')+$t('__id')" prop="ID">
-        <el-input v-model="form.ID" autocomplete="off" :placeholder="$t('__palceholderCustomerID')" :disabled="disableForm.ID" maxlength="20" show-word-limit></el-input>
+      <el-form-item :label="$t('__employee')+$t('__id')">
+        <el-col :span="4" v-show="!disableForm.ID">
+          <el-select v-model="IDType" value-key="value" :placeholder="$t('__plzChoice')">
+            <el-option v-for="item in ddlIDType" :key="item.ID" :label="item.Value" :value="item.ID">
+              <span style="float: left">{{ item.Value }}</span>
+              <span style="float: right; color: #8492a6; font-size: 13px">{{ item.ID }}</span>
+            </el-option>
+          </el-select>
+        </el-col>
+        <el-col :span="12">
+          <el-form-item prop="ID" v-if="IDType === '1'">
+            <el-input v-model="form.ID" autocomplete="off" maxlength="10" show-word-limit :disabled="disableForm.ID"></el-input>
+          </el-form-item>
+          <el-form-item v-else>
+            <el-input required v-model="form.ID" autocomplete="off" maxlength="20" show-word-limit :disabled="disableForm.ID"></el-input>
+          </el-form-item>
+        </el-col>
       </el-form-item>
       <el-form-item :label="$t('__customer')+$t('__name')" prop="Name">
         <el-col :span="10">
@@ -236,7 +251,7 @@ export default {
         Referrer: ''
       },
       rules: {
-        ID: [{ required: true, message: this.$t('__pleaseInput'), trigger: 'blur' }],
+        ID: [{ trigger: 'blur', validator: validate.validatePersonalID }],
         Name: [{ required: true, message: this.$t('__pleaseInput'), trigger: 'blur' }],
         TelHome: [{ trigger: 'blur', validator: validate.validatePhone }],
         TelMobile: [{ trigger: 'blur', validator: validate.validatePhone }],
@@ -245,6 +260,7 @@ export default {
       disableForm: {
         ID: false
       },
+      IDType: '1',
       myTitle: '',
       activeName: '',
       // 以下為下拉式選單專用
@@ -265,7 +281,8 @@ export default {
       // 法定代理人專用下拉式選單
       ddlAgentCountry: [],
       ddlAgentCity: [],
-      ddlAgentPost: []
+      ddlAgentPost: [],
+      ddlIDType: []
     }
   },
   mounted () {
@@ -278,6 +295,7 @@ export default {
         this.myTitle = this.$t('__edit') + this.$t('__customer')
         this.form = JSON.parse(JSON.stringify(this.customer))
         this.disableForm.ID = true
+        this.IDType = '2' // 修改狀態不要檢核ID
         // 有法定代理人打開面板
         if (this.form.AgentID !== '') {
           this.activeName = '1'
@@ -313,6 +331,8 @@ export default {
       this.ddlRefKind = response5.data.result
       this.ddlRefKindChange()
       this.ddlEmployeeID = this.employeesData
+      const response6 = await this.$api.basic.getDropdownList({ type: 'idType' })
+      this.ddlIDType = response6.data.result
 
       // 法定代理人
       this.ddlAgentID = this.customersData

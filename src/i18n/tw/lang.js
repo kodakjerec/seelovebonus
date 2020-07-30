@@ -13,6 +13,7 @@ export default {
   __invalid: '作廢',
   __save: '存檔',
   __print: '列印',
+  __toExcel: '下載Excel',
   __theFollingIs: '以下為',
   __theAboveIs: '以上為',
   __plzChoice: '請選擇',
@@ -127,6 +128,7 @@ export default {
   __warrning: '警告',
   __binding: '綁定',
   __collectioRecordsDeleteNo: '無法刪除付款資訊，請檢查 ',
+  __refEmployeeIDForUser: '關連員工帳號',
   // 請在上方新增字串
   // 以下為錯誤處理專用
   __error400: '無法理解請求',
@@ -143,6 +145,7 @@ export default {
   __pleaseInputLength: '輸入長度請超過 ',
   __pleaseInputPhoneLength: '電話格式長度不足',
   __pleaseInputPhoneStyle: '格式: 02-12345678, 037-123456, 0980-123456',
+  __pleaseInputPersonalID: '身分證格式有誤',
   __plzInputCardNumber: '請輸入末四碼, 格式: 5678',
   __pleaseInputInvoiceID: '格式: AB12345678',
   __pleaseSelectAtLeastOne: '請至少選擇一筆 '

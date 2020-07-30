@@ -118,6 +118,36 @@ const validate = {
   // 驗證身分證字號
   // TODO
   validatePersonalID: (rule, value, callback) => {
+    value = value.toUpperCase()
+    let regex = /^[A-Z]{1}[1-2]{1}[0-9]{8}$/
+    if (!regex.test(value)) {
+      callback(new Error(i18n.t('__pleaseInputPersonalID') + '1'))
+    }
+    // 驗證正確性
+    // 宣告一個陣列放入A~Z相對應數字的順序
+    let Esum = null
+    let Nsum = null
+    let country = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'J', 'K', 'L', 'M', 'N', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'X', 'Y', 'W', 'Z', 'I', 'O']
+    for (let index = 0; index < country.length; index++) {
+      if (value[0] === country[index]) {
+        // A是從10開始編碼,每個英文的碼都跟index差異10,先加回來
+        index += 10
+        Esum = (((index % 10) * 9) + (index / 10))
+        // 英文轉成的數字, 個位數(把數字/10取餘數)乘９再加上十位數
+        // 加上十位數(數字/10,因為是int,後面會直接捨去)
+        break
+      }
+    }
+    // 從第二個數字開始跑,每個數字*相對應權重
+    for (let i = 1; i < 9; i++) {
+      Nsum += parseInt(value[i]) * (9 - i)
+    }
+    // 把上述的總和加起來,取餘數後,10-該餘數為檢查碼,要等於最後一個數字
+    let count = 10 - ((Esum + Nsum) % 10)
+    // 判斷計算總和是不是等於檢查碼
+    if (count !== parseInt(value[9])) {
+      callback(new Error(i18n.t('__pleaseInputPersonalID') + '2'))
+    }
     callback()
   },
   // 驗證發票號碼

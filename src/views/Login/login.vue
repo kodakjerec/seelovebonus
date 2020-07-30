@@ -8,10 +8,10 @@
     <el-card class="box-card">
       <el-form ref="form" :model="form" :rules="rules" label-width="80px">
         <el-form-item :label="$t('__userId')" prop="id">
-          <el-input v-model="form.id"></el-input>
+          <el-input v-model="form.id" autocomplete></el-input>
         </el-form-item>
         <el-form-item :label="$t('__pwd')" prop="pwd">
-          <el-input v-model="form.pwd"></el-input>
+          <el-input v-model="form.pwd" show-password></el-input>
         </el-form-item>
       </el-form>
       <el-button class="submitButton" type="primary" @click="submit">{{$t('__login')}}</el-button>
