@@ -7,6 +7,13 @@
       <el-form-item :label="$t('__pwd')" prop="Password">
         <el-input v-model="form.Password" autocomplete="off" :disabled="disableForm.Password" maxlength="20" show-word-limit></el-input>
       </el-form-item>
+      <new-form
+        v-if="dialogShowUpdatePassword"
+        :dialog-type="dialogTypeUpdatePassword"
+        :dialog-show="dialogShowUpdatePassword"
+        :user="user"
+        @dialog-cancel="dialogCancel()"
+        @dialog-save="dialogSave()"></new-form>
       <el-form-item :label="$t('__groups')" prop="GroupID">
         <el-select v-model="form.GroupID" value-key="value" :placeholder="$t('__plzChoice')">
           <el-option v-for="item in ddlGroup" :key="item.ID" :label="item.Value" :value="item.ID">
@@ -42,13 +49,16 @@
      -->
     <div slot="footer" class="dialog-footer">
       <el-button @click="cancel">{{$t('__cancel')}}</el-button>
-      <el-button type="primary" @click="checkValidate">{{$t('__save')}}</el-button>
+      <el-button v-show="buttonsShow.save && buttonsShowUser.save" type="primary" @click="checkValidate">{{$t('__save')}}</el-button>
+      <el-button v-show="buttonsShow.delete && buttonsShowUser.delete" type="danger" @click.prevent="showForm('edit')">{{$t('__edit')+$t('__pwd')}}</el-button>
     </div>
   </el-dialog>
 </template>
 
 <script>
 import validate from '@/setup/validate.js'
+import newForm from './userUpdatePassword'
+
 export default {
   name: 'UserNewForm',
   props: {
@@ -56,6 +66,9 @@ export default {
     dialogShow: { type: Boolean, default: false },
     user: { type: Object },
     progList: { type: Array }
+  },
+  components: {
+    newForm
   },
   data () {
     return {
@@ -71,11 +84,29 @@ export default {
         GroupID: [{ required: true, message: this.$t('__pleaseInput'), trigger: 'blur' }],
         refEmployeeID: [{ required: true, message: this.$t('__pleaseInput'), trigger: 'blur' }]
       },
+      // 系統目前狀態權限
+      buttonsShow: {
+        new: 1,
+        edit: 0,
+        save: 1,
+        delete: 0,
+        search: 1
+      },
+      // 使用者能看到的權限
+      buttonsShowUser: {
+        new: 1,
+        edit: 1,
+        save: 1,
+        delete: 1,
+        search: 1
+      },
       disableForm: {
         UserID: false,
         Password: false
       },
       myTitle: '',
+      dialogTypeUpdatePassword: 'edit',
+      dialogShowUpdatePassword: false,
       ddlGroup: [],
       ddlEmployee: []
     }
@@ -84,14 +115,19 @@ export default {
     switch (this.dialogType) {
       case 'new':
         this.myTitle = this.$t('__new') + this.$t('__users')
-        this.disableForm.UserID = false
-        this.disableForm.Password = false
         break
       case 'edit':
         this.myTitle = this.$t('__edit') + this.$t('__users')
         this.form = JSON.parse(JSON.stringify(this.user))
         this.disableForm.UserID = true
         this.disableForm.Password = true
+        this.buttonsShow = {
+          new: 1,
+          edit: 1,
+          save: 1,
+          delete: 1,
+          search: 1
+        }
         break
     }
 
@@ -179,6 +215,17 @@ export default {
           break
       }
       if (isSuccess) { this.$emit('dialog-save') }
+    },
+    // 開啟表單
+    showForm: function (eventType) {
+      this.dialogTypeUpdatePassword = eventType
+      this.dialogShowUpdatePassword = true
+    },
+    dialogCancel: function () {
+      this.dialogShowUpdatePassword = false
+    },
+    dialogSave: function () {
+      this.dialogShowUpdatePassword = false
     }
   }
 }

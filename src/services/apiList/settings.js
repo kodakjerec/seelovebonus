@@ -49,6 +49,15 @@ export default {
         return data
       })
     },
+    userUpdatePassword: ({ form }) => {
+      form.UserID = crypto.encrypt(form.UserID)
+      form.Password = crypto.encrypt(form.Password)
+      let rawData = { form }
+      return post('/settings/userUpdatePassword', rawData).then(data => {
+        console.log(`%c <<< Response(/rest/settings/userUpdatePassword)⤵ `, 'background-color: #E0455D; color: white; font-size: 14px; font-weight: bold;', data)
+        return data
+      })
+    },
     groupProgListDel: ({ GroupID, ProgID }) => {
       let rawData = { GroupID, ProgID }
       return post('/settings/groupProgListDel', rawData).then(data => {

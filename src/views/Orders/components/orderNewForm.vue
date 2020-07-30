@@ -168,8 +168,8 @@
     <div slot="footer" class="dialog-footer">
       <br/>
       <el-button @click="cancel">{{$t('__cancel')}}</el-button>
-      <el-button type="primary" @click="checkValidate" v-show="buttonsShow.save && buttonsShowUser.save">{{$t('__save')}}</el-button>
-      <el-button type="danger" @click="delOrder" v-show="buttonsShow.delete && buttonsShowUser.delete">{{$t('__deleteFile')}}</el-button>
+      <el-button v-show="buttonsShow.save && buttonsShowUser.save" type="primary" @click="checkValidate">{{$t('__save')}}</el-button>
+      <el-button v-show="buttonsShow.delete && buttonsShowUser.delete" type="danger" @click="delOrder">{{$t('__deleteFile')}}</el-button>
     </div>
   </div>
 </template>
