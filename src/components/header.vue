@@ -18,12 +18,12 @@
           </el-menu-item>
         </el-submenu>
       </template>
+      <el-menu-item>
+        {{userName}}, {{$t('__hello')}}
+      </el-menu-item>
       <el-menu-item index="/" class="defineCSS">
         <i class="el-icon-switch-button"></i>
         <span>{{$t('__logout')}}</span>
-      </el-menu-item>
-      <el-menu-item>
-        {{userName}}, {{$t('__hello')}}
       </el-menu-item>
     </el-menu>
 </template>
@@ -43,14 +43,26 @@ export default {
     ...mapState(['isLogin', 'userName', 'menuList'])
   },
   methods: {
-    handleSelect (key, keyPath) {
-      router.push(key)
+    handleSelect: function (key, keyPath) {
+      switch (key) {
+        case '/':
+          this.$api.login.logout({
+            UserID: this.$store.state.UserID
+          })
+          break
+        default:
+      }
+      router.replace(key)
     }
   }
 }
 </script>
 <style lang="scss" scoped>
-.defineCSS i {
-  color: yellow
+.defineCSS {
+  position: absolute;
+  right:0px;
+  i {
+    color: yellow
+  }
 }
 </style>

@@ -12,6 +12,14 @@ export default {
         return data
       })
     },
+    logout: ({ UserID }) => {
+      UserID = crypto.encrypt(UserID)
+      let rawData = { UserID }
+      return post('/login/logout', rawData).then(data => {
+        console.log(`%c <<< Response(/rest/login/logout)⤵ `, 'background-color: #E0455D; color: white; font-size: 14px; font-weight: bold;', data)
+        return data
+      })
+    },
     getMenu: ({ UserID }) => {
       UserID = crypto.encrypt(UserID)
       let rawData = { UserID }

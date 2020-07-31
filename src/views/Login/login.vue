@@ -7,14 +7,14 @@
     ></el-image>
     <el-card class="box-card">
       <el-form ref="form" :model="form" :rules="rules" label-width="80px">
-        <el-form-item :label="$t('__userId')" prop="id">
-          <el-input v-model="form.id" autocomplete></el-input>
+        <el-form-item :label="$t('__userId')" prop="UserID">
+          <el-input v-model="form.UserID" autocomplete></el-input>
         </el-form-item>
-        <el-form-item :label="$t('__pwd')" prop="pwd">
-          <el-input v-model="form.pwd" show-password></el-input>
+        <el-form-item :label="$t('__pwd')" prop="Password">
+          <el-input v-model="form.Password" show-password></el-input>
         </el-form-item>
       </el-form>
-      <el-button class="submitButton" type="primary" @click="submit">{{$t('__login')}}</el-button>
+      <el-button class="submitButton" type="primary" @click.prevent="submit">{{$t('__login')}}</el-button>
     </el-card>
     <div>
       <br>
@@ -32,22 +32,20 @@
 <script>
 import router from '@/router'
 import i18n from '@/setup/setupLocale'
+import validate from '@/setup/validate.js'
+
 export default {
   name: 'Login',
   data () {
     return {
       language: true,
       form: {
-        id: '',
-        pwd: ''
+        UserID: '',
+        Password: ''
       },
       rules: {
-        id: [
-          { required: true, message: this.$t('__pleaseInputUserID'), trigger: 'blur' }
-        ],
-        pwd: [
-          { required: true, message: this.$t('__pleaseInputPassword'), trigger: 'blur' }
-        ]
+        UserID: [{ required: true, validator: validate.validateUserIDAndPassword, trigger: 'blur' }],
+        Password: [{ required: true, validator: validate.validateUserIDAndPassword, trigger: 'blur' }]
       }
     }
   },
@@ -105,8 +103,8 @@ export default {
     // 送出登入API
     login: async function () {
       const response = await this.$api.login.login({
-        UserID: this.form.id,
-        Password: this.form.pwd
+        UserID: this.form.UserID,
+        Password: this.form.Password
       })
 
       // 成功登入
@@ -120,7 +118,7 @@ export default {
 
         // 讀入menu
         const response2 = await this.$api.login.getMenu({
-          UserID: this.form.id
+          UserID: this.form.UserID
         })
 
         this.$store.dispatch('setMenuList', response2.data)
