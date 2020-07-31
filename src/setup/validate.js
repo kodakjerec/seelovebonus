@@ -132,7 +132,7 @@ const validate = {
       if (value[0] === country[index]) {
         // A是從10開始編碼,每個英文的碼都跟index差異10,先加回來
         index += 10
-        Esum = (((index % 10) * 9) + (index / 10))
+        Esum = (((index % 10) * 9) + Math.floor(index / 10))
         // 英文轉成的數字, 個位數(把數字/10取餘數)乘９再加上十位數
         // 加上十位數(數字/10,因為是int,後面會直接捨去)
         break
