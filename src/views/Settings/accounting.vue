@@ -32,7 +32,7 @@ export default {
   methods: {
     // 讀入使用者清單
     preLoading: async function () {
-      const response = await this.$api.settings.getSetting({ type: 'accounting' })
+      const response = await this.$api.settings.getDropdownList({ type: 'accounting' })
       this.accountingList = response.data.result
     },
     // 重整畫面

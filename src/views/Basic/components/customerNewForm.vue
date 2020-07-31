@@ -313,7 +313,7 @@ export default {
 
       const responseCustomers = await this.$api.basic.getDropdownList({ type: 'customers' })
       this.customersData = responseCustomers.data.result
-      const responseEmployees = await this.$api.basic.getDropdownList({ type: 'customerEmployees' })
+      const responseEmployees = await this.$api.basic.getDropdownList({ type: 'employees' })
       this.employeesData = responseEmployees.data.result
       const responseCompanies = await this.$api.basic.getDropdownList({ type: 'companies' })
       this.companiesData = responseCompanies.data.result
@@ -330,9 +330,10 @@ export default {
       const response5 = await this.$api.basic.getDropdownList({ type: 'refKind' })
       this.ddlRefKind = response5.data.result
       this.ddlRefKindChange()
-      this.ddlEmployeeID = this.employeesData
       const response6 = await this.$api.basic.getDropdownList({ type: 'idType' })
       this.ddlIDType = response6.data.result
+      const response7 = await this.$api.basic.getDropdownList({ type: 'employeesList' })
+      this.ddlEmployeeID = response7.data.result
 
       // 法定代理人
       this.ddlAgentID = this.customersData

@@ -234,7 +234,7 @@ export default {
       const response = await this.$api.basic.getDropdownList({ type: 'post' })
       this.postData = response.data.result
 
-      const responseEmployees = await this.$api.basic.getDropdownList({ type: 'employees' })
+      const responseEmployees = await this.$api.basic.getDropdownList({ type: 'employeeParent' })
       this.employeesData = responseEmployees.data.result
       const responseCompanies = await this.$api.basic.getDropdownList({ type: 'companies' })
       this.companiesData = responseCompanies.data.result

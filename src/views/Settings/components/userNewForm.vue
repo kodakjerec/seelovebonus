@@ -30,6 +30,14 @@
           </el-option>
         </el-select>
       </el-form-item>
+      <el-form-item :label="$t('__status')">
+        <el-select v-model="form.Status" value-key="value" :placeholder="$t('__plzChoice')">
+          <el-option v-for="item in ddlStatus" :key="item.ID" :label="item.Value" :value="item.ID">
+            <span style="float: left">{{ item.Value }}</span>
+            <span style="float: right; color: #8492a6; font-size: 13px">{{ item.ID }}</span>
+          </el-option>
+        </el-select>
+      </el-form-item>
     </el-form>
     <!-- <el-table :data="progList" ref="multipleTable"  @selection-change="handleSelectionChange">
       <el-table-column
@@ -76,7 +84,8 @@ export default {
         UserID: '',
         Password: '',
         GroupID: '',
-        refEmployeeID: ''
+        refEmployeeID: '',
+        Status: '1'
       },
       rules: {
         UserID: [{ required: true, validator: validate.validateUserIDAndPassword, trigger: 'blur' }],
@@ -108,6 +117,7 @@ export default {
       dialogTypeUpdatePassword: 'edit',
       dialogShowUpdatePassword: false,
       ddlGroup: [],
+      ddlStatus: [],
       ddlEmployee: []
     }
   },
@@ -141,11 +151,12 @@ export default {
   methods: {
     // 取得群組清單
     getDropDownList: async function () {
-      const response1 = await this.$api.settings.getSetting({ type: 'groupsList' })
+      const response1 = await this.$api.settings.getDropdownList({ type: 'groupsList' })
       this.ddlGroup = response1.data.result
-
-      const response2 = await this.$api.settings.getSetting({ type: 'employeesList' })
+      const response2 = await this.$api.settings.getDropdownList({ type: 'employeesList' })
       this.ddlEmployee = response2.data.result
+      const response3 = await this.$api.settings.getDropdownList({ type: 'status' })
+      this.ddlStatus = response3.data.result
     },
     toggleSelection: function (rows) {
       if (rows) {

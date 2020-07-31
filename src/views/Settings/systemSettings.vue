@@ -75,7 +75,7 @@ export default {
   methods: {
     // 讀入系統清單
     preLoading: async function () {
-      const response = await this.$api.settings.getSetting({ type: 'systemSettings' })
+      const response = await this.$api.settings.getDropdownList({ type: 'systemSettings' })
       this.settingsOrigin = response.data.result
 
       let arrayDistinctCategory = [...new Set(this.settingsOrigin.map(item => item.Category))]

@@ -24,10 +24,10 @@ export default {
         return data
       })
     },
-    getSetting: ({ type }) => {
+    getDropdownList: ({ type }) => {
       let rawData = { type }
-      return post('/settings/getSetting', rawData).then(data => {
-        console.log(`%c <<< Response(/rest/settings/getSetting)⤵ `, 'background-color: #E0455D; color: white; font-size: 14px; font-weight: bold;', data)
+      return post('/settings/getDropdownList', rawData).then(data => {
+        console.log(`%c <<< Response(/rest/settings/getDropdownList)⤵ `, 'background-color: #E0455D; color: white; font-size: 14px; font-weight: bold;', data)
         return data
       })
     },
