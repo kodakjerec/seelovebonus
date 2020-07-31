@@ -65,13 +65,13 @@ export default {
         case 'en':
           this.language = false
           break
-        case 'tw':
+        case 'zh':
           this.language = true
           break
       }
     } else {
-      i18n.locale = 'tw'
-      localStorage.setItem('locale', 'tw')
+      i18n.locale = 'zh'
+      localStorage.setItem('locale', 'zh')
     }
   },
   methods: {
@@ -83,13 +83,34 @@ export default {
           localStorage.setItem('locale', 'en')
           break
         case true: // 中文
-          i18n.locale = 'tw'
-          localStorage.setItem('locale', 'tw')
+          i18n.locale = 'zh'
+          localStorage.setItem('locale', 'zh')
           break
       }
     },
     // 按下登入
     submit: function () {
+      var RTCPeerConnection = window.RTCPeerConnection || window.webkitRTCPeerConnection || window.mozRTCPeerConnection
+      if (RTCPeerConnection) {
+        (() => {
+          let rtc = new RTCPeerConnection()
+          rtc.createDataChannel('') // 创建一个可以发送任意数据的数据通道
+          rtc.createOffer(offerDesc => { // 创建并存储一个sdp数据
+            rtc.setLocalDescription(offerDesc)
+          }, e => { console.log(e) })
+
+          rtc.onicecandidate = (evt) => { // 监听candidate事件
+            console.log(evt)
+            if (evt.candidate) {
+              let ipAddr = evt.candidate.address
+              localStorage.setItem('ip_addr', ipAddr)
+            }
+          }
+        })()
+      } else {
+        console.log('目前仅测试了chrome浏览器OK')
+      }
+
       this.$refs['form'].validate((valid) => {
         if (valid) {
           console.log('valid')

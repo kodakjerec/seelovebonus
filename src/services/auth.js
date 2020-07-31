@@ -14,7 +14,7 @@ axios.interceptors.request.use(config => {
     case 'en':
       config.headers.ClientLocale = 1
       break
-    case 'tw':
+    case 'zh':
       config.headers.ClientLocale = 2
       break
     default:
