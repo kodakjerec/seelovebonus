@@ -43,10 +43,10 @@ export default {
     ...mapState(['isLogin', 'userName', 'menuList'])
   },
   methods: {
-    handleSelect: function (key, keyPath) {
+    handleSelect: async function (key, keyPath) {
       switch (key) {
         case '/':
-          this.$api.login.logout({
+          await this.$api.login.logout({
             UserID: this.$store.state.UserID
           })
           break
