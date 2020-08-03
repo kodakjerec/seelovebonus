@@ -43,8 +43,8 @@
         </el-col>
         <el-col :span="10">
           <el-form-item prop="Referrer">
-            <el-select v-model="form.Referrer" value-key="value" :placeholder="$t('__plzChoice')" @change="ddlReferrerChange">
-              <el-option v-for="item in ddlReferrer" :key="item.ID" :label="item.Value" :value="item.ID">
+            <el-select v-model="form.Referrer" filterable value-key="value" :placeholder="$t('__plzChoice')" @change="ddlReferrerChange">
+              <el-option v-for="item in ddlReferrer" :key="item.ID" :label="item.ID+' '+item.Value" :value="item.ID">
                 <span style="float: left">{{ item.Value }}</span>
                 <span style="float: right; color: #8492a6; font-size: 13px">{{ item.ID }}</span>
               </el-option>
@@ -53,8 +53,8 @@
         </el-col>
       </el-form-item>
       <el-form-item :label="$t('__refEmployeeID')">
-        <el-select v-model="form.EmployeeID" value-key="value" :placeholder="$t('__plzChoice')" disabled>
-          <el-option v-for="item in ddlEmployeeID" :key="item.ID" :label="item.Value" :value="item.ID">
+        <el-select v-model="form.EmployeeID" filterable value-key="value" :placeholder="$t('__plzChoice')" disabled>
+          <el-option v-for="item in ddlEmployeeID" :key="item.ID" :label="item.ID+' '+item.Value" :value="item.ID">
             <span style="float: left">{{ item.Value }}</span>
             <span style="float: right; color: #8492a6; font-size: 13px">{{ item.ID }}</span>
           </el-option>

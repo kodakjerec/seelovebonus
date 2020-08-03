@@ -2,9 +2,9 @@
   <div>
     <el-form>
       <el-form-item :label="$t('__companies')+$t('__id')">
-        <el-col :span="8">
-          <el-select v-model="form.CompanyID" value-key="value" :placeholder="$t('__plzChoice')">
-            <el-option v-for="item in ddlCompanies" :key="item.ID" :label="item.Value" :value="item.ID">
+        <el-col :span="10">
+          <el-select v-model="form.CompanyID" filterable value-key="value" :placeholder="$t('__plzChoice')">
+            <el-option v-for="item in ddlCompanies" :key="item.ID" :label="item.ID+' '+item.Value" :value="item.ID">
               <span style="float: left">{{ item.Value }}</span>
               <span style="float: right; color: #8492a6; font-size: 13px">{{ item.ID }}</span>
             </el-option>

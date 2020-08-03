@@ -93,7 +93,7 @@ export default {
     preLoading: async function () {
       const responseRecords = await this.$api.orders.getObject({ type: 'collectionRecords', ID: this.orderID })
       this.collectionRecordsShow = responseRecords.data.result
-      if (this.collectionRecordsShow) {
+      if (this.collectionRecordsShow && this.collectionRecordsShow.length > 0) {
         this.activeName = '1'
       }
     },

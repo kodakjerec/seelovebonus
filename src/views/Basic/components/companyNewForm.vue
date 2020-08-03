@@ -8,8 +8,8 @@
         <el-input v-model="form.Name" autocomplete="off" maxlength="40" show-word-limit></el-input>
       </el-form-item>
       <el-form-item :label="$t('__refEmployeeID')" prop="EmployeeID">
-        <el-select v-model="form.EmployeeID" value-key="value" :placeholder="$t('__plzChoice')">
-          <el-option v-for="item in ddlEmployeeID" :key="item.ID" :label="item.Value" :value="item.ID">
+        <el-select v-model="form.EmployeeID" filterable :placeholder="$t('__plzChoice')">
+          <el-option v-for="item in ddlEmployeeID" :key="item.ID" :label="item.ID+' '+item.Value" :value="item.ID">
             <span style="float: left">{{ item.Value }}</span>
             <span style="float: right; color: #8492a6; font-size: 13px">{{ item.ID }}</span>
           </el-option>
@@ -29,8 +29,8 @@
         </el-col>
         <el-col :span="10">
           <el-form-item>
-            <el-select v-model="form.Referrer" value-key="value" :placeholder="$t('__plzChoice')">
-              <el-option v-for="item in ddlReferrer" :key="item.ID" :label="item.Value" :value="item.ID">
+            <el-select v-model="form.Referrer" filterable value-key="value" :placeholder="$t('__plzChoice')">
+              <el-option v-for="item in ddlReferrer" :key="item.ID" :label="item.ID+' '+item.Value" :value="item.ID">
                 <span style="float: left">{{ item.Value }}</span>
                 <span style="float: right; color: #8492a6; font-size: 13px">{{ item.ID }}</span>
               </el-option>

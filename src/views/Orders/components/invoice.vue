@@ -89,7 +89,7 @@ export default {
     preLoading: async function () {
       const responseRecords = await this.$api.orders.getObject({ type: 'invoiceHead', ID: this.orderID })
       this.invoiceHeadShow = responseRecords.data.result
-      if (this.invoiceHeadShow) {
+      if (this.invoiceHeadShow && this.invoiceHeadShow.length > 0) {
         this.activeName = '1'
       }
     },

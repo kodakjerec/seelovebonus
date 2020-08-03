@@ -5,8 +5,8 @@
     <template v-if="showAgentData">
       <el-form-item :label="$t('__orderCustomer')+$t('__name')" prop="CustomerID" label-width="100px" label-position="left">
         <el-col :span="6">
-          <el-select v-model="form.CustomerID" value-key="value" :placeholder="$t('__plzChoice')" @change="ddlCustomerChange" :disabled="disableForm.CustomerID">
-            <el-option v-for="item in ddlCustomer" :key="item.ID" :label="item.Value" :value="item.ID">
+          <el-select v-model="form.CustomerID" filterable value-key="value" :placeholder="$t('__plzChoice')" @change="ddlCustomerChange" :disabled="disableForm.CustomerID">
+            <el-option v-for="item in ddlCustomer" :key="item.ID" :label="item.ID+' '+item.Value" :value="item.ID">
               <span style="float: left">{{ item.Value }}</span>
               <span style="float: right; color: #8492a6; font-size: 13px">{{ item.ID }}</span>
             </el-option>
@@ -67,8 +67,8 @@
     <template v-else>
             <el-form-item :label="$t('__orderCustomer')+$t('__name')" prop="CustomerID" label-width="100px" label-position="left">
         <el-col :span="6">
-          <el-select v-model="form.CustomerID" value-key="value" :placeholder="$t('__plzChoice')" @change="ddlCustomerChange" :disabled="disableForm.CustomerID">
-            <el-option v-for="item in ddlCustomer" :key="item.ID" :label="item.Value" :value="item.ID">
+          <el-select v-model="form.CustomerID" filterable value-key="value" :placeholder="$t('__plzChoice')" @change="ddlCustomerChange" :disabled="disableForm.CustomerID">
+            <el-option v-for="item in ddlCustomer" :key="item.ID" :label="item.ID+' '+item.Value" :value="item.ID">
               <span style="float: left">{{ item.Value }}</span>
               <span style="float: right; color: #8492a6; font-size: 13px">{{ item.ID }}</span>
             </el-option>

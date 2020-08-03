@@ -8,8 +8,8 @@
           <el-input v-model="form.Name" autocomplete="off" maxlength="40" show-word-limit></el-input>
       </el-form-item>
       <el-form-item :label="$t('__accounting')+$t('__name')" prop="AccountingID">
-        <el-select v-model="form.AccountingID" value-key="value" :placeholder="$t('__plzChoice')" @change="ddlAccountingChange" >
-          <el-option v-for="item in ddlAccounting" :key="item.ID" :label="item.Value" :value="item.ID">
+        <el-select v-model="form.AccountingID" filterable value-key="value" :placeholder="$t('__plzChoice')" @change="ddlAccountingChange" >
+          <el-option v-for="item in ddlAccounting" :key="item.ID" :label="item.ID+' '+item.Value" :value="item.ID">
             <span style="float: left">{{ item.Value }}</span>
             <span style="float: right; color: #8492a6; font-size: 13px">{{ item.ID }}</span>
           </el-option>
