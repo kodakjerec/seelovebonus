@@ -11,11 +11,8 @@
           </el-select>
         </el-col>
         <el-col :span="12">
-          <el-form-item prop="ID" v-if="IDType === '1'">
+          <el-form-item prop="ID">
             <el-input v-model="form.ID" autocomplete="off" maxlength="10" show-word-limit :disabled="disableForm.ID"></el-input>
-          </el-form-item>
-          <el-form-item v-else>
-            <el-input required v-model="form.ID" autocomplete="off" maxlength="20" show-word-limit :disabled="disableForm.ID"></el-input>
           </el-form-item>
         </el-col>
       </el-form-item>
@@ -162,6 +159,17 @@ export default {
     employee: { type: Object }
   },
   data () {
+    // 切換驗證身分證號碼或護照
+    let validatePersonalID = (rule, value, callback) => {
+      let idType = this.IDType
+      switch (idType) {
+        case '1':
+          validate.validatePersonalID(rule, value, callback)
+          break
+        default:
+          validate.validatePassport(rule, value, callback)
+      }
+    }
     return {
       form: {
         ID: '',
@@ -182,7 +190,7 @@ export default {
         Memo: ''
       },
       rules: {
-        ID: [{ trigger: 'blur', validator: validate.validatePersonalID }],
+        ID: [{ trigger: 'blur', validator: validatePersonalID }],
         Name: [{ required: true, message: this.$t('__pleaseInput'), trigger: 'blur' }],
         TelHome: [{ trigger: 'blur', validator: validate.validatePhone }],
         TelMobile: [{ trigger: 'blur', validator: validate.validatePhone }],

@@ -7,7 +7,15 @@
       <el-form-item :label="$t('__company')+$t('__name')" prop="Name">
         <el-input v-model="form.Name" autocomplete="off" maxlength="40" show-word-limit></el-input>
       </el-form-item>
-      <el-form-item :label="$t('__refKind')">
+      <el-form-item :label="$t('__refEmployeeID')" prop="EmployeeID">
+        <el-select v-model="form.EmployeeID" value-key="value" :placeholder="$t('__plzChoice')">
+          <el-option v-for="item in ddlEmployeeID" :key="item.ID" :label="item.Value" :value="item.ID">
+            <span style="float: left">{{ item.Value }}</span>
+            <span style="float: right; color: #8492a6; font-size: 13px">{{ item.ID }}</span>
+          </el-option>
+        </el-select>
+      </el-form-item>
+      <el-form-item :label="$t('__sponsorKind')">
         <el-col :span="10">
           <el-select v-model="form.refKind" value-key="value" :placeholder="$t('__plzChoice')" @change="ddlRefKindChange">
             <el-option v-for="item in ddlRefKind" :key="item.ID" :label="item.Value" :value="item.ID">
@@ -17,7 +25,7 @@
           </el-select>
         </el-col>
         <el-col :span="4" class="el-form-item__label">
-          {{$t('__referrer')}}
+          {{$t('__sponsor')}}
         </el-col>
         <el-col :span="10">
           <el-form-item>
@@ -163,7 +171,8 @@ export default {
         Post: null,
         Address: '',
         refKind: null,
-        Referrer: null
+        Referrer: null,
+        EmployeeID: null
       },
       rules: {
         ID: [{ required: true, message: this.$t('__pleaseInput'), trigger: 'blur' }],
@@ -171,7 +180,8 @@ export default {
         StartDate: [{ required: true, message: this.$t('__pleaseInput'), trigger: 'blur' }],
         EndDate: [{ required: true, message: this.$t('__pleaseInput'), trigger: 'blur' }],
         Tel1: [{ trigger: 'blur', validator: validate.validatePhone }],
-        Tel2: [{ trigger: 'blur', validator: validate.validatePhone }]
+        Tel2: [{ trigger: 'blur', validator: validate.validatePhone }],
+        EmployeeID: [{ required: true, message: this.$t('__pleaseInput'), trigger: 'blur' }]
       },
       disableForm: {
         ID: false
@@ -183,7 +193,8 @@ export default {
       ddlPost: [],
       ddlStatus: [],
       ddlRefKind: [],
-      ddlReferrer: []
+      ddlReferrer: [],
+      ddlEmployeeID: []
     }
   },
   mounted () {
@@ -225,6 +236,8 @@ export default {
       const response5 = await this.$api.basic.getDropdownList({ type: 'refKind' })
       this.ddlRefKind = response5.data.result
       this.ddlRefKindChange()
+      const response7 = await this.$api.basic.getDropdownList({ type: 'employeesList' })
+      this.ddlEmployeeID = response7.data.result
     },
     // 過濾郵遞區號
     ddlCityChange: function () {

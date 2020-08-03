@@ -69,7 +69,6 @@
 export default {
   name: 'OrderDetail',
   props: {
-
     dialogType: { type: String, default: 'new' },
     orderID: { type: String },
     projectID: { type: String },
@@ -86,7 +85,8 @@ export default {
         QtyOrigin: 0,
         Qty: 0,
         UnitName: '',
-        ItemType: 0
+        ItemType: 0,
+        Status: 'New'
       },
       subList: [],
       subListDeleted: [],
@@ -95,8 +95,13 @@ export default {
     }
   },
   watch: {
-    orderDetail: function () {
-      this.subList = JSON.parse(JSON.stringify(this.orderDetail))
+    orderID: function (newValue) {
+      if (newValue) {
+        this.subList.forEach(item => { item.OrderID = newValue })
+      }
+    },
+    orderDetail: function (newValue) {
+      this.subList = JSON.parse(JSON.stringify(newValue))
     }
   },
   mounted () {
@@ -114,6 +119,7 @@ export default {
       let isSuccess = false
       // 結合已刪除單據
       const finalResult = this.subList.concat(this.subListDeleted)
+
       for (let index = 0; index < finalResult.length; index++) {
         let uploadResult = 0
         let row = finalResult[index]
@@ -186,6 +192,8 @@ export default {
         let highestSeq = Math.max(...amounts)
         nextSeq = highestSeq + 1
       }
+
+      // 新增 item
       newObj.OrderID = this.orderID
       newObj.ProjectID = this.projectID
       newObj.Seq = nextSeq
@@ -211,9 +219,51 @@ export default {
         row.Status = 'Modified'
       }
     },
+    // 變更明細商品數量
     qtyChange: function (selected, row) {
       if (row.Status === '') {
         row.Status = 'Modified'
+      }
+    },
+    // 父視窗:變更明細商品數量, 只變更專案商品
+    parentQtyChange: function (newQtyPlus) {
+      this.subList.forEach(item => {
+        if (item.ItemType === 0) {
+          item.Qty = item.QtyOrigin * newQtyPlus
+        }
+      })
+    },
+    // 父視窗:清空選單, 填入專案商品
+    parentResetItems: function (projectDetail) {
+      // reset
+      this.subList = []
+
+      for (let index = 0; index < projectDetail.length; index++) {
+        let product = projectDetail[index]
+
+        let newObj = JSON.parse(JSON.stringify(this.subItem))
+        // find Maximum Seq
+        let nextSeq = 1
+        if (this.subList.length === 0) {
+          nextSeq = 1
+        } else {
+          let amounts = this.subList.map(item => item.Seq)
+          let highestSeq = Math.max(...amounts)
+          nextSeq = highestSeq + 1
+        }
+
+        // 新增 item
+        newObj.OrderID = this.orderID
+        newObj.ProjectID = this.projectID
+        newObj.ProductID = product.ProductID
+        newObj.Name = product.ProductName
+        newObj.QtyOrigin = product.Qty
+        newObj.Qty = product.Qty
+        newObj.Seq = nextSeq
+        newObj.ProjectID = product.ProjectID
+        newObj.ItemType = 0
+        newObj.Status = 'New'
+        this.subList.push(newObj)
       }
     }
   }

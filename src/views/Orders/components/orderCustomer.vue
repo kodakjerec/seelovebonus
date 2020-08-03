@@ -169,9 +169,9 @@ export default {
     }
   },
   watch: {
-    orderID: function (value) {
-      if (value) {
-        this.form.OrderID = value
+    orderID: function (newValue) {
+      if (newValue) {
+        this.form.OrderID = newValue
       }
     },
     orderCustomer: function () {

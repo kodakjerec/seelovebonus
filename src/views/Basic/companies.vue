@@ -30,6 +30,10 @@
         :label="$t('__principal')">
       </el-table-column>
       <el-table-column
+        prop="EmployeeName"
+        :label="$t('__refEmployeeID')">
+      </el-table-column>
+      <el-table-column
         prop="StartDate"
         :label="$t('__startDate')"
         :formatter="formatterDate">

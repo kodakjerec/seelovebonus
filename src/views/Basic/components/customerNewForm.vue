@@ -1,7 +1,7 @@
 <template>
   <el-dialog :title="myTitle" :visible="dialogShow" center width="80%" @close="cancel">
     <el-form ref="form" :model="form" :rules="rules" label-width="20%">
-      <el-form-item :label="$t('__employee')+$t('__id')">
+      <el-form-item :label="$t('__customer')+$t('__id')">
         <el-col :span="4" v-show="!disableForm.ID">
           <el-select v-model="IDType" value-key="value" :placeholder="$t('__plzChoice')">
             <el-option v-for="item in ddlIDType" :key="item.ID" :label="item.Value" :value="item.ID">
@@ -11,11 +11,8 @@
           </el-select>
         </el-col>
         <el-col :span="12">
-          <el-form-item prop="ID" v-if="IDType === '1'">
+          <el-form-item prop="ID">
             <el-input v-model="form.ID" autocomplete="off" maxlength="10" show-word-limit :disabled="disableForm.ID"></el-input>
-          </el-form-item>
-          <el-form-item v-else>
-            <el-input required v-model="form.ID" autocomplete="off" maxlength="20" show-word-limit :disabled="disableForm.ID"></el-input>
           </el-form-item>
         </el-col>
       </el-form-item>
@@ -32,14 +29,6 @@
           </el-form-item>
         </el-col>
       </el-form-item>
-      <el-form-item :label="$t('__refEmployeeID')" prop="EmployeeID">
-        <el-select v-model="form.EmployeeID" value-key="value" :placeholder="$t('__plzChoice')">
-          <el-option v-for="item in ddlEmployeeID" :key="item.ID" :label="item.Value" :value="item.ID">
-            <span style="float: left">{{ item.Value }}</span>
-            <span style="float: right; color: #8492a6; font-size: 13px">{{ item.ID }}</span>
-          </el-option>
-        </el-select>
-      </el-form-item>
       <el-form-item :label="$t('__refKind')">
         <el-col :span="10">
           <el-select v-model="form.refKind" value-key="value" :placeholder="$t('__plzChoice')" @change="ddlRefKindChange">
@@ -53,8 +42,8 @@
           {{$t('__referrer')}}
         </el-col>
         <el-col :span="10">
-          <el-form-item>
-            <el-select v-model="form.Referrer" value-key="value" :placeholder="$t('__plzChoice')">
+          <el-form-item prop="Referrer">
+            <el-select v-model="form.Referrer" value-key="value" :placeholder="$t('__plzChoice')" @change="ddlReferrerChange">
               <el-option v-for="item in ddlReferrer" :key="item.ID" :label="item.Value" :value="item.ID">
                 <span style="float: left">{{ item.Value }}</span>
                 <span style="float: right; color: #8492a6; font-size: 13px">{{ item.ID }}</span>
@@ -62,6 +51,14 @@
             </el-select>
           </el-form-item>
         </el-col>
+      </el-form-item>
+      <el-form-item :label="$t('__refEmployeeID')">
+        <el-select v-model="form.EmployeeID" value-key="value" :placeholder="$t('__plzChoice')" disabled>
+          <el-option v-for="item in ddlEmployeeID" :key="item.ID" :label="item.Value" :value="item.ID">
+            <span style="float: left">{{ item.Value }}</span>
+            <span style="float: right; color: #8492a6; font-size: 13px">{{ item.ID }}</span>
+          </el-option>
+        </el-select>
       </el-form-item>
       <el-form-item :label="$t('__home')+$t('__tel')">
         <el-col :span="10">
@@ -225,6 +222,17 @@ export default {
     customer: { type: Object }
   },
   data () {
+    // 切換驗證身分證號碼或護照
+    let validatePersonalID = (rule, value, callback) => {
+      let idType = this.IDType
+      switch (idType) {
+        case '1':
+          validate.validatePersonalID(rule, value, callback)
+          break
+        default:
+          validate.validatePassport(rule, value, callback)
+      }
+    }
     return {
       form: {
         ID: '',
@@ -243,19 +251,19 @@ export default {
         Post: null,
         Address: '',
         EMail: '',
-        EmployeeID: '',
+        EmployeeID: null,
         Birth: '',
         Gender: '3',
         Status: '1',
         refKind: null,
-        Referrer: ''
+        Referrer: null
       },
       rules: {
-        ID: [{ trigger: 'blur', validator: validate.validatePersonalID }],
+        ID: [{ trigger: 'blur', validator: validatePersonalID }],
         Name: [{ required: true, message: this.$t('__pleaseInput'), trigger: 'blur' }],
         TelHome: [{ trigger: 'blur', validator: validate.validatePhone }],
         TelMobile: [{ trigger: 'blur', validator: validate.validatePhone }],
-        EmployeeID: [{ required: true, message: this.$t('__pleaseInput'), trigger: 'blur' }]
+        Referrer: [{ required: true, message: this.$t('__pleaseInput'), trigger: 'blur' }]
       },
       disableForm: {
         ID: false
@@ -350,7 +358,7 @@ export default {
       this.ddlAgentPost = this.postData.filter(item => item.ParentID === this.form.AgentCity)
     },
     // 過濾推薦人種類
-    ddlRefKindChange: function () {
+    ddlRefKindChange: function (selected) {
       switch (this.form.refKind) {
         case '1':
           this.ddlReferrer = this.customersData
@@ -362,6 +370,25 @@ export default {
           this.ddlReferrer = this.companiesData
           break
       }
+    },
+    // 選定業務代表, 帶入 業務輔導部
+    ddlReferrerChange: function (selected) {
+      let row = null
+      let bringEmployeeID = ''
+      switch (this.form.refKind) {
+        case '1':
+          bringEmployeeID = ''
+          break
+        case '2':
+          row = this.employeesData.find(item => { return item.ID === selected })
+          if (row) { bringEmployeeID = row.EmployeeID }
+          break
+        case '3':
+          row = this.companiesData.find(item => { return item.ID === selected })
+          if (row) { bringEmployeeID = row.EmployeeID }
+          break
+      }
+      this.form.EmployeeID = bringEmployeeID
     },
     // 切換 法定代理人
     ddlAgentIDChange: async function (selectd) {

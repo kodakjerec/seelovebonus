@@ -116,7 +116,6 @@ const validate = {
     callback()
   },
   // 驗證身分證字號
-  // TODO
   validatePersonalID: (rule, value, callback) => {
     value = value.toUpperCase()
     let regex = /^[A-Z]{1}[1-2]{1}[0-9]{8}$/
@@ -144,9 +143,22 @@ const validate = {
     }
     // 把上述的總和加起來,取餘數後,10-該餘數為檢查碼,要等於最後一個數字
     let count = 10 - ((Esum + Nsum) % 10)
+    // console.log('Esum:' + Esum + ' Nsum:' + Nsum + ' count:' + count)
+    // 餘數為0的判斷
+    if (count === 10) {
+      callback()
+    }
     // 判斷計算總和是不是等於檢查碼
     if (count !== parseInt(value[9])) {
       callback(new Error(i18n.t('__pleaseInputPersonalID') + '2'))
+    }
+    callback()
+  },
+  // 驗證護照
+  validatePassport: (rule, value, callback) => {
+    let regex = /^.{7,}$/
+    if (!regex.test(value)) {
+      callback(new Error(i18n.t('__pleaseInputLength') + '7'))
     }
     callback()
   },

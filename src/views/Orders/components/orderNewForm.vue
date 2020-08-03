@@ -2,7 +2,7 @@
   <div>
     <h1>{{myTitle}}</h1>
     <el-form ref="form" :model="form" :rules="rules">
-      <el-form-item :label="$t('__orderID')+'：'" label-width="100px" label-position="left">
+      <el-form-item prop="ID" :label="$t('__orderID')+'：'" label-width="100px" label-position="left">
         <el-col :span="6">
           <el-input v-model="form.ID" :placeholder="$t('__afterSaveWillShow')" autocomplete="off" :disabled="disableForm.ID"></el-input>
         </el-col>
@@ -91,7 +91,7 @@
         :orderID="form.ID"
         :orderCustomer="orderCustomer"
         :ddlCustomerBefore="ddlCustomer"></order-customer>
-      <template v-if="form.ID">
+      <template v-if="dialogType !== 'new'">
         <!-- 供奉憑證 -->
         <certificate1
           :buttonsShow="buttonsShow"
@@ -211,6 +211,7 @@ export default {
         Amount: 0
       },
       rules: {
+        ID: [{ required: true, message: this.$t('__pleaseInput'), trigger: 'blur' }],
         OrderDate: [{ required: true, message: this.$t('__pleaseInput'), trigger: 'blur' }],
         ProjectID: [{ required: true, message: this.$t('__pleaseInput'), trigger: 'blur' }],
         CreateID: [{ required: true, message: this.$t('__pleaseInput'), trigger: 'blur' }]
@@ -232,7 +233,7 @@ export default {
         search: 1
       },
       disableForm: {
-        ID: true,
+        ID: false,
         ProjectID: false,
         Qty: false,
         OrderDate: false,
@@ -276,11 +277,14 @@ export default {
       case 'edit':
         this.myTitle = this.$t('__edit') + this.$t('__orderPaper')
         this.form = JSON.parse(JSON.stringify(this.order))
+        this.disableForm.ID = true
         this.disableForm.ProjectID = true
         this.disableForm.Qty = true
         this.disableForm.OrderDate = true
         this.disableForm.CreateID = true
-        this.ddlProjectChange(this.form.ProjectID)
+
+        this.bringProject(this.form.ProjectID)
+
         if (this.form.Status === '0') {
           this.buttonsShow = {
             new: 0,
@@ -322,11 +326,27 @@ export default {
       const responseStampShow = await this.$api.orders.getObject({ type: 'orderStampShow', ID: this.form.ID })
       this.stampShow = responseStampShow.data.result
     },
+    // 點擊"修改專案", 填入明細
+    bringProject: async function (selected) {
+      // get Data
+      const responseProject = await this.$api.orders.getObject({ type: 'project', ID: selected })
+      let project = responseProject.data.result[0]
+      const responseProjectDetail = await this.$api.orders.getObject({ type: 'projectDetail', ID: selected })
+      let projectDetail = responseProjectDetail.data.result
+
+      // 填入 projectHead 顯示用
+      let targetProjectHead = this.projectHead[0]
+      targetProjectHead.ProjectName = project.Name
+      targetProjectHead.FirstItemName = projectDetail[0].ProductName
+      targetProjectHead.Price = this.form.Price
+      targetProjectHead.Qty = this.form.Qty
+      targetProjectHead.Amount = this.form.Amount
+
+      // 填入 orderDetail
+      this.$refs['orderDetail'].parentResetItems(projectDetail)
+    },
     // 切換專案, 填入明細
     ddlProjectChange: async function (selected) {
-      // reset
-      this.orderDetail = []
-
       // get Data
       const responseProject = await this.$api.orders.getObject({ type: 'project', ID: selected })
       let project = responseProject.data.result[0]
@@ -348,30 +368,7 @@ export default {
       this.form.Amount = targetProjectHead.Amount
 
       // 填入 orderDetail
-      for (let index = 0; index < projectDetail.length; index++) {
-        let product = projectDetail[index]
-
-        // find Maximum Seq
-        let nextSeq = 1
-        if (this.orderDetail.length === 0) {
-          nextSeq = 1
-        } else {
-          let amounts = this.orderDetail.map(item => item.Seq)
-          let highestSeq = Math.max(...amounts)
-          nextSeq = highestSeq + 1
-        }
-        this.orderDetail.push({
-          OrderID: this.form.ID,
-          Seq: nextSeq,
-          ProjectID: selected,
-          ProductID: product.ProductID,
-          Name: product.ProductName,
-          QtyOrigin: product.Qty,
-          Qty: product.Qty,
-          UnitName: product.UnitName,
-          ItemType: 0
-        })
-      }
+      this.$refs['orderDetail'].parentResetItems(projectDetail)
     },
     qtyChange: function (selected, row) {
       // 填入 projectHead 顯示用
@@ -384,10 +381,7 @@ export default {
       this.form.Amount = targetProjectHead.Amount
 
       // 填入 orderDetail
-      for (let index = 0; index < this.orderDetail.length; index++) {
-        let item = this.orderDetail[index]
-        item.Qty = item.QtyOrigin * selected
-      }
+      this.$refs['orderDetail'].parentQtyChange(selected)
     },
     // 檢查輸入
     checkValidate: async function () {
@@ -419,8 +413,16 @@ export default {
           isSuccess = await this.$refs['orderDetail'].beforeSave()
           isSuccess = await this.$refs['orderCustomer'].save()
           if (isSuccess) {
-            this.$alert(this.$t('__uploadSuccess'), 200)
-            this.$emit('dialog-save')
+            this.$alert(this.$t('__uploadSuccess'), 200, {
+              callback: () => {
+                this.$router.replace({
+                  name: this.parent,
+                  params: {
+                    returnType: 'save'
+                  }
+                })
+              }
+            })
           }
           break
         case 'edit':
@@ -430,7 +432,7 @@ export default {
           if (isSuccessEdit) {
             this.$alert(this.$t('__uploadSuccess'), 200, {
               callback: () => {
-                this.$router.push({
+                this.$router.replace({
                   name: this.parent,
                   params: {
                     returnType: 'save'

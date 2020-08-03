@@ -10,7 +10,8 @@ export default new Vuex.Store({
     isLogin: false,
     userID: '',
     userName: '',
-    menuList: []
+    menuList: [],
+    version: '2020.8.3.2'
   },
   mutations: {
     SET_AUTH (state, options) {

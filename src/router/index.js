@@ -1,14 +1,19 @@
 import Vue from 'vue'
-import VueRouter from 'vue-router'
+import Router from 'vue-router'
+
+Vue.use(Router)
 
 // 解決Element-UI 在 vue 3.0 中重複路徑報錯問題
 // https://www.cnblogs.com/chenwan1218/p/13130410.html
-const originalPush = VueRouter.prototype.push
-VueRouter.prototype.push = function push (location) {
-  return originalPush.call(this, location).catch(err => err)
+// https://juejin.im/post/6854573221439045640
+const VueRouterPush = Router.prototype.push
+Router.prototype.push = function push (location) {
+  return VueRouterPush.call(this, location).catch(err => err)
 }
-
-Vue.use(VueRouter)
+const VueRouterReplace = Router.prototype.replace
+Router.prototype.replace = function replace (location) {
+  return VueRouterReplace.call(this, location).catch(err => err)
+}
 
 const routes = [
   {
@@ -105,7 +110,7 @@ const routes = [
   }
 ]
 
-const router = new VueRouter({
+const router = new Router({
   routes
 })
 
