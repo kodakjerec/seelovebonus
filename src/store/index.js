@@ -4,6 +4,7 @@ import createPersistedState from 'vuex-persistedstate'
 
 Vue.use(Vuex)
 
+let enableLoadingMaskTime = Date.now()
 export default new Vuex.Store({
   state: {
     token: '',
@@ -11,7 +12,9 @@ export default new Vuex.Store({
     userID: '',
     userName: '',
     menuList: [],
-    version: '2020.8.3.2'
+    version: '2020.8.3.2',
+    loadingCounter: 0,
+    isEnableLoadingMask: false
   },
   mutations: {
     SET_AUTH (state, options) {
@@ -22,6 +25,15 @@ export default new Vuex.Store({
     },
     SET_MENULIST (state, menu) {
       state.menuList = menu
+    },
+    ADD_LOADING_COUNTER (state) {
+      state.loadingCounter += 1
+    },
+    REMOVE_LOADING_COUNTER (state) {
+      state.loadingCounter -= 1
+    },
+    ENABLE_LOADING_MASK (state, isEnable) {
+      state.isEnableLoadingMask = isEnable
     }
   },
   actions: {
@@ -35,6 +47,37 @@ export default new Vuex.Store({
     },
     setMenuList (context, menu) {
       context.commit('SET_MENULIST', menu)
+    },
+    increaseLoadingCounter ({ dispatch, commit, state }) {
+      commit('ADD_LOADING_COUNTER')
+      if (state.loadingCounter > 0 && !state.isEnableLoadingMask) {
+        dispatch('enableLoadingMask')
+      }
+    },
+    decreaseLoadingCounter ({ dispatch, commit, state }) {
+      commit('REMOVE_LOADING_COUNTER')
+      if (state.loadingCounter <= 0 && state.isEnableLoadingMask) {
+        dispatch('disableLoadingMask')
+      }
+    },
+    enableLoadingMask ({ commit, state }) {
+      enableLoadingMaskTime = Date.now()
+      commit('ENABLE_LOADING_MASK', true)
+    },
+    disableLoadingMask ({ commit, state }) {
+      // 避免切換速度過快而造成畫面閃動，所以定義最小顯示時間
+      let minMaskShowPeriod = 300 /* ms */
+      let pastMilliseconds = parseInt(Date.now() - enableLoadingMaskTime)
+      let isShorterThanMinMaskShowPeriod = minMaskShowPeriod > pastMilliseconds
+      let remainMillisenconds = minMaskShowPeriod - pastMilliseconds
+
+      // 若低於最小顯示時間，將使用 setTimout 補足顯示時間後關閉
+      setTimeout(() => {
+        // 真正要關閉時要確認目前是否還有 Request 執行中(避免延遲過程中又發出 request 被馬上關閉)
+        if (state.loadingCounter <= 0 && state.isEnableLoadingMask) {
+          commit('ENABLE_LOADING_MASK', false)
+        }
+      }, isShorterThanMinMaskShowPeriod ? remainMillisenconds : 0)
     }
   },
   modules: {

@@ -1,16 +1,22 @@
 <template>
-  <div id="app">
+  <div id="app"
+    v-loading="isEnableLoadingMask"
+    v-loading.fullscreen.lock="true">
     <app-header></app-header>
     <router-view></router-view>
   </div>
 </template>
 
 <script>
+import { mapState } from 'vuex'
 import appHeader from '@/components/header'
 export default {
   name: 'app',
   components: {
     appHeader
+  },
+  computed: {
+    ...mapState(['isEnableLoadingMask'])
   }
 }
 </script>

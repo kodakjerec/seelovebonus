@@ -1,4 +1,5 @@
 import { MessageBox } from 'element-ui'
+import store from '@/store/index'
 import router from '@/router/index'
 import i18n from '@/setup/setupLocale'
 import req from './auth' // 把request包裝
@@ -10,12 +11,15 @@ let seeloveNodeServer = {
 
 // 一般api使用
 export const post = async (url, reqData = {}) => {
+  store.dispatch('increaseLoadingCounter')
   let combineURL = 'http://' + seeloveNodeServer.ipHost + url
   return req('post', combineURL, reqData)
     .then(response => {
+      store.dispatch('decreaseLoadingCounter')
       return response
     })
     .catch(error => {
+      store.dispatch('decreaseLoadingCounter')
       const { response } = error
       console.log(`%c 💩💩💩 API發生例外錯誤 💩💩💩${((response && response.status) ? `status code [${response.status}]` : '')}`, 'color: #BB2E29; font-size: 14px; font-weight: bold;')
       return Promise.reject(error)
