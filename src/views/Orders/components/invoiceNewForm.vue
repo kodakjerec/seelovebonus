@@ -189,9 +189,9 @@ export default {
         InvoiceDate: false,
         InvoiceID: false,
         RandomCode: false,
-        Tax: true,
+        Tax: false,
         Status: false,
-        CreateID: true,
+        CreateID: false,
         SalesReturnDate: true,
         selectCollectionRecords: false
       },

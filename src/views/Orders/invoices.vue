@@ -1,6 +1,10 @@
 <template>
   <el-form>
+    <el-button-group>
+      <el-button type="primary" icon="el-icon-plus" disabled>{{$t('__new')}}</el-button>
+    </el-button-group>
     <search-button @search="search"></search-button>
+    <p/>
     <el-table
       :data="invoicesShow"
       stripe
@@ -108,7 +112,7 @@ export default {
     // 搜尋
     search: async function (value) {
       this.searchKeyWord = value
-      const response2 = await this.$api.basic.invoiceShow({ keyword: this.searchKeyWord })
+      const response2 = await this.$api.orders.invoiceShow({ keyword: this.searchKeyWord })
       this.invoicesShow = response2.data.result
     }
   }

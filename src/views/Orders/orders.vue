@@ -108,7 +108,7 @@ export default {
     // 搜尋
     search: async function (value) {
       this.searchKeyWord = value
-      const response2 = await this.$api.basic.ordersShow({ keyword: this.searchKeyWord })
+      const response2 = await this.$api.orders.ordersShow({ keyword: this.searchKeyWord })
       this.ordersShow = response2.data.result
     }
   }

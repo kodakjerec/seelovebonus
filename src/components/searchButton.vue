@@ -19,7 +19,7 @@ export default {
   },
   methods: {
     change: function (value) {
-      if (value && value.length > 0) { this.$emit('search', value) }
+      this.$emit('search', value)
     }
   }
 }

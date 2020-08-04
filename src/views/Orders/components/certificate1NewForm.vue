@@ -146,11 +146,11 @@ export default {
           }
           break
         case 'edit':
-          // const responseEdit = await this.$api.orders.orderCertificate1Edit({ form: this.form })
-          // if (responseEdit.status === 200) {
-          //   this.$alert(responseEdit.data.result[0].message, responseEdit.data.result[0].code)
-          //   isSuccess = true
-          // }
+          const responseEdit = await this.$api.orders.orderCertificate1Edit({ form: this.form })
+          if (responseEdit.status === 200) {
+            this.$alert(responseEdit.data.result[0].message, responseEdit.data.result[0].code)
+            isSuccess = true
+          }
           isSuccess = true
           break
         case 'delete':

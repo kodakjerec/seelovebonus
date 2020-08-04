@@ -138,6 +138,7 @@ export default {
   __error401: 'Unauthorized',
   __error404: 'Page Not Found',
   __error500: 'Internal Server Error',
+  __newSuccess: 'New Success',
   __uploadSuccess: 'Upload Success.',
   __uploadFail: 'Upload Fail, please try again.',
   // 以下為驗證專用

@@ -230,7 +230,7 @@ export default {
     // 選定客戶取得資料
     ddlCustomerChange: async function () {
       // 取得可以用的選單
-      let responseRow = await this.$api.basic.getObject({ type: 'customer', ID: this.form.CustomerID })
+      let responseRow = await this.$api.orders.getObject({ type: 'orderCustomerGetDetail', ID: this.form.CustomerID })
       let row = responseRow.data.result[0]
       this.form.TelHome = row.TelHome
       this.form.TelMobile = row.TelMobile

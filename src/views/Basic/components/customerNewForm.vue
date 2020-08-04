@@ -251,7 +251,7 @@ export default {
         Post: null,
         Address: '',
         EMail: '',
-        EmployeeID: null,
+        EmployeeID: null, // 虛構欄位, 不存在資料庫
         Birth: '',
         Gender: '3',
         Status: '1',
@@ -325,6 +325,14 @@ export default {
       this.employeesData = responseEmployees.data.result
       const responseCompanies = await this.$api.basic.getDropdownList({ type: 'companies' })
       this.companiesData = responseCompanies.data.result
+      // 幫忙帶入虛構欄位: EmployeeID
+      switch (this.dialogType) {
+        case 'edit':
+          this.$nextTick(() => {
+            this.ddlReferrerChange(this.form.Referrer)
+          })
+          break
+      }
 
       const response1 = await this.$api.basic.getDropdownList({ type: 'country' })
       this.ddlCountry = response1.data.result

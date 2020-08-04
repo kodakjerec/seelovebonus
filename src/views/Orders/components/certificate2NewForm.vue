@@ -79,8 +79,10 @@ export default {
     }
   },
   mounted () {
-    this.form = JSON.parse(JSON.stringify(this.certificate2))
-    this.form.CreateDate = this.formatterDate(null, null, this.form.CreateDate, null)
+    if (Object.keys(this.certificate2).length > 0) {
+      this.form = JSON.parse(JSON.stringify(this.certificate2))
+      this.form.CreateDate = this.formatterDate(null, null, this.form.CreateDate, null)
+    }
 
     switch (this.dialogType) {
       case 'new':
@@ -144,11 +146,11 @@ export default {
           }
           break
         case 'edit':
-          // const responseEdit = await this.$api.orders.orderCertificate2Edit({ form: this.form })
-          // if (responseEdit.status === 200) {
-          //   this.$alert(responseEdit.data.result[0].message, responseEdit.data.result[0].code)
-          //   isSuccess = true
-          // }
+          const responseEdit = await this.$api.orders.orderCertificate2Edit({ form: this.form })
+          if (responseEdit.status === 200) {
+            this.$alert(responseEdit.data.result[0].message, responseEdit.data.result[0].code)
+            isSuccess = true
+          }
           isSuccess = true
           break
         case 'delete':

@@ -413,7 +413,7 @@ export default {
           isSuccess = await this.$refs['orderDetail'].beforeSave()
           isSuccess = await this.$refs['orderCustomer'].save()
           if (isSuccess) {
-            this.$alert(this.$t('__uploadSuccess'), 200, {
+            this.$alert(this.$t('__newSuccess'), 200, {
               callback: () => {
                 this.$router.replace({
                   name: this.parent,
