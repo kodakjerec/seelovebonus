@@ -1,7 +1,6 @@
 <template>
   <div id="app"
-    v-loading="isEnableLoadingMask"
-    v-loading.fullscreen.lock="true">
+    v-loading="isEnableLoadingMask">
     <app-header></app-header>
     <router-view></router-view>
   </div>
