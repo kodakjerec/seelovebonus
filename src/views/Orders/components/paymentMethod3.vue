@@ -19,7 +19,7 @@
               v-model="form.ChequeDate"
               type="date"
               :placeholder="$t('__plzChoice')+$t('__expire')+$t('__date')"
-              format="yyyy - MM - dd"
+              value-format="yyyy-MM-dd"
                :disabled="disableForm.ChequeDate">
             </el-date-picker>
           </el-form-item>

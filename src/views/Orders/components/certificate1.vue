@@ -37,6 +37,7 @@
     :dialog-type="dialogType"
     :dialog-show="dialogShow"
     :certificate1="certificate1"
+    :orderID="orderID"
     @dialog-cancel="dialogCancel()"
     @dialog-save="dialogSave()"></new-form>
   </el-form>
@@ -97,13 +98,7 @@ export default {
     },
     // 開啟表單
     showForm: async function (eventType) {
-      this.certificate1 = {
-        OrderID: this.orderID,
-        Certificate1: null,
-        PrintCount: 0,
-        Status: '1'
-      }
-
+      this.certificate1 = {}
       this.dialogType = eventType
       this.dialogShow = true
     },

@@ -2,8 +2,8 @@ import { post } from '@/services/utils'
 
 export default {
   orders: {
-    ordersShow: () => {
-      let rawData = { }
+    ordersShow: ({ keyword }) => {
+      let rawData = { keyword }
       return post('/orders/ordersShow', rawData).then(data => {
         console.log(`%c <<< Response(/rest/orders/ordersShow)⤵ `, 'background-color: #E0455D; color: white; font-size: 14px; font-weight: bold;', data)
         return data
@@ -128,8 +128,8 @@ export default {
         return data
       })
     },
-    invoiceShow: () => {
-      let rawData = { }
+    invoiceShow: ({ keyword }) => {
+      let rawData = { keyword }
       return post('/orders/invoiceShow', rawData).then(data => {
         console.log(`%c <<< Response(/rest/orders/invoiceShow)⤵ `, 'background-color: #E0455D; color: white; font-size: 14px; font-weight: bold;', data)
         return data

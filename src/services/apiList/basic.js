@@ -2,8 +2,8 @@ import { post } from '@/services/utils'
 
 export default {
   basic: {
-    companiesShow: () => {
-      let rawData = { }
+    companiesShow: ({ keyword }) => {
+      let rawData = { keyword }
       return post('/basic/companiesShow', rawData).then(data => {
         console.log(`%c <<< Response(/rest/basic/companiesShow)⤵ `, 'background-color: #E0455D; color: white; font-size: 14px; font-weight: bold;', data)
         return data
@@ -23,8 +23,8 @@ export default {
         return data
       })
     },
-    customersShow: () => {
-      let rawData = { }
+    customersShow: ({ keyword }) => {
+      let rawData = { keyword }
       return post('/basic/customersShow', rawData).then(data => {
         console.log(`%c <<< Response(/rest/basic/customersShow)⤵ `, 'background-color: #E0455D; color: white; font-size: 14px; font-weight: bold;', data)
         return data
@@ -44,8 +44,8 @@ export default {
         return data
       })
     },
-    employeesShow: () => {
-      let rawData = { }
+    employeesShow: ({ keyword }) => {
+      let rawData = { keyword }
       return post('/basic/employeesShow', rawData).then(data => {
         console.log(`%c <<< Response(/rest/basic/employeesShow)⤵ `, 'background-color: #E0455D; color: white; font-size: 14px; font-weight: bold;', data)
         return data
@@ -65,8 +65,8 @@ export default {
         return data
       })
     },
-    productsShow: () => {
-      let rawData = { }
+    productsShow: ({ keyword }) => {
+      let rawData = { keyword }
       return post('/basic/productsShow', rawData).then(data => {
         console.log(`%c <<< Response(/rest/basic/productsShow)⤵ `, 'background-color: #E0455D; color: white; font-size: 14px; font-weight: bold;', data)
         return data
@@ -107,8 +107,8 @@ export default {
         return data
       })
     },
-    projectsShow: () => {
-      let rawData = { }
+    projectsShow: ({ keyword }) => {
+      let rawData = { keyword }
       return post('/basic/projectsShow', rawData).then(data => {
         console.log(`%c <<< Response(/rest/basic/projectsShow)⤵ `, 'background-color: #E0455D; color: white; font-size: 14px; font-weight: bold;', data)
         return data

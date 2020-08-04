@@ -151,5 +151,6 @@ export default {
   __pleaseInputPersonalID: '身分證格式有誤',
   __plzInputCardNumber: '請輸入末四碼, 格式: 5678',
   __pleaseInputInvoiceID: '格式: AB12345678',
-  __pleaseSelectAtLeastOne: '請至少選擇一筆 '
+  __pleaseSelectAtLeastOne: '請至少選擇一筆 ',
+  __pleaseInputSearchValue: '請輸入查詢數值'
 }

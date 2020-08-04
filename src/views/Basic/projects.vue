@@ -3,6 +3,7 @@
     <el-button-group>
       <el-button type="primary" icon="el-icon-plus" @click.prevent="showForm('new')">{{$t('__new')}}</el-button>
     </el-button-group>
+    <search-button @search="search"></search-button>
     <p/>
     <el-table
       :data="projectsShow"
@@ -45,12 +46,14 @@
 </template>
 
 <script>
+import searchButton from '@/components/searchButton'
 import newForm from './components/projectNewForm'
 import { formatDate, formatMoney } from '@/setup/format.js'
 
 export default {
   name: 'Projects',
   components: {
+    searchButton,
     newForm
   },
   data () {
@@ -58,7 +61,8 @@ export default {
       dialogType: 'new',
       dialogShow: false,
       projectsShow: [],
-      project: {}
+      project: {},
+      searchKeyWord: ''
     }
   },
   mounted () {
@@ -74,7 +78,7 @@ export default {
     // 讀入系統清單
     preLoading: async function () {
       // 顯示專用
-      const response2 = await this.$api.basic.projectsShow()
+      const response2 = await this.$api.basic.projectsShow({ keyword: this.searchKeyWord })
       this.projectsShow = response2.data.result
     },
     handleClick: async function (row, column, event) {
@@ -97,6 +101,12 @@ export default {
     dialogSave: function () {
       this.dialogShow = false
       this.preLoading()
+    },
+    // 搜尋
+    search: async function (value) {
+      this.searchKeyWord = value
+      const response2 = await this.$api.basic.projectsShow({ keyword: this.searchKeyWord })
+      this.projectsShow = response2.data.result
     }
   }
 }

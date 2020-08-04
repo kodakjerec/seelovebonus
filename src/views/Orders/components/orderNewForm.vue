@@ -4,7 +4,7 @@
     <el-form ref="form" :model="form" :rules="rules">
       <el-form-item prop="ID" :label="$t('__orderID')+'：'" label-width="100px" label-position="left">
         <el-col :span="6">
-          <el-input v-model="form.ID" :placeholder="$t('__afterSaveWillShow')" autocomplete="off" :disabled="disableForm.ID"></el-input>
+          <el-input v-model="form.ID" :placeholder="$t('__pleaseInput')" autocomplete="off" :disabled="disableForm.ID"></el-input>
         </el-col>
         <el-col :span="2" class="el-form-item__label">
           {{$t('__status')}}
@@ -26,7 +26,7 @@
               v-model="form.OrderDate"
               type="date"
               :placeholder="$t('__plzChoice')+$t('__order')+$t('__date')"
-              format="yyyy - MM - dd"
+              value-format="yyyy-MM-dd"
               :disabled="disableForm.OrderDate">
             </el-date-picker>
           </el-form-item>

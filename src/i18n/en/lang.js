@@ -151,5 +151,6 @@ export default {
   __pleaseInputPersonalID: 'ID style is\'t correct',
   __plzInputCardNumber: 'Input last 4 numbers, ex: 5678',
   __pleaseInputInvoiceID: 'Style: AB12345678',
-  __pleaseSelectAtLeastOne: 'Select at least one '
+  __pleaseSelectAtLeastOne: 'Select at least one ',
+  __pleaseInputSearchValue: 'Please input search content'
 }

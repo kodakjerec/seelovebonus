@@ -30,7 +30,7 @@
           v-model="form.InvoiceDate"
           type="date"
           :placeholder="$t('__plzChoice')+$t('__invoice')+$t('__date')"
-          format="yyyy - MM - dd"
+          value-format="yyyy-MM-dd"
            :disabled="disableForm.InvoiceDate">
         </el-date-picker>
       </el-form-item>

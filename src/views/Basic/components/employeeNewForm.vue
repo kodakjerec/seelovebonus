@@ -57,7 +57,7 @@
               v-model="form.StartDate"
               type="date"
               :placeholder="$t('__plzChoice')+$t('__startDate')"
-              format="yyyy - MM - dd">
+              value-format="yyyy-MM-dd">
             </el-date-picker>
           </el-form-item>
         </el-col>
@@ -70,7 +70,7 @@
               v-model="form.EndDate"
               type="date"
               :placeholder="$t('__plzChoice')+$t('__endDate')"
-              format="yyyy - MM - dd">
+              value-format="yyyy-MM-dd">
             </el-date-picker>
           </el-form-item>
         </el-col>

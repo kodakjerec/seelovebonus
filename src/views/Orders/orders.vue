@@ -3,6 +3,7 @@
     <el-button-group>
       <el-button type="primary" icon="el-icon-plus" @click.prevent="showForm('new')">{{$t('__new')}}</el-button>
     </el-button-group>
+    <search-button @search="search"></search-button>
     <p/>
     <el-table
       :data="ordersShow"
@@ -38,16 +39,21 @@
 </template>
 
 <script>
+import searchButton from '@/components/searchButton'
 import { formatMoney, formatDate } from '@/setup/format.js'
 
 export default {
   name: 'Orders',
+  components: {
+    searchButton
+  },
   data () {
     return {
       dialogType: 'new',
       dialogShow: false,
       ordersShow: [],
-      order: {}
+      order: {},
+      searchKeyWord: ''
     }
   },
   mounted () {
@@ -63,7 +69,7 @@ export default {
     // 讀入系統清單
     preLoading: async function () {
       // 顯示專用
-      const response2 = await this.$api.orders.ordersShow()
+      const response2 = await this.$api.orders.ordersShow({ keyword: this.searchKeyWord })
       this.ordersShow = response2.data.result
     },
     handleClick: async function (row, column, event) {
@@ -98,6 +104,12 @@ export default {
     dialogSave: function () {
       this.dialogShow = false
       this.preLoading()
+    },
+    // 搜尋
+    search: async function (value) {
+      this.searchKeyWord = value
+      const response2 = await this.$api.basic.ordersShow({ keyword: this.searchKeyWord })
+      this.ordersShow = response2.data.result
     }
   }
 }

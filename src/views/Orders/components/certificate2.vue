@@ -37,6 +37,7 @@
     :dialog-type="dialogType"
     :dialog-show="dialogShow"
     :certificate2="certificate2"
+    :orderID="orderID"
     @dialog-cancel="dialogCancel()"
     @dialog-save="dialogSave()"></new-form>
   </el-form>
@@ -89,7 +90,7 @@ export default {
     },
     handleClick: async function (row, column, event) {
       // 取得可以用的選單
-      this.collectionRecord = row
+      this.certificate2 = row
 
       // 進入修改
       this.dialogType = 'edit'
@@ -97,13 +98,7 @@ export default {
     },
     // 開啟表單
     showForm: async function (eventType) {
-      this.certificate2 = {
-        OrderID: this.orderID,
-        Certificate2: null,
-        PrintCount: 0,
-        Status: '1'
-      }
-
+      this.certificate2 = {}
       this.dialogType = eventType
       this.dialogShow = true
     },

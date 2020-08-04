@@ -18,8 +18,8 @@
             <el-date-picker
               v-model="form.ReceivedDate"
               type="date"
+              value-format="yyyy-MM-dd"
               :placeholder="$t('__plzChoice')+$t('__received')+$t('__date')"
-              format="yyyy - MM - dd"
               :disabled="disableForm.ReceivedDate">
             </el-date-picker>
           </el-form-item>
@@ -85,7 +85,7 @@ export default {
         InvoiceID: '',
         OrderID: null,
         PaymentMethod: '4',
-        ReceivedDate: new Date(),
+        ReceivedDate: null,
         Amount: null,
         Account: null,
         BankID: null,
@@ -112,7 +112,7 @@ export default {
         Amount: false,
         Account: false,
         BankID: false,
-        ReceivedID: true,
+        ReceivedID: false,
         ChequeDate: false
       },
       myTitle: '',

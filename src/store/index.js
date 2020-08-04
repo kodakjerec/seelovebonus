@@ -34,6 +34,10 @@ export default new Vuex.Store({
     },
     ENABLE_LOADING_MASK (state, isEnable) {
       state.isEnableLoadingMask = isEnable
+    },
+    RESET_LOADING_MASK (state) {
+      state.loadingCounter = 0
+      state.isEnableLoadingMask = false
     }
   },
   actions: {
@@ -78,6 +82,9 @@ export default new Vuex.Store({
           commit('ENABLE_LOADING_MASK', false)
         }
       }, isShorterThanMinMaskShowPeriod ? remainMillisenconds : 0)
+    },
+    resetLoadingMask ({ commit }) {
+      commit('RESET_LOADING_MASK')
     }
   },
   modules: {

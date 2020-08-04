@@ -8,7 +8,7 @@
           <el-input v-model="form.Certificate2" autocomplete="off" maxlength="40" show-word-limit :disabled="disableForm.Certificate2"></el-input>
       </el-form-item>
       <el-form-item :label="$t('__printCount')" label-width="100px" label-position="left">
-          <el-input v-model="form.PrintCount" autocomplete="off" maxlength="200" show-word-limit :disabled="disableForm.PrintCount"></el-input>
+          <el-input-number v-model="form.PrintCount" autocomplete="off" maxlength="200" show-word-limit :disabled="disableForm.PrintCount"></el-input-number>
       </el-form-item>
       <el-form-item :label="$t('__status')" label-width="100px" label-position="left">
           <el-select v-model="form.Status" value-key="value" :placeholder="$t('__plzChoice')" :disabled="disableForm.Status">
@@ -19,7 +19,12 @@
         </el-select>
       </el-form-item>
       <el-form-item :label="$t('__createDate')" label-width="100px" label-position="left">
-          <el-input v-model="form.CreateDate" autocomplete="off" maxlength="200" show-word-limit :disabled="disableForm.CreateDate"></el-input>
+          <el-date-picker
+            v-model="form.CreateDate"
+            type="date"
+            value-format="yyyy-MM-dd"
+            :disabled="disableForm.CreateDate">
+          </el-date-picker>
       </el-form-item>
     </el-form>
     <div slot="footer" class="dialog-footer">
@@ -38,16 +43,17 @@ export default {
   props: {
     dialogType: { type: String, default: 'new' },
     dialogShow: { type: Boolean, default: false },
-    certificate2: { type: Object }
+    certificate2: { type: Object },
+    orderID: { type: String }
   },
   data () {
     return {
       form: {
-        OrderID: null,
+        OrderID: this.orderID,
         Certificate2: null,
         PrintCount: 0,
         Status: '1',
-        CreateDate: null
+        CreateDate: new Date()
       },
       rules: {
         Certificate2: [{ required: true, message: this.$t('__pleaseInput'), trigger: 'blur' }]
@@ -63,9 +69,9 @@ export default {
       disableForm: {
         OrderID: true,
         Certificate2: false,
-        PrintCount: true,
-        Status: true,
-        CreateDate: true
+        PrintCount: false,
+        Status: false,
+        CreateDate: false
       },
       myTitle: '',
       // 以下為下拉式選單專用

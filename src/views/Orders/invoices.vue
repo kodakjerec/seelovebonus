@@ -1,7 +1,8 @@
 <template>
   <el-form>
+    <search-button @search="search"></search-button>
     <el-table
-      :data="ordersShow"
+      :data="invoicesShow"
       stripe
       border
       @row-click="handleClick"
@@ -38,16 +39,21 @@
 </template>
 
 <script>
+import searchButton from '@/components/searchButton'
 import { formatMoney, formatDate } from '@/setup/format.js'
 
 export default {
   name: 'Invoices',
+  components: {
+    searchButton
+  },
   data () {
     return {
       dialogType: 'new',
       dialogShow: false,
-      ordersShow: [],
-      order: {}
+      invoicesShow: [],
+      order: {},
+      searchKeyWord: ''
     }
   },
   mounted () {
@@ -63,8 +69,8 @@ export default {
     // 讀入系統清單
     preLoading: async function () {
       // 顯示專用
-      const response2 = await this.$api.orders.invoiceShow()
-      this.ordersShow = response2.data.result
+      const response2 = await this.$api.orders.invoiceShow({ keyword: this.searchKeyWord })
+      this.invoicesShow = response2.data.result
     },
     handleClick: async function (row, column, event) {
       // 取得可以用的選單
@@ -98,6 +104,12 @@ export default {
     dialogSave: function () {
       this.dialogShow = false
       this.preLoading()
+    },
+    // 搜尋
+    search: async function (value) {
+      this.searchKeyWord = value
+      const response2 = await this.$api.basic.invoiceShow({ keyword: this.searchKeyWord })
+      this.invoicesShow = response2.data.result
     }
   }
 }

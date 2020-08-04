@@ -93,7 +93,7 @@
               v-model="form.Birth"
               type="date"
               :placeholder="$t('__plzChoice')+$t('__birth')"
-              format="yyyy - MM - dd">
+              value-format="yyyy-MM-dd">
             </el-date-picker>
           </el-form-item>
         </el-col>
