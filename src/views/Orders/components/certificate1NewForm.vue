@@ -110,14 +110,14 @@ export default {
         }
         break
     }
-    this.preloading()
+    this.preLoading()
   },
   methods: {
     formatterDate: function (row, column, cellValue, index) {
       return formatDate(cellValue)
     },
     // 讀取預設資料
-    preloading: async function () {
+    preLoading: async function () {
       const response3 = await this.$api.basic.getDropdownList({ type: 'status' })
       this.ddlStatus = response3.data.result
     },

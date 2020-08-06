@@ -7,8 +7,11 @@
     </el-form-item>
     <el-form-item :label="$t('__systemSettingsCategory')">
       <el-col :span="8">
-        <el-select v-model="form.category" value-key="value" :placeholder="$t('__plzChoice')" @change="selectChange">
-          <el-option v-for="item in categories" :key="item.ID" :label="item.Value" :value="item.ID"></el-option>
+        <el-select style="width:100%" v-model="form.category" value-key="value" :placeholder="$t('__plzChoice')" @change="selectChange">
+          <el-option v-for="item in ddlCategory" :key="item.ID" :label="item.Value" :value="item.ID">
+            <span style="float: left">{{ item.Value+'('+item.Memo+')'}}</span>
+            <span style="float: right; color: #8492a6; font-size: 13px">{{ item.ID }}</span>
+          </el-option>
         </el-select>
       </el-col>
       <el-col :span="4" class="el-form-item__label">
@@ -48,6 +51,10 @@
         prop="Language"
         :label="$t('__systemSettingsLanguage')">
       </el-table-column>
+      <el-table-column
+        prop="Memo"
+        :label="$t('__memo')">
+      </el-table-column>
     </el-table>
   </el-form>
 </template>
@@ -61,12 +68,12 @@ export default {
         category: 'Country',
         language: 2
       },
-      categories: [],
       languages: [
         { ID: 1, Value: this.$t('__language1') },
         { ID: 2, Value: this.$t('__language2') }],
       settingsOrigin: [],
-      settings: []
+      settings: [],
+      ddlCategory: []
     }
   },
   mounted () {
@@ -78,11 +85,10 @@ export default {
       const response = await this.$api.settings.getDropdownList({ type: 'systemSettings' })
       this.settingsOrigin = response.data.result
 
-      let arrayDistinctCategory = [...new Set(this.settingsOrigin.map(item => item.Category))]
-      arrayDistinctCategory.forEach(value => {
-        this.categories.push({ ID: value, Value: value })
-      })
-      this.form.category = this.categories[0].ID
+      const response2 = await this.$api.settings.getDropdownList({ type: 'settingsType' })
+      this.ddlCategory = response2.data.result
+
+      this.form.category = this.ddlCategory[0].ID
       this.form.language = this.languages[1].ID
 
       this.selectChange()

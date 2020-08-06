@@ -12,7 +12,7 @@
         </el-col>
         <el-col :span="12">
           <el-form-item prop="ID">
-            <el-input v-model="form.ID" autocomplete="off" maxlength="10" show-word-limit :disabled="disableForm.ID"></el-input>
+            <el-input v-model="form.ID" autocomplete="off" maxlength="20" show-word-limit :disabled="disableForm.ID"></el-input>
           </el-form-item>
         </el-col>
       </el-form-item>
@@ -234,13 +234,13 @@ export default {
         this.IDType = '2' // 修改狀態不要檢核ID
         break
     }
-    await this.preloading()
+    await this.preLoading()
 
     this.isLoadingFinish = true
   },
   methods: {
     // 讀取預設資料
-    preloading: async function () {
+    preLoading: async function () {
       // 取得所有原始資料
       const response = await this.$api.basic.getDropdownList({ type: 'post' })
       this.postData = response.data.result

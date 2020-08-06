@@ -116,11 +116,11 @@ export default {
         this.disableForm.ID = true
         break
     }
-    this.preloading()
+    this.preLoading()
   },
   methods: {
     // 讀取預設資料
-    preloading: async function () {
+    preLoading: async function () {
       const response1 = await this.$api.basic.getDropdownList({ type: 'accounting' })
       this.ddlAccounting = response1.data.result
       const response2 = await this.$api.basic.getDropdownList({ type: 'unit' })

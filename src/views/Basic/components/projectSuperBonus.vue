@@ -65,11 +65,11 @@ export default {
     }
   },
   mounted () {
-    this.preloading()
+    this.preLoading()
   },
   methods: {
     // 讀取預設資料
-    preloading: async function () {
+    preLoading: async function () {
 
     },
     // 存檔前先過濾

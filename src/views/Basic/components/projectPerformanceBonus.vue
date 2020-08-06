@@ -71,11 +71,11 @@ export default {
     }
   },
   mounted () {
-    this.preloading()
+    this.preLoading()
   },
   methods: {
     // 讀取預設資料
-    preloading: async function () {
+    preLoading: async function () {
       // 取得所有原始資料
       const response = await this.$api.basic.getDropdownList({ type: 'grade' })
       this.ddlSubList = response.data.result

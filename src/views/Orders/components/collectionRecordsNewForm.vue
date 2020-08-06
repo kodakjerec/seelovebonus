@@ -160,11 +160,11 @@ export default {
         }
         break
     }
-    this.preloading()
+    this.preLoading()
   },
   methods: {
     // 讀取預設資料
-    preloading: async function () {
+    preLoading: async function () {
       const response3 = await this.$api.orders.getDropdownList({ type: 'employee' })
       this.ddlCreateID = response3.data.result
       const response1 = await this.$api.orders.getDropdownList({ type: 'paymentMethod' })

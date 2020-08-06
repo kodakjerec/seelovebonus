@@ -138,17 +138,31 @@
       </el-form-item>
     </el-form>
     <div slot="footer" class="dialog-footer">
-      <el-button @click="cancel">{{$t('__cancel')}}</el-button>
-      <el-button type="primary" @click="checkValidate">{{$t('__save')}}</el-button>
+      <el-button @click.prevent="cancel">{{$t('__cancel')}}</el-button>
+      <el-button type="primary" @click.prevent="checkValidate">{{$t('__save')}}</el-button>
     </div>
+    <el-collapse v-model="activeName" accordion="">
+        <el-collapse-item name="1">
+          <template slot="title">
+            <h2>{{$t('__logExceedingCompanyContractDate')}}<i class="el-icon-circle-plus" v-show="activeName===''"></i></h2>
+          </template>
+          <exceedingDateLog
+            :companyID="form.ID">
+          </exceedingDateLog>
+        </el-collapse-item>
+    </el-collapse>
   </el-dialog>
 </template>
 
 <script>
 import validate from '@/setup/validate.js'
+import exceedingDateLog from './companyExceedingDateLog'
 
 export default {
   name: 'CompanyNewForm',
+  components: {
+    exceedingDateLog
+  },
   props: {
     dialogType: { type: String, default: 'new' },
     dialogShow: { type: Boolean, default: false },
@@ -188,7 +202,8 @@ export default {
       },
       myTitle: '',
       isLoadingFinish: false, // 讀取完畢
-      postData: [],
+      postData: [], // 郵遞區號
+      activeName: '',
       // 以下為下拉式選單專用
       ddlCountry: [],
       ddlCity: [],
@@ -211,13 +226,13 @@ export default {
         this.disableForm.ID = true
         break
     }
-    await this.preloading()
+    await this.preLoading()
 
     this.isLoadingFinish = true
   },
   methods: {
     // 讀取預設資料
-    preloading: async function () {
+    preLoading: async function () {
       // 取得所有原始資料
       const response = await this.$api.basic.getDropdownList({ type: 'post' })
       this.postData = response.data.result

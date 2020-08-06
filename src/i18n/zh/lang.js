@@ -132,6 +132,8 @@ export default {
   __binding: '綁定',
   __collectioRecordsDeleteNo: '無法刪除付款資訊，請檢查 ',
   __refEmployeeIDForUser: '關連員工帳號',
+  __logExceedingCompanyContractDate: '展期紀錄',
+  __logTime: 'Log時間',
   // 請在上方新增字串
   // 以下為錯誤處理專用
   __error400: '無法理解請求',

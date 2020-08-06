@@ -304,14 +304,14 @@ export default {
         }
         break
     }
-    this.preloading()
+    this.preLoading()
   },
   methods: {
     formatterMoney: function (row, column, cellValue, index) {
       return formatMoney(cellValue)
     },
     // 讀取預設資料
-    preloading: async function () {
+    preLoading: async function () {
       const response1 = await this.$api.orders.getDropdownList({ type: 'orderStatus' })
       this.ddlOrderStatus = response1.data.result
       const response2 = await this.$api.orders.getDropdownList({ type: 'project' })

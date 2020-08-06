@@ -15,6 +15,14 @@ export function formatDate (value) {
   }
 }
 
+export function formatDateTime (value) {
+  if (value) {
+    return value.replace('T', ' ').replace('Z', '')
+  } else {
+    return value
+  }
+}
+
 export function formatCard (value) {
   if (value) {
     return value.substring(0, 10)

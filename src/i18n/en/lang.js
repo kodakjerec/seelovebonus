@@ -132,6 +132,8 @@ export default {
   __binding: 'Binding',
   __collectioRecordsDeleteNo: 'Can\'t delete record, please check ',
   __refEmployeeIDForUser: 'Ref. ID',
+  __logExceedingCompanyContractDate: 'Log',
+  __logTime: 'Log time',
   // 請在上方新增字串
   // 以下為錯誤處理專用
   __error400: 'Bad Request',
