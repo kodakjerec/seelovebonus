@@ -19,36 +19,36 @@
       <el-form-item :label="$t('__employee')+$t('__name')" prop="Name">
           <el-input v-model="form.Name" autocomplete="off" maxlength="40" show-word-limit></el-input>
       </el-form-item>
-            <el-form-item :label="$t('__grade')" prop="Grade">
-        <el-col :span="10">
+      <el-form-item :label="$t('__grade')" prop="Grade">
         <el-select v-model="form.Grade" value-key="value" :placeholder="$t('__plzChoice')">
           <el-option v-for="item in ddlGrade" :key="item.ID" :label="item.Value" :value="item.ID">
             <span style="float: left">{{ item.Value }}</span>
             <span style="float: right; color: #8492a6; font-size: 13px">{{ item.ID }}</span>
           </el-option>
         </el-select>
+      </el-form-item>
+      <el-form-item :label="$t('__companyID')" prop="CompanyID">
+        <el-col :span="10">
+          <el-select v-model="form.CompanyID" filterable value-key="value" :placeholder="$t('__plzChoice')" @change="ddlCompanyIDChange">
+            <el-option v-for="item in ddlCompanyID" :key="item.ID" :label="item.ID+' '+item.Value" :value="item.ID">
+              <span style="float: left">{{ item.Value }}</span>
+              <span style="float: right; color: #8492a6; font-size: 13px">{{ item.ID }}</span>
+            </el-option>
+          </el-select>
         </el-col>
         <el-col :span="4" class="el-form-item__label">
-          {{$t('__companyID')}}
+          {{$t('__parent')+$t('__id')}}
         </el-col>
         <el-col :span="10">
-          <el-form-item prop="CompanyID">
-            <el-select v-model="form.CompanyID" filterable value-key="value" :placeholder="$t('__plzChoice')" @change="ddlCompanyIDChange">
-              <el-option v-for="item in ddlCompanyID" :key="item.ID" :label="item.ID+' '+item.Value" :value="item.ID">
+          <el-form-item prop="ParentID">
+            <el-select v-model="form.ParentID" value-key="value" :placeholder="$t('__plzChoice')" :disabled="!(form.CompanyID !== null)">
+              <el-option v-for="item in ddlParentID" :key="item.ID" :label="item.Value" :value="item.ID">
                 <span style="float: left">{{ item.Value }}</span>
                 <span style="float: right; color: #8492a6; font-size: 13px">{{ item.ID }}</span>
               </el-option>
             </el-select>
           </el-form-item>
         </el-col>
-      </el-form-item>
-      <el-form-item :label="$t('__parent')+$t('__id')" prop="ParentID">
-        <el-select v-model="form.ParentID" value-key="value" :placeholder="$t('__plzChoice')" :disabled="!(form.CompanyID !== null)">
-          <el-option v-for="item in ddlParentID" :key="item.ID" :label="item.Value" :value="item.ID">
-            <span style="float: left">{{ item.Value }}</span>
-            <span style="float: right; color: #8492a6; font-size: 13px">{{ item.ID }}</span>
-          </el-option>
-        </el-select>
       </el-form-item>
       <el-form-item :label="$t('__qualifications')+$t('__startDate')" required>
         <el-col :span="10">
@@ -205,6 +205,7 @@ export default {
       },
       IDType: '1',
       myTitle: '',
+      isLoadingFinish: false, // 讀取完畢
       // 以下為下拉式選單專用
       // Settings資料
       postData: [],
@@ -220,7 +221,7 @@ export default {
       ddlIDType: []
     }
   },
-  mounted () {
+  async mounted () {
     switch (this.dialogType) {
       case 'new':
         this.myTitle = this.$t('__new') + this.$t('__employee')
@@ -233,7 +234,9 @@ export default {
         this.IDType = '2' // 修改狀態不要檢核ID
         break
     }
-    this.preloading()
+    await this.preloading()
+
+    this.isLoadingFinish = true
   },
   methods: {
     // 讀取預設資料
@@ -265,10 +268,16 @@ export default {
     // 切換公司
     ddlCompanyIDChange: function () {
       this.ddlParentID = this.employeesData.filter(item => item.CompanyID === this.form.CompanyID)
+      if (this.isLoadingFinish) {
+        this.form.ParentID = null
+      }
     },
     // 過濾郵遞區號
     ddlCityChange: function () {
       this.ddlPost = this.postData.filter(item => item.ParentID === this.form.City)
+      if (this.isLoadingFinish) {
+        this.form.Post = null
+      }
     },
     // 檢查輸入
     checkValidate: function () {

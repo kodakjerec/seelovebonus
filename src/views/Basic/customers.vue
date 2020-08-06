@@ -12,7 +12,7 @@
       @row-click="handleClick"
       style="width: 100%">
       <el-table-column
-        prop="ID"
+        prop="viewID"
         :label="$t('__customer')+$t('__id')">
       </el-table-column>
       <el-table-column

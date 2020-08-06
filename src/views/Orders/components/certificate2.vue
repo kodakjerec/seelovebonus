@@ -1,7 +1,10 @@
 <template>
   <el-form>
     <el-collapse v-model="activeName" accordion>
-      <el-collapse-item :title="$t('__certificate2')" name='1'>
+      <el-collapse-item name='1'>
+        <template slot="title">
+          <h2>{{$t('__certificate2')}}<i class="el-icon-circle-plus" v-show="activeName===''"></i></h2>
+        </template>
         <el-button-group>
           <el-button type="primary" icon="el-icon-plus" @click.prevent="showForm('new')" v-show="buttonsShow.new && buttonsShowUser.new">{{$t('__new')+$t('__certificate2')}}</el-button>
         </el-button-group>

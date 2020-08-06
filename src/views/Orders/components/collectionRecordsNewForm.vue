@@ -77,16 +77,18 @@ export default {
   props: {
     dialogType: { type: String, default: 'new' },
     dialogShow: { type: Boolean, default: false },
-    collectionRecord: { type: Object }
+    collectionRecord: { type: Object },
+    orderID: { type: String },
+    orderAmount: { type: Number }
   },
   data () {
     return {
       form: {
         InvoiceID: '',
-        OrderID: null,
-        PaymentMethod: '4',
-        ReceivedDate: null,
-        Amount: null,
+        OrderID: this.orderID,
+        PaymentMethod: '1',
+        ReceivedDate: new Date(),
+        Amount: this.orderAmount,
         Account: null,
         BankID: null,
         Memo: null,
@@ -123,7 +125,9 @@ export default {
     }
   },
   mounted () {
-    this.form = JSON.parse(JSON.stringify(this.collectionRecord))
+    if (Object.keys(this.collectionRecord).length > 0) {
+      this.form = JSON.parse(JSON.stringify(this.collectionRecord))
+    }
     switch (this.dialogType) {
       case 'new':
         this.myTitle = this.$t('__new') + this.$t('__collectionRecords')

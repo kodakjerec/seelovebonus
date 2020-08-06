@@ -1,7 +1,10 @@
 <template>
   <el-form>
     <el-collapse v-model="activeName" accordion>
-      <el-collapse-item :title="$t('__collectionRecords')" name='1'>
+      <el-collapse-item name='1'>
+        <template slot="title">
+          <h2>{{$t('__collectionRecords')}}<i class="el-icon-circle-plus" v-show="activeName===''"></i></h2>
+        </template>
         <el-button-group>
           <el-button type="primary" icon="el-icon-plus" @click.prevent="showForm('new')" v-show="buttonsShow.new && buttonsShowUser.new">{{$t('__new')+$t('__collectionRecords')}}</el-button>
         </el-button-group>
@@ -47,6 +50,8 @@
     :dialog-type="dialogType"
     :dialog-show="dialogShow"
     :collectionRecord="collectionRecord"
+    :orderID="orderID"
+    :orderAmount="orderAmount"
     @dialog-cancel="dialogCancel()"
     @dialog-save="dialogSave()"></new-form>
   </el-form>
@@ -72,7 +77,8 @@ export default {
       dialogShow: false,
       collectionRecordsShow: [],
       collectionRecord: {},
-      activeName: ''
+      activeName: '',
+      orderAmount: 0
     }
   },
   watch: {
@@ -111,18 +117,7 @@ export default {
       const responseRecords = await this.$api.orders.collectionRecordsFunctions({ type: 'collectionRecordsNew', OrderID: this.orderID })
       let order = responseRecords.data.result[0]
 
-      this.collectionRecord = {
-        InvoiceID: '',
-        OrderID: this.orderID,
-        PaymentMethod: '1',
-        ReceivedDate: new Date(),
-        Amount: order.Amount,
-        Account: null,
-        BankID: null,
-        Memo: null,
-        ReceivedID: this.$store.state.userID,
-        ChequeDate: null
-      }
+      this.orderAmount = order.Amount
 
       this.dialogType = eventType
       this.dialogShow = true

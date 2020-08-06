@@ -187,7 +187,9 @@ export default {
         ID: false
       },
       myTitle: '',
+      isLoadingFinish: false, // 讀取完畢
       postData: [],
+      // 以下為下拉式選單專用
       ddlCountry: [],
       ddlCity: [],
       ddlPost: [],
@@ -197,7 +199,7 @@ export default {
       ddlEmployeeID: []
     }
   },
-  mounted () {
+  async mounted () {
     switch (this.dialogType) {
       case 'new':
         this.myTitle = this.$t('__new') + this.$t('__company')
@@ -209,7 +211,9 @@ export default {
         this.disableForm.ID = true
         break
     }
-    this.preloading()
+    await this.preloading()
+
+    this.isLoadingFinish = true
   },
   methods: {
     // 讀取預設資料
@@ -242,6 +246,9 @@ export default {
     // 過濾郵遞區號
     ddlCityChange: function () {
       this.ddlPost = this.postData.filter(item => item.ParentID === this.form.City)
+      if (this.isLoadingFinish) {
+        this.form.Post = null
+      }
     },
     // 過濾推薦人種類
     ddlRefKindChange: function () {
@@ -255,6 +262,9 @@ export default {
         case '3':
           this.ddlReferrer = this.companiesData
           break
+      }
+      if (this.isLoadingFinish) {
+        this.form.Referrer = null
       }
     },
     // 檢查輸入

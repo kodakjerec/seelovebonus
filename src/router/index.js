@@ -76,9 +76,14 @@ const routes = [
     component: () => import('@/views/Orders/invoices')
   },
   {
-    path: '/Orders/CollectionRecords',
-    name: 'CollectionRecords',
-    component: () => import('@/views/Orders/collectionRecords')
+    path: '/Orders/Certificate1',
+    name: 'Certificate1',
+    component: () => import('@/views/Orders/certificate1')
+  },
+  {
+    path: '/Orders/Certificate2',
+    name: 'Certificate2',
+    component: () => import('@/views/Orders/certificate2')
   },
   {
     path: '/Reports',

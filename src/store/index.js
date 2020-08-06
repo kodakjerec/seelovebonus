@@ -12,7 +12,7 @@ export default new Vuex.Store({
     userID: '',
     userName: '',
     menuList: [],
-    version: '2020.8.3.2',
+    version: '2020.8.4.4',
     loadingCounter: 0,
     isEnableLoadingMask: false
   },

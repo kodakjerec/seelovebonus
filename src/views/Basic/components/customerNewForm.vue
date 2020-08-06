@@ -150,7 +150,10 @@
       </el-form-item>
       <!-- 以下為法定代理人 -->
       <el-collapse v-model="activeName" accordion="">
-        <el-collapse-item :title="$t('__customer')+$t('__agent')" name="1">
+        <el-collapse-item name="1">
+          <template slot="title">
+            <h2>{{$t('__customer')+$t('__agent')}}<i class="el-icon-circle-plus" v-show="activeName===''"></i></h2>
+          </template>
           <el-form-item :label="$t('__id')">
             <el-select v-model="form.AgentID" value-key="value" :placeholder="$t('__palceholderCustomerID')" @change="ddlAgentIDChange">
                 <el-option v-for="item in ddlAgentID" :key="item.ID" :label="item.Value" :value="item.ID">
@@ -271,6 +274,7 @@ export default {
       IDType: '1',
       myTitle: '',
       activeName: '',
+      isLoadingFinish: false, // 讀取完畢
       // 以下為下拉式選單專用
       // Settings資料
       postData: [],
@@ -293,7 +297,7 @@ export default {
       ddlIDType: []
     }
   },
-  mounted () {
+  async mounted () {
     switch (this.dialogType) {
       case 'new':
         this.myTitle = this.$t('__new') + this.$t('__customer')
@@ -310,7 +314,9 @@ export default {
         }
         break
     }
-    this.preloading()
+    await this.preloading()
+
+    this.isLoadingFinish = true
   },
   methods: {
     // 讀取預設資料
@@ -360,10 +366,16 @@ export default {
     // 過濾郵遞區號
     ddlCityChange: function () {
       this.ddlPost = this.postData.filter(item => item.ParentID === this.form.City)
+      if (this.isLoadingFinish) {
+        this.form.Post = null
+      }
     },
     // 過濾法定代理人郵遞區號
     ddlAgentCityChange: function () {
       this.ddlAgentPost = this.postData.filter(item => item.ParentID === this.form.AgentCity)
+      if (this.isLoadingFinish) {
+        this.form.AgentPost = null
+      }
     },
     // 過濾推薦人種類
     ddlRefKindChange: function (selected) {
@@ -377,6 +389,10 @@ export default {
         case '3':
           this.ddlReferrer = this.companiesData
           break
+      }
+      if (this.isLoadingFinish) {
+        this.form.Referrer = null
+        this.form.EmployeeID = null
       }
     },
     // 選定業務代表, 帶入 業務輔導部

@@ -1,7 +1,7 @@
 <template>
   <el-form>
     <el-button-group>
-      <el-button type="primary" icon="el-icon-plus" disabled>{{$t('__new')}}</el-button>
+      <el-button class="hideButton" type="info" icon="el-icon-printer"></el-button>
     </el-button-group>
     <search-button @search="search"></search-button>
     <p/>
@@ -118,3 +118,9 @@ export default {
   }
 }
 </script>
+
+<style lang="scss" scoped>
+.hideButton {
+  visibility: hidden;
+}
+</style>

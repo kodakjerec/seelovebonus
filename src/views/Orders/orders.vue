@@ -21,6 +21,41 @@
         :formatter="formatterDate">
       </el-table-column>
       <el-table-column
+        prop="CustomerName"
+        :label="$t('__orderCustomer')+$t('__name')">
+      </el-table-column>
+      <el-table-column
+        prop="Certificate1List"
+        :label="$t('__certificate1')">
+        <template slot-scope="scope">
+          <div v-for="item in scope.row.Certificate1List" :key="item.Certificate1">
+            {{item.Certificate1}}
+          </div>
+        </template>
+      </el-table-column>
+      <el-table-column
+        prop="Certificate2List"
+        :label="$t('__certificate2')">
+        <template slot-scope="scope">
+          <div v-for="item in scope.row.Certificate2List" :key="item.Certificate2">
+            {{item.Certificate2}}
+          </div>
+        </template>
+      </el-table-column>
+      <el-table-column
+        prop="InvoiceList"
+        :label="$t('__invoice')">
+        <template slot-scope="scope">
+          <div v-for="item in scope.row.InvoiceList" :key="item.InvoiceID">
+            {{item.InvoiceID}}
+          </div>
+        </template>
+      </el-table-column>
+      <el-table-column
+        prop="ReferrerName"
+        :label="$t('__referrer')">
+      </el-table-column>
+      <el-table-column
         prop="ProjectName"
         :label="$t('__project')+$t('__name')">
       </el-table-column>
@@ -71,6 +106,11 @@ export default {
       // 顯示專用
       const response2 = await this.$api.orders.ordersShow({ keyword: this.searchKeyWord })
       this.ordersShow = response2.data.result
+      this.ordersShow.forEach(item => {
+        if (item.Certificate1List) { item.Certificate1List = JSON.parse(item.Certificate1List) }
+        if (item.Certificate2List) { item.Certificate2List = JSON.parse(item.Certificate2List) }
+        if (item.InvoiceList) { item.InvoiceList = JSON.parse(item.InvoiceList) }
+      })
     },
     handleClick: async function (row, column, event) {
       // 取得可以用的選單

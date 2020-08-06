@@ -14,18 +14,7 @@
           <el-form-item>
             <el-button-group>
               <el-button type="primary" icon="el-icon-search" @click.prevent="search()">{{$t('__search')}}</el-button>
-                <vue-excel-xlsx
-                  v-show="employees.length>0"
-                  class="vueExcelxlsx"
-                  :data="employees"
-                  :columns="columns"
-                  :filename="'組織分配表'"
-                  :sheetname="'Sheet1'"
-                  >
-                  <el-button type="primary" icon="el-icon-printer">
-                    {{$t('__toExcel')}}
-                  </el-button>
-                </vue-excel-xlsx>
+              <el-button type="primary" v-show="employees.length > 0" icon="el-icon-printer" @click.prevent="toExcel()">{{$t('__toExcel')}}</el-button>
             </el-button-group>
           </el-form-item>
         </el-col>
@@ -75,6 +64,9 @@
 </template>
 
 <script>
+import Excel from 'exceljs'
+import { saveAs } from 'file-saver'
+
 export default {
   name: 'ReportsEmployee',
   data () {
@@ -84,36 +76,44 @@ export default {
       },
       columns: [
         {
-          label: this.$t('__seq'),
-          field: 'Seq'
+          header: this.$t('__seq'),
+          key: 'Seq',
+          width: 8
         },
         {
-          label: this.$t('__name'),
-          field: 'Name'
+          header: this.$t('__name'),
+          key: 'Name',
+          width: 10
         },
         {
-          label: this.$t('__grade'),
-          field: 'GradeName'
+          header: this.$t('__grade'),
+          key: 'GradeName',
+          width: 10
         },
         {
-          label: this.$t('__uniqueNumber'),
-          field: 'ID'
+          header: this.$t('__uniqueNumber'),
+          key: 'ID',
+          width: 10
         },
         {
-          label: this.$t('__tel'),
-          field: 'TelMobile'
+          header: this.$t('__tel'),
+          key: 'TelMobile',
+          width: 10
         },
         {
-          label: this.$t('__address'),
-          field: 'Address'
+          header: this.$t('__address'),
+          key: 'Address',
+          width: 30
         },
         {
-          label: this.$t('__parent') + this.$t('__name'),
-          field: 'ParentName'
+          header: this.$t('__parent') + this.$t('__name'),
+          key: 'ParentName',
+          width: 10
         },
         {
-          label: this.$t('__parent') + this.$t('__id'),
-          field: 'ParentID'
+          header: this.$t('__parent') + this.$t('__id'),
+          field: 'ParentID',
+          width: 10
         }
       ],
       employees: [],
@@ -135,14 +135,20 @@ export default {
     search: async function () {
       const response2 = await this.$api.reports.employees({ CompanyID: this.form.CompanyID })
       this.employees = response2.data.result
+    },
+    toExcel: function () {
+      let workbook = new Excel.Workbook()
+      let sheet = workbook.addWorksheet('My Sheet')
+      sheet.columns = this.columns
+      sheet.addRows(this.employees)
+
+      let fileName = '組織分配表.xlsx'
+      workbook.xlsx.writeBuffer()
+        .then(function (data) {
+          let blob = new Blob([data], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' })
+          saveAs(blob, fileName)
+        })
     }
   }
 }
 </script>
-
-<style scoped>
-.vueExcelxlsx {
-  border: none;
-  background-color: transparent
-}
-</style>

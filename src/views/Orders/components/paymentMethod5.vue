@@ -4,7 +4,7 @@
     <el-form-item :label="$t('__received')+$t('__amount')" prop="Amount" label-position="left" label-width="100px">
         <el-input v-model.number="form.Amount" :disabled="disableForm.Amount"></el-input>
     </el-form-item>
-    <el-form-item :label="$t('__bank')+$t('__id')" prop="BankID" label-position="left" label-width="100px">
+    <el-form-item :label="$t('__bank')+$t('__id')" label-position="left" label-width="100px">
       <el-col :span="4">
         <el-select v-model="form.BankID" filterable :filter-method="bankIDFilter" :placeholder="$t('__plzChoice')" :disabled="disableForm.BankID">
           <el-option v-for="item in ddlBankIDFilter" :key="item.ID" :label="item.Value" :value="item.ID">
@@ -39,8 +39,7 @@ export default {
     return {
       rules: {
         Account: [{ required: true, trigger: 'blur', validator: validate.validateCard }],
-        Amount: [{ required: true, message: this.$t('__pleaseInput'), trigger: 'blur' }],
-        BankID: [{ required: true, message: this.$t('__pleaseInput'), trigger: 'blur' }]
+        Amount: [{ required: true, message: this.$t('__pleaseInput'), trigger: 'blur' }]
       },
       ddlBankIDFilter: []
     }

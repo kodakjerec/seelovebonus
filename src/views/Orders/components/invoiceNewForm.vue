@@ -84,10 +84,16 @@
           <el-input v-model="form.Amount" autocomplete="off" disabled></el-input>
       </el-form-item>
       <el-form-item>
-        <el-collapse v-model="activeName" accordion="">
+        <el-collapse v-model="activeNames">
           <el-collapse-item :title="$t('__invoice')+$t('__detail')" name="1">
+            <template slot="title">
+              <h2>{{$t('__invoice')+$t('__detail')}}<i class="el-icon-circle-plus" v-show="!activeNames.includes('1')"></i></h2>
+            </template>
           </el-collapse-item>
           <el-collapse-item :title="$t('__binding')+$t('__collectionRecords')" name="2">
+            <template slot="title">
+              <h2>{{$t('__binding')+$t('__collectionRecords')}}<i class="el-icon-circle-plus" v-show="!activeNames.includes('2')"></i></h2>
+            </template>
             <el-table
             ref="multipleTable"
             :data="selectCollectionRecords"
@@ -124,8 +130,8 @@
                 width="100px">
               </el-table-column>
             </el-table>
+            <div style="color:red" v-show="multipleSelection.length <= 0">{{$t('__pleaseSelectAtLeastOne')+$t('__collectionRecords')}}</div>
           </el-collapse-item>
-          <div style="color:red" v-show="multipleSelection.length <= 0">{{$t('__pleaseSelectAtLeastOne')+$t('__collectionRecords')}}</div>
         </el-collapse>
       </el-form-item>
     </el-form>
@@ -196,7 +202,7 @@ export default {
         selectCollectionRecords: false
       },
       myTitle: '',
-      activeName: '2',
+      activeNames: ['2'],
       selectCollectionRecords: [],
       multipleSelection: [],
       // 以下為下拉式選單專用
