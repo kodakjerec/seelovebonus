@@ -120,11 +120,24 @@ const router = new Router({
   routes
 })
 
+let tempMenuList = JSON.parse(JSON.stringify(store.state.menuList))
+let subMenuList = []
+tempMenuList.forEach(menu => {
+  menu.subMenu.forEach(submenu => {
+    subMenuList.push(submenu)
+  })
+})
+
 router.beforeEach((to, from, next) => {
   // 重新進入頁面的時候, 清空讀取中視窗, 避免影響使用者操作
   store.dispatch('resetLoadingMask')
   if (to.meta.title) {
     document.title = to.meta.title
+  } else {
+    let submenu = subMenuList.find(submenu => { return submenu.Path === to.path })
+    if (submenu) {
+      document.title = submenu.Name
+    }
   }
   next()
 })
