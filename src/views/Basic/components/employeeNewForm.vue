@@ -160,15 +160,30 @@ export default {
   },
   data () {
     // 切換驗證身分證號碼或護照
-    let validatePersonalID = (rule, value, callback) => {
+    let validatePersonalID = async (rule, value, callback) => {
       let idType = this.IDType
+      // 1.驗證可用性
+      let checkValidate = null
       switch (idType) {
         case '1':
-          validate.validatePersonalID(rule, value, callback)
+          checkValidate = validate.validatePersonalID(rule, value, callback)
           break
         default:
-          validate.validatePassport(rule, value, callback)
+          checkValidate = validate.validatePassport(rule, value, callback)
       }
+      if (checkValidate !== '') {
+        callback(checkValidate)
+        return
+      }
+
+      // 2.驗證是否重複
+      const response = await this.$api.basic.checkValidate({ type: 'employee', ID: this.form.ID })
+      let rows = response.data.result
+      if (rows && rows.length > 0) {
+        callback(new Error(this.$t('__id') + this.$t('__valueUsed')))
+        return
+      }
+      callback()
     }
     return {
       form: {

@@ -54,11 +54,6 @@ export default {
     return {
       columns: [
         {
-          header: this.$t('__seq'),
-          key: 'Seq',
-          width: 8
-        },
-        {
           header: this.$t('__orderID'),
           key: 'OrderID',
           width: 10

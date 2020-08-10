@@ -150,6 +150,11 @@ export default {
       this.searchKeyWord = value
       const response2 = await this.$api.orders.ordersShow({ keyword: this.searchKeyWord })
       this.ordersShow = response2.data.result
+      this.ordersShow.forEach(item => {
+        if (item.Certificate1List) { item.Certificate1List = JSON.parse(item.Certificate1List) }
+        if (item.Certificate2List) { item.Certificate2List = JSON.parse(item.Certificate2List) }
+        if (item.InvoiceList) { item.InvoiceList = JSON.parse(item.InvoiceList) }
+      })
     }
   }
 }

@@ -12,6 +12,10 @@
       @row-click="handleClick"
       style="width: 100%">
       <el-table-column
+        prop="InvoiceID"
+        :label="$t('__invoice')+$t('__id')">
+      </el-table-column>
+      <el-table-column
         prop="OrderID"
         :label="$t('__orderID')">
       </el-table-column>
@@ -19,10 +23,6 @@
         prop="InvoiceDate"
         :label="$t('__invoice')+$t('__date')"
         :formatter="formatterDate">
-      </el-table-column>
-      <el-table-column
-        prop="InvoiceID"
-        :label="$t('__invoice')+$t('__id')">
       </el-table-column>
       <el-table-column
         prop="Title"
@@ -37,6 +37,10 @@
       <el-table-column
         prop="InvoiceStatusName"
         :label="$t('__status')">
+      </el-table-column>
+      <el-table-column
+        prop="Memo"
+        :label="$t('__memo')">
       </el-table-column>
     </el-table>
     <new-form

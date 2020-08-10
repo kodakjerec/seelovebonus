@@ -120,7 +120,7 @@ const validate = {
     value = value.toUpperCase()
     let regex = /^[A-Z]{1}[1-2]{1}[0-9]{8}$/
     if (!regex.test(value)) {
-      callback(new Error(i18n.t('__pleaseInputPersonalID') + '1'))
+      return new Error(i18n.t('__pleaseInputPersonalID') + '1')
     }
     // 驗證正確性
     // 宣告一個陣列放入A~Z相對應數字的順序
@@ -146,21 +146,21 @@ const validate = {
     // console.log('Esum:' + Esum + ' Nsum:' + Nsum + ' count:' + count)
     // 餘數為0的判斷
     if (count === 10) {
-      callback()
+      return ''
     }
     // 判斷計算總和是不是等於檢查碼
     if (count !== parseInt(value[9])) {
-      callback(new Error(i18n.t('__pleaseInputPersonalID') + '2'))
+      return new Error(i18n.t('__pleaseInputPersonalID') + '2')
     }
-    callback()
+    return ''
   },
   // 驗證護照
   validatePassport: (rule, value, callback) => {
     let regex = /^.{7,}$/
     if (!regex.test(value)) {
-      callback(new Error(i18n.t('__pleaseInputLength') + '7'))
+      return new Error(i18n.t('__pleaseInputLength') + '7')
     }
-    callback()
+    return ''
   },
   // 驗證發票號碼
   validateInvoiceID: (rule, value, callback) => {
