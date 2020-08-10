@@ -5,8 +5,8 @@ import i18n from '@/setup/setupLocale'
 import req from './auth' // 把request包裝
 
 let seeloveNodeServer = {
-  // ipHost: '192.168.1.20:3000'
-  ipHost: 'localhost:3000'
+  ipHost: '192.168.1.20:3000'
+  // ipHost: 'localhost:3000'
 }
 
 // 一般api使用
