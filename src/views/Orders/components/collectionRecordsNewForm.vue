@@ -135,7 +135,7 @@ export default {
       case 'edit':
         this.myTitle = this.$t('__edit') + this.$t('__collectionRecords')
         this.disableForm.PaymentMethod = true
-        this.disableForm.ReceivedDate = true
+        // this.disableForm.ReceivedDate = true
         this.disableForm.Amount = true
         this.disableForm.Account = true
         this.disableForm.BankID = true

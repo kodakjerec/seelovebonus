@@ -25,6 +25,21 @@ export const post = async (url, reqData = {}) => {
       return Promise.reject(error)
     })
 }
+export const getFile = async (url, reqData = {}) => {
+  store.dispatch('increaseLoadingCounter')
+  let combineURL = 'http://' + seeloveNodeServer.ipHost + url
+  return req('getFile', combineURL, reqData)
+    .then(response => {
+      store.dispatch('decreaseLoadingCounter')
+      return response
+    })
+    .catch(error => {
+      store.dispatch('decreaseLoadingCounter')
+      const { response } = error
+      console.log(`%c 💩💩💩 API發生例外錯誤 💩💩💩${((response && response.status) ? `status code [${response.status}]` : '')}`, 'color: #BB2E29; font-size: 14px; font-weight: bold;')
+      return Promise.reject(error)
+    })
+}
 
 // 錯誤訊息提示
 export const errorMessage = (msg, title) => {

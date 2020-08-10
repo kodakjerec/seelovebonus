@@ -83,6 +83,8 @@ export default function (method, url, data = null) {
     return axios.post(url, data)
   } else if (method === 'get') {
     return axios.get(url, { params: data })
+  } else if (method === 'getfile') {
+    return axios.get(url, { params: data, responseType: 'blob' })
   } else if (method === 'delete') {
     return axios.delete(url, { params: data })
   } else if (method === 'put') {

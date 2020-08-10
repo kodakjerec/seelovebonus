@@ -1,62 +1,28 @@
 <template>
   <div>
-    <el-form>
+    <el-form ref="form" :model="form" label-width="20%">
       <el-form-item :label="$t('__companies')+$t('__id')">
-        <el-col :span="10">
-          <el-select v-model="form.CompanyID" filterable value-key="value" :placeholder="$t('__plzChoice')">
-            <el-option v-for="item in ddlCompanies" :key="item.ID" :label="item.ID+' '+item.Value" :value="item.ID">
-              <span style="float: left">{{ item.Value }}</span>
-              <span style="float: right; color: #8492a6; font-size: 13px">{{ item.ID }}</span>
-            </el-option>
-          </el-select>
-        </el-col>
-        <el-col :span="8">
-          <el-form-item>
-            <el-button-group>
-              <el-button type="primary" icon="el-icon-search" @click.prevent="search()">{{$t('__search')}}</el-button>
-              <el-button type="primary" v-show="employees.length > 0" icon="el-icon-printer" @click.prevent="toExcel()">{{$t('__toExcel')}}</el-button>
-            </el-button-group>
-          </el-form-item>
-        </el-col>
+        <el-select v-model="form.CompanyID" filterable value-key="value" :placeholder="$t('__plzChoice')">
+          <el-option v-for="item in ddlCompanies" :key="item.ID" :label="item.ID+' '+item.Value" :value="item.ID">
+            <span style="float: left">{{ item.Value }}</span>
+            <span style="float: right; color: #8492a6; font-size: 13px">{{ item.ID }}</span>
+          </el-option>
+        </el-select>
       </el-form-item>
     </el-form>
+    <el-button-group>
+      <el-button type="primary" icon="el-icon-search" @click.prevent="search()">{{$t('__search')}}</el-button>
+      <el-button type="primary" v-show="results.length > 0" icon="el-icon-printer" @click.prevent="toExcel()">{{$t('__toExcel')}}</el-button>
+    </el-button-group>
     <div id="printMe">
       <el-table
-        :data="employees"
+        :data="results"
         stripe
         border
         style="width: 100%">
-        <el-table-column
-          prop="Seq"
-          :label="$t('__seq')">
-        </el-table-column>
-        <el-table-column
-          prop="Name"
-          :label="$t('__name')">
-        </el-table-column>
-        <el-table-column
-          prop="GradeName"
-          :label="$t('__grade')">
-        </el-table-column>
-        <el-table-column
-          prop="ID"
-          :label="$t('__uniqueNumber')">
-        </el-table-column>
-        <el-table-column
-          prop="TelMobile"
-          :label="$t('__tel')">
-        </el-table-column>
-        <el-table-column
-          prop="Address"
-          :label="$t('__address')">
-        </el-table-column>
-        <el-table-column
-          prop="ParentName"
-          :label="$t('__parent')+$t('__name')">
-        </el-table-column>
-        <el-table-column
-          prop="ParentID"
-          :label="$t('__parent')+$t('__name')">
+        <el-table-column v-for="column in columns" :key="column.key"
+          :prop="column.key"
+          :label="column.header">
         </el-table-column>
       </el-table>
     </div>
@@ -64,7 +30,6 @@
 </template>
 
 <script>
-import Excel from 'exceljs'
 import { saveAs } from 'file-saver'
 
 export default {
@@ -112,11 +77,11 @@ export default {
         },
         {
           header: this.$t('__parent') + this.$t('__id'),
-          field: 'ParentID',
+          key: 'ParentID',
           width: 10
         }
       ],
-      employees: [],
+      results: [],
       // 以下為下拉式選單專用
       ddlCompanies: []
     }
@@ -134,20 +99,12 @@ export default {
     // 查詢
     search: async function () {
       const response2 = await this.$api.reports.employees({ CompanyID: this.form.CompanyID })
-      this.employees = response2.data.result
+      this.results = response2.data.result
     },
-    toExcel: function () {
-      let workbook = new Excel.Workbook()
-      let sheet = workbook.addWorksheet('My Sheet')
-      sheet.columns = this.columns
-      sheet.addRows(this.employees)
-
-      let fileName = '組織分配表.xlsx'
-      workbook.xlsx.writeBuffer()
-        .then(function (data) {
-          let blob = new Blob([data], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' })
-          saveAs(blob, fileName)
-        })
+    toExcel: async function () {
+      const response2 = await this.$api.reports.employeesToExcel({ CompanyID: this.form.CompanyID, columns: this.columns })
+      let blob = new Blob([response2.data], { type: response2.headers['content-type'] })
+      saveAs(blob, '組織分配表' + this.form.CompanyID + '.xlsx')
     }
   }
 }

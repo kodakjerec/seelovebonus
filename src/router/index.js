@@ -76,14 +76,14 @@ const routes = [
     component: () => import('@/views/Orders/invoices')
   },
   {
-    path: '/Orders/Certificate1',
-    name: 'Certificate1',
-    component: () => import('@/views/Orders/certificate1')
+    path: '/Orders/Certificate1Show',
+    name: 'Certificate1Show',
+    component: () => import('@/views/Orders/certificate1Show')
   },
   {
-    path: '/Orders/Certificate2',
-    name: 'Certificate2',
-    component: () => import('@/views/Orders/certificate2')
+    path: '/Orders/Certificate2Show',
+    name: 'Certificate2Show',
+    component: () => import('@/views/Orders/certificate2Show')
   },
   {
     path: '/Reports',
@@ -95,9 +95,9 @@ const routes = [
     component: () => import('@/views/Reports/reportsEmployees')
   },
   {
-    path: '/Settings',
-    name: 'Settings',
-    component: () => import('@/views/Settings/setting')
+    path: '/Reports/Bonus1',
+    name: 'ReportsBonus1',
+    component: () => import('@/views/Reports/reportsBonus1')
   },
   {
     path: '/Settings/SystemSettings',

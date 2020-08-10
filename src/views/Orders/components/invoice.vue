@@ -46,6 +46,7 @@
     :dialog-type="dialogType"
     :dialog-show="dialogShow"
     :invoiceHead="invoiceHead"
+    :orderID="orderID"
     @dialog-cancel="dialogCancel()"
     @dialog-save="dialogSave()"></new-form>
   </el-form>

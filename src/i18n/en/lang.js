@@ -134,6 +134,10 @@ export default {
   __refEmployeeIDForUser: 'Ref. ID',
   __logExceedingCompanyContractDate: 'Log',
   __logTime: 'Log time',
+  __companyPaid: 'Company paid',
+  __secondaryPaid: 'Secondary paid',
+  __selfPaid: 'Self paid',
+  __million: '0.01M',
   // 請在上方新增字串
   // 以下為錯誤處理專用
   __error400: 'Bad Request',

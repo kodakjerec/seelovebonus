@@ -280,7 +280,7 @@ export default {
         this.disableForm.ID = true
         this.disableForm.ProjectID = true
         this.disableForm.Qty = true
-        this.disableForm.OrderDate = true
+        // this.disableForm.OrderDate = true
         this.disableForm.CreateID = true
 
         this.bringProject(this.form.ProjectID)
@@ -463,6 +463,14 @@ export default {
             isSuccess = true
             // 取得單號回填後續資料
             this.form.ID = responseNew.data.result[0].ID
+          }
+          break
+        case 'edit':
+          const responseEdit = await this.$api.orders.orderEdit({ form: this.form })
+          if (responseEdit.status === 200) {
+            isSuccess = true
+            // 取得單號回填後續資料
+            this.form.ID = responseEdit.data.result[0].ID
           }
           break
         case 'delete':

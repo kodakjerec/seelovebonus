@@ -134,6 +134,10 @@ export default {
   __refEmployeeIDForUser: '關連員工帳號',
   __logExceedingCompanyContractDate: '展期紀錄',
   __logTime: 'Log時間',
+  __companyPaid: '組織總發',
+  __secondaryPaid: '從屬實領',
+  __selfPaid: '個人實領',
+  __million: '萬',
   // 請在上方新增字串
   // 以下為錯誤處理專用
   __error400: '無法理解請求',

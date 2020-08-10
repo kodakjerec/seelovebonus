@@ -4,7 +4,7 @@
     <el-form-item :label="$t('__received')+$t('__amount')" prop="Amount" label-position="left" label-width="100px">
         <el-input v-model.number="form.Amount" :disabled="disableForm.Amount"></el-input>
     </el-form-item>
-    <el-form-item :label="$t('__bank')+$t('__id')" label-position="left" label-width="100px">
+    <!-- <el-form-item :label="$t('__bank')+$t('__id')" label-position="left" label-width="100px">
       <el-col :span="4">
         <el-select v-model="form.BankID" filterable :filter-method="bankIDFilter" :placeholder="$t('__plzChoice')" :disabled="disableForm.BankID">
           <el-option v-for="item in ddlBankIDFilter" :key="item.ID" :label="item.Value" :value="item.ID">
@@ -21,6 +21,9 @@
           <el-input v-model="form.Account" :placeholder="$t('__plzInputCardNumber')" maxlength="20" show-word-limit :disabled="disableForm.Account"></el-input>
         </el-form-item>
       </el-col>
+    </el-form-item> -->
+    <el-form-item prop="Account" :label="$t('__account')" label-position="left" label-width="100px">
+      <el-input v-model="form.Account" :placeholder="$t('__plzInputCardNumber')" maxlength="20" show-word-limit :disabled="disableForm.Account"></el-input>
     </el-form-item>
   </el-form>
 </template>

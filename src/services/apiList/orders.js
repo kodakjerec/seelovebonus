@@ -58,6 +58,20 @@ export default {
         return data
       })
     },
+    certificate1Show: ({ keyword }) => {
+      let rawData = { keyword }
+      return post('/orders/certificate1Show', rawData).then(data => {
+        console.log(`%c <<< Response(/rest/orders/certificate1Show)⤵ `, 'background-color: #E0455D; color: white; font-size: 14px; font-weight: bold;', data)
+        return data
+      })
+    },
+    certificate2Show: ({ keyword }) => {
+      let rawData = { keyword }
+      return post('/orders/certificate2Show', rawData).then(data => {
+        console.log(`%c <<< Response(/rest/orders/certificate2Show)⤵ `, 'background-color: #E0455D; color: white; font-size: 14px; font-weight: bold;', data)
+        return data
+      })
+    },
     orderCertificate1New: ({ form }) => {
       let rawData = { form }
       return post('/orders/orderCertificate1New', rawData).then(data => {

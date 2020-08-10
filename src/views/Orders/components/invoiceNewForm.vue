@@ -153,25 +153,26 @@ export default {
   props: {
     dialogType: { type: String, default: 'new' },
     dialogShow: { type: Boolean, default: false },
-    invoiceHead: { type: Object }
+    invoiceHead: { type: Object },
+    orderID: { type: String }
   },
   data () {
     return {
       form: {
         InvoiceID: null,
-        InvoiceDate: null,
-        OrderID: null,
-        Title: null,
-        UniformNumber: null,
+        InvoiceDate: new Date(),
+        OrderID: this.orderID,
+        Title: '',
+        UniformNumber: '',
         Amount: null,
-        ReceivedDate: null,
+        ReceivedDate: new Date(),
         InvoiceKind: '6',
         Tax: '1',
         CarrierNumber: null,
         Memo: null,
-        InvoiceIDFirst: null,
+        InvoiceIDFirst: '',
         RandomCode: null,
-        CreateID: null,
+        CreateID: this.$store.state.userID,
         Status: '2',
         SalesReturnDate: null,
         multipleSelection: [{ name: 'q' }]
@@ -213,7 +214,9 @@ export default {
     }
   },
   mounted () {
-    this.form = JSON.parse(JSON.stringify(this.invoiceHead))
+    if (Object.keys(this.invoiceHead).length > 0) {
+      this.form = JSON.parse(JSON.stringify(this.invoiceHead))
+    }
 
     switch (this.dialogType) {
       case 'new':
@@ -222,7 +225,7 @@ export default {
       case 'edit':
         this.myTitle = this.$t('__edit') + this.$t('__invoice')
         this.disableForm.InvoiceKind = true
-        this.disableForm.InvoiceDate = true
+        // this.disableForm.InvoiceDate = true
         this.disableForm.InvoiceID = true
         this.disableForm.RandomCode = true
         this.disableForm.Status = true

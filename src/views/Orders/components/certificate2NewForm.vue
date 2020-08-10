@@ -28,6 +28,8 @@
       </el-form-item>
     </el-form>
     <div slot="footer" class="dialog-footer">
+      <el-button icon="el-icon-printer" @click.prevent="toExcel()">{{$t('__print')}}</el-button>
+      <p/>
       <el-button @click="cancel">{{$t('__cancel')}}</el-button>
       <el-button v-show="buttonsShow.save" type="primary" @click="checkValidate">{{$t('__save')}}</el-button>
       <el-button v-show="buttonsShow.delete" type="danger" @click="delRecord">{{$t('__delete')}}</el-button>
@@ -36,6 +38,7 @@
 </template>
 
 <script>
+import { saveAs } from 'file-saver'
 import { formatDate } from '@/setup/format.js'
 
 export default {
@@ -191,6 +194,11 @@ export default {
           }
         }
       })
+    },
+    toExcel: async function () {
+      const response2 = await this.$api.reports.certificate2ToExcel({ Certificate2: this.form.Certificate2 })
+      let blob = new Blob([response2.data], { type: response2.headers['content-type'] })
+      saveAs(blob, '換狀證明' + this.form.Certificate2 + '.xlsx')
     }
   }
 }

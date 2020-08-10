@@ -39,16 +39,25 @@
         :label="$t('__status')">
       </el-table-column>
     </el-table>
+    <new-form
+      v-if="dialogShow"
+      :dialog-type="dialogType"
+      :dialog-show="dialogShow"
+      :invoiceHead="invoiceHead"
+      @dialog-cancel="dialogCancel()"
+      @dialog-save="dialogSave()"></new-form>
   </el-form>
 </template>
 
 <script>
+import newForm from './components/invoiceNewForm'
 import searchButton from '@/components/searchButton'
 import { formatMoney, formatDate } from '@/setup/format.js'
 
 export default {
   name: 'Invoices',
   components: {
+    newForm,
     searchButton
   },
   data () {
@@ -56,7 +65,7 @@ export default {
       dialogType: 'new',
       dialogShow: false,
       invoicesShow: [],
-      order: {},
+      invoiceHead: {},
       searchKeyWord: ''
     }
   },
@@ -78,29 +87,11 @@ export default {
     },
     handleClick: async function (row, column, event) {
       // 取得可以用的選單
-      let responseRow = await this.$api.orders.getObject({ type: 'orderHead', ID: row.OrderID })
-      this.order = responseRow.data.result[0]
+      this.invoiceHead = row
 
       // 進入修改
-      this.$router.push({
-        name: 'OrderNewForm',
-        params: {
-          dialogType: 'edit',
-          order: this.order,
-          parent: 'Invoices'
-        }
-      })
-    },
-    // 開啟表單
-    showForm: function (eventType) {
-      this.$router.push({
-        name: 'OrderNewForm',
-        params: {
-          dialogType: eventType,
-          order: this.order,
-          parent: 'Invoices'
-        }
-      })
+      this.dialogType = 'edit'
+      this.dialogShow = true
     },
     dialogCancel: function () {
       this.dialogShow = false
