@@ -44,6 +44,7 @@ export default {
   __operate: 'Operate',
   __groupName: 'Group Name',
   __systemSettingsCategory: 'Category',
+  __systemSettingsParentCategory: 'ParentCategory',
   __systemSettingsParentID: 'ParentID',
   __systemSettingsID: 'ID',
   __systemSettingsValue: 'Value',
@@ -137,6 +138,8 @@ export default {
   __secondaryPaid: 'Secondary paid',
   __selfPaid: 'Self paid',
   __million: '0.01M',
+  __allSettingsWillNewTogether: 'When adding, all language settings will be the same. Please modify the subsequent settings for different languages',
+  __itemCategory: 'Category(Level 1-2-3)',
   // 請在上方新增字串
   // 以下為錯誤處理專用
   __error400: 'Bad Request',

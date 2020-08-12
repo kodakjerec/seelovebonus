@@ -1,16 +1,24 @@
 <template>
-  <el-dialog :title="myTitle" :visible="dialogShow" center @close="cancel">
+  <el-dialog :title="myTitle" :visible="dialogShow" center width="80%" @close="cancel">
     <el-form ref="form" :model="form" :rules="rules" label-width="30%">
       <el-form-item :label="$t('__systemSettingsCategory')" prop="Category">
-        <el-select v-model="form.Category" :disabled="disableForm.Category" :placeholder="$t('__plzChoice')" @change="selectChange">
+        <el-select v-model="form.Category" :disabled="disableForm.Category" :placeholder="$t('__plzChoice')">
           <el-option v-for="item in ddlCategory" :key="item.ID" :label="item.Value" :value="item.ID">
             <span style="float: left">{{ item.Value }}</span>
             <span style="float: right; color: #8492a6; font-size: 13px">{{ item.ID }}</span>
           </el-option>
         </el-select>
       </el-form-item>
-      <el-form-item :label="$t('__systemSettingsParentID')" prop="ParentID">
-        <el-select v-model="form.ParentID" value-key="value" :placeholder="$t('__plzChoice')">
+      <el-form-item :label="$t('__systemSettingsParentCategory')">
+        <el-select v-model="form.ParentCategory" :placeholder="$t('__plzChoice')" @change="selectChange">
+          <el-option v-for="item in ddlParentCategory" :key="item.ID" :label="item.Value" :value="item.ID">
+            <span style="float: left">{{ item.Value }}</span>
+            <span style="float: right; color: #8492a6; font-size: 13px">{{ item.ID }}</span>
+          </el-option>
+        </el-select>
+      </el-form-item>
+      <el-form-item :label="$t('__systemSettingsParentID')">
+        <el-select v-model="form.ParentID" :disabled="disableForm.ParentID" :placeholder="$t('__plzChoice')">
           <el-option v-for="item in ddlParentID" :key="item.ID" :label="item.Value" :value="item.ID">
             <span style="float: left">{{ item.Value }}</span>
             <span style="float: right; color: #8492a6; font-size: 13px">{{ item.ID }}</span>
@@ -21,15 +29,16 @@
         <el-input v-model="form.ID" autocomplete="off" :disabled="disableForm.ID" maxlength="20" show-word-limit></el-input>
       </el-form-item>
       <el-form-item :label="$t('__systemSettingsValue')" prop="Value">
-        <el-input v-model="form.Value" autocomplete="off" :disabled="disableForm.Value" maxlength="20" show-word-limit></el-input>
+        <el-input v-model="form.Value" autocomplete="off" maxlength="20" show-word-limit></el-input>
       </el-form-item>
       <el-form-item :label="$t('__systemSettingsLanguage')" prop="Language">
-        <el-select v-model="form.Language" value-key="value" :placeholder="$t('__plzChoice')">
+        <el-select v-model="form.Language" :disabled="disableForm.Language" :placeholder="$t('__plzChoice')">
           <el-option v-for="item in ddlLanguages" :key="item.ID" :label="item.Value" :value="item.ID">
             <span style="float: left">{{ item.Value }}</span>
             <span style="float: right; color: #8492a6; font-size: 13px">{{ item.ID }}</span>
           </el-option>
         </el-select>
+        <br/>{{$t('__allSettingsWillNewTogether')}}
       </el-form-item>
       <el-form-item :label="$t('__memo')">
           <el-input v-model="form.Memo" autocomplete="off" maxlength="200" show-word-limit></el-input>
@@ -51,13 +60,15 @@ export default {
   props: {
     dialogType: { type: String, default: 'new' },
     dialogShow: { type: Boolean, default: false },
+    category: { type: String },
     systemSettings: { type: Object }
   },
   data () {
     return {
       form: {
         Category: null,
-        ParentID: '0',
+        ParentCategory: null,
+        ParentID: '-1',
         ID: null,
         Value: null,
         Language: 2,
@@ -88,11 +99,14 @@ export default {
         search: 1
       },
       disableForm: {
-        UserID: false,
-        Password: false
+        Category: true,
+        ParentID: true,
+        ID: false,
+        Language: true
       },
       myTitle: '',
       ddlCategory: [],
+      ddlParentCategory: [],
       ddlParentIDOrigin: [],
       ddlParentID: [],
       ddlLanguages: [
@@ -108,7 +122,6 @@ export default {
       case 'edit':
         this.myTitle = this.$t('__edit') + this.$t('__systemSettingsID')
         this.form = JSON.parse(JSON.stringify(this.systemSettings))
-        this.disableForm.Category = true
         this.disableForm.ID = true
         this.buttonsShow = {
           new: 1,
@@ -127,17 +140,20 @@ export default {
     // 取得群組清單
     preLoading: async function () {
       const response2 = await this.$api.settings.getDropdownList({ type: 'settingsType' })
-      this.ddlCategory = response2.data.result
-      this.form.Category = this.ddlCategory[0].ID
+      this.ddlCategory = JSON.parse(JSON.stringify(response2.data.result))
+      this.ddlParentCategory = JSON.parse(JSON.stringify(response2.data.result))
+      this.form.Category = this.category
 
-      const response3 = await this.$api.settings.getDropdownList({ type: 'systemSettings' })
+      const response3 = await this.$api.settings.getDropdownList({ type: 'systemSettingsNewFormParentID' })
       this.ddlParentIDOrigin = response3.data.result
       this.selectChange()
     },
-    // 篩選
+    // 父階層分類 篩選
     selectChange: function () {
-      this.ddlParentID = this.ddlParentIDOrigin.filter(item => item.Category === this.form.Category).filter(item => item.Language === this.form.Language)
-      this.ddlParentID.push({ ID: '0', Value: '0' })
+      if (this.form.ParentCategory) {
+        this.ddlParentID = this.ddlParentIDOrigin.filter(item => item.Category === this.form.ParentCategory).filter(item => item.Language === this.form.Language)
+        this.disableForm.ParentID = false
+      }
     },
     // 檢查輸入
     checkValidate: function () {

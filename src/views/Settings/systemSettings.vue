@@ -37,6 +37,10 @@
         :label="$t('__systemSettingsCategory')">
       </el-table-column>
       <el-table-column
+        prop="ParentCategory"
+        :label="$t('__systemSettingsParentCategory')">
+      </el-table-column>
+      <el-table-column
         prop="ParentID"
         :label="$t('__systemSettingsParentID')">
       </el-table-column>
@@ -61,6 +65,7 @@
       v-if="dialogShow"
       :dialog-type="dialogType"
       :dialog-show="dialogShow"
+      :category="form.category"
       :systemSettings="systemSettings"
       @dialog-cancel="dialogCancel()"
       @dialog-save="dialogSave()"></new-form>
@@ -93,8 +98,13 @@ export default {
         { ID: 2, Value: this.$t('__language2') }]
     }
   },
-  mounted () {
-    this.preLoading()
+  async mounted () {
+    await this.preLoading()
+
+    this.form.category = this.ddlCategory[0].ID
+    this.form.language = this.ddlLanguages[1].ID
+
+    this.selectChange()
   },
   methods: {
     // 讀入系統清單
@@ -104,11 +114,6 @@ export default {
 
       const response2 = await this.$api.settings.getDropdownList({ type: 'settingsType' })
       this.ddlCategory = response2.data.result
-
-      this.form.category = this.ddlCategory[0].ID
-      this.form.language = this.ddlLanguages[1].ID
-
-      this.selectChange()
     },
     // 篩選
     selectChange: function () {
@@ -131,9 +136,11 @@ export default {
     dialogCancel: function () {
       this.dialogShow = false
     },
-    dialogSave: function () {
+    dialogSave: async function () {
       this.dialogShow = false
-      this.preLoading()
+      await this.preLoading()
+
+      this.selectChange()
     }
   }
 }

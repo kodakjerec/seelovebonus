@@ -44,6 +44,7 @@ export default {
   __operate: '操作',
   __groupName: '群組名稱',
   __systemSettingsCategory: '分類',
+  __systemSettingsParentCategory: '父階層分類',
   __systemSettingsParentID: '父階層代號',
   __systemSettingsID: '代號',
   __systemSettingsValue: '數值',
@@ -137,6 +138,8 @@ export default {
   __secondaryPaid: '從屬實領',
   __selfPaid: '個人實領',
   __million: '萬',
+  __allSettingsWillNewTogether: '新增時, 所有語系設定會相同. 後續不同語言設定請自行修改',
+  __itemCategory: '商品類別(大-中-小)',
   // 請在上方新增字串
   // 以下為錯誤處理專用
   __error400: '無法理解請求',

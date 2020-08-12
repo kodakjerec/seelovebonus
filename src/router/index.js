@@ -59,6 +59,11 @@ const routes = [
     component: () => import('../views/Basic/projects')
   },
   {
+    path: '/Basic/Stock',
+    name: 'Stock',
+    component: () => import('../views/Basic/stock')
+  },
+  {
     path: '/Orders/Orders',
     name: 'Orders',
     component: () => import('@/views/Orders/orders'),
@@ -141,4 +146,11 @@ router.beforeEach((to, from, next) => {
   }
   next()
 })
+
+// // 強迫重新整理網頁
+// router.afterEach((to, from, next) => {
+//   if (to.path === '/' && from.path !== '/') {
+//     window.location.reload(true)
+//   }
+// })
 export default router

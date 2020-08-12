@@ -44,6 +44,40 @@
           <el-input v-model.number="form.Cost" autocomplete="off"></el-input>
         </el-col>
       </el-form-item>
+      <el-form-item :label="$t('__itemCategory')">
+        <el-col :span="8">
+          <el-select v-model="form.Category1" filterable :placeholder="$t('__plzChoice')" @change="ddlCategory1Change" >
+            <el-option v-for="item in ddlCategory1" :key="item.ID" :label="item.ID+' '+item.Value" :value="item.ID">
+              <span style="float: left">{{ item.Value }}</span>
+              <span style="float: right; color: #8492a6; font-size: 13px">{{ item.ID }}</span>
+            </el-option>
+          </el-select>
+        </el-col>
+        <el-col :span="8">
+          <el-select v-model="form.Category2" filterable :placeholder="$t('__plzChoice')" @change="ddlCategory2Change" >
+            <el-option v-for="item in ddlCategory2" :key="item.ID" :label="item.ID+' '+item.Value" :value="item.ID">
+              <span style="float: left">{{ item.Value }}</span>
+              <span style="float: right; color: #8492a6; font-size: 13px">{{ item.ID }}</span>
+            </el-option>
+          </el-select>
+        </el-col>
+        <el-col :span="8">
+          <el-select v-model="form.Category3" filterable :placeholder="$t('__plzChoice')">
+            <el-option v-for="item in ddlCategory3" :key="item.ID" :label="item.ID+' '+item.Value" :value="item.ID">
+              <span style="float: left">{{ item.Value }}</span>
+              <span style="float: right; color: #8492a6; font-size: 13px">{{ item.ID }}</span>
+            </el-option>
+          </el-select>
+        </el-col>
+      </el-form-item>
+      <el-form-item :label="$t('__status')">
+        <el-select v-model="form.Status" value-key="value" :placeholder="$t('__plzChoice')">
+          <el-option v-for="item in ddlStatus" :key="item.ID" :label="item.Value" :value="item.ID">
+            <span style="float: left">{{ item.Value }}</span>
+            <span style="float: right; color: #8492a6; font-size: 13px">{{ item.ID }}</span>
+          </el-option>
+        </el-select>
+      </el-form-item>
       <el-form-item :label="$t('__bom')">
         <el-select v-model="form.BOM" value-key="value" :placeholder="$t('__plzChoice')" disabled>
           <el-option v-for="item in ddlBOM" :key="item.ID" :label="item.Value" :value="item.ID">
@@ -85,7 +119,11 @@ export default {
         Unit: '1',
         Price: 0,
         Cost: 0,
-        BOM: 0
+        BOM: 0,
+        Category1: null,
+        Category2: null,
+        Category3: null,
+        Status: '1'
       },
       rules: {
         ID: [{ required: true, message: this.$t('__pleaseInput'), trigger: 'blur' }],
@@ -98,13 +136,20 @@ export default {
       },
       myTitle: '',
       productBOM: [],
+      isLoadingFinish: false, // 讀取完畢
       // 以下為下拉式選單專用
       ddlAccounting: [],
       ddlUnit: [],
-      ddlBOM: []
+      ddlBOM: [],
+      ddlStatus: [],
+      ddlCategory1: [],
+      ddlCategory2Origin: [],
+      ddlCategory2: [],
+      ddlCategory3Origin: [],
+      ddlCategory3: []
     }
   },
-  mounted () {
+  async mounted () {
     switch (this.dialogType) {
       case 'new':
         this.myTitle = this.$t('__new') + this.$t('__product')
@@ -116,7 +161,9 @@ export default {
         this.disableForm.ID = true
         break
     }
-    this.preLoading()
+    await this.preLoading()
+
+    this.isLoadingFinish = true
   },
   methods: {
     // 讀取預設資料
@@ -127,8 +174,19 @@ export default {
       this.ddlUnit = response2.data.result
       const response3 = await this.$api.basic.getDropdownList({ type: 'status' })
       this.ddlBOM = response3.data.result
+      const response4 = await this.$api.basic.getDropdownList({ type: 'status' })
+      this.ddlStatus = response4.data.result
       const responseBOM = await this.$api.basic.getObject({ type: 'productBOM', ID: this.form.ID })
       this.productBOM = responseBOM.data.result
+
+      const resItemCategory1 = await this.$api.basic.getDropdownList({ type: 'itemCategory1' })
+      this.ddlCategory1 = resItemCategory1.data.result
+      const resItemCategory2 = await this.$api.basic.getDropdownList({ type: 'itemCategory2' })
+      this.ddlCategory2Origin = resItemCategory2.data.result
+      const resItemCategory3 = await this.$api.basic.getDropdownList({ type: 'itemCategory3' })
+      this.ddlCategory3Origin = resItemCategory3.data.result
+      this.ddlCategory1Change()
+      this.ddlCategory2Change()
     },
     // 切換費用代號, 填入名稱
     ddlAccountingChange: function (selected) {
@@ -186,6 +244,21 @@ export default {
 
       if (isSuccess) {
         this.$emit('dialog-save')
+      }
+    },
+    // 商品大類變更
+    ddlCategory1Change: function () {
+      this.ddlCategory2 = this.ddlCategory2Origin.filter(item => item.ParentID === this.form.Category1)
+      if (this.isLoadingFinish) {
+        this.form.Category2 = null
+        this.form.Category3 = null
+      }
+    },
+    // 商品中類變更
+    ddlCategory2Change: function () {
+      this.ddlCategory3 = this.ddlCategory3Origin.filter(item => item.ParentID === this.form.Category2)
+      if (this.isLoadingFinish) {
+        this.form.Category3 = null
       }
     }
   }
