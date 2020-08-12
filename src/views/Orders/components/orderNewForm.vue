@@ -167,9 +167,9 @@
     </el-form>
     <div slot="footer" class="dialog-footer">
       <br/>
+      <el-button v-show="buttonsShow.delete && buttonsShowUser.delete" type="danger" @click="invalidOrder">{{$t('__invalid') + $t('__orderPaper')}}</el-button>
       <el-button @click="cancel">{{$t('__cancel')}}</el-button>
       <el-button v-show="buttonsShow.save && buttonsShowUser.save" type="primary" @click="checkValidate">{{$t('__save')}}</el-button>
-      <el-button v-show="buttonsShow.delete && buttonsShowUser.delete" type="danger" @click="delOrder">{{$t('__deleteFile')}}</el-button>
     </div>
   </div>
 </template>
@@ -479,55 +479,57 @@ export default {
             isSuccess = true
           }
           break
+        case 'invalid':
+          const responseInvalid = await this.$api.orders.orderInvalid({ form: this.form })
+          if (responseInvalid.status === 200) {
+            isSuccess = true
+          }
+          break
       }
 
       return isSuccess
     },
     // 作廢
-    delOrder: function () {
-      let myObject = this
-      this.$msgbox({
-        message: this.$t('__deleteFile'),
-        title: this.$t('__delete'),
+    invalidOrder: async function () {
+      let answerAction = await this.$msgbox({
+        message: this.$t('__invalid') + this.$t('__orderPaper'),
+        title: this.$t('__invalid'),
         showCancelButton: true,
         confirmButtonText: this.$t('__ok'),
         cancelButtonText: this.$t('__cancel'),
         type: 'warning',
-        closeOnPressEscape: true,
-        callback: function (action, instance, done) {
-          switch (action) {
-            case 'confirm':
-              myObject.form.Status = '0'
-              myObject.buttonsShow = {
-                new: 0,
-                edit: 0,
-                save: 0,
-                delete: 0,
-                search: 0
-              }
-              setTimeout(async () => {
-                let isSuccessEdit = await myObject.save('delete')
-                if (isSuccessEdit) {
-                  myObject.$alert(myObject.$t('__uploadSuccess'), 200, {
-                    callback: () => {
-                      myObject.$router.push({
-                        name: myObject.parent,
-                        params: {
-                          returnType: 'save'
-                        }
-                      })
-                    }
-                  })
-                }
-              }, 300)
-              break
-            case 'cancel':
-              break
-            case 'close':
-              break
-          }
-        }
+        closeOnPressEscape: true
       })
+
+      switch (answerAction) {
+        case 'confirm':
+          this.form.Status = '0'
+          this.buttonsShow = {
+            new: 0,
+            edit: 0,
+            save: 0,
+            delete: 0,
+            search: 0
+          }
+          let isSuccessEdit = await this.save('invalid')
+          if (isSuccessEdit) {
+            this.$alert(this.$t('__uploadSuccess'), 200, {
+              callback: () => {
+                this.$router.push({
+                  name: this.parent,
+                  params: {
+                    returnType: 'save'
+                  }
+                })
+              }
+            })
+          }
+          break
+        case 'cancel':
+          break
+        case 'close':
+          break
+      }
     },
     refreshCollectionRecords: function () {
       this.$refs['collectionRecords'].preLoading()

@@ -227,6 +227,12 @@ export default {
   data () {
     // 切換驗證身分證號碼或護照
     let validatePersonalID = async (rule, value, callback) => {
+      // 新增時才檢驗
+      if (this.dialogType !== 'new') {
+        callback()
+        return
+      }
+
       let idType = this.IDType
       // 1.驗證可用性
       let checkValidate = null

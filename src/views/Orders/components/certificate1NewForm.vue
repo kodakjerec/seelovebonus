@@ -28,11 +28,11 @@
       </el-form-item>
     </el-form>
     <div slot="footer" class="dialog-footer">
-      <el-button icon="el-icon-printer" @click.prevent="toExcel()">{{$t('__print')}}</el-button>
+      <el-button v-show="buttonsShow.save" icon="el-icon-printer" @click.prevent="toExcel()">{{$t('__print')}}</el-button>
       <p/>
+      <el-button v-show="buttonsShow.delete" type="danger" @click="delRecord">{{$t('__delete')}}</el-button>
       <el-button @click="cancel">{{$t('__cancel')}}</el-button>
       <el-button v-show="buttonsShow.save" type="primary" @click="checkValidate">{{$t('__save')}}</el-button>
-      <el-button v-show="buttonsShow.delete" type="danger" @click="delRecord">{{$t('__delete')}}</el-button>
     </div>
   </el-dialog>
 </template>
@@ -72,7 +72,7 @@ export default {
       disableForm: {
         OrderID: true,
         Certificate1: false,
-        PrintCount: false,
+        PrintCount: true,
         Status: false,
         CreateDate: false
       },
@@ -171,34 +171,36 @@ export default {
     },
     // 刪除
     delRecord: async function () {
-      let myObject = this
-      this.$msgbox({
+      let answerAction = await this.$msgbox({
         message: this.$t('__delete') + this.$t('__certificate1'),
         title: this.$t('__delete'),
         showCancelButton: true,
         confirmButtonText: this.$t('__ok'),
         cancelButtonText: this.$t('__cancel'),
         type: 'warning',
-        closeOnPressEscape: true,
-        callback: function (action, instance, done) {
-          switch (action) {
-            case 'confirm':
-              setTimeout(() => {
-                myObject.save('delete')
-              }, 300)
-              break
-            case 'cancel':
-              break
-            case 'close':
-              break
-          }
-        }
+        closeOnPressEscape: true
+      }).then((value) => {
+        return value
+      }).catch((error) => {
+        return error
       })
+
+      switch (answerAction) {
+        case 'confirm':
+          this.save('delete')
+          break
+        case 'cancel':
+          break
+        case 'close':
+          break
+      }
     },
     toExcel: async function () {
       const response2 = await this.$api.reports.certificate1ToExcel({ Certificate1: this.form.Certificate1 })
       let blob = new Blob([response2.data], { type: response2.headers['content-type'] })
       saveAs(blob, '供奉憑證' + this.form.Certificate1 + '.xlsx')
+
+      this.form.PrintCount += 1
     }
   }
 }

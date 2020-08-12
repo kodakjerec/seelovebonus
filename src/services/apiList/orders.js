@@ -30,6 +30,13 @@ export default {
         return data
       })
     },
+    orderInvalid: ({ form }) => {
+      let rawData = { form }
+      return post('/orders/orderInvalid', rawData).then(data => {
+        console.log(`%c <<< Response(/rest/orders/orderInvalid)⤵ `, 'background-color: #E0455D; color: white; font-size: 14px; font-weight: bold;', data)
+        return data
+      })
+    },
     orderCustomerNew: ({ form }) => {
       let rawData = { form }
       return post('/orders/orderCustomerNew', rawData).then(data => {

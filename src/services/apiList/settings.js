@@ -85,6 +85,27 @@ export default {
         console.log(`%c <<< Response(/rest/settings/groupEdit)⤵ `, 'background-color: #E0455D; color: white; font-size: 14px; font-weight: bold;', data)
         return data
       })
+    },
+    settingsNew: ({ form }) => {
+      let rawData = { form }
+      return post('/settings/settingsNew', rawData).then(data => {
+        console.log(`%c <<< Response(/rest/settings/settingsNew)⤵ `, 'background-color: #E0455D; color: white; font-size: 14px; font-weight: bold;', data)
+        return data
+      })
+    },
+    settingsEdit: ({ form }) => {
+      let rawData = { form }
+      return post('/settings/settingsEdit', rawData).then(data => {
+        console.log(`%c <<< Response(/rest/settings/settingsEdit)⤵ `, 'background-color: #E0455D; color: white; font-size: 14px; font-weight: bold;', data)
+        return data
+      })
+    },
+    settingsDelete: ({ form }) => {
+      let rawData = { form }
+      return post('/settings/settingsDelete', rawData).then(data => {
+        console.log(`%c <<< Response(/rest/settings/settingsDelete)⤵ `, 'background-color: #E0455D; color: white; font-size: 14px; font-weight: bold;', data)
+        return data
+      })
     }
   }
 }

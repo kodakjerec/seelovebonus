@@ -127,7 +127,6 @@ export default {
   __certificate2: 'Proof of change',
   __printCount: 'Print count',
   __createDate: 'Create Date',
-  __deleteFile: 'Delete File',
   __warrning: 'Warrning',
   __binding: 'Binding',
   __collectioRecordsDeleteNo: 'Can\'t delete record, please check ',

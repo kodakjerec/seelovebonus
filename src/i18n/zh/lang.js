@@ -127,7 +127,6 @@ export default {
   __certificate2: '展雲換狀證明編號',
   __printCount: '列印次數',
   __createDate: '建立日期',
-  __deleteFile: '作廢單據',
   __warrning: '警告',
   __binding: '綁定',
   __collectioRecordsDeleteNo: '無法刪除付款資訊，請檢查 ',

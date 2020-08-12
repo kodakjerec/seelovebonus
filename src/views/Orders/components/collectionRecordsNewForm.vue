@@ -51,9 +51,9 @@
       </el-form-item>
     </el-form>
     <div slot="footer" class="dialog-footer">
+      <el-button v-show="buttonsShow.delete" type="danger" @click="delRecord">{{$t('__delete')}}</el-button>
       <el-button @click="cancel">{{$t('__cancel')}}</el-button>
       <el-button v-show="buttonsShow.save" type="primary" @click="checkValidate">{{$t('__save')}}</el-button>
-      <el-button v-show="buttonsShow.delete" type="danger" @click="delRecord">{{$t('__delete')}}</el-button>
     </div>
   </el-dialog>
 </template>
@@ -240,37 +240,33 @@ export default {
         this.$alert(this.$t('__collectioRecordsDeleteNo') + this.$t('__invoice') + this.$t('__number'), this.$t('__warrning'))
         return
       }
-      let myObject = this
-      this.$msgbox({
+      let answerAction = await this.$msgbox({
         message: this.$t('__delete') + this.$t('__collectionRecords'),
         title: this.$t('__delete'),
         showCancelButton: true,
         confirmButtonText: this.$t('__ok'),
         cancelButtonText: this.$t('__cancel'),
         type: 'warning',
-        closeOnPressEscape: true,
-        callback: function (action, instance, done) {
-          switch (action) {
-            case 'confirm':
-              myObject.form.Status = '0'
-              myObject.buttonsShow = {
-                new: 0,
-                edit: 0,
-                save: 0,
-                delete: 0,
-                search: 0
-              }
-              setTimeout(() => {
-                myObject.save('delete')
-              }, 300)
-              break
-            case 'cancel':
-              break
-            case 'close':
-              break
-          }
-        }
+        closeOnPressEscape: true
       })
+
+      switch (answerAction) {
+        case 'confirm':
+          this.form.Status = '0'
+          this.buttonsShow = {
+            new: 0,
+            edit: 0,
+            save: 0,
+            delete: 0,
+            search: 0
+          }
+          this.save('delete')
+          break
+        case 'cancel':
+          break
+        case 'close':
+          break
+      }
     }
   }
 }
