@@ -40,6 +40,7 @@
 <script>
 import { saveAs } from 'file-saver'
 import { formatDate } from '@/setup/format.js'
+import { messageBoxYesNo } from '@/services/utils'
 
 export default {
   name: 'Certificate1NewForm',
@@ -171,19 +172,7 @@ export default {
     },
     // 刪除
     delRecord: async function () {
-      let answerAction = await this.$msgbox({
-        message: this.$t('__delete') + this.$t('__certificate1'),
-        title: this.$t('__delete'),
-        showCancelButton: true,
-        confirmButtonText: this.$t('__ok'),
-        cancelButtonText: this.$t('__cancel'),
-        type: 'warning',
-        closeOnPressEscape: true
-      }).then((value) => {
-        return value
-      }).catch((error) => {
-        return error
-      })
+      let answerAction = await messageBoxYesNo(this.$t('__delete') + this.$t('__certificate1'), this.$t('__delete'))
 
       switch (answerAction) {
         case 'confirm':

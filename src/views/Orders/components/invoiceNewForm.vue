@@ -147,6 +147,7 @@
 <script>
 import validate from '@/setup/validate.js'
 import { formatMoney, formatDate } from '@/setup/format.js'
+import { messageBoxYesNo } from '@/services/utils'
 
 export default {
   name: 'InvoiceNewForm',
@@ -352,15 +353,7 @@ export default {
     },
     // 作廢發票
     delInvoice: async function () {
-      let answerAction = await this.$msgbox({
-        message: this.$t('__invalid') + this.$t('__invoice'),
-        title: this.$t('__invalid'),
-        showCancelButton: true,
-        confirmButtonText: this.$t('__ok'),
-        cancelButtonText: this.$t('__cancel'),
-        type: 'warning',
-        closeOnPressEscape: true
-      })
+      let answerAction = await messageBoxYesNo(this.$t('__invalid') + this.$t('__invoice'), this.$t('__invalid'))
 
       switch (answerAction) {
         case 'confirm':
@@ -371,6 +364,10 @@ export default {
             save: 0,
             delete: 0,
             search: 0
+          }
+          for (let i = 0; i < this.multipleSelection.length; i++) {
+            let row = this.multipleSelection[i]
+            this.$api.orders.invoiceFunctions({ type: 'invoiceBindRecords', OrderID: row.OrderID, InvoiceID: '', Seq: row.Seq })
           }
           this.save('delete')
           break

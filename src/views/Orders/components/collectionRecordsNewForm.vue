@@ -64,6 +64,7 @@ import method2 from './paymentMethod2'
 import method3 from './paymentMethod3'
 import method4 from './paymentMethod4'
 import method5 from './paymentMethod5'
+import { messageBoxYesNo } from '@/services/utils'
 
 export default {
   name: 'CollectionRecordsNewForm',
@@ -240,15 +241,7 @@ export default {
         this.$alert(this.$t('__collectioRecordsDeleteNo') + this.$t('__invoice') + this.$t('__number'), this.$t('__warrning'))
         return
       }
-      let answerAction = await this.$msgbox({
-        message: this.$t('__delete') + this.$t('__collectionRecords'),
-        title: this.$t('__delete'),
-        showCancelButton: true,
-        confirmButtonText: this.$t('__ok'),
-        cancelButtonText: this.$t('__cancel'),
-        type: 'warning',
-        closeOnPressEscape: true
-      })
+      let answerAction = await messageBoxYesNo(this.$t('__delete') + this.$t('__collectionRecords'), this.$t('__delete'))
 
       switch (answerAction) {
         case 'confirm':

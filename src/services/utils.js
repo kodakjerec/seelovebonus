@@ -50,6 +50,25 @@ export const errorMessage = (msg, title) => {
   })
 }
 
+// 詢問小視窗
+export const messageBoxYesNo = async (msg, title) => {
+  msg = msg || ''
+  title = title || ''
+  let answer = await MessageBox.confirm(msg, title, {
+    showCancelButton: true,
+    confirmButtonText: i18n.t('__ok'),
+    cancelButtonText: i18n.t('__cancel'),
+    type: 'warning',
+    closeOnPressEscape: true
+  }).then((value) => {
+    return value
+  }).catch((error) => {
+    return error
+  })
+
+  return answer
+}
+
 // 跳轉回首頁
 export const toLogin = () => {
   router.replace({

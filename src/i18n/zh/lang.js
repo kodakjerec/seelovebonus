@@ -143,8 +143,6 @@ export default {
   __error401: '授權失敗，請重新登入',
   __error404: '伺服器找不到請求的資源。',
   __error500: '伺服器端發生未知或無法處理的錯誤。',
-  __newSuccess: '新增成功',
-  __uploadSuccess: '更新成功',
   __uploadFail: '更新失敗，請再嘗試一次',
   // 以下為驗證專用
   __pleaseInputUserID: '請輸入帳號',

@@ -167,7 +167,8 @@
     </el-form>
     <div slot="footer" class="dialog-footer">
       <br/>
-      <el-button v-show="buttonsShow.delete && buttonsShowUser.delete" type="danger" @click="invalidOrder">{{$t('__invalid') + $t('__orderPaper')}}</el-button>
+      <el-button v-show="buttonsShow.delete && buttonsShowUser.delete && form.Status < '2'" type="danger" @click="deleteOrder">{{$t('__delete')}}</el-button>
+      <el-button v-show="buttonsShow.delete && buttonsShowUser.delete" type="danger" @click="invalidOrder">{{$t('__invalid')}}</el-button>
       <el-button @click="cancel">{{$t('__cancel')}}</el-button>
       <el-button v-show="buttonsShow.save && buttonsShowUser.save" type="primary" @click="checkValidate">{{$t('__save')}}</el-button>
     </div>
@@ -182,6 +183,7 @@ import orderCustomer from './orderCustomer'
 import collectionRecords from './collectionRecords'
 import invoice from './invoice'
 import { formatMoney } from '@/setup/format.js'
+import { messageBoxYesNo } from '@/services/utils'
 
 export default {
   name: 'OrderNewForm',
@@ -254,6 +256,7 @@ export default {
         CompanyName: null,
         ReferrerName: null
       }],
+      updateMessage: '', // 更新資料庫後回傳的訊息
       // 以下為下拉式選單專用
       ddlOrderStatus: [],
       ddlProject: [],
@@ -413,7 +416,7 @@ export default {
           isSuccess = await this.$refs['orderDetail'].beforeSave()
           isSuccess = await this.$refs['orderCustomer'].save()
           if (isSuccess) {
-            this.$alert(this.$t('__newSuccess'), 200, {
+            this.$alert(this.updateMessage, 200, {
               callback: () => {
                 this.$router.replace({
                   name: this.parent,
@@ -430,7 +433,7 @@ export default {
           isSuccessEdit = await this.$refs['orderDetail'].beforeSave()
           isSuccessEdit = await this.$refs['orderCustomer'].save()
           if (isSuccessEdit) {
-            this.$alert(this.$t('__uploadSuccess'), 200, {
+            this.$alert(this.updateMessage, 200, {
               callback: () => {
                 this.$router.replace({
                   name: this.parent,
@@ -463,6 +466,7 @@ export default {
             isSuccess = true
             // 取得單號回填後續資料
             this.form.ID = responseNew.data.result[0].ID
+            this.updateMessage = responseNew.data.result[0].message
           }
           break
         case 'edit':
@@ -471,49 +475,62 @@ export default {
             isSuccess = true
             // 取得單號回填後續資料
             this.form.ID = responseEdit.data.result[0].ID
+            this.updateMessage = responseEdit.data.result[0].message
           }
           break
         case 'delete':
           const responseDelete = await this.$api.orders.orderDelete({ form: this.form })
           if (responseDelete.status === 200) {
             isSuccess = true
+            this.updateMessage = responseDelete.data.result[0].message
           }
           break
         case 'invalid':
           const responseInvalid = await this.$api.orders.orderInvalid({ form: this.form })
           if (responseInvalid.status === 200) {
             isSuccess = true
+            this.updateMessage = responseInvalid.data.result[0].message
           }
           break
       }
 
       return isSuccess
     },
-    // 作廢
-    invalidOrder: async function () {
-      let answerAction = await this.$msgbox({
-        message: this.$t('__invalid') + this.$t('__orderPaper'),
-        title: this.$t('__invalid'),
-        showCancelButton: true,
-        confirmButtonText: this.$t('__ok'),
-        cancelButtonText: this.$t('__cancel'),
-        type: 'warning',
-        closeOnPressEscape: true
-      })
+    // 刪除
+    deleteOrder: async function () {
+      let answerAction = await messageBoxYesNo(this.$t('__delete') + this.$t('__orderPaper'), this.$t('__delete'))
 
       switch (answerAction) {
         case 'confirm':
-          this.form.Status = '0'
-          this.buttonsShow = {
-            new: 0,
-            edit: 0,
-            save: 0,
-            delete: 0,
-            search: 0
+          let isSuccessEdit = await this.save('delete')
+          if (isSuccessEdit) {
+            this.$alert(this.updateMessage, 200, {
+              callback: () => {
+                this.$router.push({
+                  name: this.parent,
+                  params: {
+                    returnType: 'save'
+                  }
+                })
+              }
+            })
           }
+          break
+        case 'cancel':
+          break
+        case 'close':
+          break
+      }
+    },
+    // 作廢
+    invalidOrder: async function () {
+      let answerAction = await messageBoxYesNo(this.$t('__invalid') + this.$t('__orderPaper'), this.$t('__invalid'))
+
+      switch (answerAction) {
+        case 'confirm':
           let isSuccessEdit = await this.save('invalid')
           if (isSuccessEdit) {
-            this.$alert(this.$t('__uploadSuccess'), 200, {
+            this.$alert(this.updateMessage, 200, {
               callback: () => {
                 this.$router.push({
                   name: this.parent,
