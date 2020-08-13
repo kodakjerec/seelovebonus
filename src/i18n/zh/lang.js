@@ -140,6 +140,11 @@ export default {
   __million: '萬',
   __allSettingsWillNewTogether: '新增時, 所有語系設定會相同. 後續不同語言設定請自行修改',
   __itemCategory: '商品類別(大-中-小)',
+  __storageAddress: '儲位',
+  __building: '棟別',
+  __floor: '樓層',
+  __area: '區域',
+  __volume: '體積',
   // 請在上方新增字串
   // 以下為錯誤處理專用
   __error400: '無法理解請求',

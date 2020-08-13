@@ -61,7 +61,7 @@ const routes = [
   {
     path: '/Basic/Stock',
     name: 'Stock',
-    component: () => import('../views/Basic/stock')
+    component: () => import('../views/Basic/storageAddress')
   },
   {
     path: '/Orders/Orders',

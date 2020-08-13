@@ -140,6 +140,11 @@ export default {
   __million: '0.01M',
   __allSettingsWillNewTogether: 'When adding, all language settings will be the same. Please modify the subsequent settings for different languages',
   __itemCategory: 'Category(Level 1-2-3)',
+  __storageAddress: 'Storage address',
+  __building: 'Building',
+  __floor: 'Floor',
+  __area: 'Area',
+  __volume: 'Volume',
   // 請在上方新增字串
   // 以下為錯誤處理專用
   __error400: 'Bad Request',

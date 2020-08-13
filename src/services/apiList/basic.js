@@ -198,6 +198,27 @@ export default {
         return data
       })
     },
+    storageAddressShow: ({ keyword }) => {
+      let rawData = { keyword }
+      return post('/basic/storageAddressShow', rawData).then(data => {
+        console.log(`%c <<< Response(/rest/basic/storageAddressShow)⤵ `, 'background-color: #E0455D; color: white; font-size: 14px; font-weight: bold;', data)
+        return data
+      })
+    },
+    storageAddressNew: ({ form }) => {
+      let rawData = { form }
+      return post('/basic/storageAddressNew', rawData).then(data => {
+        console.log(`%c <<< Response(/rest/basic/storageAddressNew)⤵ `, 'background-color: #E0455D; color: white; font-size: 14px; font-weight: bold;', data)
+        return data
+      })
+    },
+    storageAddressEdit: ({ form }) => {
+      let rawData = { form }
+      return post('/basic/storageAddressEdit', rawData).then(data => {
+        console.log(`%c <<< Response(/rest/basic/storageAddressEdit)⤵ `, 'background-color: #E0455D; color: white; font-size: 14px; font-weight: bold;', data)
+        return data
+      })
+    },
     getDropdownList: ({ type }) => {
       let rawData = { type }
       return post('/basic/getDropdownList', rawData).then(data => {
