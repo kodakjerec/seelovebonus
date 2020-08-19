@@ -1,4 +1,4 @@
-import { post, getFile } from '@/services/utils'
+import { post } from '@/services/utils'
 
 export default {
   reports: {
