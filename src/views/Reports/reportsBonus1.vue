@@ -28,103 +28,32 @@
       </el-form-item>
     </el-form>
     <el-button-group>
-      <el-button type="primary" icon="el-icon-search" @click.prevent="search()">{{$t('__search')}}</el-button>
-      <el-button type="primary" v-show="results.length > 0" icon="el-icon-printer" @click.prevent="toExcel()">{{$t('__toExcel')}}</el-button>
+      <el-button type="primary" icon="el-icon-printer" @click.prevent="print">{{$t('__print')}}</el-button>
     </el-button-group>
-    <div id="printMe">
-      <el-table
-        :data="results"
-        stripe
-        border
-        style="width: 100%">
-        <el-table-column v-for="column in columns" :key="column.key"
-          :prop="column.key"
-          :label="column.header">
-        </el-table-column>
-      </el-table>
-    </div>
+    <el-footer>
+      <iframeReportingService
+       :reportPath="reportPath"
+       :params="reportParams"></iframeReportingService>
+    </el-footer>
   </div>
 </template>
 
 <script>
-import { saveAs } from 'file-saver'
+import iframeReportingService from '@/components/iframeReportingService'
 
 export default {
   name: 'ReportsBonus1',
+  components: {
+    iframeReportingService
+  },
   data () {
     return {
       form: {
         StartDate: null,
         EndDate: null
       },
-      columns: [
-        {
-          header: this.$t('__seq'),
-          key: 'Seq',
-          width: 8
-        },
-        {
-          header: this.$t('__company') + this.$t('__id'),
-          key: 'CompanyID',
-          width: 10
-        },
-        {
-          header: this.$t('__company') + this.$t('__name'),
-          key: 'CompanyName',
-          width: 10
-        },
-        {
-          header: this.$t('__uniqueNumber'),
-          key: 'ID',
-          width: 10
-        },
-        {
-          header: this.$t('__name'),
-          key: 'EmployeeName',
-          width: 10
-        },
-        {
-          header: this.$t('__parent') + this.$t('__id'),
-          key: 'ParentID',
-          width: 10
-        },
-        {
-          header: this.$t('__amount') + '(' + this.$t('__million') + ')',
-          key: 'Amount',
-          width: 10
-        },
-        {
-          header: this.$t('__superBonus') + this.$t('__percentage') + '(%)',
-          key: 'Percentage',
-          width: 30
-        },
-        {
-          header: this.$t('__companyPaid'),
-          key: 'CompanyBonus',
-          width: 10
-        },
-        {
-          header: this.$t('__secondaryPaid'),
-          key: 'SecondaryBonus',
-          width: 10
-        },
-        {
-          header: this.$t('__selfPaid'),
-          key: 'SelfBonus',
-          width: 10
-        },
-        {
-          header: this.$t('__performanceBonus') + this.$t('__percentage') + '(%)',
-          key: 'PerBonusPercentage',
-          width: 30
-        },
-        {
-          header: this.$t('__performanceBonus') + this.$t('__amount') + '(' + this.$t('__million') + ')',
-          key: 'PerBonusAmount',
-          width: 30
-        }
-      ],
-      results: []
+      reportPath: 'reports_Bonus1',
+      reportParams: {}
     }
   },
   mounted () {
@@ -134,18 +63,30 @@ export default {
     // 讀入系統清單
     preLoading: async function () {
       this.form.EndDate = new Date()
+      this.form.EndDate = this.form.EndDate.toISOString().slice(0, 10)
+
       this.form.StartDate = new Date()
-      this.form.StartDate.setMonth(this.form.EndDate.getMonth() - 3)
+      this.form.StartDate.setMonth(this.form.StartDate.getMonth() - 3)
+      this.form.StartDate = this.form.StartDate.toISOString().slice(0, 10)
     },
-    // 查詢
-    search: async function () {
-      const response2 = await this.$api.reports.bonus1({ form: this.form })
-      this.results = response2.data.result
-    },
-    toExcel: async function () {
-      const response2 = await this.$api.reports.bonus1ToExcel({ StartDate: this.form.StartDate, EndDate: this.form.EndDate, columns: this.columns })
-      let blob = new Blob([response2.data], { type: response2.headers['content-type'] })
-      saveAs(blob, '獎金試算.xlsx')
+    // SSRS列印
+    print: function () {
+      let strLocale = '2'
+      switch (localStorage.getItem('locale')) {
+        case 'en':
+          strLocale = '1'
+          break
+        case 'zh':
+          strLocale = '2'
+          break
+      }
+      this.reportParams = {
+        locale: strLocale,
+        StartDate: this.form.StartDate,
+        EndDate: this.form.EndDate }
+
+      // 紀錄Log
+      this.$api.reports.bonus1ToExcel({ StartDate: this.form.StartDate, EndDate: this.form.EndDate })
     }
   }
 }

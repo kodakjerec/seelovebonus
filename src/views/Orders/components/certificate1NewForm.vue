@@ -28,22 +28,29 @@
       </el-form-item>
     </el-form>
     <div slot="footer" class="dialog-footer">
-      <el-button v-show="buttonsShow.save" icon="el-icon-printer" @click.prevent="toExcel()">{{$t('__print')}}</el-button>
+      <el-button v-show="buttonsShow.save" icon="el-icon-printer" @click.prevent="print">{{$t('__print')}}</el-button>
       <p/>
       <el-button v-show="buttonsShow.delete" type="danger" @click="delRecord">{{$t('__delete')}}</el-button>
       <el-button @click="cancel">{{$t('__cancel')}}</el-button>
       <el-button v-show="buttonsShow.save" type="primary" @click="checkValidate">{{$t('__save')}}</el-button>
+      <p/>
+      <iframeReportingService
+       :reportPath="reportPath"
+       :params="reportParams"></iframeReportingService>
     </div>
   </el-dialog>
 </template>
 
 <script>
-import { saveAs } from 'file-saver'
+import iframeReportingService from '@/components/iframeReportingService'
 import { formatDate } from '@/setup/format.js'
 import { messageBoxYesNo } from '@/services/utils'
 
 export default {
   name: 'Certificate1NewForm',
+  components: {
+    iframeReportingService
+  },
   props: {
     dialogType: { type: String, default: 'new' },
     dialogShow: { type: Boolean, default: false },
@@ -78,6 +85,8 @@ export default {
         CreateDate: false
       },
       myTitle: '',
+      reportPath: 'reports_Certificate1ToExcel',
+      reportParams: {},
       // 以下為下拉式選單專用
       ddlStatus: []
     }
@@ -184,10 +193,23 @@ export default {
           break
       }
     },
-    toExcel: async function () {
-      const response2 = await this.$api.reports.certificate1ToExcel({ Certificate1: this.form.Certificate1 })
-      let blob = new Blob([response2.data], { type: response2.headers['content-type'] })
-      saveAs(blob, '供奉憑證' + this.form.Certificate1 + '.xlsx')
+    // 列印
+    print: function () {
+      let strLocale = '2'
+      switch (localStorage.getItem('locale')) {
+        case 'en':
+          strLocale = '1'
+          break
+        case 'zh':
+          strLocale = '2'
+          break
+      }
+      this.reportParams = {
+        locale: strLocale,
+        keyword: this.form.Certificate1 }
+
+      // 紀錄Log
+      this.$api.reports.certificate1ToExcel({ Certificate1: this.form.Certificate1 })
 
       this.form.PrintCount += 1
     }

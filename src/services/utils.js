@@ -4,15 +4,17 @@ import router from '@/router/index'
 import i18n from '@/setup/setupLocale'
 import req from './auth' // 把request包裝
 
-let seeloveNodeServer = {
-  ipHost: '192.168.1.20:3000'
-  // ipHost: 'localhost:3000'
+export const seeloveNodeServer = {
+  ip: '192.168.1.20',
+  // ipHost: 'localhost',
+  port: '3000', // backend server
+  portReportingServices: '3002' // reporting services server
 }
 
 // 一般api使用
 export const post = async (url, reqData = {}) => {
   store.dispatch('increaseLoadingCounter')
-  let combineURL = 'http://' + seeloveNodeServer.ipHost + url
+  let combineURL = 'http://' + seeloveNodeServer.ip + ':' + seeloveNodeServer.port + url
   return req('post', combineURL, reqData)
     .then(response => {
       store.dispatch('decreaseLoadingCounter')
@@ -27,7 +29,7 @@ export const post = async (url, reqData = {}) => {
 }
 export const getFile = async (url, reqData = {}) => {
   store.dispatch('increaseLoadingCounter')
-  let combineURL = 'http://' + seeloveNodeServer.ipHost + url
+  let combineURL = 'http://' + seeloveNodeServer.ip + ':' + seeloveNodeServer.port + url
   return req('getFile', combineURL, reqData)
     .then(response => {
       store.dispatch('decreaseLoadingCounter')
