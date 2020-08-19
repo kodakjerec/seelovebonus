@@ -27,6 +27,10 @@
         :label="$t('__company')+$t('__name')">
       </el-table-column>
       <el-table-column
+        prop="Nickname"
+        :label="$t('__nickname')">
+      </el-table-column>
+      <el-table-column
         prop="Principal"
         :label="$t('__principal')">
       </el-table-column>
@@ -43,6 +47,10 @@
         prop="EndDate"
         :label="$t('__endDate')"
         :formatter="formatterDate">
+      </el-table-column>
+      <el-table-column
+        prop="RefferIDName"
+        :label="$t('__sponsor')">
       </el-table-column>
     </el-table>
     <new-form

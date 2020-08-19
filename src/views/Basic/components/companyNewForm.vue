@@ -5,7 +5,15 @@
         <el-input v-model="form.ID" autocomplete="off" :placeholder="$t('__palceholderCompanyID')" :disabled="disableForm.ID" maxlength="20" show-word-limit></el-input>
       </el-form-item>
       <el-form-item :label="$t('__company')+$t('__name')" prop="Name">
-        <el-input v-model="form.Name" autocomplete="off" maxlength="40" show-word-limit></el-input>
+        <el-col :span="10">
+          <el-input v-model="form.Name" autocomplete="off" maxlength="40" show-word-limit></el-input>
+        </el-col>
+        <el-col :span="4" class="el-form-item__label">
+          {{$t('__nickname')}}
+        </el-col>
+        <el-col :span="10">
+          <el-input v-model="form.Nickname" autocomplete="off" maxlength="40" show-word-limit></el-input>
+        </el-col>
       </el-form-item>
       <el-form-item :label="$t('__refEmployeeID')" prop="EmployeeID">
         <el-select v-model="form.EmployeeID" filterable :placeholder="$t('__plzChoice')">
@@ -17,7 +25,7 @@
       </el-form-item>
       <el-form-item :label="$t('__sponsorKind')">
         <el-col :span="10">
-          <el-select v-model="form.refKind" value-key="value" :placeholder="$t('__plzChoice')" @change="ddlRefKindChange">
+          <el-select v-model="form.refKind" value-key="value" :placeholder="$t('__plzChoice')" @change="ddlRefKindChange" :disabled="disableForm.refKind">
             <el-option v-for="item in ddlRefKind" :key="item.ID" :label="item.Value" :value="item.ID">
               <span style="float: left">{{ item.Value }}</span>
               <span style="float: right; color: #8492a6; font-size: 13px">{{ item.ID }}</span>
@@ -184,9 +192,10 @@ export default {
         City: null,
         Post: null,
         Address: '',
-        refKind: null,
+        refKind: '3',
         Referrer: null,
-        EmployeeID: null
+        EmployeeID: null,
+        Nickname: null
       },
       rules: {
         ID: [{ required: true, message: this.$t('__pleaseInput'), trigger: 'blur' }],
@@ -198,7 +207,8 @@ export default {
         EmployeeID: [{ required: true, message: this.$t('__pleaseInput'), trigger: 'blur' }]
       },
       disableForm: {
-        ID: false
+        ID: false,
+        refKind: true
       },
       myTitle: '',
       isLoadingFinish: false, // 讀取完畢
@@ -250,7 +260,7 @@ export default {
       this.customersData = responseCustomers.data.result
       const responseEmployees = await this.$api.basic.getDropdownList({ type: 'customerEmployees' })
       this.employeesData = responseEmployees.data.result
-      const responseCompanies = await this.$api.basic.getDropdownList({ type: 'companies' })
+      const responseCompanies = await this.$api.basic.getDropdownList({ type: 'companyParent' })
       this.companiesData = responseCompanies.data.result
       const response5 = await this.$api.basic.getDropdownList({ type: 'refKind' })
       this.ddlRefKind = response5.data.result

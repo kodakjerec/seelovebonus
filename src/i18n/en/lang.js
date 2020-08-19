@@ -145,6 +145,7 @@ export default {
   __floor: 'Floor',
   __area: 'Area',
   __volume: 'Volume',
+  __nickname: 'Nickname',
   // 請在上方新增字串
   // 以下為錯誤處理專用
   __error400: 'Bad Request',
