@@ -1,7 +1,6 @@
 <template>
   <div>
-    <employeesCanvas
-      @findCompany="findCompany"></employeesCanvas>
+    <vChart @findCompany="findCompany"></vChart>
     <el-form ref="form" :model="form" label-width="20%">
       <el-form-item :label="$t('__companies')+$t('__id')">
         <el-select v-model="form.CompanyID" filterable value-key="value" :placeholder="$t('__plzChoice')">
@@ -20,13 +19,13 @@
 </template>
 
 <script>
-import employeesCanvas from './reportsEmployeesCanvas'
+import vChart from './reportsEmployeesVChart'
 import iframeReportingService from '@/components/iframeReportingService'
 
 export default {
   name: 'ReportsEmployee',
   components: {
-    employeesCanvas,
+    vChart,
     iframeReportingService
   },
   data () {
