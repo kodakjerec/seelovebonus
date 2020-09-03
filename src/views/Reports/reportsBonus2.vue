@@ -26,15 +26,13 @@
           </el-option>
         </el-select>
       </el-form-item>
+      <el-form-item>
+        <el-button type="primary" icon="el-icon-printer" @click.prevent="print">{{$t('__print')}}</el-button>
+      </el-form-item>
     </el-form>
-    <el-button-group>
-      <el-button type="primary" icon="el-icon-printer" @click.prevent="print">{{$t('__print')}}</el-button>
-    </el-button-group>
-    <el-footer>
-      <iframeReportingService
-       :reportPath="reportPath"
-       :params="reportParams"></iframeReportingService>
-    </el-footer>
+    <iframeReportingService
+      :reportPath="reportPath"
+      :params="reportParams"></iframeReportingService>
   </div>
 </template>
 

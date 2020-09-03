@@ -24,7 +24,6 @@
         <eChart2 :companyID="form.CompanyID" ></eChart2>
       </el-tab-pane>
     </el-tabs>
-
   </div>
 </template>
 

@@ -1,7 +1,8 @@
 <template>
-      <el-menu
+  <el-header>
+    <el-menu
       :default-active="activeIndex2"
-      class="el-menu-demo"
+      class="floatingMenu"
       mode="horizontal"
       @select="handleSelect"
       background-color="#545c64"
@@ -26,6 +27,7 @@
         <span>{{$t('__logout')}}</span>
       </el-menu-item>
     </el-menu>
+  </el-header>
 </template>
 
 <script>
@@ -58,6 +60,15 @@ export default {
 }
 </script>
 <style lang="scss" scoped>
+.floatingMenu {
+  position:fixed; /* fixing the position takes it out of html flow - knows
+                   nothing about where to locate itself except by browser
+                   coordinates */
+  left:0;           /* top left corner should start at leftmost spot */
+  top:0;            /* top left corner should start at topmost spot */
+  width:100vw;      /* take up the full browser width */
+  z-index:200;  /* high z index so other content scrolls underneath */
+}
 .defineCSS {
   position: absolute;
   right:0px;
