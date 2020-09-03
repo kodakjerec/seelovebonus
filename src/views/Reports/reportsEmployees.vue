@@ -1,31 +1,43 @@
 <template>
   <div>
-    <vChart @findCompany="findCompany"></vChart>
-    <el-form ref="form" :model="form" label-width="20%">
-      <el-form-item :label="$t('__companies')+$t('__id')">
-        <el-select v-model="form.CompanyID" filterable value-key="value" :placeholder="$t('__plzChoice')">
-          <el-option v-for="item in ddlCompanies" :key="item.ID" :label="item.ID+' '+item.Value" :value="item.ID">
-            <span style="float: left">{{ item.Value }}</span>
-            <span style="float: right; color: #8492a6; font-size: 13px">{{ item.ID }}</span>
-          </el-option>
-        </el-select>
-      </el-form-item>
-      <el-button type="primary" icon="el-icon-printer" @click.prevent="print">{{$t('__print')}}</el-button>
-    </el-form>
-    <iframeReportingService
-      :reportPath="reportPath"
-      :params="reportParams"></iframeReportingService>
+    <eChart @findCompany="findCompany"></eChart>
+    <el-tabs v-model="activeName">
+      <el-tab-pane :label="$t('__print')" name="first">
+        <el-form :inline="true" ref="form" :model="form">
+          <el-form-item :label="$t('__companies')+$t('__id')">
+            <el-select v-model="form.CompanyID" filterable :placeholder="$t('__plzChoice')">
+              <el-option v-for="item in ddlCompanies" :key="item.ID" :label="item.ID+' '+item.Value" :value="item.ID">
+                <span style="float: left">{{ item.Value }}</span>
+                <span style="float: right; color: #8492a6; font-size: 13px">{{ item.ID }}</span>
+              </el-option>
+            </el-select>
+          </el-form-item>
+          <el-form-item>
+            <el-button type="primary" icon="el-icon-printer" @click.prevent="print">{{$t('__print')}}</el-button>
+          </el-form-item>
+        </el-form>
+        <iframeReportingService
+          :reportPath="reportPath"
+          :params="reportParams"></iframeReportingService>
+      </el-tab-pane>
+      <el-tab-pane :label="$t('__graphical')" name="second">
+        <eChart2 :companyID="form.CompanyID" ></eChart2>
+      </el-tab-pane>
+    </el-tabs>
+
   </div>
 </template>
 
 <script>
-import vChart from './reportsEmployeesVChart'
+import eChart from './components/reportsEmployeesEChart'
+import eChart2 from './components/reportsEmployeesEChart2'
 import iframeReportingService from '@/components/iframeReportingService'
 
 export default {
   name: 'ReportsEmployee',
   components: {
-    vChart,
+    eChart,
+    eChart2,
     iframeReportingService
   },
   data () {
@@ -35,19 +47,20 @@ export default {
       },
       reportPath: 'reports_Employees',
       reportParams: {},
+      activeName: 'first',
       // 以下為下拉式選單專用
       ddlCompanies: []
     }
   },
   mounted () {
     this.preLoading()
+    this.findCompany('83799375')
   },
   methods: {
     // 讀入系統清單
     preLoading: async function () {
       const response = await this.$api.reports.getDropdownList({ type: 'companies' })
       this.ddlCompanies = response.data.result
-      this.form.CompanyID = this.ddlCompanies[0].ID
     },
     // canvas 點公司
     findCompany: function (value) {

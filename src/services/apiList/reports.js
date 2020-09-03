@@ -24,10 +24,10 @@ export default {
         return data
       })
     },
-    bonus1ToExcel: ({ StartDate, EndDate }) => {
-      let rawData = { StartDate, EndDate }
-      return post('/reports/bonus1ToExcel', rawData).then(data => {
-        console.log(`%c <<< Response(/rest/reports/bonus1ToExcel)⤵ `, 'background-color: #E0455D; color: white; font-size: 14px; font-weight: bold;', data)
+    bonus2ToExcel: ({ reportParams }) => {
+      let rawData = { reportParams }
+      return post('/reports/bonus2ToExcel', rawData).then(data => {
+        console.log(`%c <<< Response(/rest/reports/bonus2ToExcel)⤵ `, 'background-color: #E0455D; color: white; font-size: 14px; font-weight: bold;', data)
         return data
       })
     },

@@ -100,9 +100,9 @@ const routes = [
     component: () => import('@/views/Reports/reportsEmployees')
   },
   {
-    path: '/Reports/Bonus1',
-    name: 'ReportsBonus1',
-    component: () => import('@/views/Reports/reportsBonus1')
+    path: '/Reports/Bonus2',
+    name: 'ReportsBonus2',
+    component: () => import('@/views/Reports/reportsBonus2')
   },
   {
     path: '/Settings/SystemSettings',

@@ -13,6 +13,7 @@ export default {
   __invalid: 'Invalid',
   __save: 'Save',
   __print: 'Print',
+  __graphical: 'Graphical',
   __toExcel: 'Download Excel',
   __theFollingIs: 'The folling is',
   __theAboveIs: 'The ablove is',

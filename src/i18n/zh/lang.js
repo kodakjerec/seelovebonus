@@ -13,6 +13,7 @@ export default {
   __invalid: '作廢',
   __save: '存檔',
   __print: '列印',
+  __graphical: '圖形化',
   __toExcel: '下載Excel',
   __theFollingIs: '以下為',
   __theAboveIs: '以上為',
