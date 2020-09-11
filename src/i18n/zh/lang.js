@@ -83,7 +83,7 @@ export default {
   __bomSub: 'BOM子結構',
   __seq: '順序',
   __productBOMWarrning: '請先完成新增再修改BOM架構',
-  __projectDetailWarrning: '請先完成新增再修改專案產品',
+  __projectDetailWarrning: '請先完成新增再修改專案商品',
   __orderDetailWarrning: '請先完成新增再修改付款紀錄和發票',
   __project: '專案',
   __detail: '明細',
