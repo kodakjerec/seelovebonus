@@ -20,7 +20,7 @@
       </el-table-column>
       <el-table-column
         prop="refEmployeeID"
-        :label="$t('__refEmployeeID')">
+        :label="$t('__refEmployeeIDForUser')">
       </el-table-column>
     </el-table>
     <new-form
