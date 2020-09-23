@@ -41,7 +41,7 @@
         <br/>{{$t('__allSettingsWillNewTogether')}}
       </el-form-item>
       <el-form-item :label="$t('__memo')">
-          <el-input v-model="form.Memo" autocomplete="off" maxlength="200" show-word-limit></el-input>
+          <el-input type="textarea" v-model="form.Memo" autocomplete="off" maxlength="200" show-word-limit></el-input>
       </el-form-item>
     </el-form>
     <div slot="footer" class="dialog-footer">

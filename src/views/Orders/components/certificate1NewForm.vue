@@ -11,7 +11,7 @@
           <el-input-number v-model="form.PrintCount" autocomplete="off" maxlength="200" show-word-limit :disabled="disableForm.PrintCount"></el-input-number>
       </el-form-item>
       <el-form-item :label="$t('__status')" label-width="100px" label-position="left">
-          <el-select v-model="form.Status" value-key="value" :placeholder="$t('__plzChoice')" :disabled="disableForm.Status">
+        <el-select v-model="form.Status" value-key="value" :placeholder="$t('__plzChoice')" :disabled="disableForm.Status">
           <el-option v-for="item in ddlStatus" :key="item.ID" :label="item.Value" :value="item.ID">
             <span style="float: left">{{ item.Value }}</span>
             <span style="float: right; color: #8492a6; font-size: 13px">{{ item.ID }}</span>
@@ -25,6 +25,14 @@
             value-format="yyyy-MM-dd"
             :disabled="disableForm.CreateDate">
           </el-date-picker>
+      </el-form-item>
+      <el-form-item label="Duration" label-width="100px" label-position="left">
+        <el-select v-model="form.reportDuration" value-key="value" :placeholder="$t('__plzChoice')" :disabled="disableForm.Status">
+          <el-option v-for="item in ddlReportDuration" :key="item.ID" :label="item.Value" :value="item.ID">
+            <span style="float: left">{{ item.Value }}</span>
+            <span style="float: right; color: #8492a6; font-size: 13px">{{ item.ID }}</span>
+          </el-option>
+        </el-select>
       </el-form-item>
     </el-form>
     <div slot="footer" class="dialog-footer">
@@ -64,7 +72,8 @@ export default {
         Certificate1: null,
         PrintCount: 0,
         Status: '1',
-        CreateDate: new Date()
+        CreateDate: new Date(),
+        reportDuration: '1'
       },
       rules: {
         Certificate1: [{ required: true, message: this.$t('__pleaseInput'), trigger: 'blur' }]
@@ -88,7 +97,8 @@ export default {
       reportPath: 'reports_Certificate1ToExcel',
       reportParams: {},
       // 以下為下拉式選單專用
-      ddlStatus: []
+      ddlStatus: [],
+      ddlReportDuration: []
     }
   },
   mounted () {
@@ -131,6 +141,9 @@ export default {
     },
     // 讀取預設資料
     preLoading: async function () {
+      const response2 = await this.$api.reports.getDropdownList({ type: 'cer1Duration' })
+      this.ddlReportDuration = response2.data.result
+      this.form.reportDuration = this.ddlReportDuration[0].ID
       const response3 = await this.$api.basic.getDropdownList({ type: 'status' })
       this.ddlStatus = response3.data.result
     },
@@ -206,7 +219,8 @@ export default {
       }
       this.reportParams = {
         locale: strLocale,
-        keyword: this.form.Certificate1 }
+        keyword: this.form.Certificate1,
+        reportDuration: this.form.reportDuration }
 
       // 紀錄Log
       this.$api.reports.certificate1ToExcel({ Certificate1: this.form.Certificate1 })
