@@ -27,7 +27,7 @@
           </el-date-picker>
       </el-form-item>
       <el-form-item label="Duration" label-width="100px" label-position="left">
-        <el-select v-model="form.reportDuration" value-key="value" :placeholder="$t('__plzChoice')" :disabled="disableForm.Status">
+        <el-select v-model="form.reportDuration" :placeholder="$t('__plzChoice')" :disabled="disableForm.Status">
           <el-option v-for="item in ddlReportDuration" :key="item.ID" :label="item.Value" :value="item.ID">
             <span style="float: left">{{ item.Value }}</span>
             <span style="float: right; color: #8492a6; font-size: 13px">{{ item.ID }}</span>
@@ -103,8 +103,12 @@ export default {
   },
   mounted () {
     if (Object.keys(this.certificate1).length > 0) {
-      this.form = JSON.parse(JSON.stringify(this.certificate1))
-      this.form.CreateDate = this.formatterDate(null, null, this.form.CreateDate, null)
+      this.form.OrderID = this.certificate1.OrderID
+      this.form.Certificate1 = this.certificate1.Certificate1
+      this.form.PrintCount = this.certificate1.PrintCount
+      this.form.Status = this.certificate1.Status
+      let tempDate = new Date()
+      this.form.CreateDate = this.formatterDate(null, null, tempDate.toISOString().slice(0, 10), null)
     }
 
     switch (this.dialogType) {
@@ -143,7 +147,6 @@ export default {
     preLoading: async function () {
       const response2 = await this.$api.reports.getDropdownList({ type: 'cer1Duration' })
       this.ddlReportDuration = response2.data.result
-      this.form.reportDuration = this.ddlReportDuration[0].ID
       const response3 = await this.$api.basic.getDropdownList({ type: 'status' })
       this.ddlStatus = response3.data.result
     },
