@@ -1,42 +1,13 @@
 <template>
   <el-dialog :title="myTitle" :visible="dialogShow" center width="80%" @close="cancel">
-    <el-form ref="form" :model="form" :rules="rules">
-      <el-form-item :label="$t('__paymentMethod')" prop="PaymentMethod" label-width="100px" label-position="left">
-        <el-col :span="4">
-          <el-select v-model="form.PaymentMethod" value-key="value" :placeholder="$t('__plzChoice')" :disabled="disableForm.PaymentMethod">
-            <el-option v-for="item in ddlPaymentMethod" :key="item.ID" :label="item.Value" :value="item.ID">
-              <span style="float: left">{{ item.Value }}</span>
-              <span style="float: right; color: #8492a6; font-size: 13px">{{ item.ID }}</span>
-            </el-option>
-          </el-select>
-        </el-col>
-        <el-col :span="4" class="el-form-item__label">
-          {{$t('__received')+$t('__date')}}
-        </el-col>
-        <el-col :span="6">
-          <el-form-item prop="ReceivedDate">
-            <el-date-picker
-              v-model="form.ReceivedDate"
-              type="date"
-              value-format="yyyy-MM-dd"
-              :placeholder="$t('__plzChoice')+$t('__received')+$t('__date')"
-              :disabled="disableForm.ReceivedDate">
-            </el-date-picker>
-          </el-form-item>
-        </el-col>
-        <el-col :span="4" class="el-form-item__label">
-          {{$t('__received')+$t('__operator')}}
-        </el-col>
-        <el-col :span="6">
-          <el-form-item prop="ReceivedID">
-              <el-select v-model="form.ReceivedID" value-key="value" :placeholder="$t('__plzChoice')" :disabled="disableForm.ReceivedID">
-                <el-option v-for="item in ddlCreateID" :key="item.ID" :label="item.Value" :value="item.ID">
-                  <span style="float: left">{{ item.Value }}</span>
-                  <span style="float: right; color: #8492a6; font-size: 13px">{{ item.ID }}</span>
-                </el-option>
-              </el-select>
-            </el-form-item>
-        </el-col>
+    <el-form ref="form" :model="form" :rules="rules" label-width="10vw" label-position="right">
+      <el-form-item :label="$t('__paymentMethod')" prop="PaymentMethod">
+        <el-select v-model="form.PaymentMethod" value-key="value" :placeholder="$t('__plzChoice')" :disabled="disableForm.PaymentMethod">
+          <el-option v-for="item in ddlPaymentMethod" :key="item.ID" :label="item.Value" :value="item.ID">
+            <span style="float: left">{{ item.Value }}</span>
+            <span style="float: right; color: #8492a6; font-size: 13px">{{ item.ID }}</span>
+          </el-option>
+        </el-select>
       </el-form-item>
       <method1 ref="method1" v-if="form.PaymentMethod === '1'" :form="form" :disableForm="disableForm"></method1>
       <method2 ref="method2" v-if="form.PaymentMethod === '2'" :form="form" :disableForm="disableForm" :ddlBankID="ddlBankID"></method2>
@@ -48,6 +19,14 @@
       </el-form-item>
       <el-form-item :label="$t('__invoice')+$t('__number')" label-width="100px" label-position="left">
           <el-input v-model="form.InvoiceID" autocomplete="off" maxlength="200" show-word-limit disabled></el-input>
+      </el-form-item>
+      <el-form-item :label="$t('__received')+$t('__operator')" prop="ReceivedID">
+        <el-select v-model="form.ReceivedID" value-key="value" :placeholder="$t('__plzChoice')" :disabled="disableForm.ReceivedID">
+          <el-option v-for="item in ddlCreateID" :key="item.ID" :label="item.Value" :value="item.ID">
+            <span style="float: left">{{ item.Value }}</span>
+            <span style="float: right; color: #8492a6; font-size: 13px">{{ item.ID }}</span>
+          </el-option>
+        </el-select>
       </el-form-item>
     </el-form>
     <div slot="footer" class="dialog-footer">

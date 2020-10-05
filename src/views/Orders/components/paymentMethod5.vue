@@ -1,28 +1,19 @@
 
 <template>
-  <el-form ref="form" :model="form" :rules="rules">
-    <el-form-item :label="$t('__received')+$t('__amount')" prop="Amount" label-position="left" label-width="100px">
+  <el-form ref="form" :model="form" :rules="rules" label-width="10vw" label-position="right">
+    <el-form-item :label="$t('__received')+$t('__date')" required>
+      <el-date-picker
+        v-model="form.ReceivedDate"
+        type="date"
+        value-format="yyyy-MM-dd"
+        :placeholder="$t('__plzChoice')+$t('__received')+$t('__date')"
+        :disabled="disableForm.ReceivedDate">
+      </el-date-picker>
+    </el-form-item>
+    <el-form-item :label="$t('__received')+$t('__amount')" prop="Amount">
         <el-input v-model.number="form.Amount" :disabled="disableForm.Amount"></el-input>
     </el-form-item>
-    <!-- <el-form-item :label="$t('__bank')+$t('__id')" label-position="left" label-width="100px">
-      <el-col :span="4">
-        <el-select v-model="form.BankID" filterable :filter-method="bankIDFilter" :placeholder="$t('__plzChoice')" :disabled="disableForm.BankID">
-          <el-option v-for="item in ddlBankIDFilter" :key="item.ID" :label="item.Value" :value="item.ID">
-            <span style="float: left">{{ item.Value }}</span>
-            <span style="float: right; color: #8492a6; font-size: 13px">{{ item.ID }}</span>
-          </el-option>
-        </el-select>
-      </el-col>
-      <el-col :span="4" class="el-form-item__label">
-        {{$t('__account')}}
-      </el-col>
-      <el-col :span="10">
-        <el-form-item prop="Account">
-          <el-input v-model="form.Account" :placeholder="$t('__plzInputCardNumber')" maxlength="20" show-word-limit :disabled="disableForm.Account"></el-input>
-        </el-form-item>
-      </el-col>
-    </el-form-item> -->
-    <el-form-item prop="Account" :label="$t('__account')" label-position="left" label-width="100px">
+    <el-form-item prop="Account" :label="$t('__account')">
       <el-input v-model="form.Account" :placeholder="$t('__plzInputCardNumber')" maxlength="20" show-word-limit :disabled="disableForm.Account"></el-input>
     </el-form-item>
   </el-form>

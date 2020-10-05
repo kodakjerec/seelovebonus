@@ -1,6 +1,6 @@
 <template>
   <el-dialog :title="myTitle" :visible="dialogShow" center width="80%" @close="cancel">
-    <el-form ref="form" :model="form" :rules="rules" label-width="20%">
+    <el-form ref="form" :model="form" :rules="rules" label-width="10vw" label-position="right">
       <el-form-item :label="$t('__product')+$t('__id')" prop="ID">
         <el-input v-model="form.ID" autocomplete="off" :disabled="disableForm.ID" maxlength="20" show-word-limit></el-input>
       </el-form-item>
@@ -19,11 +19,8 @@
         <el-col :span="10">
           <el-input v-model.number="form.Qty" autocomplete="off"></el-input>
         </el-col>
-        <el-col :span="4" class="el-form-item__label">
-          {{$t('__unit')}}
-        </el-col>
-        <el-col :span="10">
-          <el-form-item prop="Unit">
+        <el-col :span="14">
+          <el-form-item :label="$t('__unit')" prop="Unit">
             <el-select v-model="form.Unit" value-key="value" :placeholder="$t('__plzChoice')">
               <el-option v-for="item in ddlUnit" :key="item.ID" :label="item.Value" :value="item.ID">
                 <span style="float: left">{{ item.Value }}</span>
@@ -37,11 +34,10 @@
         <el-col :span="10">
           <el-input v-model.number="form.Price" autocomplete="off"></el-input>
         </el-col>
-        <el-col :span="4" class="el-form-item__label">
-          {{$t('__cost')}}
-        </el-col>
-        <el-col :span="10">
-          <el-input v-model.number="form.Cost" autocomplete="off"></el-input>
+        <el-col :span="14">
+          <el-form-item :label="$t('__cost')">
+            <el-input v-model.number="form.Cost" autocomplete="off"></el-input>
+          </el-form-item>
         </el-col>
       </el-form-item>
       <el-form-item :label="$t('__itemCategory')">

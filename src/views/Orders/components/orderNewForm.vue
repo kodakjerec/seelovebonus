@@ -1,27 +1,23 @@
 <template>
   <div>
     <h1>{{myTitle}}</h1>
-    <el-form ref="form" :model="form" :rules="rules">
-      <el-form-item prop="ID" :label="$t('__orderID')+'：'" label-width="100px" label-position="left">
-        <el-col :span="6">
+    <el-form ref="form" :model="form" :rules="rules" label-width="10vw" label-position="right" inline="true">
+      <el-form-item :label="$t('__orderID')+'：'" prop="ID">
+        <el-col :span="4">
           <el-input v-model="form.ID" :placeholder="$t('__pleaseInput')" autocomplete="off" :disabled="disableForm.ID"></el-input>
         </el-col>
-        <el-col :span="2" class="el-form-item__label">
-          {{$t('__status')}}
+        <el-col :span="10">
+          <el-form-item :label="$t('__status')">
+            <el-select v-model="form.Status" value-key="value" disabled>
+              <el-option v-for="item in ddlOrderStatus" :key="item.ID" :label="item.Value" :value="item.ID">
+                <span style="float: left">{{ item.Value }}</span>
+                <span style="float: right; color: #8492a6; font-size: 13px">{{ item.ID }}</span>
+              </el-option>
+            </el-select>
+          </el-form-item>
         </el-col>
-        <el-col :span="3">
-          <el-select v-model="form.Status" value-key="value" disabled>
-            <el-option v-for="item in ddlOrderStatus" :key="item.ID" :label="item.Value" :value="item.ID">
-              <span style="float: left">{{ item.Value }}</span>
-              <span style="float: right; color: #8492a6; font-size: 13px">{{ item.ID }}</span>
-            </el-option>
-          </el-select>
-        </el-col>
-        <el-col :span="7" class="el-form-item__label">
-          {{$t('__order')+$t('__date')+'：'}}
-        </el-col>
-        <el-col :span="6">
-          <el-form-item prop="OrderDate">
+        <el-col :span="10">
+          <el-form-item :label="$t('__order')+$t('__date')+'：'" prop="OrderDate">
             <el-date-picker
               v-model="form.OrderDate"
               type="date"
@@ -32,139 +28,138 @@
           </el-form-item>
         </el-col>
       </el-form-item>
-      <!-- 選擇專案 -->
+    </el-form>
+    <!-- 選擇專案 -->
+    <el-table
+      :data="projectHead"
+      stripe
+      border
+      style="width: 100%">
+      <el-table-column
+        prop="ProjectName"
+        :label="$t('__project')+$t('__name')">
+        <template slot-scope="scope">
+          <el-form-item prop="ProjectID">
+            <el-select v-model="scope.row[scope.column.property]" filterable :placeholder="$t('__plzChoice')" @change="(value)=>{ddlProjectChange(value, scope.row)}" style="display:block" :disabled="disableForm.ProjectID">
+              <el-option v-for="item in ddlProject" :key="item.ID" :label="item.ID+' '+item.Value" :value="item.ID">
+                <span style="float: left">{{ item.Value }}</span>
+                <span style="float: right; color: #8492a6; font-size: 13px">{{ item.ID }}</span>
+              </el-option>
+            </el-select>
+          </el-form-item>
+        </template>
+      </el-table-column>
+      <el-table-column
+        prop="FirstItemName"
+        :label="$t('__content')">
+      </el-table-column>
+      <el-table-column
+        prop="Price"
+        :label="$t('__project')+$t('__price')"
+        :formatter="formatterMoney"
+        width="100px">
+      </el-table-column>
+      <el-table-column
+        prop="Qty"
+        :label="$t('__qty')"
+        width="100px">
+        <template slot-scope="scope">
+          <el-input v-model.number="scope.row[scope.column.property]" @change="(value)=>{qtyChange(value, scope.row)}" :disabled="disableForm.Qty"></el-input>
+        </template>
+      </el-table-column>
+      <el-table-column
+        prop="Amount"
+        :label="$t('__amount')"
+        :formatter="formatterMoney"
+        width="100px">
+      </el-table-column>
+    </el-table>
+    <!-- 專案明細 -->
+    <order-detail
+      ref="orderDetail"
+      :dialogType="dialogType"
+      :orderID="form.ID"
+      :projectID="form.ProjectID"
+      :orderDetail="orderDetail"></order-detail>
+    <!-- 訂購者資料 -->
+    <order-customer
+      ref="orderCustomer"
+      :dialogType="dialogType"
+      :orderID="form.ID"
+      :orderCustomer="orderCustomer"
+      :ddlCustomerBefore="ddlCustomer"></order-customer>
+    <template v-if="dialogType !== 'new'">
+      <!-- 供奉憑證 -->
+      <certificate1
+        :buttonsShow="buttonsShow"
+        :buttonsShowUser="buttonsShowUser"
+        :orderID="form.ID"></certificate1>
+      <!-- 換狀證明 -->
+      <certificate2
+        :buttonsShow="buttonsShow"
+        :buttonsShowUser="buttonsShowUser"
+        :orderID="form.ID"></certificate2>
+      <!-- 付款資訊 -->
+      <collection-records
+        ref="collectionRecords"
+        :buttonsShow="buttonsShow"
+        :buttonsShowUser="buttonsShowUser"
+        :orderID="form.ID"></collection-records>
+      <!-- 發票資訊 -->
+      <invoice
+        ref="invoice"
+        :buttonsShow="buttonsShow"
+        :buttonsShowUser="buttonsShowUser"
+        :orderID="form.ID"
+        @refreshCollectionRecords="refreshCollectionRecords()"></invoice>
+      <!-- 蓋章區域 -->
       <el-table
-        :data="projectHead"
+        :data="stampShow"
         stripe
         border
         style="width: 100%">
-        <el-table-column
-          prop="ProjectName"
-          :label="$t('__project')+$t('__name')">
-          <template slot-scope="scope">
-            <el-form-item prop="ProjectID">
-              <el-select v-model="scope.row[scope.column.property]" filterable :placeholder="$t('__plzChoice')" @change="(value)=>{ddlProjectChange(value, scope.row)}" style="display:block" :disabled="disableForm.ProjectID">
-                <el-option v-for="item in ddlProject" :key="item.ID" :label="item.ID+' '+item.Value" :value="item.ID">
-                  <span style="float: left">{{ item.Value }}</span>
-                  <span style="float: right; color: #8492a6; font-size: 13px">{{ item.ID }}</span>
-                </el-option>
-              </el-select>
-            </el-form-item>
-          </template>
+        <el-table-column :label="$t('__defaultCompanyName')">
+          <el-table-column
+            :label="$t('__orderSpace1')">
+          </el-table-column>
+          <el-table-column
+            :label="$t('__orderSpace2')">
+          </el-table-column>
+          <el-table-column
+            :label="$t('__orderCreateID')">
+            <template slot-scope="scope">
+              {{scope.row.CreateID}}<br/>{{scope.row.CreateIDName}}
+            </template>
+          </el-table-column>
+          <el-table-column
+            :label="$t('__refEmployeeID')">
+            <template slot-scope="scope">
+              {{scope.row.EmployeeID}}<br/>{{scope.row.EmployeeIDName}}
+            </template>
+          </el-table-column>
         </el-table-column>
-        <el-table-column
-          prop="FirstItemName"
-          :label="$t('__content')">
-        </el-table-column>
-        <el-table-column
-          prop="Price"
-          :label="$t('__project')+$t('__price')"
-          :formatter="formatterMoney"
-          width="100px">
-        </el-table-column>
-        <el-table-column
-          prop="Qty"
-          :label="$t('__qty')"
-          width="100px">
-          <template slot-scope="scope">
-            <el-input v-model.number="scope.row[scope.column.property]" @change="(value)=>{qtyChange(value, scope.row)}" :disabled="disableForm.Qty"></el-input>
-          </template>
-        </el-table-column>
-        <el-table-column
-          prop="Amount"
-          :label="$t('__amount')"
-          :formatter="formatterMoney"
-          width="100px">
+        <el-table-column :label="$t('__defaultDepart')">
+          <el-table-column
+            :label="$t('__company')">
+            <template slot-scope="scope">
+              {{scope.row.CompanyID}}<br/>{{scope.row.CompanyName}}
+            </template>
+          </el-table-column>
+          <el-table-column
+            :label="$t('__referrer')">
+            <template slot-scope="scope">
+              {{scope.row.Referrer}}<br/>{{scope.row.ReferrerName}}
+            </template>
+          </el-table-column>
+          <el-table-column
+            :label="$t('__orderSpace3')">
+          </el-table-column>
         </el-table-column>
       </el-table>
-      <!-- 專案明細 -->
-      <order-detail
-        ref="orderDetail"
-        :dialogType="dialogType"
-        :orderID="form.ID"
-        :projectID="form.ProjectID"
-        :orderDetail="orderDetail"></order-detail>
-      <!-- 訂購者資料 -->
-      <order-customer
-        ref="orderCustomer"
-        :dialogType="dialogType"
-        :orderID="form.ID"
-        :orderCustomer="orderCustomer"
-        :ddlCustomerBefore="ddlCustomer"></order-customer>
-      <template v-if="dialogType !== 'new'">
-        <!-- 供奉憑證 -->
-        <certificate1
-          :buttonsShow="buttonsShow"
-          :buttonsShowUser="buttonsShowUser"
-          :orderID="form.ID"></certificate1>
-        <!-- 換狀證明 -->
-        <certificate2
-          :buttonsShow="buttonsShow"
-          :buttonsShowUser="buttonsShowUser"
-          :orderID="form.ID"></certificate2>
-        <!-- 付款資訊 -->
-        <collection-records
-          ref="collectionRecords"
-          :buttonsShow="buttonsShow"
-          :buttonsShowUser="buttonsShowUser"
-          :orderID="form.ID"></collection-records>
-        <!-- 發票資訊 -->
-        <invoice
-          ref="invoice"
-          :buttonsShow="buttonsShow"
-          :buttonsShowUser="buttonsShowUser"
-          :orderID="form.ID"
-          @refreshCollectionRecords="refreshCollectionRecords()"></invoice>
-        <!-- 蓋章區域 -->
-        <el-table
-          :data="stampShow"
-          stripe
-          border
-          style="width: 100%">
-          <el-table-column :label="$t('__defaultCompanyName')">
-            <el-table-column
-              :label="$t('__orderSpace1')">
-            </el-table-column>
-            <el-table-column
-              :label="$t('__orderSpace2')">
-            </el-table-column>
-            <el-table-column
-              :label="$t('__orderCreateID')">
-              <template slot-scope="scope">
-                {{scope.row.CreateID}}<br/>{{scope.row.CreateIDName}}
-              </template>
-            </el-table-column>
-            <el-table-column
-              :label="$t('__refEmployeeID')">
-              <template slot-scope="scope">
-                {{scope.row.EmployeeID}}<br/>{{scope.row.EmployeeIDName}}
-              </template>
-            </el-table-column>
-          </el-table-column>
-          <el-table-column :label="$t('__defaultDepart')">
-            <el-table-column
-              :label="$t('__company')">
-              <template slot-scope="scope">
-                {{scope.row.CompanyID}}<br/>{{scope.row.CompanyName}}
-              </template>
-            </el-table-column>
-            <el-table-column
-              :label="$t('__referrer')">
-              <template slot-scope="scope">
-                {{scope.row.Referrer}}<br/>{{scope.row.ReferrerName}}
-              </template>
-            </el-table-column>
-            <el-table-column
-              :label="$t('__orderSpace3')">
-            </el-table-column>
-          </el-table-column>
-        </el-table>
       </template>
       <template v-else>
         {{$t('__orderDetailWarrning')}}
       </template>
-
-    </el-form>
     <div slot="footer" class="dialog-footer">
       <br/>
       <el-button v-show="buttonsShow.delete && buttonsShowUser.delete && form.Status < '2'" type="danger" @click="deleteOrder">{{$t('__delete')}}</el-button>

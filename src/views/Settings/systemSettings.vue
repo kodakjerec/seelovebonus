@@ -14,16 +14,15 @@
           </el-option>
         </el-select>
       </el-col>
-      <el-col :span="4" class="el-form-item__label">
-        {{$t('__systemSettingsLanguage')}}
-      </el-col>
       <el-col :span="8">
-        <el-select v-model="form.language" value-key="value" :placeholder="$t('__plzChoice')" @change="selectChange">
-          <el-option v-for="item in ddlLanguages" :key="item.ID" :label="item.Value" :value="item.ID">
-            <span style="float: left">{{ item.Value }}</span>
-            <span style="float: right; color: #8492a6; font-size: 13px">{{ item.ID }}</span>
-          </el-option>
-      </el-select>
+        <el-form-item :label="$t('__systemSettingsLanguage')">
+          <el-select v-model="form.language" value-key="value" :placeholder="$t('__plzChoice')" @change="selectChange">
+            <el-option v-for="item in ddlLanguages" :key="item.ID" :label="item.Value" :value="item.ID">
+              <span style="float: left">{{ item.Value }}</span>
+              <span style="float: right; color: #8492a6; font-size: 13px">{{ item.ID }}</span>
+            </el-option>
+          </el-select>
+        </el-form-item>
       </el-col>
     </el-form-item>
     <el-table

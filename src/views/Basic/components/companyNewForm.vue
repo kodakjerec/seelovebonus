@@ -1,6 +1,6 @@
 <template>
   <el-dialog :title="myTitle" :visible="dialogShow" center width="80%" @close="cancel">
-    <el-form ref="form" :model="form" :rules="rules" label-width="20%">
+    <el-form ref="form" :model="form" :rules="rules" label-width="10vw" label-position="right">
       <el-form-item :label="$t('__company')+$t('__id')" prop="ID">
         <el-input v-model="form.ID" autocomplete="off" :placeholder="$t('__palceholderCompanyID')" :disabled="disableForm.ID" maxlength="20" show-word-limit></el-input>
       </el-form-item>
@@ -8,11 +8,10 @@
         <el-col :span="10">
           <el-input v-model="form.Name" autocomplete="off" maxlength="40" show-word-limit></el-input>
         </el-col>
-        <el-col :span="4" class="el-form-item__label">
-          {{$t('__nickname')}}
-        </el-col>
-        <el-col :span="10">
-          <el-input v-model="form.Nickname" autocomplete="off" maxlength="40" show-word-limit></el-input>
+        <el-col :span="14">
+          <el-form-item :label="$t('__nickname')">
+            <el-input v-model="form.Nickname" autocomplete="off" maxlength="40" show-word-limit></el-input>
+          </el-form-item>
         </el-col>
       </el-form-item>
       <el-form-item :label="$t('__refEmployeeID')" prop="EmployeeID">
@@ -23,7 +22,7 @@
           </el-option>
         </el-select>
       </el-form-item>
-      <el-form-item :label="$t('__sponsorKind')">
+      <el-form-item :label="$t('__sponsorKind')" required>
         <el-col :span="10">
           <el-select v-model="form.refKind" value-key="value" :placeholder="$t('__plzChoice')" @change="ddlRefKindChange" :disabled="disableForm.refKind">
             <el-option v-for="item in ddlRefKind" :key="item.ID" :label="item.Value" :value="item.ID">
@@ -32,11 +31,8 @@
             </el-option>
           </el-select>
         </el-col>
-        <el-col :span="4" class="el-form-item__label">
-          {{$t('__sponsor')}}
-        </el-col>
-        <el-col :span="10">
-          <el-form-item>
+        <el-col :span="14">
+          <el-form-item :label="$t('__sponsor')" required>
             <el-select v-model="form.Referrer" filterable value-key="value" :placeholder="$t('__plzChoice')">
               <el-option v-for="item in ddlReferrer" :key="item.ID" :label="item.ID+' '+item.Value" :value="item.ID">
                 <span style="float: left">{{ item.Value }}</span>
@@ -50,11 +46,10 @@
         <el-col :span="10">
           <el-input v-model="form.Principal" autocomplete="off" maxlength="40" show-word-limit></el-input>
         </el-col>
-        <el-col :span="4" class="el-form-item__label">
-          {{$t('__uniformNumber')}}
-        </el-col>
-        <el-col :span="10">
-          <el-input v-model="form.UniformNumber" autocomplete="off"></el-input>
+        <el-col :span="14">
+          <el-form-item :label="$t('__uniformNumber')">
+            <el-input v-model="form.UniformNumber" autocomplete="off"></el-input>
+          </el-form-item>
         </el-col>
       </el-form-item>
       <el-form-item :label="$t('__tel')+'1'">
@@ -63,11 +58,8 @@
             <el-input v-model="form.Tel1" autocomplete="off"></el-input>
           </el-form-item>
         </el-col>
-        <el-col :span="4" class="el-form-item__label">
-          {{$t('__tel')+'2'}}
-        </el-col>
-        <el-col :span="10">
-          <el-form-item prop="Tel2">
+        <el-col :span="14">
+          <el-form-item :label="$t('__tel')+'2'" prop="Tel2">
             <el-input v-model="form.Tel2" autocomplete="off"></el-input>
           </el-form-item>
         </el-col>
@@ -83,11 +75,8 @@
             </el-date-picker>
           </el-form-item>
         </el-col>
-        <el-col :span="4" class="el-form-item__label">
-          {{$t('__endDate')}}
-        </el-col>
-        <el-col :span="10">
-          <el-form-item prop="EndDate">
+        <el-col :span="14">
+          <el-form-item :label="$t('__endDate')" prop="EndDate">
             <el-date-picker
               v-model="form.EndDate"
               type="date"
@@ -106,11 +95,8 @@
             </el-option>
           </el-select>
         </el-col>
-        <el-col :span="2" class="el-form-item__label">
-          {{$t('__city')}}
-        </el-col>
-        <el-col :span="4">
-          <el-form-item>
+        <el-col :span="8">
+          <el-form-item :label="$t('__city')">
             <el-select v-model="form.City" value-key="value" :placeholder="$t('__plzChoice')" @change="ddlCityChange">
               <el-option v-for="item in ddlCity" :key="item.ID" :label="item.Value" :value="item.ID">
                 <span style="float: left">{{ item.Value }}</span>
@@ -119,11 +105,8 @@
             </el-select>
           </el-form-item>
         </el-col>
-        <el-col :span="4" class="el-form-item__label">
-          {{$t('__post')}}
-        </el-col>
-        <el-col :span="10">
-          <el-form-item>
+        <el-col :span="12">
+          <el-form-item :label="$t('__post')">
             <el-select v-model="form.Post" value-key="value" :placeholder="$t('__plzChoice')">
               <el-option v-for="item in ddlPost" :key="item.ID" :label="item.Value" :value="item.ID">
                 <span style="float: left">{{ item.Value }}</span>

@@ -1,10 +1,10 @@
 <template>
-  <el-form ref="form" :model="form" :rules="rules">
+  <el-form ref="form" :model="form" :rules="rules" label-width="10vw" label-position="right">
     <h2 style="text-align:left">{{$t('__orderCustomer')+$t('__data')}}</h2>
     <!-- 有法定代理人資料, 要顯示 -->
     <template v-if="showAgentData">
-      <el-form-item :label="$t('__orderCustomer')+$t('__name')" prop="CustomerID" label-width="100px" label-position="left">
-        <el-col :span="6">
+      <el-form-item :label="$t('__orderCustomer')+$t('__name')" prop="CustomerID">
+        <el-col :span="8">
           <el-select v-model="form.CustomerID" filterable value-key="value" :placeholder="$t('__plzChoice')" @change="ddlCustomerChange" :disabled="disableForm.CustomerID">
             <el-option v-for="item in ddlCustomer" :key="item.ID" :label="item.ID+' '+item.Value" :value="item.ID">
               <span style="float: left">{{ item.Value }}</span>
@@ -12,22 +12,20 @@
             </el-option>
           </el-select>
         </el-col>
-        <el-col :span="6" class="el-form-item__label">
-          {{$t('__agent')}}
-        </el-col>
-        <el-col :span="10">
-          <el-input v-model="form.AgentName" autocomplete="off" disabled></el-input>
+        <el-col :span="16">
+          <el-form-item :label="$t('__agent')">
+            <el-input v-model="form.AgentName" autocomplete="off" disabled></el-input>
+          </el-form-item>
         </el-col>
       </el-form-item>
       <el-form-item :label="$t('__uniqueNumber')" label-width="100px" label-position="left">
         <el-col :span="8">
           <el-input v-model="form.CustomerID" autocomplete="off" disabled></el-input>
         </el-col>
-        <el-col :span="4" class="el-form-item__label">
-          {{$t('__uniqueNumber')}}
-        </el-col>
-        <el-col :span="12">
-          <el-input v-model="form.AgentID" autocomplete="off" disabled></el-input>
+        <el-col :span="16">
+          <el-form-item :label="$t('__uniqueNumber')">
+            <el-input v-model="form.AgentID" autocomplete="off" disabled></el-input>
+          </el-form-item>
         </el-col>
       </el-form-item>
       <el-form-item :label="$t('__home')+'/'+$t('__mobile')+$t('__tel')" label-width="100px" label-position="left">
@@ -35,11 +33,8 @@
           <el-input v-model="form.TelHome" autocomplete="off" disabled></el-input>
           <el-input v-model="form.TelMobile" autocomplete="off" disabled></el-input>
         </el-col>
-        <el-col :span="4" class="el-form-item__label">
-          {{$t('__address')}}
-        </el-col>
-        <el-col :span="3">
-          <el-form-item>
+        <el-col :span="7">
+          <el-form-item :label="$t('__address')">
             <el-select v-model="form.AgentCity" value-key="value" :placeholder="$t('__plzChoice')" @change="ddlCityChange" disabled>
               <el-option v-for="item in ddlAgentCity" :key="item.ID" :label="item.Value" :value="item.ID">
                 <span style="float: left">{{ item.Value }}</span>

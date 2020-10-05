@@ -13,7 +13,7 @@
             </el-option>
           </el-select>
         </el-col>
-        <el-col :span="4" class="el-form-item__label">
+        <el-col :span="4">
           {{$t('__invoice')+$t('__status')}}
         </el-col>
         <el-col :span="6">
@@ -38,7 +38,7 @@
         <el-col :span="10">
           <el-input v-model="form.InvoiceID" autocomplete="off" :disabled="disableForm.InvoiceID"></el-input>
         </el-col>
-        <el-col :span="4" class="el-form-item__label">
+        <el-col :span="4">
           {{$t('__randomCode')}}
         </el-col>
         <el-col :span="10">
@@ -65,7 +65,7 @@
             </el-option>
           </el-select>
         </el-col>
-        <el-col :span="4" class="el-form-item__label">
+        <el-col :span="4">
           {{$t('__tax')+$t('__status')}}
         </el-col>
         <el-col :span="6">

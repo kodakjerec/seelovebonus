@@ -1,7 +1,7 @@
 <template>
   <el-dialog :title="myTitle" :visible="dialogShow" center width="80%" @close="cancel">
-    <el-form ref="form" :model="form" :rules="rules" label-width="20%">
-      <el-form-item :label="$t('__employee')+$t('__id')">
+    <el-form ref="form" :model="form" :rules="rules" label-width="10vw" label-position="right">
+      <el-form-item :label="$t('__employee')+$t('__id')" required>
         <el-col :span="4" v-show="!disableForm.ID">
           <el-select v-model="IDType" value-key="value" :placeholder="$t('__plzChoice')">
             <el-option v-for="item in ddlIDType" :key="item.ID" :label="item.Value" :value="item.ID">
@@ -36,11 +36,8 @@
             </el-option>
           </el-select>
         </el-col>
-        <el-col :span="4" class="el-form-item__label">
-          {{$t('__parent')+$t('__id')}}
-        </el-col>
-        <el-col :span="10">
-          <el-form-item prop="ParentID">
+        <el-col :span="14">
+          <el-form-item :label="$t('__parent')+$t('__id')" prop="ParentID">
             <el-select v-model="form.ParentID" value-key="value" :placeholder="$t('__plzChoice')" :disabled="!(form.CompanyID !== null)">
               <el-option v-for="item in ddlParentID" :key="item.ID" :label="item.Value" :value="item.ID">
                 <span style="float: left">{{ item.Value }}</span>
@@ -61,11 +58,8 @@
             </el-date-picker>
           </el-form-item>
         </el-col>
-        <el-col :span="4" class="el-form-item__label">
-          {{$t('__endDate')}}
-        </el-col>
-        <el-col :span="10">
-          <el-form-item prop="EndDate">
+        <el-col :span="14">
+          <el-form-item :label="$t('__endDate')" prop="EndDate">
             <el-date-picker
               v-model="form.EndDate"
               type="date"
@@ -81,11 +75,8 @@
             <el-input v-model="form.TelHome" autocomplete="off"></el-input>
           </el-form-item>
         </el-col>
-        <el-col :span="4" class="el-form-item__label">
-          {{$t('__mobile')+$t('__tel')}}
-        </el-col>
-        <el-col :span="10">
-          <el-form-item prop="TelMobile">
+        <el-col :span="14">
+          <el-form-item :label="$t('__mobile')+$t('__tel')" prop="TelMobile">
             <el-input v-model="form.TelMobile" autocomplete="off"></el-input>
           </el-form-item>
         </el-col>
@@ -99,11 +90,8 @@
             </el-option>
           </el-select>
         </el-col>
-        <el-col :span="2" class="el-form-item__label">
-          {{$t('__city')}}
-        </el-col>
-        <el-col :span="4">
-          <el-form-item>
+        <el-col :span="8">
+          <el-form-item :label="$t('__city')">
             <el-select v-model="form.City" value-key="value" :placeholder="$t('__plzChoice')" @change="ddlCityChange">
               <el-option v-for="item in ddlCity" :key="item.ID" :label="item.Value" :value="item.ID">
                 <span style="float: left">{{ item.Value }}</span>
@@ -112,11 +100,8 @@
             </el-select>
           </el-form-item>
         </el-col>
-        <el-col :span="4" class="el-form-item__label">
-          {{$t('__post')}}
-        </el-col>
-        <el-col :span="10">
-          <el-form-item>
+        <el-col :span="12">
+          <el-form-item :label="$t('__post')">
             <el-select v-model="form.Post" value-key="value" :placeholder="$t('__plzChoice')">
               <el-option v-for="item in ddlPost" :key="item.ID" :label="item.Value" :value="item.ID">
                 <span style="float: left">{{ item.Value }}</span>

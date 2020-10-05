@@ -147,6 +147,7 @@ export default {
   __area: 'Area',
   __volume: 'Volume',
   __nickname: 'Nickname',
+  __swipeCard: 'Swipe',
   // 請在上方新增字串
   // 以下為錯誤處理專用
   __error400: 'Bad Request',
