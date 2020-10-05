@@ -1,7 +1,7 @@
 <template>
   <div>
     <h1>{{myTitle}}</h1>
-    <el-form ref="form" :model="form" :rules="rules" label-width="10vw" label-position="right" inline="true">
+    <el-form ref="form" :model="form" :rules="rules" label-width="10vw" label-position="right" :inline="true">
       <el-form-item :label="$t('__orderID')+'：'" prop="ID">
         <el-col :span="4">
           <el-input v-model="form.ID" :placeholder="$t('__pleaseInput')" autocomplete="off" :disabled="disableForm.ID"></el-input>
@@ -28,52 +28,52 @@
           </el-form-item>
         </el-col>
       </el-form-item>
+      <!-- 選擇專案 -->
+      <el-table
+        :data="projectHead"
+        stripe
+        border
+        style="width: 100%">
+        <el-table-column
+          prop="ProjectName"
+          :label="$t('__project')+$t('__name')">
+          <template slot-scope="scope">
+            <el-form-item prop="ProjectID">
+              <el-select v-model="scope.row[scope.column.property]" filterable :placeholder="$t('__plzChoice')" @change="(value)=>{ddlProjectChange(value, scope.row)}" style="display:block" :disabled="disableForm.ProjectID">
+                <el-option v-for="item in ddlProject" :key="item.ID" :label="item.ID+' '+item.Value" :value="item.ID">
+                  <span style="float: left">{{ item.Value }}</span>
+                  <span style="float: right; color: #8492a6; font-size: 13px">{{ item.ID }}</span>
+                </el-option>
+              </el-select>
+            </el-form-item>
+          </template>
+        </el-table-column>
+        <el-table-column
+          prop="FirstItemName"
+          :label="$t('__content')">
+        </el-table-column>
+        <el-table-column
+          prop="Price"
+          :label="$t('__project')+$t('__price')"
+          :formatter="formatterMoney"
+          width="100px">
+        </el-table-column>
+        <el-table-column
+          prop="Qty"
+          :label="$t('__qty')"
+          width="100px">
+          <template slot-scope="scope">
+            <el-input v-model.number="scope.row[scope.column.property]" @change="(value)=>{qtyChange(value, scope.row)}" :disabled="disableForm.Qty"></el-input>
+          </template>
+        </el-table-column>
+        <el-table-column
+          prop="Amount"
+          :label="$t('__amount')"
+          :formatter="formatterMoney"
+          width="100px">
+        </el-table-column>
+      </el-table>
     </el-form>
-    <!-- 選擇專案 -->
-    <el-table
-      :data="projectHead"
-      stripe
-      border
-      style="width: 100%">
-      <el-table-column
-        prop="ProjectName"
-        :label="$t('__project')+$t('__name')">
-        <template slot-scope="scope">
-          <el-form-item prop="ProjectID">
-            <el-select v-model="scope.row[scope.column.property]" filterable :placeholder="$t('__plzChoice')" @change="(value)=>{ddlProjectChange(value, scope.row)}" style="display:block" :disabled="disableForm.ProjectID">
-              <el-option v-for="item in ddlProject" :key="item.ID" :label="item.ID+' '+item.Value" :value="item.ID">
-                <span style="float: left">{{ item.Value }}</span>
-                <span style="float: right; color: #8492a6; font-size: 13px">{{ item.ID }}</span>
-              </el-option>
-            </el-select>
-          </el-form-item>
-        </template>
-      </el-table-column>
-      <el-table-column
-        prop="FirstItemName"
-        :label="$t('__content')">
-      </el-table-column>
-      <el-table-column
-        prop="Price"
-        :label="$t('__project')+$t('__price')"
-        :formatter="formatterMoney"
-        width="100px">
-      </el-table-column>
-      <el-table-column
-        prop="Qty"
-        :label="$t('__qty')"
-        width="100px">
-        <template slot-scope="scope">
-          <el-input v-model.number="scope.row[scope.column.property]" @change="(value)=>{qtyChange(value, scope.row)}" :disabled="disableForm.Qty"></el-input>
-        </template>
-      </el-table-column>
-      <el-table-column
-        prop="Amount"
-        :label="$t('__amount')"
-        :formatter="formatterMoney"
-        width="100px">
-      </el-table-column>
-    </el-table>
     <!-- 專案明細 -->
     <order-detail
       ref="orderDetail"
