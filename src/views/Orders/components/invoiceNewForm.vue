@@ -1,10 +1,10 @@
 <template>
   <el-dialog :title="myTitle" :visible="dialogShow" center width="80%" @close="cancel">
-    <el-form ref="invoiceForm" :model="form" :rules="rules">
-      <el-form-item :label="$t('__orderID')" label-width="100px" label-position="left">
+    <el-form ref="invoiceForm" :model="form" :rules="rules" label-width="10vw" label-position="right">
+      <el-form-item :label="$t('__orderID')">
           <el-input v-model="form.OrderID" autocomplete="off" disabled></el-input>
       </el-form-item>
-      <el-form-item :label="$t('__invoice')+$t('__kind')" prop="InvoiceKind" label-width="100px" label-position="left">
+      <el-form-item :label="$t('__invoice')+$t('__kind')" prop="InvoiceKind">
         <el-col :span="6">
           <el-select v-model="form.InvoiceKind" value-key="value" :placeholder="$t('__plzChoice')" :disabled="disableForm.InvoiceKind">
             <el-option v-for="item in ddlInvoiceKind" :key="item.ID" :label="item.Value" :value="item.ID">
@@ -13,19 +13,18 @@
             </el-option>
           </el-select>
         </el-col>
-        <el-col :span="4">
-          {{$t('__invoice')+$t('__status')}}
-        </el-col>
-        <el-col :span="6">
-          <el-select v-model="form.Status" value-key="value" :placeholder="$t('__plzChoice')" :disabled="disableForm.Status">
-            <el-option v-for="item in ddlInvoiceStatus" :key="item.ID" :label="item.Value" :value="item.ID">
-              <span style="float: left">{{ item.Value }}</span>
-              <span style="float: right; color: #8492a6; font-size: 13px">{{ item.ID }}</span>
-            </el-option>
-          </el-select>
+        <el-col :span="10">
+          <el-form-item :label="$t('__invoice')+$t('__status')">
+            <el-select v-model="form.Status" value-key="value" :placeholder="$t('__plzChoice')" :disabled="disableForm.Status">
+              <el-option v-for="item in ddlInvoiceStatus" :key="item.ID" :label="item.Value" :value="item.ID">
+                <span style="float: left">{{ item.Value }}</span>
+                <span style="float: right; color: #8492a6; font-size: 13px">{{ item.ID }}</span>
+              </el-option>
+            </el-select>
+          </el-form-item>
         </el-col>
       </el-form-item>
-      <el-form-item :label="$t('__invoice')+$t('__date')" prop="InvoiceDate" label-width="100px" label-position="left">
+      <el-form-item :label="$t('__invoice')+$t('__date')" prop="InvoiceDate">
         <el-date-picker
           v-model="form.InvoiceDate"
           type="date"
@@ -34,29 +33,26 @@
            :disabled="disableForm.InvoiceDate">
         </el-date-picker>
       </el-form-item>
-      <el-form-item :label="$t('__invoice')+$t('__number')" prop="InvoiceID" label-width="100px" label-position="left">
+      <el-form-item :label="$t('__invoice')+$t('__number')" prop="InvoiceID">
         <el-col :span="10">
           <el-input v-model="form.InvoiceID" autocomplete="off" :disabled="disableForm.InvoiceID"></el-input>
         </el-col>
-        <el-col :span="4">
-          {{$t('__randomCode')}}
-        </el-col>
-        <el-col :span="10">
-          <el-form-item>
+        <el-col :span="14">
+          <el-form-item :label="$t('__randomCode')">
             <el-input v-model="form.RandomCode" autocomplete="off" :disabled="disableForm.RandomCode"></el-input>
           </el-form-item>
         </el-col>
       </el-form-item>
-      <el-form-item :label="$t('__title')" label-width="100px" label-position="left">
+      <el-form-item :label="$t('__title')">
           <el-input v-model="form.Title" autocomplete="off" maxlength="40" show-word-limit></el-input>
       </el-form-item>
-      <el-form-item :label="$t('__uniformNumber')" label-width="100px" label-position="left">
+      <el-form-item :label="$t('__uniformNumber')">
           <el-input v-model="form.UniformNumber" autocomplete="off" maxlength="8" show-word-limit></el-input>
       </el-form-item>
-      <el-form-item :label="$t('__carrierNumber')" label-width="100px" label-position="left">
+      <el-form-item :label="$t('__carrierNumber')">
           <el-input v-model="form.CarrierNumber" autocomplete="off" maxlength="64" show-word-limit></el-input>
       </el-form-item>
-      <el-form-item :label="$t('__received')+$t('__operator')" prop="CreateID" label-width="100px" label-position="left">
+      <el-form-item :label="$t('__received')+$t('__operator')" prop="CreateID">
         <el-col :span="6">
           <el-select v-model="form.CreateID" value-key="value" :placeholder="$t('__plzChoice')" :disabled="disableForm.CreateID">
             <el-option v-for="item in ddlCreateID" :key="item.ID" :label="item.Value" :value="item.ID">
@@ -65,22 +61,21 @@
             </el-option>
           </el-select>
         </el-col>
-        <el-col :span="4">
-          {{$t('__tax')+$t('__status')}}
-        </el-col>
-        <el-col :span="6">
-          <el-select v-model="form.Tax" value-key="value" :placeholder="$t('__plzChoice')" :disabled="disableForm.Tax">
-            <el-option v-for="item in ddlTax" :key="item.ID" :label="item.Value" :value="item.ID">
-              <span style="float: left">{{ item.Value }}</span>
-              <span style="float: right; color: #8492a6; font-size: 13px">{{ item.ID }}</span>
-            </el-option>
-          </el-select>
+        <el-col :span="10">
+          <el-form-item :label="$t('__tax')+$t('__status')">
+            <el-select v-model="form.Tax" value-key="value" :placeholder="$t('__plzChoice')" :disabled="disableForm.Tax">
+              <el-option v-for="item in ddlTax" :key="item.ID" :label="item.Value" :value="item.ID">
+                <span style="float: left">{{ item.Value }}</span>
+                <span style="float: right; color: #8492a6; font-size: 13px">{{ item.ID }}</span>
+              </el-option>
+            </el-select>
+          </el-form-item>
         </el-col>
       </el-form-item>
-      <el-form-item :label="$t('__memo')" label-width="100px" label-position="left">
+      <el-form-item :label="$t('__memo')">
           <el-input v-model="form.Memo" autocomplete="off" maxlength="200" show-word-limit></el-input>
       </el-form-item>
-      <el-form-item :label="$t('__amount')" label-width="100px" label-position="left">
+      <el-form-item :label="$t('__amount')">
           <el-input v-model="form.Amount" autocomplete="off" disabled></el-input>
       </el-form-item>
       <el-form-item>
