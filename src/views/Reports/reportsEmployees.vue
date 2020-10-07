@@ -13,7 +13,7 @@
             </el-select>
           </el-form-item>
           <el-form-item>
-            <el-button type="primary" icon="el-icon-printer" @click.prevent="print">{{$t('__print')}}</el-button>
+            <el-button v-show="buttonsShowUser.edit" type="primary" icon="el-icon-printer" @click.prevent="print">{{$t('__print')}}</el-button>
           </el-form-item>
         </el-form>
         <iframeReportingService
@@ -48,11 +48,20 @@ export default {
       reportParams: {},
       activeName: 'first',
       // 以下為下拉式選單專用
-      ddlCompanies: []
+      ddlCompanies: [],
+      // 使用者能看到的權限
+      buttonsShowUser: {
+        new: 1,
+        edit: 1,
+        save: 1,
+        delete: 1,
+        search: 1
+      }
     }
   },
   mounted () {
     this.preLoading()
+    this.userPermission()
     this.findCompany('83799375')
   },
   methods: {
@@ -60,6 +69,14 @@ export default {
     preLoading: async function () {
       const response = await this.$api.reports.getDropdownList({ type: 'companies' })
       this.ddlCompanies = response.data.result
+    },
+    // 使用者權限
+    userPermission: async function () {
+      let progPermission = this.$store.state.userProg.filter(item => { return item.Path === this.$route.fullPath })[0]
+      this.buttonsShowUser.new = progPermission.fun1
+      this.buttonsShowUser.edit = progPermission.fun2
+      this.buttonsShowUser.save = progPermission.fun2
+      this.buttonsShowUser.delete = progPermission.fun3
     },
     // canvas 點公司
     findCompany: function (value) {

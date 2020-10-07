@@ -85,7 +85,7 @@
     </el-form>
     <div slot="footer" class="dialog-footer">
       <el-button @click="cancel">{{$t('__cancel')}}</el-button>
-      <el-button type="primary" @click="checkValidate">{{$t('__save')}}</el-button>
+      <el-button v-show="buttonsShowUser.save" type="primary" @click="checkValidate">{{$t('__save')}}</el-button>
     </div>
   </el-dialog>
 </template>
@@ -96,7 +96,8 @@ export default {
   props: {
     dialogType: { type: String, default: 'new' },
     dialogShow: { type: Boolean, default: false },
-    storageAddress: { type: Object }
+    storageAddress: { type: Object },
+    buttonsShowUser: { type: Object }
   },
   data () {
     return {

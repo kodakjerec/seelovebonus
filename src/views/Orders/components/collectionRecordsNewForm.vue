@@ -30,9 +30,9 @@
       </el-form-item>
     </el-form>
     <div slot="footer" class="dialog-footer">
-      <el-button v-show="buttonsShow.delete" type="danger" @click="delRecord">{{$t('__delete')}}</el-button>
+      <el-button v-show="buttonsShow.delete && buttonsShowUser.delete" type="danger" @click="delRecord">{{$t('__delete')}}</el-button>
       <el-button @click="cancel">{{$t('__cancel')}}</el-button>
-      <el-button v-show="buttonsShow.save" type="primary" @click="checkValidate">{{$t('__save')}}</el-button>
+      <el-button v-show="buttonsShow.save && buttonsShowUser.save" type="primary" @click="checkValidate">{{$t('__save')}}</el-button>
     </div>
   </el-dialog>
 </template>
@@ -59,7 +59,8 @@ export default {
     dialogShow: { type: Boolean, default: false },
     collectionRecord: { type: Object },
     orderID: { type: String },
-    orderAmount: { type: Number }
+    orderAmount: { type: Number },
+    buttonsShowUser: { type: Object }
   },
   data () {
     return {

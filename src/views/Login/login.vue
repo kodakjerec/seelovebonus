@@ -61,6 +61,9 @@ export default {
     this.$store.dispatch('setMenuList', {
       'menuList': []
     })
+    this.$store.dispatch('setUserProg', {
+      'userProg': []
+    })
     localStorage.removeItem('vuex')
 
     // 取得語言設定
@@ -121,12 +124,17 @@ export default {
           'userName': response.data.result[0].Name
         })
 
-        // 讀入menu
+        // 讀入 menu
         const response2 = await this.$api.login.getMenu({
           UserID: this.form.UserID
         })
-
         this.$store.dispatch('setMenuList', response2.data)
+
+        // 讀入 使用者權限
+        const response3 = await this.$api.settings.getUserProg({
+          UserID: this.form.UserID
+        })
+        this.$store.dispatch('setUserProg', response3.data.userProg)
 
         router.push('home')
       }

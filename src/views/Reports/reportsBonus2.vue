@@ -27,7 +27,7 @@
         </el-select>
       </el-form-item>
       <el-form-item>
-        <el-button type="primary" icon="el-icon-printer" @click.prevent="print">{{$t('__print')}}</el-button>
+        <el-button v-show="buttonsShowUser.edit" type="primary" icon="el-icon-printer" @click.prevent="print">{{$t('__print')}}</el-button>
       </el-form-item>
     </el-form>
     <iframeReportingService
@@ -58,11 +58,20 @@ export default {
       reportParams: {},
       // 以下為下拉式選單專用
       ddlCompanies: [],
-      ddlProjects: []
+      ddlProjects: [],
+      // 使用者能看到的權限
+      buttonsShowUser: {
+        new: 1,
+        edit: 1,
+        save: 1,
+        delete: 1,
+        search: 1
+      }
     }
   },
   async mounted () {
     await this.preLoading()
+    this.userPermission()
 
     // 預設值
     let start = new Date()
@@ -88,6 +97,14 @@ export default {
 
       const response2 = await this.$api.reports.getDropdownList({ type: 'projects' })
       this.ddlProjects = response2.data.result
+    },
+    // 使用者權限
+    userPermission: async function () {
+      let progPermission = this.$store.state.userProg.filter(item => { return item.Path === this.$route.fullPath })[0]
+      this.buttonsShowUser.new = progPermission.fun1
+      this.buttonsShowUser.edit = progPermission.fun2
+      this.buttonsShowUser.save = progPermission.fun2
+      this.buttonsShowUser.delete = progPermission.fun3
     },
     startDateChange: function (value) {
       let start = new Date(value)

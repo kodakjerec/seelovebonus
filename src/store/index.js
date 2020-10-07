@@ -12,7 +12,8 @@ export default new Vuex.Store({
     userID: '',
     userName: '',
     menuList: [],
-    version: '2020.9.30.1',
+    userProg: [],
+    version: '2020.10.7.1',
     loadingCounter: 0,
     isEnableLoadingMask: false
   },
@@ -25,6 +26,9 @@ export default new Vuex.Store({
     },
     SET_MENULIST (state, menu) {
       state.menuList = menu
+    },
+    SET_USERPROG (state, proglist) {
+      state.userProg = proglist
     },
     ADD_LOADING_COUNTER (state) {
       state.loadingCounter += 1
@@ -51,6 +55,9 @@ export default new Vuex.Store({
     },
     setMenuList (context, menu) {
       context.commit('SET_MENULIST', menu)
+    },
+    setUserProg (context, proglist) {
+      context.commit('SET_USERPROG', proglist)
     },
     increaseLoadingCounter ({ dispatch, commit, state }) {
       commit('ADD_LOADING_COUNTER')

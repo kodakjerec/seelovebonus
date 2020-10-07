@@ -58,17 +58,24 @@ export default {
         return data
       })
     },
-    groupProgListDel: ({ GroupID, ProgID }) => {
-      let rawData = { GroupID, ProgID }
+    groupProgListDel: ({ GroupID, Row }) => {
+      let rawData = { GroupID, Row }
       return post('/settings/groupProgListDel', rawData).then(data => {
         console.log(`%c <<< Response(/rest/settings/groupProgListDel)⤵ `, 'background-color: #E0455D; color: white; font-size: 14px; font-weight: bold;', data)
         return data
       })
     },
-    groupProgListNew: ({ GroupID, ProgID }) => {
-      let rawData = { GroupID, ProgID }
+    groupProgListNew: ({ GroupID, Row }) => {
+      let rawData = { GroupID, Row }
       return post('/settings/groupProgListNew', rawData).then(data => {
         console.log(`%c <<< Response(/rest/settings/groupProgListNew)⤵ `, 'background-color: #E0455D; color: white; font-size: 14px; font-weight: bold;', data)
+        return data
+      })
+    },
+    groupProgListEdit: ({ GroupID, Row }) => {
+      let rawData = { GroupID, Row }
+      return post('/settings/groupProgListEdit', rawData).then(data => {
+        console.log(`%c <<< Response(/rest/settings/groupProgListEdit)⤵ `, 'background-color: #E0455D; color: white; font-size: 14px; font-weight: bold;', data)
         return data
       })
     },

@@ -132,9 +132,9 @@
     </el-form>
     <div slot="footer" class="dialog-footer">
       <br/>
-      <el-button v-show="buttonsShow.delete" type="danger" @click="delInvoice">{{$t('__invalid')+$t('__invoice')}}</el-button>
+      <el-button v-show="buttonsShow.delete && buttonsShowUser.delete" type="danger" @click="delInvoice">{{$t('__invalid')+$t('__invoice')}}</el-button>
       <el-button @click="cancel">{{$t('__cancel')}}</el-button>
-      <el-button v-show="buttonsShow.save" type="primary" @click="checkValidate">{{$t('__save')}}</el-button>
+      <el-button v-show="buttonsShow.save && buttonsShowUser.save" type="primary" @click="checkValidate">{{$t('__save')}}</el-button>
     </div>
   </el-dialog>
 </template>
@@ -150,7 +150,8 @@ export default {
     dialogType: { type: String, default: 'new' },
     dialogShow: { type: Boolean, default: false },
     invoiceHead: { type: Object },
-    orderID: { type: String }
+    orderID: { type: String },
+    buttonsShowUser: { type: Object }
   },
   data () {
     return {

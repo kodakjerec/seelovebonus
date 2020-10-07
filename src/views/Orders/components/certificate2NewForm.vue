@@ -28,11 +28,11 @@
       </el-form-item>
     </el-form>
     <div slot="footer" class="dialog-footer">
-      <el-button v-show="buttonsShow.save" icon="el-icon-printer" @click.prevent="print">{{$t('__print')}}</el-button>
+      <el-button v-show="buttonsShow.save && buttonsShowUser.save" icon="el-icon-printer" @click.prevent="print">{{$t('__print')}}</el-button>
       <p/>
-      <el-button v-show="buttonsShow.delete" type="danger" @click="delRecord">{{$t('__delete')}}</el-button>
+      <el-button v-show="buttonsShow.delete && buttonsShowUser.delete" type="danger" @click="delRecord">{{$t('__delete')}}</el-button>
       <el-button @click="cancel">{{$t('__cancel')}}</el-button>
-      <el-button v-show="buttonsShow.save" type="primary" @click="checkValidate">{{$t('__save')}}</el-button>
+      <el-button v-show="buttonsShow.save && buttonsShowUser.save" type="primary" @click="checkValidate">{{$t('__save')}}</el-button>
       <p/>
       <iframeReportingService
        :reportPath="reportPath"
@@ -55,7 +55,8 @@ export default {
     dialogType: { type: String, default: 'new' },
     dialogShow: { type: Boolean, default: false },
     certificate2: { type: Object },
-    orderID: { type: String }
+    orderID: { type: String },
+    buttonsShowUser: { type: Object }
   },
   data () {
     return {

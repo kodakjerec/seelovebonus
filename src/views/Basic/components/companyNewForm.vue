@@ -130,7 +130,7 @@
     </el-form>
     <div slot="footer" class="dialog-footer">
       <el-button @click.prevent="cancel">{{$t('__cancel')}}</el-button>
-      <el-button type="primary" @click.prevent="checkValidate">{{$t('__save')}}</el-button>
+      <el-button v-show="buttonsShowUser.save" type="primary" @click.prevent="checkValidate">{{$t('__save')}}</el-button>
     </div>
     <el-collapse v-model="activeName" accordion="">
         <el-collapse-item name="1">
@@ -157,7 +157,8 @@ export default {
   props: {
     dialogType: { type: String, default: 'new' },
     dialogShow: { type: Boolean, default: false },
-    company: { type: Object }
+    company: { type: Object },
+    buttonsShowUser: { type: Object }
   },
   data () {
     return {

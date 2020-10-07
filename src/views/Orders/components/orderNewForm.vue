@@ -92,24 +92,20 @@
       <!-- 供奉憑證 -->
       <certificate1
         :buttonsShow="buttonsShow"
-        :buttonsShowUser="buttonsShowUser"
         :orderID="form.ID"></certificate1>
       <!-- 換狀證明 -->
       <certificate2
         :buttonsShow="buttonsShow"
-        :buttonsShowUser="buttonsShowUser"
         :orderID="form.ID"></certificate2>
       <!-- 付款資訊 -->
       <collection-records
         ref="collectionRecords"
         :buttonsShow="buttonsShow"
-        :buttonsShowUser="buttonsShowUser"
         :orderID="form.ID"></collection-records>
       <!-- 發票資訊 -->
       <invoice
         ref="invoice"
         :buttonsShow="buttonsShow"
-        :buttonsShowUser="buttonsShowUser"
         :orderID="form.ID"
         @refreshCollectionRecords="refreshCollectionRecords()"></invoice>
       <!-- 蓋章區域 -->
@@ -193,7 +189,8 @@ export default {
   props: {
     dialogType: { type: String, default: 'new' },
     order: { type: Object },
-    parent: { type: String, default: 'orders' }
+    parent: { type: String, default: 'orders' },
+    buttonsShowUser: { type: Object }
   },
   data () {
     return {
@@ -219,14 +216,6 @@ export default {
         edit: 0,
         save: 1,
         delete: 0,
-        search: 1
-      },
-      // 使用者能看到的權限
-      buttonsShowUser: {
-        new: 1,
-        edit: 1,
-        save: 1,
-        delete: 1,
         search: 1
       },
       disableForm: {

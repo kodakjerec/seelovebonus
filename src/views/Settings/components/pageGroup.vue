@@ -24,7 +24,7 @@
     :dialog-type="dialogType"
     :dialog-show="dialogShow"
     :group="group"
-    :prog-list="progList"
+    :progList="checkedProgList"
     @dialog-cancel="dialogCancel()"
     @dialog-save="dialogSave()"></new-form>
   </div>
@@ -33,7 +33,7 @@
 <script>
 import newForm from './groupNewForm'
 export default {
-  name: 'PageUser',
+  name: 'PageGroup',
   components: {
     newForm
   },
@@ -63,18 +63,7 @@ export default {
     handleClick: async function (row, column, event) {
       // 取得可以用的選單
       const response = await this.$api.settings.getGroupProg({ GroupID: row.GroupID })
-      this.userProg = response.data.userProg
-
-      // 篩選出有用的選單
-      this.progList.forEach(value => {
-        let findResult = this.userProg.find(value2 => { return value2.ProgID === value.ProgID })
-        if (findResult) {
-          value.checked = true
-        } else {
-          value.checked = false
-        }
-        this.checkedProgList.push(value)
-      })
+      this.checkedProgList = response.data.userProg
 
       // 進入修改
       this.dialogType = 'edit'
@@ -82,12 +71,10 @@ export default {
       this.group = row
     },
     // 開啟表單
-    showForm: function (eventType) {
-      // 篩選出有用的選單
-      this.progList.forEach(value => {
-        value.checked = false
-        this.checkedProgList.push(value)
-      })
+    showForm: async function (eventType) {
+      // 取得可以用的選單
+      const response = await this.$api.settings.getGroupProg({ GroupID: '' })
+      this.checkedProgList = response.data.userProg
 
       // 進入新增
       this.dialogType = eventType

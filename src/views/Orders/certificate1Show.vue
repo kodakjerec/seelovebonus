@@ -34,6 +34,7 @@
       :dialog-show="dialogShow"
       :certificate1="certificate1"
       :orderID="orderID"
+    :buttonsShowUser="buttonsShowUser"
       @dialog-cancel="dialogCancel()"
       @dialog-save="dialogSave()"></new-form>
   </div>
@@ -87,11 +88,20 @@ export default {
       orderID: '', // 顯示修改視窗使用, 避免紅字報錯
       searchKeyWord: '',
       // 以下為下拉式選單專用
-      ddlCompanies: []
+      ddlCompanies: [],
+      // 使用者能看到的權限
+      buttonsShowUser: {
+        new: 1,
+        edit: 1,
+        save: 1,
+        delete: 1,
+        search: 1
+      }
     }
   },
   mounted () {
     this.preLoading()
+    this.userPermission()
   },
   methods: {
     formatterDate: function (row, column, cellValue, index) {
@@ -102,9 +112,20 @@ export default {
       const response = await this.$api.orders.certificate1Show({ keyword: this.searchKeyWord })
       this.results = response.data.result
     },
+    // 使用者權限
+    userPermission: async function () {
+      let progPermission = this.$store.state.userProg.filter(item => { return item.Path === this.$route.fullPath })[0]
+      this.buttonsShowUser.new = progPermission.fun1
+      this.buttonsShowUser.edit = progPermission.fun2
+      this.buttonsShowUser.save = progPermission.fun2
+      this.buttonsShowUser.delete = progPermission.fun3
+    },
     handleClick: async function (row, column, event) {
       // 取得可以用的選單
       this.certificate1 = row
+
+      // 權限管理
+      this.buttonsShowUser.save = this.buttonsShowUser.edit
 
       // 進入修改
       this.dialogType = 'edit'

@@ -1,10 +1,10 @@
 <template>
   <el-form>
     <el-button-group>
-      <el-button type="primary" icon="el-icon-plus" @click.prevent="showForm('new')">{{$t('__new')}}</el-button>
+      <el-button v-show="buttonsShowUser.new" type="primary" icon="el-icon-plus" @click.prevent="showForm('new')">{{$t('__new')}}</el-button>
     </el-button-group>
     <search-button @search="search"></search-button>
-    <p/>
+    <p style="height:1px" />
     <el-table
       :data="ordersShow"
       stripe
@@ -88,11 +88,20 @@ export default {
       dialogShow: false,
       ordersShow: [],
       order: {},
-      searchKeyWord: ''
+      searchKeyWord: '',
+      // 使用者能看到的權限
+      buttonsShowUser: {
+        new: 1,
+        edit: 1,
+        save: 1,
+        delete: 1,
+        search: 1
+      }
     }
   },
   mounted () {
     this.preLoading()
+    this.userPermission()
   },
   methods: {
     formatterDate: function (row, column, cellValue, index) {
@@ -112,10 +121,21 @@ export default {
         if (item.InvoiceList) { item.InvoiceList = JSON.parse(item.InvoiceList) }
       })
     },
+    // 使用者權限
+    userPermission: async function () {
+      let progPermission = this.$store.state.userProg.filter(item => { return item.Path === this.$route.fullPath })[0]
+      this.buttonsShowUser.new = progPermission.fun1
+      this.buttonsShowUser.edit = progPermission.fun2
+      this.buttonsShowUser.save = progPermission.fun2
+      this.buttonsShowUser.delete = progPermission.fun3
+    },
     handleClick: async function (row, column, event) {
       // 取得可以用的選單
       let responseRow = await this.$api.orders.getObject({ type: 'orderHead', ID: row.ID })
       this.order = responseRow.data.result[0]
+
+      // 權限管理
+      this.buttonsShowUser.save = this.buttonsShowUser.edit
 
       // 進入修改
       this.$router.push({
@@ -123,18 +143,23 @@ export default {
         params: {
           dialogType: 'edit',
           order: this.order,
-          parent: 'Orders'
+          parent: 'Orders',
+          buttonsShowUser: this.buttonsShowUser
         }
       })
     },
     // 開啟表單
     showForm: function (eventType) {
+      // 權限管理
+      this.buttonsShowUser.save = this.buttonsShowUser.new
+
       this.$router.push({
         name: 'OrderNewForm',
         params: {
           dialogType: eventType,
           order: this.order,
-          parent: 'Orders'
+          parent: 'Orders',
+          buttonsShowUser: this.buttonsShowUser
         }
       })
     },
