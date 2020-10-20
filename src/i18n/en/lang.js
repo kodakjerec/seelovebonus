@@ -148,6 +148,8 @@ export default {
   __volume: 'Volume',
   __nickname: 'Nickname',
   __swipeCard: 'Swipe',
+  __announcement: 'Announcement',
+  __caption: 'Caption',
   // 請在上方新增字串
   // 以下為錯誤處理專用
   __error400: 'Bad Request',

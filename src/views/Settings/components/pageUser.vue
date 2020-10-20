@@ -19,7 +19,7 @@
         :label="$t('__groups')">
       </el-table-column>
       <el-table-column
-        prop="refEmployeeID"
+        prop="refEmployeeIDName"
         :label="$t('__refEmployeeIDForUser')">
       </el-table-column>
     </el-table>
@@ -28,7 +28,6 @@
     :dialog-type="dialogType"
     :dialog-show="dialogShow"
     :user="user"
-    :prog-list="progList"
     @dialog-cancel="dialogCancel()"
     @dialog-save="dialogSave()"></new-form>
   </div>
@@ -47,39 +46,17 @@ export default {
       default: function () {
         return []
       }
-    },
-    progList: {
-      type: Array,
-      default: function () {
-        return []
-      }
     }
   },
   data () {
     return {
       dialogType: 'new',
       dialogShow: false,
-      user: {},
-      checkedProgList: []
+      user: {}
     }
   },
   methods: {
     handleClick: async function (row, column, event) {
-      // 取得可以用的選單
-      const response = await this.$api.settings.getUserProg({ UserID: row.UserID })
-      this.userProg = response.data.userProg
-
-      // 篩選出有用的選單
-      this.progList.forEach(value => {
-        let findResult = this.userProg.find(value2 => { return value2.ProgID === value.ProgID })
-        if (findResult) {
-          value.checked = true
-        } else {
-          value.checked = false
-        }
-        this.checkedProgList.push(value)
-      })
-
       // 進入修改
       this.dialogType = 'edit'
       this.dialogShow = true

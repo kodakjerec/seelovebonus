@@ -30,3 +30,21 @@ export function formatCard (value) {
     return value
   }
 }
+
+// <br/> 換成 \n
+export function brToNewLine (value) {
+  if (value) {
+    return value.replace(/(<br>|<\/br>|<br\/>)/mgi, '\n')
+  } else {
+    return value
+  }
+}
+
+// \n 換成 <br/>
+export function newLineToBr (value) {
+  if (value) {
+    return value.replace(/\n/mg, '<br/>')
+  } else {
+    return value
+  }
+}

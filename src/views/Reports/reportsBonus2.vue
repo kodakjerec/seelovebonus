@@ -18,14 +18,6 @@
           </el-option>
         </el-select>
       </el-form-item>
-      <el-form-item :label="$t('__project')+$t('__id')">
-        <el-select v-model="form.ProjectID" filterable :placeholder="$t('__plzChoice')" @change="ddlProjectsChange">
-          <el-option v-for="item in ddlProjects" :key="item.ID" :label="item.ID+' '+item.Value" :value="item.ID">
-            <span style="float: left">{{ item.Value }}</span>
-            <span style="float: right; color: #8492a6; font-size: 13px">{{ item.ID }}</span>
-          </el-option>
-        </el-select>
-      </el-form-item>
       <el-form-item>
         <el-button v-show="buttonsShowUser.edit" type="primary" icon="el-icon-printer" @click.prevent="print">{{$t('__print')}}</el-button>
       </el-form-item>
@@ -49,8 +41,8 @@ export default {
       form: {
         StartDate: null,
         EndDate: null,
-        ProjectID: null,
-        ProjectName: null,
+        ProjectID: 'R00001',
+        ProjectName: '喜越幸福專案',
         CompanyID: null,
         CompanyName: null
       },
@@ -58,7 +50,6 @@ export default {
       reportParams: {},
       // 以下為下拉式選單專用
       ddlCompanies: [],
-      ddlProjects: [],
       // 使用者能看到的權限
       buttonsShowUser: {
         new: 1,
@@ -85,18 +76,12 @@ export default {
       this.form.CompanyID = defaultCompany.ID
       this.ddlCompaniesChange(this.form.CompanyID)
     }
-
-    this.form.ProjectID = this.ddlProjects[0].ID
-    this.ddlProjectsChange(this.form.ProjectID)
   },
   methods: {
     // 讀入系統清單
     preLoading: async function () {
       const response = await this.$api.reports.getDropdownList({ type: 'companies' })
       this.ddlCompanies = response.data.result
-
-      const response2 = await this.$api.reports.getDropdownList({ type: 'projects' })
-      this.ddlProjects = response2.data.result
     },
     // 使用者權限
     userPermission: async function () {
@@ -106,6 +91,7 @@ export default {
       this.buttonsShowUser.save = progPermission.fun2
       this.buttonsShowUser.delete = progPermission.fun3
     },
+    // 給予預設日期
     startDateChange: function (value) {
       let start = new Date(value)
       let end = new Date()
@@ -120,10 +106,6 @@ export default {
     ddlCompaniesChange: function (value) {
       let item = this.ddlCompanies.find(item => { return item.ID === value })
       this.form.CompanyName = item.Nickname
-    },
-    ddlProjectsChange: function (value) {
-      let item = this.ddlProjects.find(item => { return item.ID === value })
-      this.form.ProjectName = item.Value
     },
     // SSRS列印
     print: function () {

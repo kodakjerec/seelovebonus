@@ -1,67 +1,72 @@
 <template>
-  <el-table
-  :data="subList"
-  stripe
-  border
-  style="width: 100%">
-    <el-table-column
-      prop="Seq"
-      :label="$t('__seq')"
-      width="60px">
-    </el-table-column>
-    <el-table-column
-      prop="Price"
-      :label="$t('__sumOfBusinessMin')">
-      <template slot-scope="scope">
-        <el-input v-model.number="scope.row[scope.column.property]" @change="(value)=>{priceChange(value, scope.row)}"></el-input>
-      </template>
-    </el-table-column>
-    <el-table-column
-      prop="Percentage"
-      :label="$t('__superBonus')+$t('__percentage')+'(%)'">
-      <template slot-scope="scope">
-        <el-input v-model="scope.row[scope.column.property]" autocomplete="off" @change="(value)=>{percentageChange(value, scope.row)}"></el-input>
-      </template>
-    </el-table-column>
-    <el-table-column
-      align="right"
-      width="100px">
-      <template slot="header">
-        <el-button
-          type="primary"
-          size="large"
-          @click="handleNew()">{{$t('__new')}}</el-button>
-      </template>
-      <template slot-scope="scope">
-        <el-button
-          size="mini"
-          type="danger"
-          @click="handleDelete(scope.$index, scope.row)">{{$t('__delete')}}</el-button>
-      </template>
-    </el-table-column>
-  </el-table>
+  <el-dialog :title="myTitle" :visible="dialogShow" center width="80%" @close="cancel">
+    <el-table
+    :data="subList"
+    stripe
+    border
+    style="width: 100%">
+      <el-table-column
+        prop="Seq"
+        :label="$t('__seq')"
+        width="60px">
+      </el-table-column>
+      <el-table-column
+        prop="Price"
+        :label="$t('__sumOfBusinessMin')">
+        <template slot-scope="scope">
+          <el-input v-model.number="scope.row[scope.column.property]" @change="(value)=>{priceChange(value, scope.row)}" :disabled="!buttonsShowUser.save"></el-input>
+        </template>
+      </el-table-column>
+      <el-table-column
+        prop="Percentage"
+        :label="$t('__superBonus')+$t('__percentage')+'(%)'">
+        <template slot-scope="scope">
+          <el-input v-model="scope.row[scope.column.property]" autocomplete="off" @change="(value)=>{percentageChange(value, scope.row)}" :disabled="!buttonsShowUser.save"></el-input>
+        </template>
+      </el-table-column>
+      <el-table-column
+        align="right"
+        width="100px"
+        v-if="buttonsShowUser.save">
+        <template slot="header">
+          <el-button
+            type="primary"
+            size="large"
+            @click="handleNew()">{{$t('__new')}}</el-button>
+        </template>
+        <template slot-scope="scope">
+          <el-button
+            size="mini"
+            type="danger"
+            @click="handleDelete(scope.$index, scope.row)">{{$t('__delete')}}</el-button>
+        </template>
+      </el-table-column>
+    </el-table>
+    <div slot="footer" class="dialog-footer">
+      <el-button @click="cancel">{{$t('__cancel')}}</el-button>
+      <el-button v-show="buttonsShowUser.save" type="primary" @click="beforeSave">{{$t('__save')}}</el-button>
+    </div>
+  </el-dialog>
 </template>
 
 <script>
 export default {
   name: 'ProjectSuperBonus',
   props: {
-    projectID: { type: String },
-    projectSuperBonus: { type: Array }
+    dialogType: { type: String, default: 'new' },
+    dialogShow: { type: Boolean, default: false },
+    buttonsShowUser: { type: Object }
   },
   data () {
     return {
       // 子結構
       // Status: '', New, Modified, Deleted
+      projectID: 'R00001',
+      myTitle: this.$t('__edit') + this.$t('__superBonus'),
       subItem: { ProjectID: '', Seq: 0, Price: 0, Percentage: 0, Status: '' },
       subList: [],
       subListDeleted: []
       // 下拉是選單
-    }
-  },
-  watch: {
-    projectSuperBonus: function () {
-      this.subList = JSON.parse(JSON.stringify(this.projectSuperBonus))
     }
   },
   mounted () {
@@ -70,7 +75,12 @@ export default {
   methods: {
     // 讀取預設資料
     preLoading: async function () {
-
+      const response3 = await this.$api.basic.getObject({ type: 'projectSuperBonus', ID: this.projectID })
+      this.subList = response3.data.result
+    },
+    // 取消
+    cancel: function () {
+      this.$emit('dialog-cancel')
     },
     // 存檔前先過濾
     beforeSave: async function () {
@@ -80,7 +90,7 @@ export default {
       if (finalResult.length === 0) { isSuccess = true }
 
       for (let index = 0; index < finalResult.length; index++) {
-        let uploadResult = 0
+        let uploadResult = false
         let row = finalResult[index]
         // 錯誤處理
         if (row.ProjectID === '' || row.Price === 0) {
@@ -98,10 +108,10 @@ export default {
             uploadResult = await this.save('delete', row)
             break
           case '':
-            uploadResult = 1
+            uploadResult = true
             break
         }
-        if (uploadResult === 0) {
+        if (uploadResult === false) {
           isSuccess = false
           return
         } else {
@@ -110,10 +120,7 @@ export default {
       }
 
       if (isSuccess) {
-        return 'success'
-      } else {
-        this.$alert(this.$t('__uploadFail'))
-        return 'fail'
+        this.$emit('dialog-save')
       }
     },
     // 存檔

@@ -3,9 +3,17 @@ import crypto from '@/services/crypto' // 加解密
 
 export default {
   settings: {
-    getUserAndGroupAndProg: () => {
-      return post('/settings/getUserAndGroupAndProg').then(data => {
-        console.log(`%c <<< Response(/rest/settings/getUserAndGroupAndProg)⤵ `, 'background-color: #E0455D; color: white; font-size: 14px; font-weight: bold;', data)
+    getObject: ({ type, ID }) => {
+      let rawData = { type, ID }
+      return post('/settings/getObject', rawData).then(data => {
+        console.log(`%c <<< Response(/rest/settings/getObject)⤵ `, 'background-color: #E0455D; color: white; font-size: 14px; font-weight: bold;', data)
+        return data
+      })
+    },
+    getDropdownList: ({ type }) => {
+      let rawData = { type }
+      return post('/settings/getDropdownList', rawData).then(data => {
+        console.log(`%c <<< Response(/rest/settings/getDropdownList)⤵ `, 'background-color: #E0455D; color: white; font-size: 14px; font-weight: bold;', data)
         return data
       })
     },
@@ -14,20 +22,6 @@ export default {
       let rawData = { UserID }
       return post('/settings/getUserProg', rawData).then(data => {
         console.log(`%c <<< Response(/rest/settings/getUserProg)⤵ `, 'background-color: #E0455D; color: white; font-size: 14px; font-weight: bold;', data)
-        return data
-      })
-    },
-    getGroupProg: ({ GroupID }) => {
-      let rawData = { GroupID }
-      return post('/settings/getGroupProg', rawData).then(data => {
-        console.log(`%c <<< Response(/rest/settings/getGroupProg)⤵ `, 'background-color: #E0455D; color: white; font-size: 14px; font-weight: bold;', data)
-        return data
-      })
-    },
-    getDropdownList: ({ type }) => {
-      let rawData = { type }
-      return post('/settings/getDropdownList', rawData).then(data => {
-        console.log(`%c <<< Response(/rest/settings/getDropdownList)⤵ `, 'background-color: #E0455D; color: white; font-size: 14px; font-weight: bold;', data)
         return data
       })
     },
@@ -111,6 +105,34 @@ export default {
       let rawData = { form }
       return post('/settings/settingsDelete', rawData).then(data => {
         console.log(`%c <<< Response(/rest/settings/settingsDelete)⤵ `, 'background-color: #E0455D; color: white; font-size: 14px; font-weight: bold;', data)
+        return data
+      })
+    },
+    announcementShow: ({ keyword }) => {
+      let rawData = { keyword }
+      return post('/settings/announcementShow', rawData).then(data => {
+        console.log(`%c <<< Response(/rest/settings/announcementShow)⤵ `, 'background-color: #E0455D; color: white; font-size: 14px; font-weight: bold;', data)
+        return data
+      })
+    },
+    announcementNew: ({ form }) => {
+      let rawData = { form }
+      return post('/settings/announcementNew', rawData).then(data => {
+        console.log(`%c <<< Response(/rest/settings/announcementNew)⤵ `, 'background-color: #E0455D; color: white; font-size: 14px; font-weight: bold;', data)
+        return data
+      })
+    },
+    announcementEdit: ({ form }) => {
+      let rawData = { form }
+      return post('/settings/announcementEdit', rawData).then(data => {
+        console.log(`%c <<< Response(/rest/settings/announcementEdit)⤵ `, 'background-color: #E0455D; color: white; font-size: 14px; font-weight: bold;', data)
+        return data
+      })
+    },
+    announcementDelete: ({ form }) => {
+      let rawData = { form }
+      return post('/settings/announcementDelete', rawData).then(data => {
+        console.log(`%c <<< Response(/rest/settings/announcementDelete)⤵ `, 'background-color: #E0455D; color: white; font-size: 14px; font-weight: bold;', data)
         return data
       })
     }

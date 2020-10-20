@@ -28,7 +28,7 @@
       </el-form-item>
     </el-form>
     <div slot="footer" class="dialog-footer">
-      <el-button v-show="buttonsShow.save && buttonsShowUser.save" icon="el-icon-printer" @click.prevent="print">{{$t('__print')}}</el-button>
+      <el-button v-show="buttonsShow.edit && buttonsShowUser.save" icon="el-icon-printer" @click.prevent="print">{{$t('__print')}}</el-button>
       <p/>
       <el-button v-show="buttonsShow.delete && buttonsShowUser.delete" type="danger" @click="delRecord">{{$t('__delete')}}</el-button>
       <el-button @click="cancel">{{$t('__cancel')}}</el-button>
@@ -101,6 +101,13 @@ export default {
     switch (this.dialogType) {
       case 'new':
         this.myTitle = this.$t('__new') + this.$t('__certificate2')
+        this.buttonsShow = {
+          new: 1,
+          edit: 0,
+          save: 1,
+          delete: 0,
+          search: 1
+        }
         break
       case 'edit':
         this.myTitle = this.$t('__edit') + this.$t('__certificate2')

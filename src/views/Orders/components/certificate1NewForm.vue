@@ -27,7 +27,7 @@
           </el-date-picker>
       </el-form-item>
       <el-form-item label="Duration" label-width="100px" label-position="left">
-        <el-select v-model="form.reportDuration" :placeholder="$t('__plzChoice')" :disabled="disableForm.Status">
+        <el-select v-model="form.ReportDuration" :placeholder="$t('__plzChoice')" :disabled="disableForm.Status">
           <el-option v-for="item in ddlReportDuration" :key="item.ID" :label="item.Value" :value="item.ID">
             <span style="float: left">{{ item.Value }}</span>
             <span style="float: right; color: #8492a6; font-size: 13px">{{ item.ID }}</span>
@@ -36,7 +36,7 @@
       </el-form-item>
     </el-form>
     <div slot="footer" class="dialog-footer">
-      <el-button v-show="buttonsShow.save && buttonsShowUser.save" icon="el-icon-printer" @click.prevent="print">{{$t('__print')}}</el-button>
+      <el-button v-show="buttonsShow.edit && buttonsShowUser.save" icon="el-icon-printer" @click.prevent="print">{{$t('__print')}}</el-button>
       <p/>
       <el-button v-show="buttonsShow.delete && buttonsShowUser.delete" type="danger" @click="delRecord">{{$t('__delete')}}</el-button>
       <el-button @click="cancel">{{$t('__cancel')}}</el-button>
@@ -74,7 +74,7 @@ export default {
         PrintCount: 0,
         Status: '1',
         CreateDate: new Date(),
-        reportDuration: '1'
+        ReportDuration: '1'
       },
       rules: {
         Certificate1: [{ required: true, message: this.$t('__pleaseInput'), trigger: 'blur' }]
@@ -110,11 +110,19 @@ export default {
       this.form.Status = this.certificate1.Status
       let tempDate = new Date()
       this.form.CreateDate = this.formatterDate(null, null, tempDate.toISOString().slice(0, 10), null)
+      this.form.ReportDuration = this.certificate1.ReportDuration
     }
 
     switch (this.dialogType) {
       case 'new':
         this.myTitle = this.$t('__new') + this.$t('__certificate1')
+        this.buttonsShow = {
+          new: 1,
+          edit: 0,
+          save: 1,
+          delete: 0,
+          search: 1
+        }
         break
       case 'edit':
         this.myTitle = this.$t('__edit') + this.$t('__certificate1')
@@ -224,7 +232,7 @@ export default {
       this.reportParams = {
         locale: strLocale,
         keyword: this.form.Certificate1,
-        reportDuration: this.form.reportDuration }
+        reportDuration: this.form.ReportDuration }
 
       // 紀錄Log
       this.$api.reports.certificate1ToExcel({ Certificate1: this.form.Certificate1 })

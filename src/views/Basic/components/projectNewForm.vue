@@ -33,14 +33,8 @@
           <el-input v-model.number="form.Price"></el-input>
       </el-form-item>
       <template v-if="dialogType!=='new'">
-        <el-tabs v-model="activeName">
-          <el-tab-pane :label="$t('__project')+$t('__detail')" name="first"></el-tab-pane>
-          <el-tab-pane :label="$t('__project')+$t('__performanceBonus')" name="second"></el-tab-pane>
-          <el-tab-pane :label="$t('__project')+$t('__superBonus')" name="third"></el-tab-pane>
-        </el-tabs>
-        <bom v-show="activeName==='first'" ref="bom" :projectID="form.ID" :projectDetail="projectDetail"></bom>
-        <p-bonus v-show="activeName==='second'" ref="pBonus" :projectID="form.ID" :projectPBonus="projectPBonus"></p-bonus>
-        <super-bonus v-show="activeName==='third'" ref="superBonus" :projectID="form.ID" :projectSuperBonus="projectSuperBonus"></super-bonus>
+        <el-divider>{{$t('__project')+$t('__detail')}}</el-divider>
+        <bom ref="bom" :projectID="form.ID" :projectDetail="projectDetail"></bom>
       </template>
       <el-form-item v-else>{{$t('__projectDetailWarrning')}}</el-form-item>
     </el-form>
@@ -53,14 +47,10 @@
 
 <script>
 import bom from './projectDetail'
-import pBonus from './projectPerformanceBonus'
-import superBonus from './projectSuperBonus'
 export default {
   name: 'ProjectNewForm',
   components: {
-    bom,
-    pBonus,
-    superBonus
+    bom
   },
   props: {
     dialogType: { type: String, default: 'new' },
@@ -89,8 +79,7 @@ export default {
       myTitle: '',
       projectDetail: [],
       projectPBonus: [],
-      projectSuperBonus: [],
-      activeName: 'first'
+      projectSuperBonus: []
     }
   },
   mounted () {
@@ -112,27 +101,15 @@ export default {
     preLoading: async function () {
       const response1 = await this.$api.basic.getObject({ type: 'projectDetail', ID: this.form.ID })
       this.projectDetail = response1.data.result
-      const response2 = await this.$api.basic.getObject({ type: 'projectPerformanceBonus', ID: this.form.ID })
-      this.projectPBonus = response2.data.result
-      const response3 = await this.$api.basic.getObject({ type: 'projectSuperBonus', ID: this.form.ID })
-      this.projectSuperBonus = response3.data.result
     },
     // 檢查輸入
     checkValidate: async function () {
+      if (this.dialogType !== 'new') {
       // check BOM
-      let isSuccess = false
-      isSuccess = await this.$refs['bom'].beforeSave()
-      if (!isSuccess) { return }
-
-      // check pBonus
-      isSuccess = false
-      isSuccess = await this.$refs['pBonus'].beforeSave()
-      if (!isSuccess) { return }
-
-      // check superBonus
-      isSuccess = false
-      isSuccess = await this.$refs['superBonus'].beforeSave()
-      if (!isSuccess) { return }
+        let isSuccess = false
+        isSuccess = await this.$refs['bom'].beforeSave()
+        if (!isSuccess) { return }
+      }
 
       // 檢查主表單
       this.$refs['form'].validate((valid) => {

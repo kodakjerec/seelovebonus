@@ -148,6 +148,8 @@ export default {
   __volume: '體積',
   __nickname: '暱稱',
   __swipeCard: '刷卡',
+  __announcement: '公告',
+  __caption: '說明文字',
   // 請在上方新增字串
   // 以下為錯誤處理專用
   __error400: '無法理解請求',

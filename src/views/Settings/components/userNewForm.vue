@@ -1,6 +1,6 @@
 <template>
   <el-dialog :title="myTitle" :visible="dialogShow" center @close="cancel">
-    <el-form ref="form" :model="form" :rules="rules" label-width="30%">
+    <el-form ref="form" :model="form" :rules="rules" label-width="10vw">
       <el-form-item :label="$t('__userId')" prop="UserID">
         <el-input v-model="form.UserID" autocomplete="off" :disabled="disableForm.UserID" maxlength="20" show-word-limit></el-input>
       </el-form-item>
@@ -39,22 +39,6 @@
         </el-select>
       </el-form-item>
     </el-form>
-    <!-- <el-table :data="progList" ref="multipleTable"  @selection-change="handleSelectionChange">
-      <el-table-column
-      type="selection"
-      width="55"
-      prop="checked">
-      </el-table-column>
-      <el-table-column
-      prop="ProgID"
-      label="ProgID">
-    </el-table-column>
-    <el-table-column
-      prop="Name"
-      label="Name">
-    </el-table-column>
-    </el-table>
-     -->
     <div slot="footer" class="dialog-footer">
       <el-button v-show="buttonsShow.delete && buttonsShowUser.delete" type="danger" @click.prevent="showForm('edit')">{{$t('__edit')+$t('__pwd')}}</el-button>
       <el-button @click="cancel">{{$t('__cancel')}}</el-button>
@@ -72,8 +56,7 @@ export default {
   props: {
     dialogType: { type: String, default: 'new' },
     dialogShow: { type: Boolean, default: false },
-    user: { type: Object },
-    progList: { type: Array }
+    user: { type: Object }
   },
   components: {
     newForm

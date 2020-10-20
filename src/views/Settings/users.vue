@@ -6,12 +6,10 @@
     </el-tabs>
     <page-user
     :users="users"
-    :prog-list="proglist"
     @refresh="refresh"
     v-if="activeName==='first'"></page-user>
     <page-group
     :groups="groups"
-    :prog-list="proglist"
     @refresh="refresh"
     v-if="activeName==='second'"></page-group>
   </div>
@@ -31,8 +29,7 @@ export default {
     return {
       activeName: 'first',
       users: [],
-      groups: [],
-      proglist: []
+      groups: []
     }
   },
   mounted () {
@@ -41,10 +38,11 @@ export default {
   methods: {
     // 讀入使用者清單
     preLoading: async function () {
-      const response = await this.$api.settings.getUserAndGroupAndProg()
-      this.users = response.data.users
-      this.groups = response.data.groups
-      this.proglist = response.data.proglist
+      const response = await this.$api.settings.getDropdownList({ type: 'users' })
+      this.users = response.data.result
+
+      const response2 = await this.$api.settings.getDropdownList({ type: 'groups' })
+      this.groups = response2.data.result
     },
     // 重整畫面
     refresh: function () {

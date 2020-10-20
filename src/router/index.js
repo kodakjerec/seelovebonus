@@ -118,6 +118,11 @@ const routes = [
     path: '/Settings/Accounting',
     name: 'Accounting',
     component: () => import('@/views/Settings/accounting')
+  },
+  {
+    path: '/Settings/Announcement',
+    name: 'Announcement',
+    component: () => import('@/views/Settings/announcementShow')
   }
 ]
 

@@ -1,5 +1,9 @@
 <template>
   <el-form>
+    <el-button-group class="defineCSS_ButtonGroup">
+      <el-button icon="el-icon-setting" @click.prevent="showFormPBonus('new')">{{$t('__performanceBonus')}}</el-button>
+      <el-button icon="el-icon-setting" @click.prevent="showFormSBonus('new')">{{$t('__superBonus')}}</el-button>
+    </el-button-group>
     <el-button-group>
       <el-button v-show="buttonsShowUser.new" type="primary" icon="el-icon-plus" @click.prevent="showForm('new')">{{$t('__new')}}</el-button>
     </el-button-group>
@@ -43,24 +47,46 @@
     :buttonsShowUser="buttonsShowUser"
     @dialog-cancel="dialogCancel()"
     @dialog-save="dialogSave()"></new-form>
+    <p-bonus
+    v-if="dialogShowPBonus"
+    :dialog-type="dialogTypePBonus"
+    :dialog-show="dialogShowPBonus"
+    :buttonsShowUser="buttonsShowUser"
+    @dialog-cancel="dialogCancel()"
+    @dialog-save="dialogSave()"></p-bonus>
+    <s-bonus
+    v-if="dialogShowSBonus"
+    :dialog-type="dialogTypeSBonus"
+    :dialog-show="dialogShowSBonus"
+    :buttonsShowUser="buttonsShowUser"
+    @dialog-cancel="dialogCancel()"
+    @dialog-save="dialogSave()"></s-bonus>
   </el-form>
 </template>
 
 <script>
 import searchButton from '@/components/searchButton'
 import newForm from './components/projectNewForm'
+import pBonus from './components/projectPerformanceBonus'
+import sBonus from './components/projectSuperBonus'
 import { formatDate, formatMoney } from '@/setup/format.js'
 
 export default {
   name: 'Projects',
   components: {
     searchButton,
-    newForm
+    newForm,
+    pBonus,
+    sBonus
   },
   data () {
     return {
       dialogType: 'new',
       dialogShow: false,
+      dialogTypePBonus: 'new',
+      dialogShowPBonus: false,
+      dialogTypeSBonus: 'new',
+      dialogShowSBonus: false,
       projectsShow: [],
       project: {},
       searchKeyWord: '',
@@ -119,11 +145,29 @@ export default {
       this.dialogType = eventType
       this.dialogShow = true
     },
+    showFormPBonus: function (eventType) {
+      // 權限管理
+      this.buttonsShowUser.save = this.buttonsShowUser.new
+
+      this.dialogTypePBonus = eventType
+      this.dialogShowPBonus = true
+    },
+    showFormSBonus: function (eventType) {
+      // 權限管理
+      this.buttonsShowUser.save = this.buttonsShowUser.new
+
+      this.dialogTypeSBonus = eventType
+      this.dialogShowSBonus = true
+    },
     dialogCancel: function () {
       this.dialogShow = false
+      this.dialogShowPBonus = false
+      this.dialogShowSBonus = false
     },
     dialogSave: function () {
       this.dialogShow = false
+      this.dialogShowPBonus = false
+      this.dialogShowSBonus = false
       this.preLoading()
     },
     // 搜尋
@@ -135,3 +179,9 @@ export default {
   }
 }
 </script>
+<style lang="scss" scoped>
+.defineCSS_ButtonGroup {
+  position: absolute;
+  left:10px;
+}
+</style>

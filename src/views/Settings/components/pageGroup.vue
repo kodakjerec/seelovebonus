@@ -43,12 +43,6 @@ export default {
       default: function () {
         return []
       }
-    },
-    progList: {
-      type: Array,
-      default: function () {
-        return []
-      }
     }
   },
   data () {
@@ -62,8 +56,8 @@ export default {
   methods: {
     handleClick: async function (row, column, event) {
       // 取得可以用的選單
-      const response = await this.$api.settings.getGroupProg({ GroupID: row.GroupID })
-      this.checkedProgList = response.data.userProg
+      const response = await this.$api.settings.getObject({ type: 'group', ID: row.GroupID })
+      this.checkedProgList = response.data.result
 
       // 進入修改
       this.dialogType = 'edit'
@@ -73,8 +67,8 @@ export default {
     // 開啟表單
     showForm: async function (eventType) {
       // 取得可以用的選單
-      const response = await this.$api.settings.getGroupProg({ GroupID: '' })
-      this.checkedProgList = response.data.userProg
+      const response = await this.$api.settings.getObject({ type: 'group', ID: '' })
+      this.checkedProgList = response.data.result
 
       // 進入新增
       this.dialogType = eventType

@@ -19,7 +19,7 @@
           </el-menu-item>
         </el-submenu>
       </template>
-      <el-menu-item>
+      <el-menu-item index="/home">
         {{userName}}, {{$t('__hello')}}
       </el-menu-item>
       <el-menu-item index="/" class="defineCSS">
