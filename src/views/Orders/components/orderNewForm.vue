@@ -1,12 +1,12 @@
 <template>
   <div>
     <h1>{{myTitle}}</h1>
-    <el-form ref="form" :model="form" :rules="rules" label-width="10vw" label-position="right" :inline="true">
+    <el-form ref="form" :model="form" :rules="rules" label-width="10vw" label-position="right">
       <el-form-item :label="$t('__orderID')+'：'" prop="ID">
         <el-col :span="4">
           <el-input v-model="form.ID" :placeholder="$t('__afterSaveWillShow')" autocomplete="off" :disabled="disableForm.ID"></el-input>
         </el-col>
-        <el-col :span="10">
+        <el-col :span="6">
           <el-form-item :label="$t('__status')">
             <el-select v-model="form.Status" value-key="value" disabled>
               <el-option v-for="item in ddlOrderStatus" :key="item.ID" :label="item.Value" :value="item.ID">
@@ -16,7 +16,7 @@
             </el-select>
           </el-form-item>
         </el-col>
-        <el-col :span="10">
+        <el-col :span="6">
           <el-form-item :label="$t('__order')+$t('__date')+'：'" prop="OrderDate">
             <el-date-picker
               v-model="form.OrderDate"

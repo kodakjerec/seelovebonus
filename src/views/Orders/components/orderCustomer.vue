@@ -18,7 +18,7 @@
           </el-form-item>
         </el-col>
       </el-form-item>
-      <el-form-item :label="$t('__uniqueNumber')" label-width="100px" label-position="left">
+      <el-form-item :label="$t('__uniqueNumber')">
         <el-col :span="8">
           <el-input v-model="form.CustomerID" autocomplete="off" disabled></el-input>
         </el-col>
@@ -28,7 +28,7 @@
           </el-form-item>
         </el-col>
       </el-form-item>
-      <el-form-item :label="$t('__home')+'/'+$t('__mobile')+$t('__tel')" label-width="100px" label-position="left">
+      <el-form-item :label="$t('__home')+'/'+$t('__mobile')+$t('__tel')">
         <el-col :span="8" class="elInputWidth">
           <el-input v-model="form.TelHome" autocomplete="off" disabled></el-input>
           <el-input v-model="form.TelMobile" autocomplete="off" disabled></el-input>
@@ -60,7 +60,7 @@
     </template>
     <!-- 無法定代理人資料 -->
     <template v-else>
-            <el-form-item :label="$t('__orderCustomer')+$t('__name')" prop="CustomerID" label-width="100px" label-position="left">
+            <el-form-item :label="$t('__orderCustomer')+$t('__name')" prop="CustomerID">
         <el-col :span="6">
           <el-select v-model="form.CustomerID" filterable value-key="value" :placeholder="$t('__plzChoice')" @change="ddlCustomerChange" :disabled="disableForm.CustomerID">
             <el-option v-for="item in ddlCustomer" :key="item.ID" :label="item.ID+' '+item.Value" :value="item.ID">
@@ -70,22 +70,22 @@
           </el-select>
         </el-col>
       </el-form-item>
-      <el-form-item :label="$t('__uniqueNumber')" label-width="100px" label-position="left">
+      <el-form-item :label="$t('__uniqueNumber')">
         <el-col :span="8">
           <el-input v-model="form.CustomerID" autocomplete="off" disabled></el-input>
         </el-col>
       </el-form-item>
-      <el-form-item :label="$t('__home')+'/'+$t('__mobile')+$t('__tel')" label-width="100px" label-position="left">
+      <el-form-item :label="$t('__home')+'/'+$t('__mobile')+$t('__tel')">
         <el-col :span="8" class="elInputWidth">
           <el-input v-model="form.TelHome" autocomplete="off" disabled></el-input>
           <el-input v-model="form.TelMobile" autocomplete="off" disabled></el-input>
         </el-col>
       </el-form-item>
     </template>
-    <el-form-item :label="$t('__eMail')" label-width="100px" label-position="left">
+    <el-form-item :label="$t('__eMail')">
       <el-input v-model="form.EMail" autocomplete="off" disabled></el-input>
     </el-form-item>
-    <el-form-item :label="$t('__address')" label-width="100px" label-position="left">
+    <el-form-item :label="$t('__address')">
       <el-col :span="4">
         <el-form-item>
           <el-select v-model="form.City" value-key="value" :placeholder="$t('__plzChoice')" @change="ddlCityChange" disabled>
