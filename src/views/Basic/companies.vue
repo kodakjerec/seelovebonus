@@ -10,6 +10,7 @@
       stripe
       border
       @row-click="handleClick"
+      :row-class-name="tableRowClassName"
       style="width: 100%">
       <el-table-column
         prop="ID"
@@ -99,6 +100,12 @@ export default {
   methods: {
     formatterDate: function (row, column, cellValue, index) {
       return formatDate(cellValue)
+    },
+    // table 變更顏色
+    tableRowClassName ({ row, rowIndex }) {
+      if (row['Status'] === '0') {
+        return 'disabled-row'
+      }
     },
     // 讀入系統清單
     preLoading: async function () {

@@ -131,14 +131,12 @@ const router = new Router({
 })
 
 let tempMenuList = JSON.parse(JSON.stringify(store.state.menuList))
-if (tempMenuList && tempMenuList.length > 0) {
-  let subMenuList = []
-  tempMenuList.forEach(menu => {
-    menu.subMenu.forEach(submenu => {
-      subMenuList.push(submenu)
-    })
+let subMenuList = []
+tempMenuList.forEach(menu => {
+  menu.subMenu.forEach(submenu => {
+    subMenuList.push(submenu)
   })
-}
+})
 
 router.beforeEach((to, from, next) => {
   // 重新進入頁面的時候, 清空讀取中視窗, 避免影響使用者操作

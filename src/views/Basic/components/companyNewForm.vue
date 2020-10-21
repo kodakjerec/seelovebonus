@@ -32,7 +32,7 @@
           </el-select>
         </el-col>
         <el-col :span="14">
-          <el-form-item :label="$t('__sponsor')" prop="Sponsor">
+          <el-form-item :label="$t('__sponsor')" prop="Referrer">
             <el-select v-model="form.Referrer" filterable value-key="value" :placeholder="$t('__plzChoice')">
               <el-option v-for="item in ddlReferrer" :key="item.ID" :label="item.ID+' '+item.Value" :value="item.ID">
                 <span style="float: left">{{ item.Value }}</span>
@@ -189,7 +189,7 @@ export default {
         Tel1: [{ trigger: 'blur', validator: validate.validatePhone }],
         Tel2: [{ trigger: 'blur', validator: validate.validatePhone }],
         EmployeeID: [{ required: true, message: this.$t('__pleaseInput'), trigger: 'blur' }],
-        Sponsor: [{ required: true, message: this.$t('__pleaseInput'), trigger: 'blur' }]
+        Referrer: [{ required: true, message: this.$t('__pleaseInput'), trigger: 'blur' }]
       },
       disableForm: {
         ID: false,

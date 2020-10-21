@@ -61,7 +61,8 @@ export const messageBoxYesNo = async (msg, title) => {
     confirmButtonText: i18n.t('__ok'),
     cancelButtonText: i18n.t('__cancel'),
     type: 'warning',
-    closeOnPressEscape: true
+    closeOnPressEscape: true,
+    dangerouslyUseHTMLString: true
   }).then((value) => {
     return value
   }).catch((error) => {

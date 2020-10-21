@@ -150,6 +150,8 @@ export default {
   __swipeCard: '刷卡',
   __announcement: '公告',
   __caption: '說明文字',
+  __deleteOrder: '刪除訂購單！<br/>有供奉憑證、付款資訊、發票紀錄，將無法刪除。',
+  __invalidOrder: '作廢訂購單！<br/>有付款資訊、發票紀錄，將無法作廢。',
   // 請在上方新增字串
   // 以下為錯誤處理專用
   __error400: '無法理解請求',

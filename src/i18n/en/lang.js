@@ -150,6 +150,8 @@ export default {
   __swipeCard: 'Swipe',
   __announcement: 'Announcement',
   __caption: 'Caption',
+  __deleteOrder: 'Delete Order!<br/>If there are "consecration certificates","payments","invoices". That can\'t be deleted.',
+  __invalidOrder: 'Invalid Order!<br/>If there are "payments","invoices". That can\'t be invalided.',
   // 請在上方新增字串
   // 以下為錯誤處理專用
   __error400: 'Bad Request',

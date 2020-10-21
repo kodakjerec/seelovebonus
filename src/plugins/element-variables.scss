@@ -69,4 +69,8 @@ $--input-focus-fill: yellow !default;
 // $--input-medium-font-size: $--font-size-base !default;
 // $--input-small-font-size: $--font-size-small !default;
 
+div.el-table__body-wrapper.is-scrolling-none > table > tbody > tr.el-table__row.disabled-row > td {
+  background: lightgray;
+}
+
 @import "~element-ui/packages/theme-chalk/src/index";

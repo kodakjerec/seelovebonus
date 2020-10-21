@@ -9,7 +9,8 @@
         :data="results"
         stripe
         border
-      @row-click="handleClick"
+        @row-click="handleClick"
+        :row-class-name="tableRowClassName"
         style="width: 100%">
         <template  v-for="column in columns">
           <el-table-column
@@ -34,7 +35,7 @@
       :dialog-show="dialogShow"
       :certificate2="certificate2"
       :orderID="orderID"
-    :buttonsShowUser="buttonsShowUser"
+      :buttonsShowUser="buttonsShowUser"
       @dialog-cancel="dialogCancel()"
       @dialog-save="dialogSave()"></new-form>
   </div>
@@ -106,6 +107,12 @@ export default {
   methods: {
     formatterDate: function (row, column, cellValue, index) {
       return formatDate(cellValue)
+    },
+    // table 變更顏色
+    tableRowClassName ({ row, rowIndex }) {
+      if (row['Status'] === '0') {
+        return 'disabled-row'
+      }
     },
     // 讀入系統清單
     preLoading: async function () {

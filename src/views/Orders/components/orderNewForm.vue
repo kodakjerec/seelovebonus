@@ -4,7 +4,7 @@
     <el-form ref="form" :model="form" :rules="rules" label-width="10vw" label-position="right" :inline="true">
       <el-form-item :label="$t('__orderID')+'：'" prop="ID">
         <el-col :span="4">
-          <el-input v-model="form.ID" :placeholder="$t('__pleaseInput')" autocomplete="off" :disabled="disableForm.ID"></el-input>
+          <el-input v-model="form.ID" :placeholder="$t('__afterSaveWillShow')" autocomplete="off" :disabled="disableForm.ID"></el-input>
         </el-col>
         <el-col :span="10">
           <el-form-item :label="$t('__status')">
@@ -251,6 +251,7 @@ export default {
     switch (this.dialogType) {
       case 'new':
         this.myTitle = this.$t('__new') + this.$t('__orderPaper')
+        this.disableForm.ID = true
         this.disableForm.CreateID = true
         this.form.OrderDate = new Date()
         this.buttonsShow = {
@@ -267,7 +268,6 @@ export default {
         this.disableForm.ID = true
         this.disableForm.ProjectID = true
         this.disableForm.Qty = true
-        // this.disableForm.OrderDate = true
         this.disableForm.CreateID = true
 
         this.bringProject(this.form.ProjectID)
@@ -482,7 +482,7 @@ export default {
     },
     // 刪除
     deleteOrder: async function () {
-      let answerAction = await messageBoxYesNo(this.$t('__delete') + this.$t('__orderPaper'), this.$t('__delete'))
+      let answerAction = await messageBoxYesNo(this.$t('__deleteOrder'), this.$t('__delete'))
 
       switch (answerAction) {
         case 'confirm':
@@ -508,7 +508,7 @@ export default {
     },
     // 作廢
     invalidOrder: async function () {
-      let answerAction = await messageBoxYesNo(this.$t('__invalid') + this.$t('__orderPaper'), this.$t('__invalid'))
+      let answerAction = await messageBoxYesNo(this.$t('__invalidOrder'), this.$t('__invalid'))
 
       switch (answerAction) {
         case 'confirm':

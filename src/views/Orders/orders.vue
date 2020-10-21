@@ -10,6 +10,7 @@
       stripe
       border
       @row-click="handleClick"
+      :row-class-name="tableRowClassName"
       style="width: 100%">
       <el-table-column
         prop="ID"
@@ -29,7 +30,7 @@
         :label="$t('__certificate1')">
         <template slot-scope="scope">
           <div v-for="item in scope.row.Certificate1List" :key="item.Certificate1">
-            {{item.Certificate1}}
+            {{item.Certificate1}}<template v-if="item['Status']==='0'">(停用)</template>
           </div>
         </template>
       </el-table-column>
@@ -110,6 +111,12 @@ export default {
     formatterMoney: function (row, column, cellValue, index) {
       return formatMoney(cellValue)
     },
+    // table 變更顏色
+    tableRowClassName ({ row, rowIndex }) {
+      if (row['Status'] === '0') {
+        return 'disabled-row'
+      }
+    },
     // 讀入系統清單
     preLoading: async function () {
       // 顯示專用
@@ -184,3 +191,9 @@ export default {
   }
 }
 </script>
+
+<style lang="scss" scoped>
+.hideButton {
+  visibility: hidden;
+}
+</style>

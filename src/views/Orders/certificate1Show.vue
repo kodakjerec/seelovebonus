@@ -4,30 +4,29 @@
       <el-button class="hideButton" type="info" icon="el-icon-printer"></el-button>
     </el-button-group>
     <search-button @search="search"></search-button>
-    <div id="printMe">
-      <el-table
-        :data="results"
-        stripe
-        border
+    <el-table
+      :data="results"
+      stripe
+      border
       @row-click="handleClick"
-        style="width: 100%">
-        <template  v-for="column in columns">
-          <el-table-column
-            v-if="column.formatter === 'date'"
-            :key="column.key"
-            :prop="column.key"
-            :label="column.header"
-            :formatter="formatterDate">
-          </el-table-column>
-          <el-table-column
-            v-else
-            :key="column.key"
-            :prop="column.key"
-            :label="column.header">
-          </el-table-column>
-        </template>
-      </el-table>
-    </div>
+      :row-class-name="tableRowClassName"
+      style="width: 100%">
+      <template  v-for="column in columns">
+        <el-table-column
+          v-if="column.formatter === 'date'"
+          :key="column.key"
+          :prop="column.key"
+          :label="column.header"
+          :formatter="formatterDate">
+        </el-table-column>
+        <el-table-column
+          v-else
+          :key="column.key"
+          :prop="column.key"
+          :label="column.header">
+        </el-table-column>
+      </template>
+    </el-table>
     <new-form
       v-if="dialogShow"
       :dialog-type="dialogType"
@@ -106,6 +105,12 @@ export default {
   methods: {
     formatterDate: function (row, column, cellValue, index) {
       return formatDate(cellValue)
+    },
+    // table 變更顏色
+    tableRowClassName ({ row, rowIndex }) {
+      if (row['Status'] === '0') {
+        return 'disabled-row'
+      }
     },
     // 讀入系統清單
     preLoading: async function () {
