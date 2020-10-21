@@ -2,7 +2,7 @@
   <div>
     <h1>{{myTitle}}</h1>
     <el-form ref="form" :model="form" :rules="rules" label-width="10vw" label-position="right">
-      <el-form-item :label="$t('__orderID')+'：'" prop="ID">
+      <el-form-item :label="$t('__orderID')+'：'">
         <el-col :span="4">
           <el-input v-model="form.ID" :placeholder="$t('__afterSaveWillShow')" autocomplete="off" :disabled="disableForm.ID"></el-input>
         </el-col>

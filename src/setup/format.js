@@ -48,3 +48,12 @@ export function newLineToBr (value) {
     return value
   }
 }
+
+// " " 換成 &nbsp
+export function spaceToNBSP (value) {
+  if (value) {
+    return value.replace(/ /mg, '&nbsp;')
+  } else {
+    return value
+  }
+}

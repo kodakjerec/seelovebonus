@@ -10,9 +10,8 @@
             <span class="captionDate">{{$t('__date')}}：{{formatterDate(item.StartDate)}}~{{formatterDate(item.EndDate)}}</span>
             <span class="caption">{{item.Caption}}</span>
           </template>
-          <span class="text">
-          <div v-html="item.Text"></div>
-          </span>
+          <div class="text" v-html="item.Text">
+          </div>
         </el-collapse-item>
       </template>
     </el-collapse>
@@ -20,7 +19,7 @@
 </template>
 
 <script>
-import { formatDate, newLineToBr } from '@/setup/format.js'
+import { formatDate, newLineToBr, spaceToNBSP } from '@/setup/format.js'
 export default {
   name: 'Announcement',
   data () {
@@ -45,6 +44,7 @@ export default {
         // 替換\n => <br/>
         this.list.forEach(item => {
           item.Text = newLineToBr(item.Text)
+          item.Text = spaceToNBSP(item.Text)
         })
       }
     }
@@ -58,20 +58,20 @@ export default {
   border: 1px solid lightgray;
 
   .header{
-    font-size: 2vw;
+    font-size: 2rem;
   }
   .captionDate {
     color: lightcoral;
   }
   .caption {
-    font-size: 2vw;
+    font-size: 2rem;
     font-weight: 1000;
     padding-left: 1vw;
     text-align: start;
   }
 
   .text {
-    font-size: 1vw;
+    font-size: 1.2rem;
     text-align: justify;
   }
 }
