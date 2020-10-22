@@ -99,7 +99,7 @@ export default {
           break
         case 'edit':
           const responseEdit = await this.$api.settings.userUpdatePassword({ form: data })
-          if (responseEdit.status === 200) {
+          if (responseEdit.headers['code'] === '200') {
             this.$alert(responseEdit.data.result[0].message, responseEdit.data.result[0].code)
             isSuccess = true
           }

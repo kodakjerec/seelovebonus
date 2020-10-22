@@ -116,7 +116,7 @@ export default {
       })
 
       // 成功登入
-      if (response.status === 200) {
+      if (response.headers['code'] === '200') {
         this.$store.dispatch('setAuth', {
           'token': response.data.token,
           'isLogin': true,

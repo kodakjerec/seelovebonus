@@ -157,21 +157,21 @@ export default {
       switch (type) {
         case 'new':
           const responseNew = await this.$api.settings.announcementNew({ form: data })
-          if (responseNew.status === 200) {
+          if (responseNew.headers['code'] === '200') {
             this.$alert(responseNew.data.result[0].message, responseNew.data.result[0].code)
             isSuccess = true
           }
           break
         case 'edit':
           const responseEdit = await this.$api.settings.announcementEdit({ form: data })
-          if (responseEdit.status === 200) {
+          if (responseEdit.headers['code'] === '200') {
             this.$alert(responseEdit.data.result[0].message, responseEdit.data.result[0].code)
             isSuccess = true
           }
           break
         case 'delete':
           const responseDelete = await this.$api.settings.announcementDelete({ form: data })
-          if (responseDelete.status === 200) {
+          if (responseDelete.headers['code'] === '200') {
             this.$alert(responseDelete.data.result[0].message, responseDelete.data.result[0].code)
             isSuccess = true
           }

@@ -164,7 +164,7 @@ export default {
       switch (type) {
         case 'new':
           const responseNew = await this.$api.orders.orderDetailNew({ form: row })
-          if (responseNew.status === 200) {
+          if (responseNew.headers['code'] === '200') {
             isSuccess = true
           }
           break

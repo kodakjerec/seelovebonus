@@ -195,14 +195,14 @@ export default {
       switch (this.dialogType) {
         case 'new':
           const responseNew = await this.$api.settings.userNew({ form: data })
-          if (responseNew.status === 200) {
+          if (responseNew.headers['code'] === '200') {
             this.$alert(responseNew.data.result[0].message, responseNew.data.result[0].code)
             isSuccess = true
           }
           break
         case 'edit':
           const responseEdit = await this.$api.settings.userEdit({ form: data })
-          if (responseEdit.status === 200) {
+          if (responseEdit.headers['code'] === '200') {
             this.$alert(responseEdit.data.result[0].message, responseEdit.data.result[0].code)
             isSuccess = true
           }

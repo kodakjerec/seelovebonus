@@ -139,19 +139,19 @@ export default {
       switch (type) {
         case 'new':
           const responseNew = await this.$api.basic.projectPBonusNew({ form: row })
-          if (responseNew.status === 200) {
+          if (responseNew.headers['code'] === '200') {
             isSuccess = true
           }
           break
         case 'edit':
           const responseEdit = await this.$api.basic.projectPBonusEdit({ form: row })
-          if (responseEdit.status === 200) {
+          if (responseEdit.headers['code'] === '200') {
             isSuccess = true
           }
           break
         case 'delete':
           const responseDelete = await this.$api.basic.projectPBonusDelete({ form: row })
-          if (responseDelete.status === 200) {
+          if (responseDelete.headers['code'] === '200') {
             isSuccess = true
           }
           break

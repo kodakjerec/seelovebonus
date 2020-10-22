@@ -81,6 +81,7 @@ export default {
     },
     orderCertificate1New: ({ form }) => {
       let rawData = { form }
+
       return post('/orders/orderCertificate1New', rawData).then(data => {
         console.log(`%c <<< Response(/rest/orders/orderCertificate1New)⤵ `, 'background-color: #E0455D; color: white; font-size: 14px; font-weight: bold;', data)
         return data

@@ -269,7 +269,7 @@ export default {
       switch (this.dialogType) {
         case 'new':
           const responseNew = await this.$api.orders.orderCustomerNew({ form: this.form })
-          if (responseNew.status === 200) {
+          if (responseNew.headers['code'] === '200') {
             isSuccess = true
           }
           break

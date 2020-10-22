@@ -446,7 +446,7 @@ export default {
       switch (type) {
         case 'new':
           const responseNew = await this.$api.orders.orderNew({ form: this.form })
-          if (responseNew.status === 200) {
+          if (responseNew.headers['code'] === '200') {
             isSuccess = true
             // 取得單號回填後續資料
             this.form.ID = responseNew.data.result[0].ID
@@ -455,7 +455,7 @@ export default {
           break
         case 'edit':
           const responseEdit = await this.$api.orders.orderEdit({ form: this.form })
-          if (responseEdit.status === 200) {
+          if (responseEdit.headers['code'] === '200') {
             isSuccess = true
             // 取得單號回填後續資料
             this.form.ID = responseEdit.data.result[0].ID
@@ -464,14 +464,14 @@ export default {
           break
         case 'delete':
           const responseDelete = await this.$api.orders.orderDelete({ form: this.form })
-          if (responseDelete.status === 200) {
+          if (responseDelete.headers['code'] === '200') {
             isSuccess = true
             this.updateMessage = responseDelete.data.result[0].message
           }
           break
         case 'invalid':
           const responseInvalid = await this.$api.orders.orderInvalid({ form: this.form })
-          if (responseInvalid.status === 200) {
+          if (responseInvalid.headers['code'] === '200') {
             isSuccess = true
             this.updateMessage = responseInvalid.data.result[0].message
           }

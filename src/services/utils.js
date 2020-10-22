@@ -18,6 +18,11 @@ export const post = async (url, reqData = {}) => {
   return req('post', combineURL, reqData)
     .then(response => {
       store.dispatch('decreaseLoadingCounter')
+      switch (response.headers['code']) {
+        case '500':
+          errorMessage(response.data, response.headers['code'])
+          break
+      }
       return response
     })
     .catch(error => {
