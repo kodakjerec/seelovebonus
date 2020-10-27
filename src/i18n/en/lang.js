@@ -50,6 +50,7 @@ export default {
   __systemSettingsID: 'ID',
   __systemSettingsValue: 'Value',
   __systemSettingsLanguage: 'Language',
+  __systemSettingsSettingsType: 'New Settings-Type',
   __id: 'ID',
   __number: 'Number',
   __name: 'Name',

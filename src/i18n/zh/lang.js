@@ -50,6 +50,7 @@ export default {
   __systemSettingsID: '代號',
   __systemSettingsValue: '數值',
   __systemSettingsLanguage: '適用語系',
+  __systemSettingsSettingsType: '新增設定種類',
   __id: '代號',
   __number: '號碼',
   __name: '名稱',

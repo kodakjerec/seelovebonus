@@ -34,7 +34,7 @@
       <el-button @click="cancel">{{$t('__cancel')}}</el-button>
       <el-button v-show="buttonsShow.save && buttonsShowUser.save" type="primary" @click="checkValidate">{{$t('__save')}}</el-button>
       <p/>
-      <iframeReportingService
+      <iframeReportingService v-show="buttonsShow.edit && buttonsShowUser.save"
        :reportPath="reportPath"
        :params="reportParams"></iframeReportingService>
     </div>

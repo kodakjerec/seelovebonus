@@ -1,6 +1,9 @@
 <template>
   <el-form>
     <el-form-item>
+      <el-button-group class="defineCSS_ButtonGroup">
+        <el-button icon="el-icon-setting" @click.prevent="showFormSettingsType('new')">{{$t('__systemSettingsSettingsType')}}</el-button>
+      </el-button-group>
       <el-button-group>
         <el-button type="primary" icon="el-icon-plus" @click.prevent="showForm('new')">{{$t('__new')}}</el-button>
       </el-button-group>
@@ -140,7 +143,20 @@ export default {
       await this.preLoading()
 
       this.selectChange()
+    },
+    showFormSettingsType: function (eventType) {
+      // 切換成 settingsType
+      this.form.category = this.ddlCategory.find(item => item.ID === 'SettingsType').ID
+      this.selectChange()
+
+      this.showForm(eventType)
     }
   }
 }
 </script>
+<style lang="scss" scoped>
+.defineCSS_ButtonGroup {
+  position: absolute;
+  left:10px;
+}
+</style>
