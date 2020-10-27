@@ -14,6 +14,7 @@
           stripe
           border
           @row-click="handleClick"
+          :row-class-name="tableRowClassName"
           style="width: 100%">
           <el-table-column
             prop="Certificate2"
@@ -92,6 +93,12 @@ export default {
     },
     formatterMoney: function (row, column, cellValue, index) {
       return formatMoney(cellValue)
+    },
+    // table 變更顏色
+    tableRowClassName ({ row, rowIndex }) {
+      if (row['Status'] === '0') {
+        return 'disabled-row'
+      }
     },
     preLoading: async function () {
       const responseRecords = await this.$api.orders.getObject({ type: 'certificate2Show', ID: this.orderID })

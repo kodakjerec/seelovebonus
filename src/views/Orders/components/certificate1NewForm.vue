@@ -2,13 +2,13 @@
   <el-dialog :title="myTitle" :visible="dialogShow" center width="80%" @close="cancel">
     <el-form ref="form" :model="form" :rules="rules">
       <el-form-item :label="$t('__orderID')" label-width="100px" label-position="left">
-          <el-input v-model="form.OrderID" autocomplete="off" maxlength="200" show-word-limit :disabled="disableForm.OrderID"></el-input>
+          <el-input v-model="form.OrderID" :disabled="disableForm.OrderID"></el-input>
       </el-form-item>
-      <el-form-item :label="$t('__certificate1')" label-width="100px" label-position="left" prop="Certificate1">
-          <el-input v-model="form.Certificate1" autocomplete="off" maxlength="40" show-word-limit :disabled="disableForm.Certificate1"></el-input>
+      <el-form-item :label="$t('__certificate1')" label-width="100px" label-position="left">
+          <el-input v-model="form.Certificate1" :placeholder="$t('__afterSaveWillShow')" :disabled="disableForm.Certificate1"></el-input>
       </el-form-item>
       <el-form-item :label="$t('__printCount')" label-width="100px" label-position="left">
-          <el-input-number v-model="form.PrintCount" autocomplete="off" maxlength="200" show-word-limit :disabled="disableForm.PrintCount"></el-input-number>
+          <el-input-number v-model="form.PrintCount" :disabled="disableForm.PrintCount"></el-input-number>
       </el-form-item>
       <el-form-item :label="$t('__status')" label-width="100px" label-position="left">
         <el-select v-model="form.Status" value-key="value" :placeholder="$t('__plzChoice')" :disabled="disableForm.Status">
@@ -38,6 +38,7 @@
     <div slot="footer" class="dialog-footer">
       <el-button v-show="buttonsShow.edit && buttonsShowUser.save" icon="el-icon-printer" @click.prevent="print">{{$t('__print')}}</el-button>
       <p/>
+      <el-button v-show="buttonsShow.delete && buttonsShowUser.delete" @click="retakeID">{{$t('__retakeID')}}</el-button>
       <el-button v-show="buttonsShow.delete && buttonsShowUser.delete" type="danger" @click="delRecord">{{$t('__delete')}}</el-button>
       <el-button @click="cancel">{{$t('__cancel')}}</el-button>
       <el-button v-show="buttonsShow.save && buttonsShowUser.save" type="primary" @click="checkValidate">{{$t('__save')}}</el-button>
@@ -89,7 +90,7 @@ export default {
       },
       disableForm: {
         OrderID: true,
-        Certificate1: false,
+        Certificate1: true,
         PrintCount: true,
         Status: false,
         CreateDate: false
@@ -132,7 +133,7 @@ export default {
             new: 0,
             edit: 0,
             save: 0,
-            delete: 0,
+            delete: 1,
             search: 0
           }
         } else {
@@ -198,6 +199,18 @@ export default {
             isSuccess = true
           }
           break
+        case 'retakeID':
+          // 停用舊單據
+          this.form.Status = '0'
+          await this.$api.orders.orderCertificate1Edit({ form: this.form })
+          // 新增單據
+          this.form.Status = '1'
+          const responseRetakeID = await this.$api.orders.orderCertificate1New({ form: this.form })
+          if (responseRetakeID.headers['code'] === '200') {
+            this.$alert(responseRetakeID.data.result[0].message, responseRetakeID.data.result[0].code)
+            isSuccess = true
+          }
+          break
       }
 
       if (isSuccess) {
@@ -238,6 +251,20 @@ export default {
       this.$api.reports.certificate1ToExcel({ Certificate1: this.form.Certificate1 })
 
       this.form.PrintCount += 1
+    },
+    // 重新取號
+    retakeID: async function () {
+      let answerAction = await messageBoxYesNo(this.$t('__retakeID') + '：' + this.$t('__certificate1') + '<br/>' + this.$t('__retakeIDWarning'), this.$t('__retakeID'))
+
+      switch (answerAction) {
+        case 'confirm':
+          this.save('retakeID')
+          break
+        case 'cancel':
+          break
+        case 'close':
+          break
+      }
     }
   }
 }

@@ -4,7 +4,7 @@
     <el-form ref="form" :model="form" :rules="rules" label-width="10vw" label-position="right">
       <el-form-item :label="$t('__orderID')+'：'">
         <el-col :span="4">
-          <el-input v-model="form.ID" :placeholder="$t('__afterSaveWillShow')" autocomplete="off" :disabled="disableForm.ID"></el-input>
+          <el-input v-model="form.ID" :placeholder="$t('__afterSaveWillShow')" :disabled="disableForm.ID"></el-input>
         </el-col>
         <el-col :span="6">
           <el-form-item :label="$t('__status')">
@@ -154,7 +154,7 @@
       </el-table>
       </template>
       <template v-else>
-        {{$t('__orderDetailWarrning')}}
+        <span v-html="$t('__orderDetailWarrning')"></span>
       </template>
     <div slot="footer" class="dialog-footer">
       <br/>
