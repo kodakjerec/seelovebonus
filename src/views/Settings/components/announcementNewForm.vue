@@ -1,5 +1,5 @@
 <template>
-  <el-dialog :title="myTitle" :visible="dialogShow" center width="80%" @close="cancel">
+  <el-dialog :title="myTitle" :visible="dialogShow" center width="80vw" @close="cancel">
     <el-form ref="form" :model="form" :rules="rules" label-width="10vw">
       <el-form-item :label="$t('__announcement')+$t('__startDate')" required>
         <el-col :span="10">

@@ -129,6 +129,7 @@ export default {
   __carrierNumber: '載具號碼',
   __memo: '備註',
   __certificate1: '越南供奉憑證編號',
+  __certificate1Prefix: '編號依據',
   __certificate2: '展雲換狀證明編號',
   __printCount: '列印次數',
   __createDate: '建立日期',

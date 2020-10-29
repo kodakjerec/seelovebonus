@@ -1,24 +1,24 @@
 <template>
-  <el-dialog :title="myTitle" :visible="dialogShow" center width="80%" @close="cancel">
-    <el-form ref="form" :model="form" :rules="rules">
-      <el-form-item :label="$t('__orderID')" label-width="100px" label-position="left">
+  <el-dialog :title="myTitle" :visible="dialogShow" center width="80vw" @close="cancel">
+    <el-form ref="form" :model="form" :rules="rules" label-width="10vw" label-position="right">
+      <el-form-item :label="$t('__orderID')">
           <el-input v-model="form.OrderID" :disabled="disableForm.OrderID"></el-input>
       </el-form-item>
-      <el-form-item :label="$t('__certificate2')" label-width="100px" label-position="left">
+      <el-form-item :label="$t('__certificate2')">
           <el-input v-model="form.Certificate2" :placeholder="$t('__afterSaveWillShow')" :disabled="disableForm.Certificate2"></el-input>
       </el-form-item>
-      <el-form-item :label="$t('__printCount')" label-width="100px" label-position="left">
+      <el-form-item :label="$t('__printCount')">
           <el-input-number v-model="form.PrintCount" :disabled="disableForm.PrintCount"></el-input-number>
       </el-form-item>
-      <el-form-item :label="$t('__status')" label-width="100px" label-position="left">
-          <el-select v-model="form.Status" value-key="value" :placeholder="$t('__plzChoice')" :disabled="disableForm.Status">
+      <el-form-item :label="$t('__status')">
+        <el-select v-model="form.Status" value-key="value" :placeholder="$t('__plzChoice')" :disabled="disableForm.Status">
           <el-option v-for="item in ddlStatus" :key="item.ID" :label="item.Value" :value="item.ID">
             <span style="float: left">{{ item.Value }}</span>
             <span style="float: right; color: #8492a6; font-size: 13px">{{ item.ID }}</span>
           </el-option>
         </el-select>
       </el-form-item>
-      <el-form-item :label="$t('__createDate')" label-width="100px" label-position="left">
+      <el-form-item :label="$t('__createDate')">
           <el-date-picker
             v-model="form.CreateDate"
             type="date"

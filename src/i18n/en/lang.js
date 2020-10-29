@@ -129,6 +129,7 @@ export default {
   __carrierNumber: 'Carrier number',
   __memo: 'Memo',
   __certificate1: 'Consecration certificate',
+  __certificate1Prefix: 'Prefix',
   __certificate2: 'Proof of change',
   __printCount: 'Print count',
   __createDate: 'Create Date',

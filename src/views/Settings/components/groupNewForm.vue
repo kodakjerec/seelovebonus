@@ -1,5 +1,5 @@
 <template>
-  <el-dialog :title="myTitle" :visible="dialogShow" center width="80%" @close="cancel">
+  <el-dialog :title="myTitle" :visible="dialogShow" center width="80vw" @close="cancel">
     <el-form :model="form" label-width="10vw">
       <el-form-item :label="$t('__groups')" required>
         <el-input v-model="form.GroupID" autocomplete="off" :disabled="disableForm.GroupID" maxlength="20" show-word-limit></el-input>

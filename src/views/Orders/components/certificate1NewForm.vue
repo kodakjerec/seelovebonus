@@ -1,16 +1,25 @@
 <template>
-  <el-dialog :title="myTitle" :visible="dialogShow" center width="80%" @close="cancel">
-    <el-form ref="form" :model="form" :rules="rules">
-      <el-form-item :label="$t('__orderID')" label-width="100px" label-position="left">
+  <el-dialog :title="myTitle" :visible="dialogShow" center width="80vw" @close="cancel">
+    <el-form ref="form" :model="form" :rules="rules" label-width="10vw" label-position="right">
+      <el-form-item :label="$t('__orderID')">
           <el-input v-model="form.OrderID" :disabled="disableForm.OrderID"></el-input>
       </el-form-item>
-      <el-form-item :label="$t('__certificate1')" label-width="100px" label-position="left">
-          <el-input v-model="form.Certificate1" :placeholder="$t('__afterSaveWillShow')" :disabled="disableForm.Certificate1"></el-input>
+      <el-form-item :label="$t('__certificate1Prefix')">
+        <el-select v-model="form.Prefix" value-key="value" :placeholder="$t('__plzChoice')" :disabled="disableForm.Prefix">
+          <el-option v-for="item in ddlPrefix" :key="item.ID" :label="item.Value" :value="item.ID">
+            <span style="float: left">{{ item.Value }}</span>
+            <span style="float: right; color: #8492a6; font-size: 13px">{{ item.ID }}</span>
+          </el-option>
+        </el-select>
+        <span>{{form.Prefix}}</span>
       </el-form-item>
-      <el-form-item :label="$t('__printCount')" label-width="100px" label-position="left">
+      <el-form-item :label="$t('__certificate1')">
+        <el-input v-model="form.Certificate1" :placeholder="$t('__afterSaveWillShow')" :disabled="disableForm.Certificate1"></el-input>
+      </el-form-item>
+      <el-form-item :label="$t('__printCount')">
           <el-input-number v-model="form.PrintCount" :disabled="disableForm.PrintCount"></el-input-number>
       </el-form-item>
-      <el-form-item :label="$t('__status')" label-width="100px" label-position="left">
+      <el-form-item :label="$t('__status')">
         <el-select v-model="form.Status" value-key="value" :placeholder="$t('__plzChoice')" :disabled="disableForm.Status">
           <el-option v-for="item in ddlStatus" :key="item.ID" :label="item.Value" :value="item.ID">
             <span style="float: left">{{ item.Value }}</span>
@@ -18,7 +27,7 @@
           </el-option>
         </el-select>
       </el-form-item>
-      <el-form-item :label="$t('__createDate')" label-width="100px" label-position="left">
+      <el-form-item :label="$t('__createDate')">
           <el-date-picker
             v-model="form.CreateDate"
             type="date"
@@ -26,7 +35,7 @@
             :disabled="disableForm.CreateDate">
           </el-date-picker>
       </el-form-item>
-      <el-form-item label="Duration" label-width="100px" label-position="left">
+      <el-form-item label="Duration">
         <el-select v-model="form.ReportDuration" :placeholder="$t('__plzChoice')" :disabled="disableForm.Status">
           <el-option v-for="item in ddlReportDuration" :key="item.ID" :label="item.Value" :value="item.ID">
             <span style="float: left">{{ item.Value }}</span>
@@ -75,7 +84,8 @@ export default {
         PrintCount: 0,
         Status: '1',
         CreateDate: new Date(),
-        ReportDuration: '1'
+        ReportDuration: '1',
+        Prefix: ''
       },
       rules: {
         Certificate1: [{ required: true, message: this.$t('__pleaseInput'), trigger: 'blur' }]
@@ -93,14 +103,16 @@ export default {
         Certificate1: true,
         PrintCount: true,
         Status: false,
-        CreateDate: false
+        CreateDate: false,
+        Prefix: false
       },
       myTitle: '',
       reportPath: 'reports_Certificate1ToExcel',
       reportParams: {},
       // 以下為下拉式選單專用
       ddlStatus: [],
-      ddlReportDuration: []
+      ddlReportDuration: [],
+      ddlPrefix: []
     }
   },
   mounted () {
@@ -112,6 +124,7 @@ export default {
       let tempDate = new Date()
       this.form.CreateDate = this.formatterDate(null, null, tempDate.toISOString().slice(0, 10), null)
       this.form.ReportDuration = this.certificate1.ReportDuration
+      this.form.Prefix = this.certificate1.Prefix
     }
 
     switch (this.dialogType) {
@@ -127,7 +140,8 @@ export default {
         break
       case 'edit':
         this.myTitle = this.$t('__edit') + this.$t('__certificate1')
-        this.disableForm.Certificate1 = true
+        this.disableForm.Prefix = true
+        this.disableForm.CreateDate = true
         if (this.form.Status === '0') {
           this.buttonsShow = {
             new: 0,
@@ -159,6 +173,10 @@ export default {
       this.ddlReportDuration = response2.data.result
       const response3 = await this.$api.basic.getDropdownList({ type: 'status' })
       this.ddlStatus = response3.data.result
+
+      const response4 = await this.$api.orders.getDropdownList({ type: 'certificate1Prefix' })
+      this.ddlPrefix = response4.data.result
+      this.form.Prefix = this.ddlPrefix[0].ID
     },
     // 檢查輸入
     checkValidate: async function () {

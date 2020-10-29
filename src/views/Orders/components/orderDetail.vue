@@ -77,7 +77,8 @@ export default {
     dialogType: { type: String, default: 'new' },
     orderID: { type: String },
     projectID: { type: String },
-    orderDetail: { type: Array }
+    orderDetail: { type: Array },
+    parentQty: { type: Number }
   },
   data () {
     return {
@@ -107,6 +108,9 @@ export default {
     },
     orderDetail: function (newValue) {
       this.subList = JSON.parse(JSON.stringify(newValue))
+    },
+    parentQty: function () {
+      this.parentQtyChange()
     }
   },
   mounted () {
@@ -231,10 +235,10 @@ export default {
       }
     },
     // 父視窗:變更明細商品數量, 只變更專案商品
-    parentQtyChange: function (newQtyPlus) {
+    parentQtyChange: function () {
       this.subList.forEach(item => {
         if (item.ItemType === 0) {
-          item.Qty = item.QtyOrigin * newQtyPlus
+          item.Qty = item.QtyOrigin * this.parentQty
         }
       })
     },

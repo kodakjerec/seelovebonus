@@ -1,5 +1,5 @@
 <template>
-  <el-dialog :title="myTitle" :visible="dialogShow" center width="80%" @close="cancel">
+  <el-dialog :title="myTitle" :visible="dialogShow" center width="80vw" @close="cancel">
     <el-form ref="form" :model="form" :rules="rules" label-width="10vw" label-position="right">
       <el-form-item :label="$t('__paymentMethod')" prop="PaymentMethod">
         <el-select v-model="form.PaymentMethod" value-key="value" :placeholder="$t('__plzChoice')" :disabled="disableForm.PaymentMethod">
@@ -14,10 +14,10 @@
       <method3 ref="method3" v-if="form.PaymentMethod === '3'" :form="form" :disableForm="disableForm"></method3>
       <method4 ref="method4" v-if="form.PaymentMethod === '4'" :form="form" :disableForm="disableForm" :ddlBankID="ddlBankID"></method4>
       <method5 ref="method5" v-if="form.PaymentMethod === '5'" :form="form" :disableForm="disableForm" :ddlBankID="ddlBankID"></method5>
-      <el-form-item :label="$t('__memo')" label-width="100px" label-position="left">
+      <el-form-item :label="$t('__memo')">
           <el-input v-model="form.Memo" autocomplete="off" maxlength="200" show-word-limit></el-input>
       </el-form-item>
-      <el-form-item :label="$t('__invoice')+$t('__number')" label-width="100px" label-position="left">
+      <el-form-item :label="$t('__invoice')+$t('__number')">
           <el-input v-model="form.InvoiceID" autocomplete="off" maxlength="200" show-word-limit disabled></el-input>
       </el-form-item>
       <el-form-item :label="$t('__received')+$t('__operator')" prop="ReceivedID">
