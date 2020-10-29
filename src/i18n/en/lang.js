@@ -176,5 +176,6 @@ export default {
   __pleaseInputInvoiceID: 'Style: AB12345678',
   __pleaseSelectAtLeastOne: 'Select at least one ',
   __pleaseInputSearchValue: 'Please input search content',
-  __valueUsed: ' already used'
+  __valueUsed: ' already used',
+  __exceedQtyLimit: '超出數值上限'
 }

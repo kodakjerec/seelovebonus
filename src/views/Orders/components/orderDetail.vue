@@ -36,9 +36,9 @@
     <el-table-column
       prop="Qty"
       :label="$t('__qty')"
-      width="100px">
+      width="200px">
       <template slot-scope="scope">
-        <el-input v-if="dialogType === 'new' && scope.row.ItemType === 1" v-model.number="scope.row[scope.column.property]" @change="(value)=>{qtyChange(value, scope.row)}"></el-input>
+        <el-input-number v-if="dialogType === 'new' && scope.row.ItemType === 1" v-model.number="scope.row[scope.column.property]" @change="(currentValue, oldValue)=>{qtyChange(currentValue, oldValue, scope.row)}"></el-input-number>
         <div v-else>
           {{scope.row.Qty}}
         </div>
@@ -133,7 +133,7 @@ export default {
         let uploadResult = 0
         let row = finalResult[index]
         // 錯誤處理
-        if (row.OrderID === '') {
+        if (row.OrderID === '' || row.Qty === 0) {
           continue
         }
         // 開始更新
@@ -229,7 +229,7 @@ export default {
       }
     },
     // 變更明細商品數量
-    qtyChange: function (selected, row) {
+    qtyChange: function (currentValue, oldValue, row) {
       if (row.Status === '') {
         row.Status = 'Modified'
       }

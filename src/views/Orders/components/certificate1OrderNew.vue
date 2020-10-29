@@ -18,10 +18,11 @@
         prop="qty"
         :label="$t('__qty')">
         <template slot-scope="scope">
-          <el-input-number v-model="scope.row[scope.column.property]"></el-input-number>
+          <el-input-number v-model="scope.row[scope.column.property]" @change="(currentValue, oldValue)=>{qtyChange(currentValue, oldValue, scope.row)}"></el-input-number>
         </template>
       </el-table-column>
     </el-table>
+    <div style="color:red" v-show="isExceedQtyLimit">{{$t('__exceedQtyLimit')}}</div>
   </el-form>
 </template>
 
@@ -43,7 +44,8 @@ export default {
         ReportDuration: '1',
         Prefix: ''
       },
-      certificate1List: []
+      certificate1List: [],
+      isExceedQtyLimit: false
     }
   },
   watch: {
@@ -69,29 +71,63 @@ export default {
 
       this.parentQtyChange()
     },
-    // 父視窗:變更明細商品數量, 只變更專案商品
-    parentQtyChange: function (newQty) {
-      let index = 0
-      let tempList = JSON.parse(JSON.stringify(this.certificate1List))
-      this.certificate1List = []
+    // 更改數量
+    qtyChange: function (currentValue, oldValue, row) {
+      // 檢查總和數量有沒有超出上限
+      let count = 0
+      this.certificate1List.forEach(row => {
+        count += row.qty
+      })
 
-      tempList.forEach(row => {
+      // 超過了, 彈出警示訊息
+      // (回復舊數值發現前端不會跟著更新, 因此不採用)
+      if (count > this.parentQty) {
+        this.$message({
+          message: this.$t('__exceedQtyLimit'),
+          type: 'warning'
+        })
+        this.isExceedQtyLimit = true
+      } else {
+        this.isExceedQtyLimit = false
+      }
+    },
+    // 父視窗: 變更明細商品數量
+    parentQtyChange: function () {
+      let index = 0
+
+      this.certificate1List.forEach(row => {
         if (index === 0) {
           row.qty = this.parentQty
         } else {
           row.qty = 0
         }
 
-        // 強制觸發vue.js更新機制
-        this.certificate1List.push(row)
-
         index++
       })
+
+      this.refreshList()
+    },
+    // 強制觸發vue.js更新機制
+    refreshList: function () {
+      let tempList = JSON.parse(JSON.stringify(this.certificate1List))
+      this.certificate1List = []
+
+      tempList.forEach(row => {
+        this.certificate1List.push(row)
+      })
+    },
+    // 檢查輸入
+    checkValidate: function () {
+      // 錯誤處理: 檢查總和數量有沒有超出上限
+      if (this.isExceedQtyLimit) {
+        return false
+      }
+      return true
     },
     beforeSave: function () {
-      // 錯誤處理
+      // 錯誤處理: 沒有單號
       if (this.form.OrderID === '') {
-        return
+        return false
       }
 
       this.certificate1List.forEach(row => {
@@ -100,6 +136,8 @@ export default {
           this.save(this.form)
         }
       })
+
+      return true
     },
     // 存檔
     save: async function (item) {

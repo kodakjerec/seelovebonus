@@ -176,5 +176,6 @@ export default {
   __pleaseInputInvoiceID: '格式: AB12345678',
   __pleaseSelectAtLeastOne: '請至少選擇一筆 ',
   __pleaseInputSearchValue: '請輸入查詢數值',
-  __valueUsed: ' 已被使用'
+  __valueUsed: ' 已被使用',
+  __exceedQtyLimit: '超出數值上限'
 }

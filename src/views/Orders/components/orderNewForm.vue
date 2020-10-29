@@ -61,9 +61,9 @@
         <el-table-column
           prop="Qty"
           :label="$t('__qty')"
-          width="100px">
+          width="200px">
           <template slot-scope="scope">
-            <el-input v-model.number="scope.row[scope.column.property]" @change="(value)=>{qtyChange(value, scope.row)}" :disabled="disableForm.Qty"></el-input>
+            <el-input-number v-model="scope.row[scope.column.property]" @change="(currentValue, oldValue)=>{qtyChange(currentValue, oldValue, scope.row)}" :disabled="disableForm.Qty"></el-input-number>
           </template>
         </el-table-column>
         <el-table-column
@@ -344,17 +344,26 @@ export default {
       // 填入 orderDetail
       this.$refs['orderDetail'].parentResetItems(projectDetail)
     },
-    qtyChange: function (selected, row) {
+    qtyChange: function (currentValue, oldValue, row) {
       // 填入 orderHead
-      this.form.Qty = parseInt(selected)
       this.form.Amount = this.form.Price * this.form.Qty
     },
     // 檢查輸入
     checkValidate: async function () {
-      // 檢查客戶資訊
       let isSuccess = false
-      isSuccess = await this.$refs['orderCustomer'].checkValidate()
-      if (!isSuccess) { return }
+
+      // 新增訂單才會使用到
+      switch (this.dialogType) {
+        case 'new':
+          // 檢查客戶資訊
+          isSuccess = await this.$refs['orderCustomer'].checkValidate()
+          if (!isSuccess) { return }
+
+          // 檢查供奉憑證資訊
+          isSuccess = await this.$refs['certificate1OrderNew'].checkValidate()
+          if (!isSuccess) { return }
+          break
+      }
 
       // 檢查主表單
       await this.$refs['form'].validate((valid) => { isSuccess = valid })
