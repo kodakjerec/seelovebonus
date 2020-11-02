@@ -39,6 +39,10 @@
         :label="$t('__price')"
         :formatter="formatterMoney">
       </el-table-column>
+      <el-table-column
+        prop="PV"
+        :label="$t('__pv')">
+      </el-table-column>
     </el-table>
     <new-form
     v-if="dialogShow"

@@ -14,14 +14,14 @@
         prop="Price"
         :label="$t('__sumOfBusinessMin')">
         <template slot-scope="scope">
-          <el-input v-model.number="scope.row[scope.column.property]" @change="(value)=>{priceChange(value, scope.row)}" :disabled="!buttonsShowUser.save"></el-input>
+          <el-input-number v-model="scope.row[scope.column.property]" :min="0" @change="(currentValue, oldValue)=>{priceChange(currentValue, oldValue, scope.row)}" :disabled="!buttonsShowUser.save"></el-input-number>
         </template>
       </el-table-column>
       <el-table-column
         prop="Percentage"
         :label="$t('__superBonus')+$t('__percentage')+'(%)'">
         <template slot-scope="scope">
-          <el-input v-model="scope.row[scope.column.property]" autocomplete="off" @change="(value)=>{percentageChange(value, scope.row)}" :disabled="!buttonsShowUser.save"></el-input>
+          <el-input-number v-model="scope.row[scope.column.property]" :precision="2" :min="0" @change="(currentValue, oldValue)=>{percentageChange(currentValue, oldValue, scope.row)}" :disabled="!buttonsShowUser.save"></el-input-number>
         </template>
       </el-table-column>
       <el-table-column
@@ -179,12 +179,12 @@ export default {
       this.subList.splice(index, 1)
     },
     // 下拉式選擇商品
-    priceChange: function (selected, row) {
+    priceChange: function (currentValue, oldValue, row) {
       if (row.Status === '') {
         row.Status = 'Modified'
       }
     },
-    percentageChange: function (selected, row) {
+    percentageChange: function (currentValue, oldValue, row) {
       if (row.Status === '') {
         row.Status = 'Modified'
       }
