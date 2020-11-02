@@ -30,7 +30,12 @@
         </el-col>
       </el-form-item>
       <el-form-item :label="$t('__price')">
-          <el-input v-model.number="form.Price"></el-input>
+          <el-input-number v-model.number="form.Price" :min="0"></el-input-number>
+          <span>{{$t('__dollar')}}</span>
+      </el-form-item>
+      <el-form-item :label="$t('__pv')">
+          <el-input-number v-model.number="form.PV" :precision="2" :min="0"></el-input-number>
+          <span>{{$t('__100PercentInput100')}}</span>
       </el-form-item>
       <template v-if="dialogType!=='new'">
         <el-divider>{{$t('__project')+$t('__detail')}}</el-divider>
@@ -65,7 +70,8 @@ export default {
         Name: '',
         StartDate: '',
         EndDate: '',
-        Price: 0
+        Price: 0,
+        PV: 100
       },
       rules: {
         ID: [{ required: true, message: this.$t('__pleaseInput'), trigger: 'blur' }],

@@ -78,6 +78,7 @@ export default {
   __price: '價格',
   __cost: '成本',
   __amount: '金額',
+  __dollar: '元',
   __total: '總',
   __tax: '稅額',
   __taxIncluded: '含稅額',
@@ -156,6 +157,7 @@ export default {
   __caption: '說明文字',
   __deleteOrder: '刪除訂購單！<br/>有供奉憑證、付款資訊、發票紀錄，將無法刪除。',
   __invalidOrder: '作廢訂購單！<br/>有付款資訊、發票紀錄，將無法作廢。',
+  __pv: 'PV',
   // 請在上方新增字串
   // 以下為錯誤處理專用
   __error400: '無法理解請求',
@@ -177,5 +179,6 @@ export default {
   __pleaseSelectAtLeastOne: '請至少選擇一筆 ',
   __pleaseInputSearchValue: '請輸入查詢數值',
   __valueUsed: ' 已被使用',
-  __exceedQtyLimit: '超出數值上限'
+  __exceedQtyLimit: '超出數值上限',
+  __100PercentInput100: '100%請輸入"100"'
 }

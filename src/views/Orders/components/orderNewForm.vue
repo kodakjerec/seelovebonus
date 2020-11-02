@@ -61,7 +61,7 @@
         <el-table-column
           prop="Qty"
           :label="$t('__qty')"
-          width="200px">
+          width="210px">
           <template slot-scope="scope">
             <el-input-number v-model="scope.row[scope.column.property]" @change="(currentValue, oldValue)=>{qtyChange(currentValue, oldValue, scope.row)}" :disabled="disableForm.Qty"></el-input-number>
           </template>

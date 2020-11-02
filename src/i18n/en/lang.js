@@ -78,6 +78,7 @@ export default {
   __price: 'Price',
   __cost: 'Cost',
   __amount: 'Amount',
+  __dollar: 'dollar',
   __total: 'Total',
   __tax: 'Tax',
   __taxIncluded: 'Tax(Included)',
@@ -156,6 +157,7 @@ export default {
   __caption: 'Caption',
   __deleteOrder: 'Delete Order!<br/>If there are "consecration certificates","payments","invoices". That can\'t be deleted.',
   __invalidOrder: 'Invalid Order!<br/>If there are "payments","invoices". That can\'t be invalided.',
+  __pv: 'PV',
   // 請在上方新增字串
   // 以下為錯誤處理專用
   __error400: 'Bad Request',
@@ -177,5 +179,6 @@ export default {
   __pleaseSelectAtLeastOne: 'Select at least one ',
   __pleaseInputSearchValue: 'Please input search content',
   __valueUsed: ' already used',
-  __exceedQtyLimit: '超出數值上限'
+  __exceedQtyLimit: 'Value limit exceeded',
+  __100PercentInput100: '100% please enter "100"'
 }

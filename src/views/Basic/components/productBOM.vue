@@ -26,9 +26,9 @@
         <el-table-column
           prop="Qty"
           :label="$t('__qty')"
-          width="100px">
+          width="210px">
           <template slot-scope="scope">
-            <el-input v-model.number="scope.row[scope.column.property]" @change="(value)=>{qtyChange(value, scope.row)}"></el-input>
+            <el-input-number v-model="scope.row[scope.column.property]" :min="0" @change="(currentValue, oldValue)=>{qtyChange(currentValue, oldValue, scope.row)}"></el-input-number>
           </template>
         </el-table-column>
         <el-table-column
@@ -193,7 +193,7 @@ export default {
         row.Status = 'Modified'
       }
     },
-    qtyChange: function (selected, row) {
+    qtyChange: function (currentValue, oldValue, row) {
       if (row.Status === '') {
         row.Status = 'Modified'
       }

@@ -17,7 +17,7 @@
       </el-form-item>
       <el-form-item :label="$t('__qty')">
         <el-col :span="10">
-          <el-input v-model.number="form.Qty" autocomplete="off"></el-input>
+          <el-input-number v-model.number="form.Qty" :min="0"></el-input-number>
         </el-col>
         <el-col :span="14">
           <el-form-item :label="$t('__unit')" prop="Unit">
@@ -32,11 +32,13 @@
       </el-form-item>
       <el-form-item :label="$t('__price')">
         <el-col :span="10">
-          <el-input v-model.number="form.Price" autocomplete="off"></el-input>
+          <el-input-number v-model.number="form.Price" :min="0"></el-input-number>
+          <span>{{$t('__dollar')}}</span>
         </el-col>
         <el-col :span="14">
           <el-form-item :label="$t('__cost')">
-            <el-input v-model.number="form.Cost" autocomplete="off"></el-input>
+            <el-input-number v-model.number="form.Cost" :min="0"></el-input-number>
+            <span>{{$t('__dollar')}}</span>
           </el-form-item>
         </el-col>
       </el-form-item>
