@@ -3,7 +3,7 @@
     <div class="header">
       {{$t('__announcement')}}
     </div>
-    <el-collapse v-model="activeName" accordion>
+    <el-collapse v-model="activeNames">
       <template v-for="(item, keyIndex) in list">
         <el-collapse-item :name="item.ID" :key="keyIndex">
           <template slot="title">
@@ -24,7 +24,7 @@ export default {
   name: 'Announcement',
   data () {
     return {
-      activeName: '1',
+      activeNames: [],
       list: []
     }
   },
@@ -39,10 +39,11 @@ export default {
       const responseRecords = await this.$api.settings.getDropdownList({ type: 'announcement' })
       this.list = responseRecords.data.result
       if (this.list.length > 0) {
-        this.activeName = this.list[0].ID
-
         // 替換\n => <br/>
         this.list.forEach(item => {
+          if (item.Active === 1) {
+            this.activeNames.push(item.ID)
+          }
           item.Text = newLineToBr(item.Text)
           item.Text = spaceToNBSP(item.Text)
         })
