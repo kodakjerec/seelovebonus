@@ -386,9 +386,9 @@ export default {
       switch (this.dialogType) {
         case 'new':
           let isSuccess = await this.save(this.dialogType)
-          this.$refs['orderDetail'].beforeSave()
-          this.$refs['orderCustomer'].save()
-          this.$refs['certificate1OrderNew'].beforeSave() // 新增訂單才會出現
+          await this.$refs['orderDetail'].beforeSave()
+          await this.$refs['orderCustomer'].save()
+          await this.$refs['certificate1OrderNew'].beforeSave() // 新增訂單才會出現
           if (isSuccess) {
             this.$alert(this.updateMessage, 200, {
               callback: () => {
@@ -404,8 +404,8 @@ export default {
           break
         case 'edit':
           let isSuccessEdit = await this.save(this.dialogType)
-          this.$refs['orderDetail'].beforeSave()
-          this.$refs['orderCustomer'].save()
+          await this.$refs['orderDetail'].beforeSave()
+          await this.$refs['orderCustomer'].save()
           if (isSuccessEdit) {
             this.$alert(this.updateMessage, 200, {
               callback: () => {

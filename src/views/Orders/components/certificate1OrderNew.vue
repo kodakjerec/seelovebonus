@@ -124,18 +124,19 @@ export default {
       }
       return true
     },
-    beforeSave: function () {
+    beforeSave: async function () {
       // 錯誤處理: 沒有單號
       if (this.form.OrderID === '') {
         return false
       }
 
-      this.certificate1List.forEach(row => {
+      for (let index = 0; index < this.certificate1List.length; index++) {
+        let row = this.certificate1List[index]
         this.form.Prefix = row.ID
         for (let i = 0; i < row.qty; i++) {
-          this.save(this.form)
+          await this.save(this.form)
         }
-      })
+      }
 
       return true
     },
