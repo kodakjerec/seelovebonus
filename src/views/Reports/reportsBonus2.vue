@@ -122,7 +122,6 @@ export default {
         locale: strLocale,
         StartDate: this.form.StartDate,
         EndDate: this.form.EndDate,
-        DefaultProjectID: this.form.ProjectID,
         CompanyID: this.form.CompanyID,
         MasterName: this.form.CompanyName,
         ProjectName: this.form.ProjectName }
