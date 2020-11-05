@@ -21,7 +21,7 @@ export default {
         edgeShape: 'polyline', // 線條是直角線
         expandAndCollapse: false, // 點一下展開或摺疊
         label: { // 標籤
-          fontSize: 24 // 文字大小
+          fontSize: 20 // 文字大小
         },
         itemStyle: { // 節點的背景方塊
           color: '#FFFFFF',
@@ -90,7 +90,7 @@ export default {
         let nextLevel = parseInt(data.Level) + 1
         let childrenList = this.findChildrens(data.ID, nextLevel)
         returnData.push({
-          name: data.Name,
+          name: data.Name + '\n(' + data.Percentage + ')',
           value: parseInt(data.Seq),
           children: childrenList
         })
