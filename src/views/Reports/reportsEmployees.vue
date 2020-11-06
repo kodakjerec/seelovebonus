@@ -21,7 +21,7 @@
           :params="reportParams"></iframeReportingService>
       </el-tab-pane>
       <el-tab-pane :label="$t('__graphical')" name="second">
-        <eChart2 :companyID="form.CompanyID" ></eChart2>
+        <eChart2 :companyID="form.CompanyID" :companyNickname="form.CompanyNickname" ></eChart2>
       </el-tab-pane>
     </el-tabs>
   </div>
@@ -42,11 +42,12 @@ export default {
   data () {
     return {
       form: {
-        CompanyID: ''
+        CompanyID: '',
+        CompanyNickname: ''
       },
       reportPath: 'reports_Employees',
       reportParams: {},
-      activeName: 'first',
+      activeName: 'second',
       // 以下為下拉式選單專用
       ddlCompanies: [],
       // 使用者能看到的權限
@@ -59,8 +60,8 @@ export default {
       }
     }
   },
-  mounted () {
-    this.preLoading()
+  async mounted () {
+    await this.preLoading()
     this.userPermission()
     this.findCompany('83799375')
   },
@@ -81,6 +82,7 @@ export default {
     // canvas 點公司
     findCompany: function (value) {
       this.form.CompanyID = value
+      this.form.CompanyNickname = this.ddlCompanies.find(item => { return item.ID === value }).Nickname
       this.print()
     },
     // SSRS列印

@@ -7,7 +7,8 @@ import echarts from 'echarts'
 export default {
   name: 'reportsEmployeesEChart2',
   props: {
-    companyID: { type: String }
+    companyID: { type: String },
+    companyNickname: { type: String }
   },
   data () {
     return {
@@ -17,9 +18,9 @@ export default {
         data: null,
         orient: 'vertical', // 垂直
         symbol: 'roundRect', // 圓角矩形
-        symbolSize: 36, // 矩形大小
+        symbolSize: [30, 70], // 矩形大小
         edgeShape: 'polyline', // 線條是直角線
-        expandAndCollapse: false, // 點一下展開或摺疊
+        expandAndCollapse: true, // 點一下展開或摺疊
         label: { // 標籤
           fontSize: 20 // 文字大小
         },
@@ -39,7 +40,7 @@ export default {
   },
   watch: {
     companyID: async function (value) {
-      this.treeData.name = value
+      this.treeData.name = value + '\n' + this.companyNickname
       await this.preLoading()
 
       const option = {
@@ -89,8 +90,12 @@ export default {
       dataList.forEach(data => {
         let nextLevel = parseInt(data.Level) + 1
         let childrenList = this.findChildrens(data.ID, nextLevel)
+        let labelName = data.Percentage
+        data.Name.split('').forEach(char => {
+          labelName += '\n' + char
+        })
         returnData.push({
-          name: data.Name + '\n(' + data.Percentage + ')',
+          name: labelName,
           value: parseInt(data.Seq),
           children: childrenList
         })
