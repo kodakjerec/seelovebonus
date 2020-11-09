@@ -18,12 +18,11 @@
           </el-option>
         </el-select>
       </el-form-item>
-      <el-form-item :label="$t('__createDate')">
+      <el-form-item :label="$t('__issuanceDate')">
           <el-date-picker
-            v-model="form.CreateDate"
+            v-model="form.IssuanceDate"
             type="date"
-            value-format="yyyy-MM-dd"
-            :disabled="disableForm.CreateDate">
+            value-format="yyyy-MM-dd">
           </el-date-picker>
       </el-form-item>
     </el-form>
@@ -66,7 +65,7 @@ export default {
         Certificate2: '',
         PrintCount: 0,
         Status: '1',
-        CreateDate: new Date()
+        IssuanceDate: new Date()
       },
       rules: {
         Certificate2: [{ required: true, message: this.$t('__pleaseInput'), trigger: 'blur' }]
@@ -83,8 +82,7 @@ export default {
         OrderID: true,
         Certificate2: true,
         PrintCount: true,
-        Status: false,
-        CreateDate: false
+        Status: false
       },
       myTitle: '',
       reportPath: 'reports_Certificate2ToExcel',
@@ -96,7 +94,9 @@ export default {
   mounted () {
     if (Object.keys(this.certificate2).length > 0) {
       this.form = JSON.parse(JSON.stringify(this.certificate2))
-      this.form.CreateDate = this.formatterDate(null, null, this.form.CreateDate, null)
+    } else {
+      let tempDate = new Date()
+      this.form.IssuanceDate = this.formatterDate(null, null, tempDate.toISOString().slice(0, 10), null)
     }
 
     switch (this.dialogType) {

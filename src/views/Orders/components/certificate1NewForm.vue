@@ -27,12 +27,11 @@
           </el-option>
         </el-select>
       </el-form-item>
-      <el-form-item :label="$t('__createDate')">
+      <el-form-item :label="$t('__issuanceDate')">
           <el-date-picker
-            v-model="form.CreateDate"
+            v-model="form.IssuanceDate"
             type="date"
-            value-format="yyyy-MM-dd"
-            :disabled="disableForm.CreateDate">
+            value-format="yyyy-MM-dd">
           </el-date-picker>
       </el-form-item>
       <el-form-item label="Duration">
@@ -83,9 +82,9 @@ export default {
         Certificate1: null,
         PrintCount: 0,
         Status: '1',
-        CreateDate: new Date(),
         ReportDuration: '1',
-        Prefix: ''
+        Prefix: '',
+        IssuanceDate: new Date()
       },
       rules: {
         Certificate1: [{ required: true, message: this.$t('__pleaseInput'), trigger: 'blur' }]
@@ -103,7 +102,6 @@ export default {
         Certificate1: true,
         PrintCount: true,
         Status: false,
-        CreateDate: false,
         Prefix: false
       },
       myTitle: '',
@@ -117,14 +115,10 @@ export default {
   },
   mounted () {
     if (Object.keys(this.certificate1).length > 0) {
-      this.form.OrderID = this.certificate1.OrderID
-      this.form.Certificate1 = this.certificate1.Certificate1
-      this.form.PrintCount = this.certificate1.PrintCount
-      this.form.Status = this.certificate1.Status
+      this.form = JSON.parse(JSON.stringify(this.certificate1))
+    } else {
       let tempDate = new Date()
-      this.form.CreateDate = this.formatterDate(null, null, tempDate.toISOString().slice(0, 10), null)
-      this.form.ReportDuration = this.certificate1.ReportDuration
-      this.form.Prefix = this.certificate1.Prefix
+      this.form.IssuanceDate = this.formatterDate(null, null, tempDate.toISOString().slice(0, 10), null)
     }
 
     switch (this.dialogType) {
@@ -141,7 +135,6 @@ export default {
       case 'edit':
         this.myTitle = this.$t('__edit') + this.$t('__certificate1')
         this.disableForm.Prefix = true
-        this.disableForm.CreateDate = true
         if (this.form.Status === '0') {
           this.buttonsShow = {
             new: 0,

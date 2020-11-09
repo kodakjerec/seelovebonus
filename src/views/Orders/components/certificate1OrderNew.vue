@@ -27,6 +27,8 @@
 </template>
 
 <script>
+import { formatDate } from '@/setup/format.js'
+
 export default {
   name: 'Certificate1ForOrderNew',
   props: {
@@ -40,9 +42,9 @@ export default {
         Certificate1: '',
         PrintCount: 0,
         Status: '1',
-        CreateDate: new Date(),
         ReportDuration: '1',
-        Prefix: ''
+        Prefix: '',
+        IssuanceDate: new Date()
       },
       certificate1List: [],
       isExceedQtyLimit: false
@@ -59,9 +61,15 @@ export default {
     }
   },
   mounted () {
+    let tempDate = new Date()
+    this.form.IssuanceDate = this.formatterDate(null, null, tempDate.toISOString().slice(0, 10), null)
+
     this.preLoading()
   },
   methods: {
+    formatterDate: function (row, column, cellValue, index) {
+      return formatDate(cellValue)
+    },
     preLoading: async function () {
       // 新增時憑證編號清單
       const responseCer1List = await this.$api.orders.getDropdownList({ type: 'certificate1Prefix' })

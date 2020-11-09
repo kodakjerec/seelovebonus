@@ -1,6 +1,8 @@
 <template>
   <div id="app"
-    v-loading="isEnableLoadingMask">
+    v-loading.fullscreen="isEnableLoadingMask"
+    element-loading-text="Loading..."
+    element-loading-background="rgba(0, 0, 0, 0.1)">
     <app-header></app-header>
     <router-view></router-view>
   </div>

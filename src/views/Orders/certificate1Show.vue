@@ -74,8 +74,8 @@ export default {
           width: 10
         },
         {
-          header: this.$t('__createDate'),
-          key: 'CreateDate',
+          header: this.$t('__issuanceDate'),
+          key: 'IssuanceDate',
           width: 30,
           formatter: 'date'
         }

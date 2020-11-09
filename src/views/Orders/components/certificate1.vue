@@ -29,8 +29,8 @@
             :label="$t('__status')">
           </el-table-column>
           <el-table-column
-            prop="CreateDate"
-            :label="$t('__createDate')"
+            prop="IssuanceDate"
+            :label="$t('__issuanceDate')"
             :formatter="formatterDate">
           </el-table-column>
         </el-table>
