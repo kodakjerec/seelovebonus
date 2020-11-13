@@ -1,17 +1,6 @@
 <template>
   <div>
     <el-form ref="form" :model="form" label-width="20%">
-      <el-form-item :label="$t('__date')">
-        <el-col :span="8">
-          <el-date-picker
-            v-model="form.StartDate"
-            type="month"
-            :placeholder="$t('__plzChoice')+$t('__startDate')"
-            value-format="yyyy-MM-dd"
-            @change="startDateChange">
-          </el-date-picker>
-        </el-col>
-      </el-form-item>
       <el-form-item :label="$t('__startDate')">
         <el-col :span="8">
           <el-date-picker
@@ -55,7 +44,7 @@
 import iframeReportingService from '@/components/iframeReportingService'
 
 export default {
-  name: 'ReportsBonus2',
+  name: 'ReportsBonus1',
   components: {
     iframeReportingService
   },
@@ -64,12 +53,10 @@ export default {
       form: {
         StartDate: null,
         EndDate: null,
-        ProjectID: 'R00001',
-        ProjectName: '喜越幸福專案',
         CompanyID: null,
         CompanyName: null
       },
-      reportPath: 'reports_Bonus2',
+      reportPath: 'reports_Bonus1',
       reportParams: {},
       // 以下為下拉式選單專用
       ddlCompanies: [],
@@ -90,7 +77,7 @@ export default {
     // 預設值
     let start = new Date()
     let year = start.getFullYear()
-    let month = start.getMonth() - 1
+    let month = start.getMonth()
     start = new Date(year, month, 1, 12)
     this.startDateChange(start)
 
@@ -115,13 +102,36 @@ export default {
       this.buttonsShowUser.delete = progPermission.fun3
     },
     // 給予預設日期
+    // 抓一季, 三個月
     startDateChange: function (value) {
       let start = new Date(value)
       let end = new Date()
       let year = start.getFullYear()
       let month = start.getMonth()
+      switch (month) {
+        case 11:
+        case 12:
+        case 1:
+          month = 11
+          break
+        case 2:
+        case 3:
+        case 4:
+          month = 2
+          break
+        case 5:
+        case 6:
+        case 7:
+          month = 5
+          break
+        case 8:
+        case 9:
+        case 10:
+          month = 8
+          break
+      }
       start = new Date(year, month, 1, 12)
-      end = new Date(year, month + 1, 0, 12)
+      end = new Date(year, month + 3, 0, 12)
 
       this.form.StartDate = start.toISOString().slice(0, 10)
       this.form.EndDate = end.toISOString().slice(0, 10)
@@ -146,11 +156,10 @@ export default {
         StartDate: this.form.StartDate,
         EndDate: this.form.EndDate,
         CompanyID: this.form.CompanyID,
-        MasterName: this.form.CompanyName,
-        ProjectName: this.form.ProjectName }
+        MasterName: this.form.CompanyName }
 
       // 紀錄Log
-      this.$api.reports.bonus2ToExcel({ reportParams: this.reportParams })
+      this.$api.reports.bonus1ToExcel({ reportParams: this.reportParams })
     }
   }
 }

@@ -3,9 +3,8 @@
     class="defineCSS"
     v-model="searchValue"
     :placeholder="$t('__pleaseInputSearchValue')"
-    @change="change"
-    maxlength="40" show-word-limit>
-    <i slot="prefix" class="el-input__icon el-icon-search"></i>
+    maxlength="40">
+    <el-button slot="suffix" icon="el-icon-search" @click="change"></el-button>
   </el-input>
 </template>
 
@@ -18,8 +17,8 @@ export default {
     }
   },
   methods: {
-    change: function (value) {
-      this.$emit('search', value)
+    change: function () {
+      this.$emit('search', this.searchValue)
     }
   }
 }

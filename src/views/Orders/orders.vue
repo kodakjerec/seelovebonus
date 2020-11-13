@@ -1,14 +1,14 @@
 <template>
   <el-form>
-    <el-button-group>
+    <el-button-group style="padding-bottom: 5px">
       <el-button v-show="buttonsShowUser.new" type="primary" icon="el-icon-plus" @click.prevent="showForm('new')">{{$t('__new')}}</el-button>
+      <search-button @search="search"></search-button>
     </el-button-group>
-    <search-button @search="search"></search-button>
-    <p style="height:1px" />
     <el-table
-      :data="ordersShow"
+      :data="results"
       stripe
       border
+      :height="tableHeight"
       @row-click="handleClick"
       :row-class-name="tableRowClassName"
       style="width: 100%">
@@ -71,6 +71,16 @@
         width="100px">
       </el-table-column>
     </el-table>
+    <el-pagination
+      background
+      @size-change="handleSizeChange"
+      @current-change="handleCurrentChange"
+      :current-page="pagination.currentPage"
+      :page-sizes="pagination.pageSizeList"
+      :page-size="pagination.pageSize"
+      layout="total, sizes, prev, pager, next, jumper"
+      :total="originData.length">
+    </el-pagination>
   </el-form>
 </template>
 
@@ -87,9 +97,16 @@ export default {
     return {
       dialogType: 'new',
       dialogShow: false,
-      ordersShow: [],
+      originData: [],
+      results: [],
       order: {},
       searchKeyWord: '',
+      tableHeight: (screen.height * 7 / 9),
+      pagination: {
+        currentPage: 1,
+        pageSizeList: [10, 20, 30],
+        pageSize: 10
+      },
       // 使用者能看到的權限
       buttonsShowUser: {
         new: 1,
@@ -120,13 +137,7 @@ export default {
     // 讀入系統清單
     preLoading: async function () {
       // 顯示專用
-      const response2 = await this.$api.orders.ordersShow({ keyword: this.searchKeyWord })
-      this.ordersShow = response2.data.result
-      this.ordersShow.forEach(item => {
-        if (item.Certificate1List) { item.Certificate1List = JSON.parse(item.Certificate1List) }
-        if (item.Certificate2List) { item.Certificate2List = JSON.parse(item.Certificate2List) }
-        if (item.InvoiceList) { item.InvoiceList = JSON.parse(item.InvoiceList) }
-      })
+      this.search('')
     },
     // 使用者權限
     userPermission: async function () {
@@ -181,12 +192,26 @@ export default {
     search: async function (value) {
       this.searchKeyWord = value
       const response2 = await this.$api.orders.ordersShow({ keyword: this.searchKeyWord })
-      this.ordersShow = response2.data.result
-      this.ordersShow.forEach(item => {
+      this.originData = response2.data.result
+      this.originData.forEach(item => {
         if (item.Certificate1List) { item.Certificate1List = JSON.parse(item.Certificate1List) }
         if (item.Certificate2List) { item.Certificate2List = JSON.parse(item.Certificate2List) }
         if (item.InvoiceList) { item.InvoiceList = JSON.parse(item.InvoiceList) }
       })
+
+      this.pageChange()
+    },
+    // 分頁相關
+    handleSizeChange: function (val) {
+      this.pagination.pageSize = val
+      this.pageChange()
+    },
+    handleCurrentChange: function (val) {
+      this.pagination.currentPage = val
+      this.pageChange()
+    },
+    pageChange: function () {
+      this.results = this.originData.slice((this.pagination.currentPage - 1) * this.pagination.pageSize, this.pagination.pageSize * this.pagination.currentPage)
     }
   }
 }

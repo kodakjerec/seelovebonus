@@ -105,6 +105,11 @@ const routes = [
     component: () => import('@/views/Reports/reportsBonus2')
   },
   {
+    path: '/Reports/Bonus1',
+    name: 'ReportsBonus1',
+    component: () => import('@/views/Reports/reportsBonus1')
+  },
+  {
     path: '/Settings/SystemSettings',
     name: 'SystemSettings',
     component: () => import('@/views/Settings/systemSettings')
