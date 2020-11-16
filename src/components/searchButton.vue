@@ -21,7 +21,7 @@
       @keyup.native.enter="lockChange"
       :placeholder="$t('__pleaseInputSearchValue')"
       maxlength="40">
-      <i class="el-icon-search el-input__icon" slot="suffix" @click="change">
+      <i class="el-icon-search el-input__icon" slot="suffix" @click="mouseChange">
       </i>
     </el-input>
     <slot name="body"></slot>
@@ -62,6 +62,9 @@ export default {
     // 避免按著Enter, 重複發送查詢指令
     lockChange: function () {
       this.lock = false
+    },
+    mouseChange: function () {
+      this.$emit('search', this.searchValue)
     },
     optionsChange: function () {
       this.reOder()
