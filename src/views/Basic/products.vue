@@ -1,10 +1,9 @@
 <template>
   <el-form>
-    <el-button-group>
+    <el-button-group style="padding-bottom: 5px">
       <el-button v-show="buttonsShowUser.new" type="primary" icon="el-icon-plus" @click.prevent="showForm('new')">{{$t('__new')}}</el-button>
-    </el-button-group>
     <search-button @search="search"></search-button>
-    <p style="height:1px" />
+    </el-button-group>
     <el-table
       :data="productsShow"
       stripe

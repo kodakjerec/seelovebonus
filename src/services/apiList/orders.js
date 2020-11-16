@@ -2,8 +2,8 @@ import { post } from '@/services/utils'
 
 export default {
   orders: {
-    ordersShow: ({ keyword }) => {
-      let rawData = { keyword }
+    ordersShow: ({ keyword, StartDate, EndDate }) => {
+      let rawData = { keyword, StartDate, EndDate }
       return post('/orders/ordersShow', rawData).then(data => {
         console.log(`%c <<< Response(/rest/orders/ordersShow)⤵ `, 'background-color: #E0455D; color: white; font-size: 14px; font-weight: bold;', data)
         return data

@@ -1,8 +1,8 @@
 <template>
   <div>
-    <el-button-group>
+    <el-button-group style="padding-bottom: 5px">
       <el-button class="hideButton" type="info" icon="el-icon-printer"></el-button>
-      <search-button @search="search"></search-button>
+      <search-button :options="sortable.orderByList" :originOrderBy="sortable.orderBy" :originOrderByValue="sortable.orderByValue" @search="search" @reOrder="reOrder"></search-button>
     </el-button-group>
     <el-table
       :data="results"
@@ -94,18 +94,22 @@ export default {
       dialogType: 'new',
       dialogShow: false,
       originData: [],
-      results: [],
       certificate2: {},
       orderID: '', // 顯示修改視窗使用, 避免紅字報錯
-      searchKeyWord: '',
-      tableHeight: (screen.height * 7 / 9),
-      pagination: {
+      searchContent: {
+        searchKeyWord: ''
+      },
+      tableHeight: (screen.height * 7 / 9), // Table高度
+      pagination: { // 分頁
         currentPage: 1,
         pageSizeList: [10, 20, 30],
         pageSize: 20
       },
-      // 以下為下拉式選單專用
-      ddlCompanies: [],
+      sortable: {
+        orderByList: [{ ID: 'ID', Value: this.$t('__orderID') }, { ID: 'Certificate2', Value: this.$t('__certificate2') }], // 排序
+        orderBy: 'descending', // 排序方式
+        orderByValue: 'ID' // 預設排序欄位
+      },
       // 使用者能看到的權限
       buttonsShowUser: {
         new: 1,
@@ -113,7 +117,38 @@ export default {
         save: 1,
         delete: 1,
         search: 1
+      },
+      // 以下為下拉式選單專用
+      ddlCompanies: []
+    }
+  },
+  computed: {
+    results: function () {
+      let tempData = this.originData
+
+      // 排序依據
+      switch (this.sortable.orderByValue) {
+        case 'ID':
+          tempData = tempData.slice().sort(function (x, y) {
+            return x.ID - y.ID
+          })
+          break
+        case 'OrderDate':
+          tempData = tempData.slice().sort(function (x, y) {
+            return new Date(x.OrderDate) - new Date(y.OrderDate)
+          })
+          break
       }
+
+      // 遞增/遞減
+      switch (this.sortable.orderBy) {
+        case 'descending':
+          tempData = tempData.slice().reverse()
+          break
+      }
+
+      // 切換分頁
+      return tempData.slice((this.pagination.currentPage - 1) * this.pagination.pageSize, this.pagination.pageSize * this.pagination.currentPage)
     }
   },
   mounted () {
@@ -162,23 +197,21 @@ export default {
     },
     // 搜尋
     search: async function (value) {
-      this.searchKeyWord = value
-      const response2 = await this.$api.orders.certificate2Show({ keyword: this.searchKeyWord })
+      this.searchContent.searchKeyWord = value
+      const response2 = await this.$api.orders.certificate2Show({ keyword: this.searchContent.searchKeyWord })
       this.originData = response2.data.result
-
-      this.pageChange()
+    },
+    // 排序相關
+    reOrder: function (searchButtonResult) {
+      this.sortable.orderBy = searchButtonResult.orderBy
+      this.sortable.orderByValue = searchButtonResult.orderByValue
     },
     // 分頁相關
     handleSizeChange: function (val) {
       this.pagination.pageSize = val
-      this.pageChange()
     },
     handleCurrentChange: function (val) {
       this.pagination.currentPage = val
-      this.pageChange()
-    },
-    pageChange: function () {
-      this.results = this.originData.slice((this.pagination.currentPage - 1) * this.pagination.pageSize, this.pagination.pageSize * this.pagination.currentPage)
     }
   }
 }

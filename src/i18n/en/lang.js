@@ -159,6 +159,10 @@ export default {
   __deleteOrder: 'Delete Order!<br/>If there are "consecration certificates","payments","invoices". That can\'t be deleted.',
   __invalidOrder: 'Invalid Order!<br/>If there are "payments","invoices". That can\'t be invalided.',
   __pv: 'PV',
+  __ascending: 'Small→Big',
+  __descending: 'Big→Small',
+  __orderByValue: 'OrderBy',
+  __filter: 'Filter',
   // 請在上方新增字串
   // 以下為錯誤處理專用
   __error400: 'Bad Request',

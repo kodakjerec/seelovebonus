@@ -1,14 +1,14 @@
 <template>
   <el-form>
-    <el-button-group>
+    <el-button-group style="padding-bottom: 5px">
       <el-button v-show="buttonsShowUser.new" type="primary" icon="el-icon-plus" @click.prevent="showForm('new')">{{$t('__new')}}</el-button>
-    </el-button-group>
     <search-button @search="search"></search-button>
-    <p style="height:1px" />
+    </el-button-group>
     <el-table
-      :data="customersShow"
+      :data="results"
       stripe
       border
+      :height="tableHeight"
       @row-click="handleClick"
       :row-class-name="tableRowClassName"
       style="width: 100%">
@@ -29,6 +29,16 @@
         :label="$t('__refEmployeeID')">
       </el-table-column>
     </el-table>
+    <el-pagination
+      background
+      @size-change="handleSizeChange"
+      @current-change="handleCurrentChange"
+      :current-page="pagination.currentPage"
+      :page-sizes="pagination.pageSizeList"
+      :page-size="pagination.pageSize"
+      layout="total, sizes, prev, pager, next, jumper"
+      :total="originData.length">
+    </el-pagination>
     <new-form
     v-if="dialogShow"
     :dialog-type="dialogType"
@@ -53,9 +63,16 @@ export default {
     return {
       dialogType: 'new',
       dialogShow: false,
-      customersShow: [],
+      originData: [],
+      results: [],
       customer: {},
       searchKeyWord: '',
+      tableHeight: (screen.height * 7 / 9),
+      pagination: {
+        currentPage: 1,
+        pageSizeList: [10, 20, 30],
+        pageSize: 20
+      },
       // 使用者能看到的權限
       buttonsShowUser: {
         new: 1,
@@ -80,8 +97,7 @@ export default {
     // 讀入系統清單
     preLoading: async function () {
       // 顯示專用
-      const response2 = await this.$api.basic.customersShow({ keyword: this.searchKeyWord })
-      this.customersShow = response2.data.result
+      this.search('')
     },
     // 使用者權限
     userPermission: async function () {
@@ -122,7 +138,21 @@ export default {
     search: async function (value) {
       this.searchKeyWord = value
       const response2 = await this.$api.basic.customersShow({ keyword: this.searchKeyWord })
-      this.customersShow = response2.data.result
+      this.originData = response2.data.result
+
+      this.pageChange()
+    },
+    // 分頁相關
+    handleSizeChange: function (val) {
+      this.pagination.pageSize = val
+      this.pageChange()
+    },
+    handleCurrentChange: function (val) {
+      this.pagination.currentPage = val
+      this.pageChange()
+    },
+    pageChange: function () {
+      this.results = this.originData.slice((this.pagination.currentPage - 1) * this.pagination.pageSize, this.pagination.pageSize * this.pagination.currentPage)
     }
   }
 }

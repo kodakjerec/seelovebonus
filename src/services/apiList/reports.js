@@ -24,6 +24,13 @@ export default {
         return data
       })
     },
+    bonus1ToExcel: ({ reportParams }) => {
+      let rawData = { reportParams }
+      return post('/reports/bonus1ToExcel', rawData).then(data => {
+        console.log(`%c <<< Response(/rest/reports/bonus1ToExcel)⤵ `, 'background-color: #E0455D; color: white; font-size: 14px; font-weight: bold;', data)
+        return data
+      })
+    },
     bonus2ToExcel: ({ reportParams }) => {
       let rawData = { reportParams }
       return post('/reports/bonus2ToExcel', rawData).then(data => {

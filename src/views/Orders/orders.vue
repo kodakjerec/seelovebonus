@@ -2,7 +2,32 @@
   <el-form>
     <el-button-group style="padding-bottom: 5px">
       <el-button v-show="buttonsShowUser.new" type="primary" icon="el-icon-plus" @click.prevent="showForm('new')">{{$t('__new')}}</el-button>
-      <search-button @search="search"></search-button>
+      <search-button :options="sortable.orderByList" :originOrderBy="sortable.orderBy" :originOrderByValue="sortable.orderByValue" @search="search" @reOrder="reOrder">
+      <el-tooltip slot="body" effect="light" :content="$t('__filter')" placement="top-start">
+      <el-popover
+        placement="top"
+        v-model="searchContent.searchShowMore">
+        <el-form-item :label="$t('__startDate')">
+          <el-date-picker
+            v-model="searchContent.StartDate"
+            type="date"
+            :placeholder="$t('__plzChoice')+$t('__startDate')"
+            value-format="yyyy-MM-dd">
+          </el-date-picker>
+        </el-form-item>
+        <el-form-item :label="$t('__endDate')">
+          <el-date-picker
+            v-model="searchContent.EndDate"
+            type="date"
+            :placeholder="$t('__plzChoice')+$t('__endDate')"
+            value-format="yyyy-MM-dd">
+          </el-date-picker>
+        </el-form-item>
+        <el-button class="el-icon-s-operation" slot="reference"></el-button>
+      </el-popover>
+      </el-tooltip>
+      </search-button>
+
     </el-button-group>
     <el-table
       :data="results"
@@ -98,14 +123,23 @@ export default {
       dialogType: 'new',
       dialogShow: false,
       originData: [],
-      results: [],
       order: {},
-      searchKeyWord: '',
-      tableHeight: (screen.height * 7 / 9),
-      pagination: {
+      searchContent: {
+        searchKeyWord: '',
+        searchShowMore: false,
+        StartDate: new Date(),
+        EndDate: new Date()
+      },
+      tableHeight: (screen.height * 7 / 9), // Table高度
+      pagination: { // 分頁
         currentPage: 1,
         pageSizeList: [10, 20, 30],
         pageSize: 10
+      },
+      sortable: {
+        orderByList: [{ ID: 'ID', Value: this.$t('__orderID') }, { ID: 'OrderDate', Value: this.$t('__order') + this.$t('__date') }], // 排序
+        orderBy: 'descending', // 排序方式
+        orderByValue: 'ID' // 預設排序欄位
       },
       // 使用者能看到的權限
       buttonsShowUser: {
@@ -117,7 +151,45 @@ export default {
       }
     }
   },
+  computed: {
+    results: function () {
+      let tempData = this.originData
+
+      // 排序依據
+      switch (this.sortable.orderByValue) {
+        case 'ID':
+          tempData = tempData.slice().sort(function (x, y) {
+            return x.ID - y.ID
+          })
+          break
+        case 'OrderDate':
+          tempData = tempData.slice().sort(function (x, y) {
+            return new Date(x.OrderDate) - new Date(y.OrderDate)
+          })
+          break
+      }
+
+      // 遞增/遞減
+      switch (this.sortable.orderBy) {
+        case 'descending':
+          tempData = tempData.slice().reverse()
+          break
+      }
+
+      // 切換分頁
+      return tempData.slice((this.pagination.currentPage - 1) * this.pagination.pageSize, this.pagination.pageSize * this.pagination.currentPage)
+    }
+  },
   mounted () {
+    // 預設值
+    let start = new Date()
+    let end = new Date()
+    let year = start.getFullYear()
+    let month = start.getMonth() - 3
+    start = new Date(year, month, 1, 12)
+    this.searchContent.StartDate = start.toISOString().slice(0, 10)
+    this.searchContent.EndDate = end.toISOString().slice(0, 10)
+
     this.preLoading()
     this.userPermission()
   },
@@ -190,28 +262,26 @@ export default {
     },
     // 搜尋
     search: async function (value) {
-      this.searchKeyWord = value
-      const response2 = await this.$api.orders.ordersShow({ keyword: this.searchKeyWord })
+      this.searchContent.searchKeyWord = value
+      const response2 = await this.$api.orders.ordersShow({ keyword: this.searchContent.searchKeyWord, StartDate: this.searchContent.StartDate, EndDate: this.searchContent.EndDate })
       this.originData = response2.data.result
       this.originData.forEach(item => {
         if (item.Certificate1List) { item.Certificate1List = JSON.parse(item.Certificate1List) }
         if (item.Certificate2List) { item.Certificate2List = JSON.parse(item.Certificate2List) }
         if (item.InvoiceList) { item.InvoiceList = JSON.parse(item.InvoiceList) }
       })
-
-      this.pageChange()
+    },
+    // 排序相關
+    reOrder: function (searchButtonResult) {
+      this.sortable.orderBy = searchButtonResult.orderBy
+      this.sortable.orderByValue = searchButtonResult.orderByValue
     },
     // 分頁相關
     handleSizeChange: function (val) {
       this.pagination.pageSize = val
-      this.pageChange()
     },
     handleCurrentChange: function (val) {
       this.pagination.currentPage = val
-      this.pageChange()
-    },
-    pageChange: function () {
-      this.results = this.originData.slice((this.pagination.currentPage - 1) * this.pagination.pageSize, this.pagination.pageSize * this.pagination.currentPage)
     }
   }
 }

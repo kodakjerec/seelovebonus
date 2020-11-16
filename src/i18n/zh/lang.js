@@ -159,6 +159,10 @@ export default {
   __deleteOrder: '刪除訂購單！<br/>有供奉憑證、付款資訊、發票紀錄，將無法刪除。',
   __invalidOrder: '作廢訂購單！<br/>有付款資訊、發票紀錄，將無法作廢。',
   __pv: 'PV',
+  __ascending: '小→大',
+  __descending: '大→小',
+  __orderByValue: '排序依據',
+  __filter: '篩選',
   // 請在上方新增字串
   // 以下為錯誤處理專用
   __error400: '無法理解請求',
