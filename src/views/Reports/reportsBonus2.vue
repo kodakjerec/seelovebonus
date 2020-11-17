@@ -94,7 +94,7 @@ export default {
     start = new Date(year, month, 1, 12)
     this.startDateChange(start)
 
-    let defaultCompany = this.ddlCompanies.find(item => { return item.ID === '83799023' })
+    let defaultCompany = this.ddlCompanies.find(item => { return item.ID === '83799375' })
     if (defaultCompany) {
       this.form.CompanyID = defaultCompany.ID
       this.ddlCompaniesChange(this.form.CompanyID)
