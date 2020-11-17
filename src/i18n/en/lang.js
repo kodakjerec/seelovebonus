@@ -163,6 +163,7 @@ export default {
   __descending: 'Big→Small',
   __orderByValue: 'OrderBy',
   __filter: 'Filter',
+  __totalReport: 'Total Report',
   // 請在上方新增字串
   // 以下為錯誤處理專用
   __error400: 'Bad Request',

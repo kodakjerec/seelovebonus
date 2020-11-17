@@ -163,6 +163,7 @@ export default {
   __descending: '大→小',
   __orderByValue: '排序依據',
   __filter: '篩選',
+  __totalReport: '總表',
   // 請在上方新增字串
   // 以下為錯誤處理專用
   __error400: '無法理解請求',
