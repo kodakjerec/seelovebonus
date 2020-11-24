@@ -91,6 +91,7 @@ export default {
   __orderDetailWarrning: '請先完成新增再修改付款紀錄和發票<br/>供奉憑證與換狀證明，會依購買數量自動新增',
   __project: '專案',
   __detail: '明細',
+  __projectOrderPrefix: '專案訂單編號前綴詞',
   __performanceBonus: '業務獎金',
   __superBonus: '超級獎金',
   __percentage: '比例',
@@ -164,6 +165,11 @@ export default {
   __orderByValue: '排序依據',
   __filter: '篩選',
   __totalReport: '總表',
+  __signOff: '簽核',
+  __batch: '批次',
+  __signOffAgree: '送簽',
+  __signOffDeny: '否決',
+  __signOffWarning: '以下單據等待簽核',
   // 請在上方新增字串
   // 以下為錯誤處理專用
   __error400: '無法理解請求',

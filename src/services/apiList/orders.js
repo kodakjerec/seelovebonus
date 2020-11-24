@@ -2,8 +2,8 @@ import { post } from '@/services/utils'
 
 export default {
   orders: {
-    ordersShow: ({ keyword, StartDate, EndDate }) => {
-      let rawData = { keyword, StartDate, EndDate }
+    ordersShow: ({ keyword, StartDate, EndDate, ID }) => {
+      let rawData = { keyword, StartDate, EndDate, ID }
       return post('/orders/ordersShow', rawData).then(data => {
         console.log(`%c <<< Response(/rest/orders/ordersShow)⤵ `, 'background-color: #E0455D; color: white; font-size: 14px; font-weight: bold;', data)
         return data
@@ -62,6 +62,13 @@ export default {
       let rawData = { form }
       return post('/orders/orderDetailEdit', rawData).then(data => {
         console.log(`%c <<< Response(/rest/orders/orderDetailEdit)⤵ `, 'background-color: #E0455D; color: white; font-size: 14px; font-weight: bold;', data)
+        return data
+      })
+    },
+    orderDetailDelete: ({ form }) => {
+      let rawData = { form }
+      return post('/orders/orderDetailDelete', rawData).then(data => {
+        console.log(`%c <<< Response(/rest/orders/orderDetailDelete)⤵ `, 'background-color: #E0455D; color: white; font-size: 14px; font-weight: bold;', data)
         return data
       })
     },

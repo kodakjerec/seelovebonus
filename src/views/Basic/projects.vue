@@ -42,6 +42,10 @@
         prop="PV"
         :label="$t('__pv')">
       </el-table-column>
+      <el-table-column
+        prop="Prefix"
+        :label="$t('__projectOrderPrefix')">
+      </el-table-column>
     </el-table>
     <new-form
     v-if="dialogShow"

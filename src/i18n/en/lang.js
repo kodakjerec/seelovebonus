@@ -91,6 +91,7 @@ export default {
   __orderDetailWarrning: 'Please complete new-status before modifying the collection-records and invoices<br/>certificates and proofs will be added according to your quantity',
   __project: 'Project',
   __detail: 'Detail',
+  __projectOrderPrefix: '專案訂單編號前綴詞',
   __performanceBonus: 'Performance Bonus',
   __superBonus: 'Super Bonus',
   __percentage: 'Percentage',
@@ -164,6 +165,11 @@ export default {
   __orderByValue: 'OrderBy',
   __filter: 'Filter',
   __totalReport: 'Total Report',
+  __signOff: 'SignOff',
+  __batch: 'Total',
+  __signOffAgree: 'Agree',
+  __signOffDeny: 'Deny',
+  __signOffWarning: 'The following documents are waiting for approval',
   // 請在上方新增字串
   // 以下為錯誤處理專用
   __error400: 'Bad Request',

@@ -3,6 +3,9 @@
     <h1>{{myTitle}}</h1>
     <el-form ref="form" :model="form" :rules="rules" label-width="10vw" label-position="right">
       <el-form-item :label="$t('__orderID')+'：'">
+        <el-col :span="2" v-if="dialogType === 'new'">
+          {{form.Prefix}}
+        </el-col>
         <el-col :span="4">
           <el-input v-model="form.ID" :placeholder="$t('__afterSaveWillShow')" :disabled="disableForm.ID"></el-input>
         </el-col>
@@ -27,6 +30,11 @@
             </el-date-picker>
           </el-form-item>
         </el-col>
+      </el-form-item>
+      <!-- 備註 -->
+      <el-form-item :label="$t('__memo')">
+          <el-input v-model="form.Memo" type="textarea" rows="2" autocomplete="off" maxlength="100" show-word-limit
+            :disabled="disableForm.OrderDate"></el-input>
       </el-form-item>
       <!-- 選擇專案 -->
       <el-table
@@ -78,6 +86,7 @@
     <order-detail
       ref="orderDetail"
       :dialogType="dialogType"
+      :buttonsShow="buttonsShow"
       :orderID="form.ID"
       :projectID="form.ProjectID"
       :orderDetail="orderDetail"
@@ -86,8 +95,8 @@
     <order-customer
       ref="orderCustomer"
       :dialogType="dialogType"
+      :buttonsShow="buttonsShow"
       :orderID="form.ID"
-      :orderCustomer="orderCustomer"
       :ddlCustomerBefore="ddlCustomer"></order-customer>
     <template v-if="dialogType !== 'new'">
       <!-- 供奉憑證 -->
@@ -210,7 +219,9 @@ export default {
         Price: 0,
         Qty: 1,
         Amount: 0,
-        FirstItemName: ''
+        FirstItemName: '',
+        Prefix: '',
+        Memo: ''
       },
       rules: {
         ID: [{ required: true, message: this.$t('__pleaseInput'), trigger: 'blur' }],
@@ -236,7 +247,6 @@ export default {
       myTitle: '',
       projectHead: [],
       orderDetail: [],
-      orderCustomer: {},
       certificate1List: [],
       stampShow: [{
         CreateIDName: null,
@@ -269,12 +279,17 @@ export default {
       case 'edit':
         this.myTitle = this.$t('__edit') + this.$t('__orderPaper')
         this.form = JSON.parse(JSON.stringify(this.order))
-        this.disableForm.ID = true
-        this.disableForm.ProjectID = true
-        this.disableForm.Qty = true
-        this.disableForm.CreateID = true
 
-        if (this.form.Status === '0') {
+        // 按鈕狀態
+        let intStatus = parseInt(this.form.Status)
+        if (intStatus === 0) {
+          // 是否允許修改
+          this.disableForm.ID = true
+          this.disableForm.ProjectID = true
+          this.disableForm.Qty = true
+          this.disableForm.CreateID = true
+          this.disableForm.OrderDate = true
+
           this.buttonsShow = {
             new: 0,
             edit: 0,
@@ -282,13 +297,33 @@ export default {
             delete: 0,
             search: 0
           }
-        } else {
+        } else if (intStatus === 1) {
+          // 是否允許修改
+          this.disableForm.ID = true
+          this.disableForm.ProjectID = true
+          this.disableForm.CreateID = true
+
           this.buttonsShow = {
             new: 1,
             edit: 1,
             save: 1,
             delete: 1,
             search: 1
+          }
+        } else if (intStatus > 1) {
+          // 是否允許修改
+          this.disableForm.ID = true
+          this.disableForm.ProjectID = true
+          this.disableForm.Qty = true
+          this.disableForm.CreateID = true
+          this.disableForm.OrderDate = true
+
+          this.buttonsShow = {
+            new: 0,
+            edit: 0,
+            save: 0,
+            delete: 0,
+            search: 0
           }
         }
         this.bringProject()
@@ -313,8 +348,6 @@ export default {
 
       const responseDetail = await this.$api.orders.getObject({ type: 'orderDetail', ID: this.form.ID })
       this.orderDetail = responseDetail.data.result
-      const responseCustomer = await this.$api.orders.getObject({ type: 'orderCustomer', ID: this.form.ID })
-      this.orderCustomer = responseCustomer.data.result[0]
       const responseStampShow = await this.$api.orders.getObject({ type: 'orderStampShow', ID: this.form.ID })
       this.stampShow = responseStampShow.data.result
     },
@@ -340,6 +373,7 @@ export default {
       this.form.Qty = 1
       this.form.Amount = this.form.Price * this.form.Qty
       this.form.FirstItemName = projectDetail[0].ProductName
+      this.form.Prefix = project.Prefix
 
       // 填入 orderDetail
       this.$refs['orderDetail'].parentResetItems(projectDetail)
