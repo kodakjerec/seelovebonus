@@ -86,7 +86,7 @@
     <order-detail
       ref="orderDetail"
       :dialogType="dialogType"
-      :buttonsShow="buttonsShow"
+      :buttonsShowUser="buttonsShowUser"
       :orderID="form.ID"
       :projectID="form.ProjectID"
       :orderDetail="orderDetail"
@@ -95,7 +95,7 @@
     <order-customer
       ref="orderCustomer"
       :dialogType="dialogType"
-      :buttonsShow="buttonsShow"
+      :buttonsShowUser="buttonsShowUser"
       :orderID="form.ID"
       :ddlCustomerBefore="ddlCustomer"></order-customer>
     <template v-if="dialogType !== 'new'">
@@ -280,7 +280,7 @@ export default {
         this.myTitle = this.$t('__edit') + this.$t('__orderPaper')
         this.form = JSON.parse(JSON.stringify(this.order))
 
-        // 按鈕狀態
+        // 帶入原始單據狀態, 開啟或關閉
         let intStatus = parseInt(this.form.Status)
         if (intStatus === 0) {
           // 是否允許修改
@@ -297,11 +297,16 @@ export default {
             delete: 0,
             search: 0
           }
-        } else if (intStatus === 1) {
+        } else if (intStatus > 0) {
           // 是否允許修改
           this.disableForm.ID = true
           this.disableForm.ProjectID = true
           this.disableForm.CreateID = true
+
+          if (this.buttonsShowUser.edit === 0) {
+            this.disableForm.OrderDate = true
+            this.disableForm.Qty = true
+          }
 
           this.buttonsShow = {
             new: 1,
@@ -309,21 +314,6 @@ export default {
             save: 1,
             delete: 1,
             search: 1
-          }
-        } else if (intStatus > 1) {
-          // 是否允許修改
-          this.disableForm.ID = true
-          this.disableForm.ProjectID = true
-          this.disableForm.Qty = true
-          this.disableForm.CreateID = true
-          this.disableForm.OrderDate = true
-
-          this.buttonsShow = {
-            new: 0,
-            edit: 0,
-            save: 0,
-            delete: 0,
-            search: 0
           }
         }
         this.bringProject()

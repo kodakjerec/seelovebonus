@@ -44,6 +44,7 @@ export default {
   },
   methods: {
     save: async function () {
+      let resultMessage = ''
       for (let index = 0; index < this.signOffList.length; index++) {
         let row = this.signOffList[index]
         let form = {
@@ -53,9 +54,18 @@ export default {
           Status: row.Status,
           ID: this.$store.state.userID,
           SignResult: this.signOffChoice,
-          Memo: this.Memo
+          Memo: this.signOffReason
         }
-        await this.$api.signOff.assign({ form: form })
+        const responseSignOff = await this.$api.signOff.assign({ form: form })
+        if (responseSignOff.headers['code'] === '200') {
+          resultMessage += row.OrderID + ' ' + responseSignOff.data.result[0].message
+        }
+      }
+      if (resultMessage !== '') {
+        resultMessage = this.$t('__signOffResultMessage') + '<br/>' + resultMessage
+        this.$alert(resultMessage, {
+          dangerouslyUseHTMLString: true
+        })
       }
       this.$emit('finish')
     },

@@ -118,7 +118,7 @@ export default {
   name: 'OrderCustomer',
   props: {
     dialogType: { type: String, default: 'new' },
-    buttonsShow: { type: Object },
+    buttonsShowUser: { type: Object },
     orderID: { type: String },
     ddlCustomerBefore: { tpye: Array }
   },
@@ -184,7 +184,7 @@ export default {
       case 'new':
         break
       case 'edit':
-        if (this.buttonsShow.new === 0) {
+        if (this.buttonsShowUser.new === 0) {
           this.disableForm.CustomerID = true
         }
         break

@@ -170,6 +170,7 @@ export default {
   __signOffAgree: '送簽',
   __signOffDeny: '否決',
   __signOffWarning: '以下單據等待簽核',
+  __signOffResultMessage: '單據簽核結果如下：',
   // 請在上方新增字串
   // 以下為錯誤處理專用
   __error400: '無法理解請求',

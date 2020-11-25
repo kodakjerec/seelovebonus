@@ -253,10 +253,17 @@ export default {
       this.buttonsShowUser.delete = progPermission.fun3
     },
     handleClick: async function (row, column, event) {
-      console.log(event)
       // 取得可以用的選單
       let responseRow = await this.$api.orders.getObject({ type: 'orderHead', ID: row.ID })
       this.order = responseRow.data.result[0]
+
+      // 簽核管理
+      if (row.StatusSignOff === 0) {
+        this.buttonsShowUser.new = 0
+        this.buttonsShowUser.edit = 0
+        this.buttonsShowUser.save = 0
+        this.buttonsShowUser.delete = 0
+      }
 
       // 權限管理
       this.buttonsShowUser.save = this.buttonsShowUser.edit
@@ -339,7 +346,6 @@ export default {
     },
     // 批次送簽
     batchSignOffAgree: function () {
-      this.signOffList = ['123', '456', '789', '012', '345', '678', '901', '234', '567', '890']
       this.originData
         .filter(row => { return row.StatusSignOff === 1 })
         .forEach(row => {
@@ -372,6 +378,7 @@ export default {
     signOffFinish: function () {
       this.signOffList = []
       this.dialogShowSignOff = false
+      this.search('')
     },
     // 取消 批次視窗
     signOffCancel: function () {

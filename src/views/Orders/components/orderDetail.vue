@@ -13,7 +13,7 @@
       prop="ProductID"
       :label="$t('__product')+$t('__id')">
       <template slot-scope="scope">
-        <el-select v-if="buttonsShow.new && scope.row.ItemType === 1"
+        <el-select v-if="buttonsShowUser.new && scope.row.ItemType === 1"
           filterable
           v-model="scope.row[scope.column.property]"
           :placeholder="$t('__plzChoice')"
@@ -38,7 +38,7 @@
       :label="$t('__qty')"
       width="200px">
       <template slot-scope="scope">
-        <el-input-number v-if="buttonsShow.new && scope.row.ItemType === 1" v-model.number="scope.row[scope.column.property]" @change="(currentValue, oldValue)=>{qtyChange(currentValue, oldValue, scope.row)}"></el-input-number>
+        <el-input-number v-if="buttonsShowUser.new && scope.row.ItemType === 1" v-model.number="scope.row[scope.column.property]" @change="(currentValue, oldValue)=>{qtyChange(currentValue, oldValue, scope.row)}"></el-input-number>
         <div v-else>
           {{scope.row.Qty}}
         </div>
@@ -54,14 +54,14 @@
       width="100px">
       <template slot="header">
         <el-button
-          v-show="buttonsShow.new"
+          v-show="buttonsShowUser.new"
           type="primary"
           size="large"
           @click="handleNew()">{{$t('__new')}}</el-button>
       </template>
       <template slot-scope="scope">
         <el-button
-          v-show="buttonsShow.new && scope.row.ItemType === 1"
+          v-show="buttonsShowUser.new && scope.row.ItemType === 1"
           size="mini"
           type="danger"
           @click="handleDelete(scope.$index, scope.row)">{{$t('__delete')}}</el-button>
@@ -75,7 +75,7 @@ export default {
   name: 'OrderDetail',
   props: {
     dialogType: { type: String, default: 'new' },
-    buttonsShow: { type: Object },
+    buttonsShowUser: { type: Object },
     orderID: { type: String },
     projectID: { type: String },
     orderDetail: { type: Array },

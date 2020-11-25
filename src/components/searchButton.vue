@@ -17,11 +17,11 @@
     <el-input
       class="searchButton"
       v-model="searchValue"
-      @keydown.native.enter="change"
+      @keydown.native.enter="keyboardChange"
       @keyup.native.enter="lockChange"
       :placeholder="$t('__pleaseInputSearchValue')"
       maxlength="40">
-      <i class="el-icon-search el-input__icon" slot="suffix" @click="change">
+      <i class="el-icon-search el-input__icon" slot="suffix" @click="mouseChange">
       </i>
     </el-input>
     <slot name="body"></slot>
@@ -53,7 +53,10 @@ export default {
     this.orderByValue = this.originOrderByValue
   },
   methods: {
-    change: function () {
+    mouseChange: function () {
+      this.$emit('search', this.searchValue)
+    },
+    keyboardChange: function () {
       if (this.lock === false) {
         this.$emit('search', this.searchValue)
       }

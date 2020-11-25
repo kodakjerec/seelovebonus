@@ -170,6 +170,7 @@ export default {
   __signOffAgree: 'Agree',
   __signOffDeny: 'Deny',
   __signOffWarning: 'The following documents are waiting for approval',
+  __signOffResultMessage: 'The results of the document approval are as follows:',
   // 請在上方新增字串
   // 以下為錯誤處理專用
   __error400: 'Bad Request',
