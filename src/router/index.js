@@ -96,6 +96,12 @@ const routes = [
     component: () => import('@/views/Orders/components/orderSignOffManual')
   },
   {
+    path: '/Orders/OrderSignOffLog',
+    name: 'OrderSignOffLog',
+    component: () => import('@/views/Orders/components/orderSignOffLog'),
+    props: true
+  },
+  {
     path: '/Reports',
     name: 'Reports'
   },

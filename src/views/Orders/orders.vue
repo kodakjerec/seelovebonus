@@ -56,6 +56,10 @@
         </template>
         <template slot-scope="scope">
           <el-button
+            type="text"
+            size="mini" @click.native.stop="openSignOffLog(scope.row)">{{$t('__signOffLog')}}</el-button>
+          <br/>
+          <el-button
             v-show="scope.row.StatusSignOff === 1"
             size="mini"
             type="primary"
@@ -384,6 +388,15 @@ export default {
     openSignOffManual: function () {
       this.$router.push({
         name: 'OrderSignOffManual'
+      })
+    },
+    // 開啟 簽核歷程
+    openSignOffLog: function (row) {
+      this.$router.push({
+        name: 'OrderSignOffLog',
+        params: {
+          ID: row.ID
+        }
       })
     }
   }

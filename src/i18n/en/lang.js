@@ -175,6 +175,7 @@ export default {
   __signOffSettings: 'SignOff Settings',
   __signOffProcedure: 'SignOff Steps',
   __signOffGroups: 'SignOff Groups',
+  __signOffLog: 'SignOff Log',
   // 請在上方新增字串
   // 以下為錯誤處理專用
   __error400: 'Bad Request',

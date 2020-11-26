@@ -175,6 +175,7 @@ export default {
   __signOffSettings: '簽核設定',
   __signOffProcedure: '簽核步驟',
   __signOffGroups: '簽核群組',
+  __signOffLog: '簽核歷程',
   // 請在上方新增字串
   // 以下為錯誤處理專用
   __error400: '無法理解請求',
