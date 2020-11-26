@@ -26,7 +26,7 @@
       :label="$t('__price')"
       width="210px">
       <template slot-scope="scope">
-        <el-input-number v-model="scope.row[scope.column.property]" :min="0" @change="(currentValue, oldValue)=>{priceChange(currentValue, oldValue, scope.row)}"></el-input-number>
+        <el-input-number v-model="scope.row[scope.column.property]" @change="(currentValue, oldValue)=>{priceChange(currentValue, oldValue, scope.row)}"></el-input-number>
       </template>
     </el-table-column>
     <el-table-column

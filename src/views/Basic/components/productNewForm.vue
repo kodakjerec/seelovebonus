@@ -32,12 +32,12 @@
       </el-form-item>
       <el-form-item :label="$t('__price')">
         <el-col :span="10">
-          <el-input-number v-model.number="form.Price" :min="0"></el-input-number>
+          <el-input-number v-model.number="form.Price"></el-input-number>
           <span>{{$t('__dollar')}}</span>
         </el-col>
         <el-col :span="14">
           <el-form-item :label="$t('__cost')">
-            <el-input-number v-model.number="form.Cost" :min="0"></el-input-number>
+            <el-input-number v-model.number="form.Cost"></el-input-number>
             <span>{{$t('__dollar')}}</span>
           </el-form-item>
         </el-col>

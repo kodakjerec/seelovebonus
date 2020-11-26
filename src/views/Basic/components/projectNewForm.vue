@@ -37,7 +37,7 @@
         </el-col>
       </el-form-item>
       <el-form-item :label="$t('__price')">
-          <el-input-number v-model.number="form.Price" :min="0"></el-input-number>
+          <el-input-number v-model.number="form.Price"></el-input-number>
           <span>{{$t('__dollar')}}</span>
       </el-form-item>
       <el-form-item :label="$t('__pv')">

@@ -24,17 +24,26 @@
         :label="$t('__accounting')+$t('__name')">
       </el-table-column>
       <el-table-column
-        prop="Qty"
-        :label="$t('__qty')">
-      </el-table-column>
-      <el-table-column
-        prop="UnitName"
-        :label="$t('__unit')+$t('__name')">
+        :label="$t('__qty') + ' ' + $t('__unit')+$t('__name')">
+        <template slot-scope="scope">
+          {{scope.row.Qty + ' ' + scope.row.UnitName}}
+        </template>
       </el-table-column>
       <el-table-column
         prop="Price"
         :label="$t('__price')"
         :formatter="formatterMoney">
+      </el-table-column>
+      <el-table-column
+        prop="Cost"
+        :label="$t('__cost')"
+        :formatter="formatterMoney">
+      </el-table-column>
+      <el-table-column
+        :label="$t('__itemCategory')">
+        <template slot-scope="scope">
+          {{scope.row.Category1Name + '-' + scope.row.Category2Name + '-' + scope.row.Category3Name}}
+        </template>
       </el-table-column>
       <el-table-column
         prop="BOMName"
