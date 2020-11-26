@@ -83,7 +83,6 @@ export default {
   },
   mounted () {
     if (this.orderID) { this.preLoading() }
-    this.userPermission()
   },
   methods: {
     formatterDate: function (row, column, cellValue, index) {
@@ -98,14 +97,6 @@ export default {
       if (this.invoiceHeadShow && this.invoiceHeadShow.length > 0) {
         this.activeName = '1'
       }
-    },
-    // 使用者權限
-    userPermission: async function () {
-      let progPermission = this.$store.state.userProg.filter(item => { return item.Path === '/Orders/Invoices' })[0]
-      this.buttonsShowUser.new = progPermission.fun1
-      this.buttonsShowUser.edit = progPermission.fun2
-      this.buttonsShowUser.save = progPermission.fun2
-      this.buttonsShowUser.delete = progPermission.fun3
     },
     handleClick: async function (row, column, event) {
       // 取得可以用的選單

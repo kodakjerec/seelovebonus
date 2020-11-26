@@ -191,10 +191,10 @@
 import certificate1 from './certificate1'
 import certificate1OrderNew from './certificate1OrderNew'
 import certificate2 from './certificate2'
-import orderDetail from './orderDetail'
-import orderCustomer from './orderCustomer'
 import collectionRecords from './collectionRecords'
 import invoice from './invoice'
+import orderDetail from './orderDetail'
+import orderCustomer from './orderCustomer'
 import { formatMoney } from '@/setup/format.js'
 import { messageBoxYesNo } from '@/services/utils'
 

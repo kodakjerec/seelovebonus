@@ -167,11 +167,11 @@ export default {
       },
       // 使用者能看到的權限
       buttonsShowUser: {
-        new: null,
-        edit: 1,
-        save: 1,
-        delete: 1,
-        search: 1
+        new: 0,
+        edit: 0,
+        save: 0,
+        delete: 0,
+        search: 0
       },
       // 簽核
       dialogShowSignOff: false,
