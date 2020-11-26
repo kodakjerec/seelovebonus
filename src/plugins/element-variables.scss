@@ -79,4 +79,10 @@ $--input-focus-fill: yellow !default;
 // $--input-medium-font-size: $--font-size-base !default;
 // $--input-small-font-size: $--font-size-small !default;
 
+/* Button
+-------------------------- */
+button.el-button.hideButton.el-button--default {
+  visibility: hidden;
+}
+
 @import "~element-ui/packages/theme-chalk/src/index";

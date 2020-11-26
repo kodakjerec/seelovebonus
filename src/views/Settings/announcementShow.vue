@@ -1,10 +1,10 @@
 <template>
   <el-form>
-    <el-button-group>
+    <el-button-group style="padding-bottom: 5px">
+      <el-button class="hideButton" icon="el-icon-more"><!-- 排版用,避免沒按鈕跑版 --></el-button>
       <el-button v-show="buttonsShowUser.new" type="primary" icon="el-icon-plus" @click.prevent="showForm('new')">{{$t('__new')}}</el-button>
+      <search-button @search="search"></search-button>
     </el-button-group>
-    <search-button @search="search"></search-button>
-    <p style="height:1px" />
     <el-table
       :data="list"
       stripe

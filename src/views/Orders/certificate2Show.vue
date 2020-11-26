@@ -1,7 +1,7 @@
 <template>
   <div>
     <el-button-group style="padding-bottom: 5px">
-      <el-button class="hideButton" type="info" icon="el-icon-printer"></el-button>
+      <el-button class="hideButton" icon="el-icon-more"><!-- 排版用,避免沒按鈕跑版 --></el-button>
       <search-button :options="sortable.orderByList" :originOrderBy="sortable.orderBy" :originOrderByValue="sortable.orderByValue" @search="search" @reOrder="reOrder"></search-button>
     </el-button-group>
     <el-table
@@ -216,9 +216,3 @@ export default {
   }
 }
 </script>
-
-<style lang="scss" scoped>
-.hideButton {
-  visibility: hidden;
-}
-</style>

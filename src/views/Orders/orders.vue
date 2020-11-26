@@ -1,6 +1,7 @@
 <template>
   <el-form>
     <el-button-group style="padding-bottom: 5px">
+      <el-button class="hideButton" icon="el-icon-more"><!-- 排版用,避免沒按鈕跑版 --></el-button>
       <el-button v-show="buttonsShowUser.new" type="primary" icon="el-icon-plus" @click.prevent="showForm('new')">{{$t('__new')}}</el-button>
       <search-button :options="sortable.orderByList" :originOrderBy="sortable.orderBy" :originOrderByValue="sortable.orderByValue" @search="search" @reOrder="reOrder">
       <el-tooltip slot="body" effect="light" :content="$t('__filter')" placement="top-start">
