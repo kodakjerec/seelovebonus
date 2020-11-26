@@ -78,7 +78,6 @@ export default {
   },
   mounted () {
     if (this.orderID) { this.preLoading() }
-    this.userPermission()
   },
   methods: {
     formatterDate: function (row, column, cellValue, index) {
