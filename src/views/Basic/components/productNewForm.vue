@@ -167,22 +167,22 @@ export default {
   methods: {
     // 讀取預設資料
     preLoading: async function () {
-      const response1 = await this.$api.basic.getDropdownList({ type: 'accounting' })
+      let response1 = await this.$api.basic.getDropdownList({ type: 'accounting' })
       this.ddlAccounting = response1.data.result
-      const response2 = await this.$api.basic.getDropdownList({ type: 'unit' })
+      let response2 = await this.$api.basic.getDropdownList({ type: 'unit' })
       this.ddlUnit = response2.data.result
-      const response3 = await this.$api.basic.getDropdownList({ type: 'status' })
+      let response3 = await this.$api.basic.getDropdownList({ type: 'status' })
       this.ddlBOM = response3.data.result
-      const response4 = await this.$api.basic.getDropdownList({ type: 'status' })
+      let response4 = await this.$api.basic.getDropdownList({ type: 'status' })
       this.ddlStatus = response4.data.result
-      const responseBOM = await this.$api.basic.getObject({ type: 'productBOM', ID: this.form.ID })
+      let responseBOM = await this.$api.basic.getObject({ type: 'productBOM', ID: this.form.ID })
       this.productBOM = responseBOM.data.result
 
-      const resItemCategory1 = await this.$api.basic.getDropdownList({ type: 'itemCategory1' })
+      let resItemCategory1 = await this.$api.basic.getDropdownList({ type: 'itemCategory1' })
       this.ddlCategory1 = resItemCategory1.data.result
-      const resItemCategory2 = await this.$api.basic.getDropdownList({ type: 'itemCategory2' })
+      let resItemCategory2 = await this.$api.basic.getDropdownList({ type: 'itemCategory2' })
       this.ddlCategory2Origin = resItemCategory2.data.result
-      const resItemCategory3 = await this.$api.basic.getDropdownList({ type: 'itemCategory3' })
+      let resItemCategory3 = await this.$api.basic.getDropdownList({ type: 'itemCategory3' })
       this.ddlCategory3Origin = resItemCategory3.data.result
       this.ddlCategory1Change()
       this.ddlCategory2Change()
@@ -226,14 +226,14 @@ export default {
       let isSuccess = false
       switch (this.dialogType) {
         case 'new':
-          const responseNew = await this.$api.basic.productNew({ form: this.form })
+          let responseNew = await this.$api.basic.productNew({ form: this.form })
           if (responseNew.headers['code'] === '200') {
             this.$alert(responseNew.data.result[0].message, responseNew.data.result[0].code)
             isSuccess = true
           }
           break
         case 'edit':
-          const responseEdit = await this.$api.basic.productEdit({ form: this.form })
+          let responseEdit = await this.$api.basic.productEdit({ form: this.form })
           if (responseEdit.headers['code'] === '200') {
             this.$alert(responseEdit.data.result[0].message, responseEdit.data.result[0].code)
             isSuccess = true

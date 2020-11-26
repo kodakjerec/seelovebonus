@@ -38,10 +38,10 @@ export default {
   methods: {
     // 讀入使用者清單
     preLoading: async function () {
-      const response = await this.$api.settings.getDropdownList({ type: 'users' })
+      let response = await this.$api.settings.getDropdownList({ type: 'users' })
       this.users = response.data.result
 
-      const response2 = await this.$api.settings.getDropdownList({ type: 'groups' })
+      let response2 = await this.$api.settings.getDropdownList({ type: 'groups' })
       this.groups = response2.data.result
     },
     // 重整畫面

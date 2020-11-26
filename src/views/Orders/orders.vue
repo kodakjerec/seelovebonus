@@ -40,7 +40,12 @@
         align="left"
         width="150px">
         <template slot="header">
-          {{$t('__batch')}}<br/>
+          <el-button
+            type="text"
+            size="mini" @click.prevent="openSignOffManual">{{$t('__signOffSettings')}}</el-button>
+          <br/>
+          {{$t('__batch')+$t('__signOff')}}
+          <br/>
           <el-button
             size="mini"
             @click="batchSignOffAgree()">{{$t('__signOffAgree')}}</el-button>
@@ -73,13 +78,15 @@
           {{scope.row.ID}}<br/>{{scope.row.CustomerName}}<br/>{{scope.row.ReferrerName}}
         </template>
       </el-table-column>
-      <el-table-column
-        prop="OrderDate"
-        :label="$t('__order')+$t('__date')"
-        :formatter="formatterDate">
+      <el-table-column>
+        <template slot="header">
+          {{$t('__order')+$t('__date')}}<br/>{{$t('__project')+$t('__name')}}<br/>{{$t('__amount')}}
+        </template>
+        <template slot-scope="scope">
+          {{formatterDate(null,null,scope.row.OrderDate,null)}}<br/>{{scope.row.ProjectName}}<br/>{{formatterMoney(null,null,scope.row.Amount,null)}}
+        </template>
       </el-table-column>
       <el-table-column
-        prop="Certificate1List"
         :label="$t('__certificate1')">
         <template slot-scope="scope">
           <div v-for="item in scope.row.Certificate1List" :key="item.Certificate1">
@@ -88,7 +95,6 @@
         </template>
       </el-table-column>
       <el-table-column
-        prop="Certificate2List"
         :label="$t('__certificate2')">
         <template slot-scope="scope">
           <div v-for="item in scope.row.Certificate2List" :key="item.Certificate2">
@@ -97,23 +103,12 @@
         </template>
       </el-table-column>
       <el-table-column
-        prop="InvoiceList"
         :label="$t('__invoice')">
         <template slot-scope="scope">
           <div v-for="item in scope.row.InvoiceList" :key="item.InvoiceID">
             {{item.InvoiceID}}
           </div>
         </template>
-      </el-table-column>
-      <el-table-column
-        prop="ProjectName"
-        :label="$t('__project')+$t('__name')">
-      </el-table-column>
-      <el-table-column
-        prop="Amount"
-        :label="$t('__amount')"
-        :formatter="formatterMoney"
-        width="100px">
       </el-table-column>
     </el-table>
     <!-- 分頁 -->
@@ -127,7 +122,7 @@
       layout="total, sizes, prev, pager, next, jumper"
       :total="originData.length">
     </el-pagination>
-    <!-- 簽核 -->
+    <!-- 簽核小視窗 -->
     <sign-off-dialog
       :dialogShow="dialogShowSignOff"
       :signOffList="signOffList"
@@ -172,7 +167,7 @@ export default {
       },
       // 使用者能看到的權限
       buttonsShowUser: {
-        new: 1,
+        new: null,
         edit: 1,
         save: 1,
         delete: 1,
@@ -264,7 +259,6 @@ export default {
         this.buttonsShowUser.save = 0
         this.buttonsShowUser.delete = 0
       }
-
       // 權限管理
       this.buttonsShowUser.save = this.buttonsShowUser.edit
 
@@ -297,7 +291,7 @@ export default {
     // 搜尋
     search: async function (value) {
       this.searchContent.searchKeyWord = value
-      const response2 = await this.$api.orders.ordersShow({
+      let response2 = await this.$api.orders.ordersShow({
         keyword: this.searchContent.searchKeyWord,
         StartDate: this.searchContent.StartDate,
         EndDate: this.searchContent.EndDate,
@@ -384,6 +378,12 @@ export default {
     signOffCancel: function () {
       this.signOffList = []
       this.dialogShowSignOff = false
+    },
+    // 開啟 簽核說明
+    openSignOffManual: function () {
+      this.$router.push({
+        name: 'OrderSignOffManual'
+      })
     }
   }
 }

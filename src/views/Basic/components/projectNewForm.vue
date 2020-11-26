@@ -115,7 +115,7 @@ export default {
   methods: {
     // 讀取預設資料
     preLoading: async function () {
-      const response1 = await this.$api.basic.getObject({ type: 'projectDetail', ID: this.form.ID })
+      let response1 = await this.$api.basic.getObject({ type: 'projectDetail', ID: this.form.ID })
       this.projectDetail = response1.data.result
     },
     // 檢查輸入
@@ -143,14 +143,14 @@ export default {
       let isSuccess = false
       switch (this.dialogType) {
         case 'new':
-          const responseNew = await this.$api.basic.projectNew({ form: this.form })
+          let responseNew = await this.$api.basic.projectNew({ form: this.form })
           if (responseNew.headers['code'] === '200') {
             this.$alert(responseNew.data.result[0].message, responseNew.data.result[0].code)
             isSuccess = true
           }
           break
         case 'edit':
-          const responseEdit = await this.$api.basic.projectEdit({ form: this.form })
+          let responseEdit = await this.$api.basic.projectEdit({ form: this.form })
           if (responseEdit.headers['code'] === '200') {
             this.$alert(responseEdit.data.result[0].message, responseEdit.data.result[0].code)
             isSuccess = true

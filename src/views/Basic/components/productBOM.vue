@@ -81,14 +81,14 @@ export default {
     // 讀取預設資料
     preLoading: async function () {
       // 取得所有原始資料
-      const response = await this.$api.basic.getDropdownList({ type: 'product' })
+      let response = await this.$api.basic.getDropdownList({ type: 'product' })
       this.ddlSubList = response.data.result
     },
     // 存檔前先過濾
     beforeSave: async function () {
       let isSuccess = false
       // 結合已刪除單據
-      const finalResult = this.subList.concat(this.subListDeleted)
+      let finalResult = this.subList.concat(this.subListDeleted)
       if (finalResult.length === 0) { isSuccess = true }
 
       for (let index = 0; index < finalResult.length; index++) {
@@ -133,19 +133,19 @@ export default {
       let isSuccess = false
       switch (type) {
         case 'new':
-          const responseNew = await this.$api.basic.productBOMNew({ form: row })
+          let responseNew = await this.$api.basic.productBOMNew({ form: row })
           if (responseNew.headers['code'] === '200') {
             isSuccess = true
           }
           break
         case 'edit':
-          const responseEdit = await this.$api.basic.productBOMEdit({ form: row })
+          let responseEdit = await this.$api.basic.productBOMEdit({ form: row })
           if (responseEdit.headers['code'] === '200') {
             isSuccess = true
           }
           break
         case 'delete':
-          const responseDelete = await this.$api.basic.productBOMDelete({ form: row })
+          let responseDelete = await this.$api.basic.productBOMDelete({ form: row })
           if (responseDelete.headers['code'] === '200') {
             isSuccess = true
           }

@@ -75,7 +75,7 @@ export default {
   methods: {
     // 讀取預設資料
     preLoading: async function () {
-      const response3 = await this.$api.basic.getObject({ type: 'projectSuperBonus', ID: this.projectID })
+      let response3 = await this.$api.basic.getObject({ type: 'projectSuperBonus', ID: this.projectID })
       this.subList = response3.data.result
     },
     // 取消
@@ -86,7 +86,7 @@ export default {
     beforeSave: async function () {
       let isSuccess = false
       // 結合已刪除單據
-      const finalResult = this.subList.concat(this.subListDeleted)
+      let finalResult = this.subList.concat(this.subListDeleted)
       if (finalResult.length === 0) { isSuccess = true }
 
       for (let index = 0; index < finalResult.length; index++) {
@@ -128,19 +128,19 @@ export default {
       let isSuccess = false
       switch (type) {
         case 'new':
-          const responseNew = await this.$api.basic.projectSuperBonusNew({ form: row })
+          let responseNew = await this.$api.basic.projectSuperBonusNew({ form: row })
           if (responseNew.headers['code'] === '200') {
             isSuccess = true
           }
           break
         case 'edit':
-          const responseEdit = await this.$api.basic.projectSuperBonusEdit({ form: row })
+          let responseEdit = await this.$api.basic.projectSuperBonusEdit({ form: row })
           if (responseEdit.headers['code'] === '200') {
             isSuccess = true
           }
           break
         case 'delete':
-          const responseDelete = await this.$api.basic.projectSuperBonusDelete({ form: row })
+          let responseDelete = await this.$api.basic.projectSuperBonusDelete({ form: row })
           if (responseDelete.headers['code'] === '200') {
             isSuccess = true
           }

@@ -97,7 +97,7 @@ export default {
     // 讀入系統清單
     preLoading: async function () {
       // 顯示專用
-      const response2 = await this.$api.basic.productsShow({ keyword: this.searchKeyWord })
+      let response2 = await this.$api.basic.productsShow({ keyword: this.searchKeyWord })
       this.productsShow = response2.data.result
     },
     // 使用者權限
@@ -138,7 +138,7 @@ export default {
     // 搜尋
     search: async function (value) {
       this.searchKeyWord = value
-      const response2 = await this.$api.basic.productsShow({ keyword: this.searchKeyWord })
+      let response2 = await this.$api.basic.productsShow({ keyword: this.searchKeyWord })
       this.productsShow = response2.data.result
     }
   }

@@ -56,7 +56,7 @@ export default {
           SignResult: this.signOffChoice,
           Memo: this.signOffReason
         }
-        const responseSignOff = await this.$api.signOff.assign({ form: form })
+        let responseSignOff = await this.$api.signOff.assign({ form: form })
         if (responseSignOff.headers['code'] === '200') {
           resultMessage += row.OrderID + ' ' + responseSignOff.data.result[0].message
         }

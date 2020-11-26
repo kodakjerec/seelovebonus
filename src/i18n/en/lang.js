@@ -13,6 +13,7 @@ export default {
   __invalid: 'Invalid',
   __save: 'Save',
   __print: 'Print',
+  __goback: 'Goback',
   __retakeID: 'Retake ID',
   __retakeIDWarning: 'Retake ID will disable current document and add a new one',
   __graphical: 'Graphical',
@@ -171,6 +172,9 @@ export default {
   __signOffDeny: 'Deny',
   __signOffWarning: 'The following documents are waiting for approval',
   __signOffResultMessage: 'The results of the document approval are as follows:',
+  __signOffSettings: 'SignOff Settings',
+  __signOffProcedure: 'SignOff Steps',
+  __signOffGroups: 'SignOff Groups',
   // 請在上方新增字串
   // 以下為錯誤處理專用
   __error400: 'Bad Request',

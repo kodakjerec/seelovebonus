@@ -106,7 +106,7 @@ export default {
       return formatMoney(cellValue)
     },
     preLoading: async function () {
-      const responseRecords = await this.$api.orders.getObject({ type: 'collectionRecords', ID: this.orderID })
+      let responseRecords = await this.$api.orders.getObject({ type: 'collectionRecords', ID: this.orderID })
       this.collectionRecordsShow = responseRecords.data.result
       if (this.collectionRecordsShow && this.collectionRecordsShow.length > 0) {
         this.activeName = '1'
@@ -131,7 +131,7 @@ export default {
     // 開啟表單
     showForm: async function (eventType) {
       // 預先帶入收款金額
-      const responseRecords = await this.$api.orders.collectionRecordsFunctions({ type: 'collectionRecordsNew', OrderID: this.orderID })
+      let responseRecords = await this.$api.orders.collectionRecordsFunctions({ type: 'collectionRecordsNew', OrderID: this.orderID })
       let order = responseRecords.data.result[0]
 
       this.orderAmount = order.Amount

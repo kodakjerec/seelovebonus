@@ -90,32 +90,38 @@
       :orderID="form.ID"
       :projectID="form.ProjectID"
       :orderDetail="orderDetail"
-      :parentQty="form.Qty"></order-detail>
+      :parentQty="form.Qty">
+    </order-detail>
     <!-- 訂購者資料 -->
     <order-customer
       ref="orderCustomer"
       :dialogType="dialogType"
       :buttonsShowUser="buttonsShowUser"
       :orderID="form.ID"
-      :ddlCustomerBefore="ddlCustomer"></order-customer>
+      :ddlCustomerBefore="ddlCustomer">
+    </order-customer>
     <template v-if="dialogType !== 'new'">
       <!-- 供奉憑證 -->
       <certificate1
         :buttonsShow="buttonsShow"
+        :buttonsShowUser="buttonsShowUser"
         :orderID="form.ID"></certificate1>
       <!-- 換狀證明 -->
       <certificate2
         :buttonsShow="buttonsShow"
+        :buttonsShowUser="buttonsShowUser"
         :orderID="form.ID"></certificate2>
       <!-- 付款資訊 -->
       <collection-records
         ref="collectionRecords"
         :buttonsShow="buttonsShow"
+        :buttonsShowUser="buttonsShowUser"
         :orderID="form.ID"></collection-records>
       <!-- 發票資訊 -->
       <invoice
         ref="invoice"
         :buttonsShow="buttonsShow"
+        :buttonsShowUser="buttonsShowUser"
         :orderID="form.ID"
         @refreshCollectionRecords="refreshCollectionRecords()"></invoice>
       <!-- 蓋章區域 -->
@@ -170,6 +176,7 @@
         :orderID="form.ID"
         :parentQty="form.Qty"></certificate1-order-new>
     </template>
+    <!-- 底部操作按鈕 -->
     <div slot="footer" class="dialog-footer">
       <br/>
       <el-button v-show="buttonsShow.delete && buttonsShowUser.delete && form.Status < '2'" type="danger" @click="deleteOrder">{{$t('__delete')}}</el-button>
@@ -329,22 +336,22 @@ export default {
     },
     // 讀取預設資料
     preLoading: async function () {
-      const response1 = await this.$api.orders.getDropdownList({ type: 'orderStatus' })
+      let response1 = await this.$api.orders.getDropdownList({ type: 'orderStatus' })
       this.ddlOrderStatus = response1.data.result
-      const response2 = await this.$api.orders.getDropdownList({ type: 'project' })
+      let response2 = await this.$api.orders.getDropdownList({ type: 'project' })
       this.ddlProject = response2.data.result
-      const response4 = await this.$api.orders.getDropdownList({ type: 'customer' })
+      let response4 = await this.$api.orders.getDropdownList({ type: 'customer' })
       this.ddlCustomer = response4.data.result
 
-      const responseDetail = await this.$api.orders.getObject({ type: 'orderDetail', ID: this.form.ID })
+      let responseDetail = await this.$api.orders.getObject({ type: 'orderDetail', ID: this.form.ID })
       this.orderDetail = responseDetail.data.result
-      const responseStampShow = await this.$api.orders.getObject({ type: 'orderStampShow', ID: this.form.ID })
+      let responseStampShow = await this.$api.orders.getObject({ type: 'orderStampShow', ID: this.form.ID })
       this.stampShow = responseStampShow.data.result
     },
     // 點擊"修改專案", 填入明細
     bringProject: async function () {
       // get Data
-      const responseProjectDetail = await this.$api.orders.getObject({ type: 'projectDetail', ID: this.form.ProjectID })
+      let responseProjectDetail = await this.$api.orders.getObject({ type: 'projectDetail', ID: this.form.ProjectID })
       let projectDetail = responseProjectDetail.data.result
 
       // 填入 orderHead
@@ -353,9 +360,9 @@ export default {
     // 切換專案, 填入明細
     ddlProjectChange: async function (selected) {
       // get Data
-      const responseProject = await this.$api.orders.getObject({ type: 'project', ID: selected })
+      let responseProject = await this.$api.orders.getObject({ type: 'project', ID: selected })
       let project = responseProject.data.result[0]
-      const responseProjectDetail = await this.$api.orders.getObject({ type: 'projectDetail', ID: selected })
+      let responseProjectDetail = await this.$api.orders.getObject({ type: 'projectDetail', ID: selected })
       let projectDetail = responseProjectDetail.data.result
 
       // 填入 orderHead
@@ -459,7 +466,7 @@ export default {
       let isSuccess = false
       switch (type) {
         case 'new':
-          const responseNew = await this.$api.orders.orderNew({ form: this.form })
+          let responseNew = await this.$api.orders.orderNew({ form: this.form })
           if (responseNew.headers['code'] === '200') {
             isSuccess = true
             // 取得單號回填後續資料
@@ -468,7 +475,7 @@ export default {
           }
           break
         case 'edit':
-          const responseEdit = await this.$api.orders.orderEdit({ form: this.form })
+          let responseEdit = await this.$api.orders.orderEdit({ form: this.form })
           if (responseEdit.headers['code'] === '200') {
             isSuccess = true
             // 取得單號回填後續資料
@@ -477,14 +484,14 @@ export default {
           }
           break
         case 'delete':
-          const responseDelete = await this.$api.orders.orderDelete({ form: this.form })
+          let responseDelete = await this.$api.orders.orderDelete({ form: this.form })
           if (responseDelete.headers['code'] === '200') {
             isSuccess = true
             this.updateMessage = responseDelete.data.result[0].message
           }
           break
         case 'invalid':
-          const responseInvalid = await this.$api.orders.orderInvalid({ form: this.form })
+          let responseInvalid = await this.$api.orders.orderInvalid({ form: this.form })
           if (responseInvalid.headers['code'] === '200') {
             isSuccess = true
             this.updateMessage = responseInvalid.data.result[0].message

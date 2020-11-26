@@ -140,7 +140,7 @@ export default {
     },
     // 讀取預設資料
     preLoading: async function () {
-      const response3 = await this.$api.basic.getDropdownList({ type: 'status' })
+      let response3 = await this.$api.basic.getDropdownList({ type: 'status' })
       this.ddlStatus = response3.data.result
     },
     // 檢查輸入
@@ -161,14 +161,14 @@ export default {
       let isSuccess = false
       switch (type) {
         case 'new':
-          const responseNew = await this.$api.orders.orderCertificate2New({ form: this.form })
+          let responseNew = await this.$api.orders.orderCertificate2New({ form: this.form })
           if (responseNew.headers['code'] === '200') {
             this.$alert(responseNew.data.result[0].message, responseNew.data.result[0].code)
             isSuccess = true
           }
           break
         case 'edit':
-          const responseEdit = await this.$api.orders.orderCertificate2Edit({ form: this.form })
+          let responseEdit = await this.$api.orders.orderCertificate2Edit({ form: this.form })
           if (responseEdit.headers['code'] === '200') {
             this.$alert(responseEdit.data.result[0].message, responseEdit.data.result[0].code)
             isSuccess = true
@@ -176,7 +176,7 @@ export default {
           isSuccess = true
           break
         case 'delete':
-          const responseDelete = await this.$api.orders.orderCertificate2Delete({ form: this.form })
+          let responseDelete = await this.$api.orders.orderCertificate2Delete({ form: this.form })
           if (responseDelete.headers['code'] === '200') {
             this.$alert(responseDelete.data.result[0].message, responseDelete.data.result[0].code)
             isSuccess = true
@@ -188,7 +188,7 @@ export default {
           await this.$api.orders.orderCertificate2Edit({ form: this.form })
           // 新增單據
           this.form.Status = '1'
-          const responseRetakeID = await this.$api.orders.orderCertificate2New({ form: this.form })
+          let responseRetakeID = await this.$api.orders.orderCertificate2New({ form: this.form })
           if (responseRetakeID.headers['code'] === '200') {
             this.$alert(responseRetakeID.data.result[0].message, responseRetakeID.data.result[0].code)
             isSuccess = true

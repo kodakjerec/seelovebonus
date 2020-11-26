@@ -91,6 +91,11 @@ const routes = [
     component: () => import('@/views/Orders/certificate2Show')
   },
   {
+    path: '/Orders/OrderSignOffManual',
+    name: 'OrderSignOffManual',
+    component: () => import('@/views/Orders/components/orderSignOffManual')
+  },
+  {
     path: '/Reports',
     name: 'Reports'
   },

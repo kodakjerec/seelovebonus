@@ -196,12 +196,12 @@ export default {
         this.ddlCustomer = this.ddlCustomerBefore
       }
 
-      const response = await this.$api.basic.getDropdownList({ type: 'post' })
+      let response = await this.$api.basic.getDropdownList({ type: 'post' })
       this.postData = response.data.result
 
-      const response1 = await this.$api.basic.getDropdownList({ type: 'country' })
+      let response1 = await this.$api.basic.getDropdownList({ type: 'country' })
       this.ddlCountry = response1.data.result
-      const response2 = await this.$api.basic.getDropdownList({ type: 'city' })
+      let response2 = await this.$api.basic.getDropdownList({ type: 'city' })
       this.ddlCity = response2.data.result
 
       // 法定代理人
@@ -210,7 +210,7 @@ export default {
     },
     // 修改狀態:取得客戶資料
     bringCustomer: async function () {
-      const responseCustomer = await this.$api.orders.getObject({ type: 'orderCustomer', ID: this.orderID })
+      let responseCustomer = await this.$api.orders.getObject({ type: 'orderCustomer', ID: this.orderID })
       let row = responseCustomer.data.result[0]
 
       this.oldCustomerID = row.CustomerID
@@ -290,7 +290,7 @@ export default {
       let isSuccess = false
       switch (this.dialogType) {
         case 'new':
-          const responseNew = await this.$api.orders.orderCustomerNew({ form: this.form })
+          let responseNew = await this.$api.orders.orderCustomerNew({ form: this.form })
           if (responseNew.headers['code'] === '200') {
             isSuccess = true
           }
@@ -298,7 +298,7 @@ export default {
         case 'edit':
           // 客戶資料有異動, 才要更新
           if (this.form.CustomerID !== this.oldCustomerID) {
-            const responseEdit = await this.$api.orders.orderCustomerEdit({ form: this.form })
+            let responseEdit = await this.$api.orders.orderCustomerEdit({ form: this.form })
             if (responseEdit.headers['code'] === '200') {
               isSuccess = true
             }

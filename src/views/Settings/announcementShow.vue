@@ -90,7 +90,7 @@ export default {
     },
     // 讀入使用者清單
     preLoading: async function () {
-      const response = await this.$api.settings.announcementShow({ keyword: this.searchKeyWord })
+      let response = await this.$api.settings.announcementShow({ keyword: this.searchKeyWord })
       this.list = response.data.result
     },
     // 使用者權限
@@ -128,7 +128,7 @@ export default {
     // 搜尋
     search: async function (value) {
       this.searchKeyWord = value
-      const response2 = await this.$api.settings.announcementShow({ keyword: this.searchKeyWord })
+      let response2 = await this.$api.settings.announcementShow({ keyword: this.searchKeyWord })
       this.list = response2.data.result
     }
   }

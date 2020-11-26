@@ -169,7 +169,7 @@ export default {
       }
 
       // 2.驗證是否重複
-      const response = await this.$api.basic.checkValidate({ type: 'employee', ID: this.form.ID })
+      let response = await this.$api.basic.checkValidate({ type: 'employee', ID: this.form.ID })
       let rows = response.data.result
       if (rows && rows.length > 0) {
         callback(new Error(this.$t('__id') + this.$t('__valueUsed')))
@@ -249,24 +249,24 @@ export default {
     // 讀取預設資料
     preLoading: async function () {
       // 取得所有原始資料
-      const response = await this.$api.basic.getDropdownList({ type: 'post' })
+      let response = await this.$api.basic.getDropdownList({ type: 'post' })
       this.postData = response.data.result
 
-      const responseEmployees = await this.$api.basic.getDropdownList({ type: 'employeeParent' })
+      let responseEmployees = await this.$api.basic.getDropdownList({ type: 'employeeParent' })
       this.employeesData = responseEmployees.data.result
-      const responseCompanies = await this.$api.basic.getDropdownList({ type: 'companies' })
+      let responseCompanies = await this.$api.basic.getDropdownList({ type: 'companies' })
       this.companiesData = responseCompanies.data.result
 
-      const response1 = await this.$api.basic.getDropdownList({ type: 'country' })
+      let response1 = await this.$api.basic.getDropdownList({ type: 'country' })
       this.ddlCountry = response1.data.result
-      const response2 = await this.$api.basic.getDropdownList({ type: 'city' })
+      let response2 = await this.$api.basic.getDropdownList({ type: 'city' })
       this.ddlCity = response2.data.result
       this.ddlCityChange()
-      const response3 = await this.$api.basic.getDropdownList({ type: 'status' })
+      let response3 = await this.$api.basic.getDropdownList({ type: 'status' })
       this.ddlStatus = response3.data.result
-      const response4 = await this.$api.basic.getDropdownList({ type: 'grade' })
+      let response4 = await this.$api.basic.getDropdownList({ type: 'grade' })
       this.ddlGrade = response4.data.result
-      const response5 = await this.$api.basic.getDropdownList({ type: 'idType' })
+      let response5 = await this.$api.basic.getDropdownList({ type: 'idType' })
       this.ddlIDType = response5.data.result
 
       this.ddlCompanyID = this.companiesData
@@ -306,14 +306,14 @@ export default {
       let isSuccess = false
       switch (this.dialogType) {
         case 'new':
-          const responseNew = await this.$api.basic.employeeNew({ form: this.form })
+          let responseNew = await this.$api.basic.employeeNew({ form: this.form })
           if (responseNew.headers['code'] === '200') {
             this.$alert(responseNew.data.result[0].message, responseNew.data.result[0].code)
             isSuccess = true
           }
           break
         case 'edit':
-          const responseEdit = await this.$api.basic.employeeEdit({ form: this.form })
+          let responseEdit = await this.$api.basic.employeeEdit({ form: this.form })
           if (responseEdit.headers['code'] === '200') {
             this.$alert(responseEdit.data.result[0].message, responseEdit.data.result[0].code)
             isSuccess = true

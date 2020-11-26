@@ -226,7 +226,7 @@ export default {
       }
 
       // 2.驗證是否重複
-      const response = await this.$api.basic.checkValidate({ type: 'customer', ID: this.form.ID })
+      let response = await this.$api.basic.checkValidate({ type: 'customer', ID: this.form.ID })
       let rows = response.data.result
       if (rows && rows.length > 0) {
         callback(new Error(this.$t('__id') + this.$t('__valueUsed')))
@@ -320,14 +320,14 @@ export default {
     // 讀取預設資料
     preLoading: async function () {
       // 取得所有原始資料
-      const response = await this.$api.basic.getDropdownList({ type: 'post' })
+      let response = await this.$api.basic.getDropdownList({ type: 'post' })
       this.postData = response.data.result
 
-      const responseCustomers = await this.$api.basic.getDropdownList({ type: 'customers' })
+      let responseCustomers = await this.$api.basic.getDropdownList({ type: 'customers' })
       this.customersData = responseCustomers.data.result
-      const responseEmployees = await this.$api.basic.getDropdownList({ type: 'employees' })
+      let responseEmployees = await this.$api.basic.getDropdownList({ type: 'employees' })
       this.employeesData = responseEmployees.data.result
-      const responseCompanies = await this.$api.basic.getDropdownList({ type: 'companies' })
+      let responseCompanies = await this.$api.basic.getDropdownList({ type: 'companies' })
       this.companiesData = responseCompanies.data.result
       // 幫忙帶入虛構欄位: EmployeeID
       switch (this.dialogType) {
@@ -338,21 +338,21 @@ export default {
           break
       }
 
-      const response1 = await this.$api.basic.getDropdownList({ type: 'country' })
+      let response1 = await this.$api.basic.getDropdownList({ type: 'country' })
       this.ddlCountry = response1.data.result
-      const response2 = await this.$api.basic.getDropdownList({ type: 'city' })
+      let response2 = await this.$api.basic.getDropdownList({ type: 'city' })
       this.ddlCity = response2.data.result
       this.ddlCityChange()
-      const response3 = await this.$api.basic.getDropdownList({ type: 'status' })
+      let response3 = await this.$api.basic.getDropdownList({ type: 'status' })
       this.ddlStatus = response3.data.result
-      const response4 = await this.$api.basic.getDropdownList({ type: 'gender' })
+      let response4 = await this.$api.basic.getDropdownList({ type: 'gender' })
       this.ddlGender = response4.data.result
-      const response5 = await this.$api.basic.getDropdownList({ type: 'refKind' })
+      let response5 = await this.$api.basic.getDropdownList({ type: 'refKind' })
       this.ddlRefKind = response5.data.result
       this.ddlRefKindChange()
-      const response6 = await this.$api.basic.getDropdownList({ type: 'idType' })
+      let response6 = await this.$api.basic.getDropdownList({ type: 'idType' })
       this.ddlIDType = response6.data.result
-      const response7 = await this.$api.basic.getDropdownList({ type: 'employeesList' })
+      let response7 = await this.$api.basic.getDropdownList({ type: 'employeesList' })
       this.ddlEmployeeID = response7.data.result
 
       // 法定代理人
@@ -414,7 +414,7 @@ export default {
     },
     // 切換 法定代理人
     ddlAgentIDChange: async function (selectd) {
-      const responseCustomer = await this.$api.basic.getObject({ type: 'customer', ID: selectd })
+      let responseCustomer = await this.$api.basic.getObject({ type: 'customer', ID: selectd })
       let row = responseCustomer.data.result[0]
       if (row !== undefined) {
         this.form.AgentName = row.Name
@@ -445,14 +445,14 @@ export default {
       let isSuccess = false
       switch (this.dialogType) {
         case 'new':
-          const responseNew = await this.$api.basic.customerNew({ form: this.form })
+          let responseNew = await this.$api.basic.customerNew({ form: this.form })
           if (responseNew.headers['code'] === '200') {
             this.$alert(responseNew.data.result[0].message, responseNew.data.result[0].code)
             isSuccess = true
           }
           break
         case 'edit':
-          const responseEdit = await this.$api.basic.customerEdit({ form: this.form })
+          let responseEdit = await this.$api.basic.customerEdit({ form: this.form })
           if (responseEdit.headers['code'] === '200') {
             this.$alert(responseEdit.data.result[0].message, responseEdit.data.result[0].code)
             isSuccess = true

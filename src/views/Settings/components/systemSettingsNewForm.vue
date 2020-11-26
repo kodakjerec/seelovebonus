@@ -139,12 +139,12 @@ export default {
   methods: {
     // 取得群組清單
     preLoading: async function () {
-      const response2 = await this.$api.settings.getDropdownList({ type: 'settingsType' })
+      let response2 = await this.$api.settings.getDropdownList({ type: 'settingsType' })
       this.ddlCategory = JSON.parse(JSON.stringify(response2.data.result))
       this.ddlParentCategory = JSON.parse(JSON.stringify(response2.data.result))
       this.form.Category = this.category
 
-      const response3 = await this.$api.settings.getDropdownList({ type: 'systemSettingsNewFormParentID' })
+      let response3 = await this.$api.settings.getDropdownList({ type: 'systemSettingsNewFormParentID' })
       this.ddlParentIDOrigin = response3.data.result
       this.selectChange()
     },
@@ -175,21 +175,21 @@ export default {
       let isSuccess = false
       switch (dialogType) {
         case 'new':
-          const responseNew = await this.$api.settings.settingsNew({ form: this.form })
+          let responseNew = await this.$api.settings.settingsNew({ form: this.form })
           if (responseNew.headers['code'] === '200') {
             this.$alert(responseNew.data.result[0].message, responseNew.data.result[0].code)
             isSuccess = true
           }
           break
         case 'edit':
-          const responseEdit = await this.$api.settings.settingsEdit({ form: this.form })
+          let responseEdit = await this.$api.settings.settingsEdit({ form: this.form })
           if (responseEdit.headers['code'] === '200') {
             this.$alert(responseEdit.data.result[0].message, responseEdit.data.result[0].code)
             isSuccess = true
           }
           break
         case 'delete':
-          const responseDelete = await this.$api.settings.settingsDelete({ form: this.form })
+          let responseDelete = await this.$api.settings.settingsDelete({ form: this.form })
           if (responseDelete.headers['code'] === '200') {
             this.$alert(responseDelete.data.result[0].message, responseDelete.data.result[0].code)
             isSuccess = true

@@ -125,7 +125,7 @@ export default {
     this.editableProgList = JSON.parse(JSON.stringify(this.progList))
 
     // 已經有選擇的資料帶入
-    const rowsToToggle = this.editableProgList.filter(row => row.checked === 1)
+    let rowsToToggle = this.editableProgList.filter(row => row.checked === 1)
     this.$nextTick(() => { this.toggleSelection(rowsToToggle) })
   },
   methods: {
@@ -174,14 +174,14 @@ export default {
       let isSuccess = false
       switch (this.dialogType) {
         case 'new':
-          const responseNew = await this.$api.settings.groupNew({ GroupID: this.form.GroupID, Name: this.form.Name })
+          let responseNew = await this.$api.settings.groupNew({ GroupID: this.form.GroupID, Name: this.form.Name })
           if (responseNew.headers['code'] === '200') {
             this.$alert(responseNew.data.result[0].message, responseNew.data.result[0].code)
             isSuccess = true
           }
           break
         case 'edit':
-          const responseEdit = await this.$api.settings.groupEdit({ GroupID: this.form.GroupID, Name: this.form.Name })
+          let responseEdit = await this.$api.settings.groupEdit({ GroupID: this.form.GroupID, Name: this.form.Name })
           if (responseEdit.headers['code'] === '200') {
             this.$alert(responseEdit.data.result[0].message, responseEdit.data.result[0].code)
             isSuccess = true

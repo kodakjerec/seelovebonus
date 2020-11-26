@@ -56,7 +56,7 @@ export default {
   methods: {
     handleClick: async function (row, column, event) {
       // 取得可以用的選單
-      const response = await this.$api.settings.getObject({ type: 'group', ID: row.GroupID })
+      let response = await this.$api.settings.getObject({ type: 'group', ID: row.GroupID })
       this.checkedProgList = response.data.result
 
       // 進入修改
@@ -67,7 +67,7 @@ export default {
     // 開啟表單
     showForm: async function (eventType) {
       // 取得可以用的選單
-      const response = await this.$api.settings.getObject({ type: 'group', ID: '' })
+      let response = await this.$api.settings.getObject({ type: 'group', ID: '' })
       this.checkedProgList = response.data.result
 
       // 進入新增

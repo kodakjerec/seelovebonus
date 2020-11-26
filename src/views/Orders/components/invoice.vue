@@ -64,6 +64,7 @@ export default {
   },
   props: {
     buttonsShow: { type: Object },
+    buttonsShowUser: { type: Object },
     orderID: { type: String }
   },
   data () {
@@ -72,15 +73,7 @@ export default {
       dialogShow: false,
       invoiceHeadShow: [],
       invoiceHead: {},
-      activeName: '',
-      // 使用者能看到的權限
-      buttonsShowUser: {
-        new: 1,
-        edit: 1,
-        save: 1,
-        delete: 1,
-        search: 1
-      }
+      activeName: ''
     }
   },
   watch: {
@@ -100,7 +93,7 @@ export default {
       return formatMoney(cellValue)
     },
     preLoading: async function () {
-      const responseRecords = await this.$api.orders.getObject({ type: 'invoiceHead', ID: this.orderID })
+      let responseRecords = await this.$api.orders.getObject({ type: 'invoiceHead', ID: this.orderID })
       this.invoiceHeadShow = responseRecords.data.result
       if (this.invoiceHeadShow && this.invoiceHeadShow.length > 0) {
         this.activeName = '1'

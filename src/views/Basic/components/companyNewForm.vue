@@ -229,28 +229,28 @@ export default {
     // 讀取預設資料
     preLoading: async function () {
       // 取得所有原始資料
-      const response = await this.$api.basic.getDropdownList({ type: 'post' })
+      let response = await this.$api.basic.getDropdownList({ type: 'post' })
       this.postData = response.data.result
 
-      const response1 = await this.$api.basic.getDropdownList({ type: 'country' })
+      let response1 = await this.$api.basic.getDropdownList({ type: 'country' })
       this.ddlCountry = response1.data.result
-      const response2 = await this.$api.basic.getDropdownList({ type: 'city' })
+      let response2 = await this.$api.basic.getDropdownList({ type: 'city' })
       this.ddlCity = response2.data.result
       this.ddlCityChange()
 
-      const response3 = await this.$api.basic.getDropdownList({ type: 'status' })
+      let response3 = await this.$api.basic.getDropdownList({ type: 'status' })
       this.ddlStatus = response3.data.result
 
-      const responseCustomers = await this.$api.basic.getDropdownList({ type: 'customers' })
+      let responseCustomers = await this.$api.basic.getDropdownList({ type: 'customers' })
       this.customersData = responseCustomers.data.result
-      const responseEmployees = await this.$api.basic.getDropdownList({ type: 'customerEmployees' })
+      let responseEmployees = await this.$api.basic.getDropdownList({ type: 'customerEmployees' })
       this.employeesData = responseEmployees.data.result
-      const responseCompanies = await this.$api.basic.getDropdownList({ type: 'companyParent' })
+      let responseCompanies = await this.$api.basic.getDropdownList({ type: 'companyParent' })
       this.companiesData = responseCompanies.data.result
-      const response5 = await this.$api.basic.getDropdownList({ type: 'refKind' })
+      let response5 = await this.$api.basic.getDropdownList({ type: 'refKind' })
       this.ddlRefKind = response5.data.result
       this.ddlRefKindChange()
-      const response7 = await this.$api.basic.getDropdownList({ type: 'employeesList' })
+      let response7 = await this.$api.basic.getDropdownList({ type: 'employeesList' })
       this.ddlEmployeeID = response7.data.result
     },
     // 過濾郵遞區號
@@ -297,14 +297,14 @@ export default {
       let isSuccess = false
       switch (this.dialogType) {
         case 'new':
-          const responseNew = await this.$api.basic.companyNew({ form: this.form })
+          let responseNew = await this.$api.basic.companyNew({ form: this.form })
           if (responseNew.headers['code'] === '200') {
             this.$alert(responseNew.data.result[0].message, responseNew.data.result[0].code)
             isSuccess = true
           }
           break
         case 'edit':
-          const responseEdit = await this.$api.basic.companyEdit({ form: this.form })
+          let responseEdit = await this.$api.basic.companyEdit({ form: this.form })
           if (responseEdit.headers['code'] === '200') {
             this.$alert(responseEdit.data.result[0].message, responseEdit.data.result[0].code)
             isSuccess = true

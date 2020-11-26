@@ -90,7 +90,7 @@ export default {
   methods: {
     // 讀入系統清單
     preLoading: async function () {
-      const response = await this.$api.reports.getDropdownList({ type: 'companies' })
+      let response = await this.$api.reports.getDropdownList({ type: 'companies' })
       this.ddlCompanies = response.data.result
     },
     // 使用者權限

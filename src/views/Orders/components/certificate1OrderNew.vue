@@ -72,7 +72,7 @@ export default {
     },
     preLoading: async function () {
       // 新增時憑證編號清單
-      const responseCer1List = await this.$api.orders.getDropdownList({ type: 'certificate1Prefix' })
+      let responseCer1List = await this.$api.orders.getDropdownList({ type: 'certificate1Prefix' })
       responseCer1List.data.result.forEach(row => {
         this.certificate1List.push(row)
       })

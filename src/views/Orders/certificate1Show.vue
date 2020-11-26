@@ -198,7 +198,7 @@ export default {
     // 搜尋
     search: async function (value) {
       this.searchContent.searchKeyWord = value
-      const response2 = await this.$api.orders.certificate1Show({ keyword: this.searchContent.searchKeyWord })
+      let response2 = await this.$api.orders.certificate1Show({ keyword: this.searchContent.searchKeyWord })
       this.originData = response2.data.result
     },
     // 排序相關

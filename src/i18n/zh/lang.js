@@ -13,6 +13,7 @@ export default {
   __invalid: '作廢',
   __save: '存檔',
   __print: '列印',
+  __goback: '返回',
   __retakeID: '重新取號',
   __retakeIDWarning: '重新取號會停用目前單據，並新增一張單據',
   __graphical: '圖形化',
@@ -171,6 +172,9 @@ export default {
   __signOffDeny: '否決',
   __signOffWarning: '以下單據等待簽核',
   __signOffResultMessage: '單據簽核結果如下：',
+  __signOffSettings: '簽核設定',
+  __signOffProcedure: '簽核步驟',
+  __signOffGroups: '簽核群組',
   // 請在上方新增字串
   // 以下為錯誤處理專用
   __error400: '無法理解請求',
