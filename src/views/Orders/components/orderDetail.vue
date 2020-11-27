@@ -13,15 +13,17 @@
       prop="ProductID"
       :label="$t('__product')+$t('__id')">
       <template slot-scope="scope">
-        <el-select v-if="buttonsShowUser.new && scope.row.ItemType === 1"
+        <el-select
+          v-if="buttonsShowUser.new && scope.row.ItemType === 1"
           filterable
           v-model="scope.row[scope.column.property]"
           :placeholder="$t('__plzChoice')"
-          @change="(value)=>{ddlSubListChange(value, scope.row)}"
+          @change="(value)=>{ddlSubListChange(value, scope.row, 1)}"
           style="display:block">
-          <el-option v-for="item in ddlSubList" :key="item.ID" :label="item.ID+' '+item.Value" :value="item.ID">
-            <span style="float: left">{{ item.Value }}</span>
-            <span style="float: right; color: #8492a6; font-size: 13px">{{ item.ID }}</span>
+          <el-option v-for="item in ddlSubList" :key="item.ProductID" :value="item.ProductID">
+            <!-- 商品明細特別加上價格 -->
+            <span style="float: left">{{ item.ProductName + ' ['+ formatterMoneyUS(null,null,item.Price,null) + ']' }}</span>
+            <span style="float: right; color: #8492a6; font-size: 13px">{{ item.ProductID }}</span>
           </el-option>
         </el-select>
         <div v-else>
@@ -34,11 +36,20 @@
       :label="$t('__product')+$t('__name')">
     </el-table-column>
     <el-table-column
+      prop="Price"
+      :label="$t('__price')"
+      :formatter="formatterMoney"
+      width="100px">
+    </el-table-column>
+    <el-table-column
       prop="Qty"
       :label="$t('__qty')"
       width="200px">
       <template slot-scope="scope">
-        <el-input-number v-if="buttonsShowUser.new && scope.row.ItemType === 1" v-model.number="scope.row[scope.column.property]" @change="(currentValue, oldValue)=>{qtyChange(currentValue, oldValue, scope.row)}"></el-input-number>
+        <el-input-number
+          v-if="buttonsShowUser.new && scope.row.ItemType === 1"
+          v-model="scope.row[scope.column.property]"
+          @change="(currentValue, oldValue)=>{qtyChange(currentValue, oldValue, scope.row)}"></el-input-number>
         <div v-else>
           {{scope.row.Qty}}
         </div>
@@ -48,6 +59,12 @@
       prop="UnitName"
       :label="$t('__unit')"
       width="60px">
+    </el-table-column>
+    <el-table-column
+      prop="Amount"
+      :label="$t('__amount')"
+      :formatter="formatterMoneyUS"
+      width="200px">
     </el-table-column>
     <el-table-column
       align="right"
@@ -71,6 +88,8 @@
 </template>
 
 <script>
+import { formatMoney } from '@/setup/format.js'
+
 export default {
   name: 'OrderDetail',
   props: {
@@ -78,7 +97,6 @@ export default {
     buttonsShowUser: { type: Object },
     orderID: { type: String },
     projectID: { type: String },
-    orderDetail: { type: Array },
     parentQty: { type: Number }
   },
   data () {
@@ -91,9 +109,12 @@ export default {
         Name: '',
         QtyOrigin: 0,
         Qty: 0,
+        Price: 0,
         UnitName: '',
         ItemType: 0,
-        Status: 'New'
+        // 以下為前端顯示用, 不會記錄進資料庫
+        Status: 'New',
+        Amount: 0
       },
       subList: [],
       subListDeleted: [],
@@ -104,11 +125,9 @@ export default {
   watch: {
     orderID: function (newValue) {
       if (newValue) {
-        this.subList.forEach(item => { item.OrderID = newValue })
+        this.subItem.OrderID = newValue
+        this.bringOrderDetail()
       }
-    },
-    orderDetail: function (newValue) {
-      this.subList = JSON.parse(JSON.stringify(newValue))
     },
     parentQty: function () {
       this.parentQtyChange()
@@ -118,11 +137,24 @@ export default {
     this.preLoading()
   },
   methods: {
+    formatterMoney: function (row, column, cellValue, index) {
+      return formatMoney(cellValue)
+    },
+    formatterMoneyUS: function (row, column, cellValue, index) {
+      return formatMoney(cellValue, 'US')
+    },
     // 讀取預設資料
     preLoading: async function () {
       // 取得所有原始資料
-      let response = await this.$api.basic.getDropdownList({ type: 'product' })
+      let response = await this.$api.orders.getDropdownList({ type: 'productsForOrderDetail' })
       this.ddlSubList = response.data.result
+    },
+    // 修改狀態, 取得明細
+    bringOrderDetail: async function () {
+      let responseDetail = await this.$api.orders.getObject({ type: 'orderDetail', ID: this.orderID })
+      this.subList = responseDetail.data.result
+
+      this.reCalAmount()
     },
     // 存檔-Detail
     beforeSave: async function () {
@@ -193,6 +225,7 @@ export default {
         return 0
       }
     },
+    // ============== 子結構 ===============
     // 新增子結構
     handleNew: function () {
       // 檢查是否已經有主結構
@@ -216,34 +249,82 @@ export default {
       newObj.OrderID = this.orderID
       newObj.ProjectID = this.projectID
       newObj.Seq = nextSeq
-      newObj.ProjectID = ''
+      newObj.ProductID = ''
       newObj.ItemType = 1
       newObj.Status = 'New'
       this.subList.push(newObj)
+
+      // 新增商品還沒有填入資料, 不用計算金額
     },
     // 刪除子結構
     handleDelete: function (index, row) {
       row.Status = 'Deleted'
       this.subListDeleted.push(row)
       this.subList.splice(index, 1)
+
+      this.reCalAmount()
     },
     // 下拉式選擇商品
-    ddlSubListChange: function (selected, row) {
-      let findSubList = this.ddlSubList.find(item => item.ID === selected)
-      row.Name = findSubList.Value
-      row.Qty = 1
-      row.QtyOrigin = 1
-      row.UnitName = findSubList.UnitName
+    ddlSubListChange: function (selected, row, ItemType) {
+      let findSubList = this.ddlSubList.find(item => item.ProductID === selected)
+      this.fillSubList(row, findSubList, ItemType)
+    },
+    // 填入選擇商品: 一般商品
+    // ItemType: 0-主約 1-附約主品項 2-附約明細商品(不計價)
+    fillSubList: async function (row, itemDetail, ItemType) {
+      row.ProductID = itemDetail.ProductID
+      row.Name = itemDetail.ProductName
+      row.Qty = itemDetail.Qty
+      row.QtyOrigin = itemDetail.Qty
+      row.Price = itemDetail.Price
+      row.UnitName = itemDetail.UnitName
+      row.ItemType = ItemType
       if (row.Status === '') {
         row.Status = 'Modified'
       }
+
+      // TODO: 有BOM表, 另外顯示在小視窗
+      // if (itemDetail.BOM === '1') {
+      //   const resBomItemDetail = await this.$api.orders.getObject({ type: 'productBOMForOrderDetail', ID: itemDetail.ProductID })
+      //   let bomItemDetail = resBomItemDetail.data.result
+      //   for (let index = 0; index < bomItemDetail.length; index++) {
+      //     this.handleNew()
+      //     let rowParent = bomItemDetail[index]
+      //     let row = this.subList[this.subList.length - 1]
+      //     this.fillSubList(row, rowParent, 2)
+      //   }
+      // }
+
+      this.reCalAmount()
     },
     // 變更明細商品數量
     qtyChange: function (currentValue, oldValue, row) {
       if (row.Status === '') {
         row.Status = 'Modified'
       }
+      this.reCalAmount()
     },
+    // 重新計算專案總價
+    reCalAmount: function () {
+      let masterAmount = 0; let subAmount = 0; let tempAmount = 0
+      this.subList.forEach(row => {
+        tempAmount = row.Price * row.Qty
+        row.Amount = tempAmount
+        switch (row.ItemType) {
+          case 0:
+            masterAmount += tempAmount
+            break
+          case 1:
+            subAmount += tempAmount
+            break
+        }
+      })
+      this.$emit('reCalculateDetail', {
+        masterAmount: masterAmount,
+        subAmount: subAmount
+      })
+    },
+    // ============== 父視窗使用的函數 ===============
     // 父視窗:變更明細商品數量, 只變更專案商品
     parentQtyChange: function () {
       this.subList.forEach(item => {
@@ -251,38 +332,19 @@ export default {
           item.Qty = item.QtyOrigin * this.parentQty
         }
       })
+      this.reCalAmount()
     },
     // 父視窗:清空選單, 填入專案商品
     parentResetItems: function (projectDetail) {
       // reset
       this.subList = []
 
+      // 模仿 手動填入品項
       for (let index = 0; index < projectDetail.length; index++) {
-        let product = projectDetail[index]
-
-        let newObj = JSON.parse(JSON.stringify(this.subItem))
-        // find Maximum Seq
-        let nextSeq = 1
-        if (this.subList.length === 0) {
-          nextSeq = 1
-        } else {
-          let amounts = this.subList.map(item => item.Seq)
-          let highestSeq = Math.max(...amounts)
-          nextSeq = highestSeq + 1
-        }
-
-        // 新增 item
-        newObj.OrderID = this.orderID
-        newObj.ProjectID = this.projectID
-        newObj.ProductID = product.ProductID
-        newObj.Name = product.ProductName
-        newObj.QtyOrigin = product.Qty
-        newObj.Qty = product.Qty
-        newObj.Seq = nextSeq
-        newObj.ProjectID = product.ProjectID
-        newObj.ItemType = 0
-        newObj.Status = 'New'
-        this.subList.push(newObj)
+        this.handleNew()
+        let rowParent = projectDetail[index]
+        let row = this.subList[this.subList.length - 1]
+        this.fillSubList(row, rowParent, 0)
       }
     }
   }

@@ -1,12 +1,24 @@
-export function formatMoney (value) {
-  let formatter = new Intl.NumberFormat('en-US', {
-    style: 'currency',
-    currency: 'TWD',
-    minimumFractionDigits: 0
-  })
+// 金額 NT $ 123,456
+export function formatMoney (value, mode) {
+  let formatter = null
+  if (mode === undefined) { mode = '' }
+  switch (mode) {
+    case '':
+      formatter = new Intl.NumberFormat('en-US', {
+        style: 'currency',
+        currency: 'TWD',
+        minimumFractionDigits: 0
+      })
+      break
+    case 'US':
+      formatter = new Intl.NumberFormat()
+      break
+  }
+
   return formatter.format(value)
 }
 
+// 日期
 export function formatDate (value) {
   if (value) {
     return value.substring(0, 10)
@@ -15,6 +27,7 @@ export function formatDate (value) {
   }
 }
 
+// 日期+時間
 export function formatDateTime (value) {
   if (value) {
     return value.replace('T', ' ').replace('Z', '')
@@ -23,6 +36,7 @@ export function formatDateTime (value) {
   }
 }
 
+// 卡號
 export function formatCard (value) {
   if (value) {
     return value.substring(0, 10)

@@ -84,7 +84,7 @@
           </el-option>
         </el-select>
       </el-form-item>
-      <bom ref="bom" v-if="dialogType!=='new'" :productID="form.ID" :productBOM="productBOM"></bom>
+      <bom ref="bom" v-if="dialogType!=='new'" :productID="form.ID"></bom>
       <el-form-item v-else>{{$t('__productBOMWarrning')}}</el-form-item>
     </el-form>
     <div slot="footer" class="dialog-footer">
@@ -134,7 +134,6 @@ export default {
         ID: false
       },
       myTitle: '',
-      productBOM: [],
       isLoadingFinish: false, // 讀取完畢
       // 以下為下拉式選單專用
       ddlAccounting: [],
@@ -175,8 +174,6 @@ export default {
       this.ddlBOM = response3.data.result
       let response4 = await this.$api.basic.getDropdownList({ type: 'status' })
       this.ddlStatus = response4.data.result
-      let responseBOM = await this.$api.basic.getObject({ type: 'productBOM', ID: this.form.ID })
-      this.productBOM = responseBOM.data.result
 
       let resItemCategory1 = await this.$api.basic.getDropdownList({ type: 'itemCategory1' })
       this.ddlCategory1 = resItemCategory1.data.result

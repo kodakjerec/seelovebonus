@@ -19,6 +19,7 @@
 </template>
 
 <script>
+import { formatDateTime } from '@/setup/format.js'
 export default {
   name: 'OrderSignOffLog',
   props: {
@@ -35,7 +36,7 @@ export default {
   },
   methods: {
     formatterDate: function (cellValue) {
-      return cellValue.replace('T', ' ').replace('Z', '')
+      return formatDateTime(cellValue)
     },
     preLoading: async function () {
       let response = await this.$api.signOff.getObject({ type: 'orderSignOffLog', ID: this.ID })

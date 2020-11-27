@@ -71,14 +71,19 @@
           :label="$t('__qty')"
           width="210px">
           <template slot-scope="scope">
-            <el-input-number v-model="scope.row[scope.column.property]" @change="(currentValue, oldValue)=>{qtyChange(currentValue, oldValue, scope.row)}" :disabled="disableForm.Qty"></el-input-number>
+            <el-input-number v-model="scope.row[scope.column.property]" :disabled="disableForm.Qty"></el-input-number>
           </template>
         </el-table-column>
         <el-table-column
-          prop="Amount"
-          :label="$t('__amount')"
+          prop="masterAmount"
+          :label="$t('__total') + $t('__amount')"
           :formatter="formatterMoney"
-          width="100px">
+          width="200px">
+          <div slot-scope="scope">
+            <div style="display:inline;float:left">{{$t('__master') + $t('__amount')}}</div><div style="display:inline;float:right">{{formatterMoneyUS(scope.row.masterAmount)}}</div><br/>
+            <div style="display:inline;float:left">{{$t('__sub') + $t('__amount')}}</div><div style="display:inline;float:right">{{formatterMoneyUS(scope.row.subAmount)}}</div><br/>
+            <div style="display:inline;float:left">{{$t('__total') + $t('__amount')}}</div><div style="display:inline;float:right">{{formatterMoneyUS(scope.row.Amount)}}</div>
+          </div>
         </el-table-column>
       </el-table>
     </el-form>
@@ -89,17 +94,15 @@
       :buttonsShowUser="buttonsShowUser"
       :orderID="form.ID"
       :projectID="form.ProjectID"
-      :orderDetail="orderDetail"
-      :parentQty="form.Qty">
-    </order-detail>
+      :parentQty="form.Qty"
+      @reCalculateDetail="reCalculateDetail"></order-detail>
     <!-- 訂購者資料 -->
     <order-customer
       ref="orderCustomer"
       :dialogType="dialogType"
       :buttonsShowUser="buttonsShowUser"
       :orderID="form.ID"
-      :ddlCustomerBefore="ddlCustomer">
-    </order-customer>
+      :ddlCustomerBefore="ddlCustomer"></order-customer>
     <template v-if="dialogType !== 'new'">
       <!-- 供奉憑證 -->
       <certificate1
@@ -125,49 +128,8 @@
         :orderID="form.ID"
         @refreshCollectionRecords="refreshCollectionRecords()"></invoice>
       <!-- 蓋章區域 -->
-      <el-table
-        :data="stampShow"
-        stripe
-        border
-        style="width: 100%">
-        <el-table-column :label="$t('__defaultCompanyName')">
-          <el-table-column
-            :label="$t('__orderSpace1')">
-          </el-table-column>
-          <el-table-column
-            :label="$t('__orderSpace2')">
-          </el-table-column>
-          <el-table-column
-            :label="$t('__orderCreateID')">
-            <template slot-scope="scope">
-              {{scope.row.CreateID}}<br/>{{scope.row.CreateIDName}}
-            </template>
-          </el-table-column>
-          <el-table-column
-            :label="$t('__refEmployeeID')">
-            <template slot-scope="scope">
-              {{scope.row.EmployeeID}}<br/>{{scope.row.EmployeeIDName}}
-            </template>
-          </el-table-column>
-        </el-table-column>
-        <el-table-column :label="$t('__defaultDepart')">
-          <el-table-column
-            :label="$t('__company')">
-            <template slot-scope="scope">
-              {{scope.row.CompanyID}}<br/>{{scope.row.CompanyName}}
-            </template>
-          </el-table-column>
-          <el-table-column
-            :label="$t('__referrer')">
-            <template slot-scope="scope">
-              {{scope.row.Referrer}}<br/>{{scope.row.ReferrerName}}
-            </template>
-          </el-table-column>
-          <el-table-column
-            :label="$t('__orderSpace3')">
-          </el-table-column>
-        </el-table-column>
-      </el-table>
+      <orderStampArea
+        :orderID="form.ID"></orderStampArea>
       </template>
     <template v-else>
       <span v-html="$t('__orderDetailWarrning')"></span>
@@ -195,6 +157,7 @@ import collectionRecords from './collectionRecords'
 import invoice from './invoice'
 import orderDetail from './orderDetail'
 import orderCustomer from './orderCustomer'
+import orderStampArea from './orderStampArea'
 import { formatMoney } from '@/setup/format.js'
 import { messageBoxYesNo } from '@/services/utils'
 
@@ -207,7 +170,8 @@ export default {
     orderDetail,
     orderCustomer,
     collectionRecords,
-    invoice
+    invoice,
+    orderStampArea
   },
   props: {
     dialogType: { type: String, default: 'new' },
@@ -226,9 +190,12 @@ export default {
         Price: 0,
         Qty: 1,
         Amount: 0,
-        FirstItemName: '',
         Prefix: '',
-        Memo: ''
+        Memo: '',
+        // 以下為前端顯示用, 不會記錄進資料庫
+        masterAmount: 0,
+        subAmount: 0,
+        FirstItemName: ''
       },
       rules: {
         ID: [{ required: true, message: this.$t('__pleaseInput'), trigger: 'blur' }],
@@ -253,14 +220,6 @@ export default {
       },
       myTitle: '',
       projectHead: [],
-      orderDetail: [],
-      certificate1List: [],
-      stampShow: [{
-        CreateIDName: null,
-        EmployeeIDName: null,
-        CompanyName: null,
-        ReferrerName: null
-      }],
       updateMessage: '', // 更新資料庫後回傳的訊息
       // 以下為下拉式選單專用
       ddlOrderStatus: [],
@@ -334,6 +293,9 @@ export default {
     formatterMoney: function (row, column, cellValue, index) {
       return formatMoney(cellValue)
     },
+    formatterMoneyUS: function (cellValue) {
+      return formatMoney(cellValue, 'US')
+    },
     // 讀取預設資料
     preLoading: async function () {
       let response1 = await this.$api.orders.getDropdownList({ type: 'orderStatus' })
@@ -342,11 +304,6 @@ export default {
       this.ddlProject = response2.data.result
       let response4 = await this.$api.orders.getDropdownList({ type: 'customer' })
       this.ddlCustomer = response4.data.result
-
-      let responseDetail = await this.$api.orders.getObject({ type: 'orderDetail', ID: this.form.ID })
-      this.orderDetail = responseDetail.data.result
-      let responseStampShow = await this.$api.orders.getObject({ type: 'orderStampShow', ID: this.form.ID })
-      this.stampShow = responseStampShow.data.result
     },
     // 點擊"修改專案", 填入明細
     bringProject: async function () {
@@ -368,16 +325,13 @@ export default {
       // 填入 orderHead
       this.form.Price = project.Price
       this.form.Qty = 1
-      this.form.Amount = this.form.Price * this.form.Qty
-      this.form.FirstItemName = projectDetail[0].ProductName
       this.form.Prefix = project.Prefix
 
-      // 填入 orderDetail
+      // 主專案第一個商品名稱
+      this.form.FirstItemName = projectDetail[0].ProductName
+
+      // 主專案填入 orderDetail
       this.$refs['orderDetail'].parentResetItems(projectDetail)
-    },
-    qtyChange: function (currentValue, oldValue, row) {
-      // 填入 orderHead
-      this.form.Amount = this.form.Price * this.form.Qty
     },
     // 檢查輸入
     checkValidate: async function () {
@@ -556,6 +510,13 @@ export default {
     // 儲存發票後更新付款紀錄資訊
     refreshCollectionRecords: function () {
       this.$refs['collectionRecords'].preLoading()
+    },
+    // 子->父: 統計商品明細總價
+    reCalculateDetail: function (object) {
+      const { masterAmount, subAmount } = object
+      this.form.masterAmount = masterAmount
+      this.form.subAmount = subAmount
+      this.form.Amount = masterAmount + subAmount
     }
   }
 }
