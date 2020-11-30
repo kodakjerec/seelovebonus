@@ -44,11 +44,18 @@
           <el-input-number v-model.number="form.PV" :precision="2" :min="0"></el-input-number>
           <span>{{$t('__100PercentInput100')}}</span>
       </el-form-item>
+      <!-- 專案明細 -->
       <template v-if="dialogType!=='new'">
         <el-divider>{{$t('__project')+$t('__detail')}}</el-divider>
-        <bom ref="bom" :projectID="form.ID" :projectDetail="projectDetail"></bom>
+        <projectDetail ref="projectDetail" :projectID="form.ID" :projectDetail="projectDetail"></projectDetail>
       </template>
       <el-form-item v-else>{{$t('__projectDetailWarrning')}}</el-form-item>
+      <!-- 專案功能 -->
+      <el-divider>{{$t('__project')+$t('__function')}}</el-divider>
+      <template v-for="fun in switchProjectFunctions">
+        {{fun.Value}}
+        <el-switch v-model="fun.Available" :key="fun.Function" active-text="ON" inactive-text="OFF" :active-value="1" :inactive-value="0"></el-switch>
+      </template>
     </el-form>
     <div slot="footer" class="dialog-footer">
       <el-button @click="cancel">{{$t('__cancel')}}</el-button>
@@ -58,11 +65,11 @@
 </template>
 
 <script>
-import bom from './projectDetail'
+import projectDetail from './projectDetail'
 export default {
   name: 'ProjectNewForm',
   components: {
-    bom
+    projectDetail
   },
   props: {
     dialogType: { type: String, default: 'new' },
@@ -93,8 +100,9 @@ export default {
       },
       myTitle: '',
       projectDetail: [],
-      projectPBonus: [],
-      projectSuperBonus: []
+      AvailableFunctions: [],
+      // 下拉是選單
+      switchProjectFunctions: []
     }
   },
   mounted () {
@@ -117,13 +125,16 @@ export default {
     preLoading: async function () {
       let response1 = await this.$api.basic.getObject({ type: 'projectDetail', ID: this.form.ID })
       this.projectDetail = response1.data.result
+      // 有用到的專案功能
+      let responseAvailableProjectFunctions = await this.$api.basic.getObject({ type: 'projectFunctions', ID: this.form.ID })
+      this.switchProjectFunctions = responseAvailableProjectFunctions.data.result
     },
     // 檢查輸入
     checkValidate: async function () {
       if (this.dialogType !== 'new') {
       // check BOM
         let isSuccess = false
-        isSuccess = await this.$refs['bom'].beforeSave()
+        isSuccess = await this.$refs['projectDetail'].beforeSave()
         if (!isSuccess) { return }
       }
 
@@ -147,6 +158,11 @@ export default {
           if (responseNew.headers['code'] === '200') {
             this.$alert(responseNew.data.result[0].message, responseNew.data.result[0].code)
             isSuccess = true
+
+            // 更新專案功能代號
+            this.switchProjectFunctions.forEach(item => {
+              item.ProjectID = this.form.ID
+            })
           }
           break
         case 'edit':
@@ -156,6 +172,11 @@ export default {
             isSuccess = true
           }
           break
+      }
+
+      // 專案功能更新
+      for (let index = 0; index < this.switchProjectFunctions.length; index++) {
+        await this.$api.basic.projectFunctionsUpdate({ form: this.switchProjectFunctions[index] })
       }
 
       if (isSuccess) {

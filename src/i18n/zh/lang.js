@@ -95,6 +95,7 @@ export default {
   __orderDetailWarrning: '請先完成新增再修改付款紀錄和發票<br/>供奉憑證與換狀證明，會依購買數量自動新增',
   __project: '專案',
   __detail: '明細',
+  __function: '功能',
   __projectOrderPrefix: '專案訂單編號前綴詞',
   __performanceBonus: '業務獎金',
   __superBonus: '超級獎金',

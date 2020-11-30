@@ -95,6 +95,7 @@ export default {
   __orderDetailWarrning: 'Please complete new-status before modifying the collection-records and invoices<br/>certificates and proofs will be added according to your quantity',
   __project: 'Project',
   __detail: 'Detail',
+  __function: 'Function',
   __projectOrderPrefix: '專案訂單編號前綴詞',
   __performanceBonus: 'Performance Bonus',
   __superBonus: 'Super Bonus',

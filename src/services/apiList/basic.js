@@ -184,6 +184,13 @@ export default {
         return data
       })
     },
+    projectFunctionsUpdate: ({ form }) => {
+      let rawData = { form }
+      return post('/basic/projectFunctionsUpdate', rawData).then(data => {
+        console.log(`%c <<< Response(/rest/basic/projectFunctionsUpdate)⤵ `, 'background-color: #E0455D; color: white; font-size: 14px; font-weight: bold;', data)
+        return data
+      })
+    },
     checkValidate: ({ type, ID }) => {
       let rawData = { type, ID }
       return post('/basic/checkValidate', rawData).then(data => {
