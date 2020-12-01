@@ -229,7 +229,9 @@ export default {
     // 切換 UserType
     ddlUserTypeChange: function (selected, row) {
       row.GroupName = ''
-      row.Status = 'Modified'
+      if (row.Status === '') {
+        row.Status = 'Modified'
+      }
     },
     // 切換 ID
     ddlIDChange: function (selected, row) {
