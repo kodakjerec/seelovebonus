@@ -47,7 +47,7 @@
       <!-- 專案明細 -->
       <template v-if="dialogType!=='new'">
         <el-divider>{{$t('__project')+$t('__detail')}}</el-divider>
-        <projectDetail ref="projectDetail" :projectID="form.ID" :projectDetail="projectDetail"></projectDetail>
+        <project-detail ref="projectDetail" :projectID="form.ID"></project-detail>
       </template>
       <el-form-item v-else>{{$t('__projectDetailWarrning')}}</el-form-item>
       <!-- 專案功能 -->
@@ -99,7 +99,6 @@ export default {
         ID: false
       },
       myTitle: '',
-      projectDetail: [],
       AvailableFunctions: [],
       // 下拉是選單
       switchProjectFunctions: []
@@ -113,9 +112,10 @@ export default {
         break
       case 'edit':
         this.myTitle = this.$t('__edit') + this.$t('__project')
-        this.form = JSON.parse(JSON.stringify(this.project))
         this.disableForm.ID = true
         this.disableForm.Prefix = true
+
+        this.form = JSON.parse(JSON.stringify(this.project))
         break
     }
     this.preLoading()
@@ -123,8 +123,6 @@ export default {
   methods: {
     // 讀取預設資料
     preLoading: async function () {
-      let response1 = await this.$api.basic.getObject({ type: 'projectDetail', ID: this.form.ID })
-      this.projectDetail = response1.data.result
       // 有用到的專案功能
       let responseAvailableProjectFunctions = await this.$api.basic.getObject({ type: 'projectFunctions', ID: this.form.ID })
       this.switchProjectFunctions = responseAvailableProjectFunctions.data.result

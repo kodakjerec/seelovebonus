@@ -2,11 +2,11 @@
   <div>
     <h1>{{myTitle}}</h1>
     <el-form ref="form" :model="form" :rules="rules" label-width="10vw" label-position="right">
-      <el-form-item :label="$t('__orderID')+'：'">
+      <el-form-item :label="$t('__orderID')">
         <el-col :span="2" v-if="dialogType === 'new'">
           {{form.Prefix}}
         </el-col>
-        <el-col :span="4">
+        <el-col :span="5">
           <el-input v-model="form.ID" :placeholder="$t('__afterSaveWillShow')" :disabled="disableForm.ID"></el-input>
         </el-col>
         <el-col :span="6">
@@ -19,7 +19,7 @@
             </el-select>
           </el-form-item>
         </el-col>
-        <el-col :span="6">
+        <el-col :span="11">
           <el-form-item :label="$t('__order')+$t('__date')+'：'" prop="OrderDate">
             <el-date-picker
               v-model="form.OrderDate"
@@ -36,6 +36,8 @@
           <el-input v-model="form.Memo" type="textarea" rows="2" autocomplete="off" maxlength="100" show-word-limit
             :disabled="disableForm.OrderDate"></el-input>
       </el-form-item>
+      <!-- 專案特殊功能 -->
+      <order-functions ref="orderFunctions" :orderID="form.ID" :buttonsShowUser="buttonsShowUser" :showChanyunOrderID="form.showChanyunOrderID"></order-functions>
       <!-- 選擇專案 -->
       <el-table
         :data="projectHead"
@@ -46,14 +48,19 @@
           prop="ProjectID"
           :label="$t('__project')+$t('__name')">
           <template slot-scope="scope">
-            <el-form-item prop="ProjectID">
-              <el-select v-model="scope.row[scope.column.property]" filterable :placeholder="$t('__plzChoice')" @change="(value)=>{ddlProjectChange(value, scope.row)}" style="display:block" :disabled="disableForm.ProjectID">
-                <el-option v-for="item in ddlProject" :key="item.ID" :label="item.ID+' '+item.Value" :value="item.ID">
-                  <span style="float: left">{{ item.Value }}</span>
-                  <span style="float: right; color: #8492a6; font-size: 13px">{{ item.ID }}</span>
-                </el-option>
-              </el-select>
-            </el-form-item>
+            <el-select
+              prop="ProjectID"
+              v-model="scope.row[scope.column.property]"
+              filterable
+              :placeholder="$t('__plzChoice')"
+              @change="(value)=>{ddlProjectChange(value, scope.row)}"
+              style="display:block"
+              :disabled="disableForm.ProjectID">
+              <el-option v-for="item in ddlProject" :key="item.ID" :label="item.ID+' '+item.Value" :value="item.ID">
+                <span style="float: left">{{ item.Value }}</span>
+                <span style="float: right; color: #8492a6; font-size: 13px">{{ item.ID }}</span>
+              </el-option>
+            </el-select>
           </template>
         </el-table-column>
         <el-table-column
@@ -134,9 +141,15 @@
     <template v-else>
       <span v-html="$t('__orderDetailWarrning')"></span>
       <certificate1-order-new
+        v-show="form.showCertificate1 === 1"
         ref="certificate1OrderNew"
         :orderID="form.ID"
         :parentQty="form.Qty"></certificate1-order-new>
+      <certificate2-order-new
+        v-show="form.showCertificate2 === 1"
+        ref="certificate2OrderNew"
+        :orderID="form.ID"
+        :parentQty="form.Qty"></certificate2-order-new>
     </template>
     <!-- 底部操作按鈕 -->
     <div slot="footer" class="dialog-footer">
@@ -153,11 +166,14 @@
 import certificate1 from './certificate1'
 import certificate1OrderNew from './certificate1OrderNew'
 import certificate2 from './certificate2'
+import certificate2OrderNew from './certificate2OrderNew'
 import collectionRecords from './collectionRecords'
 import invoice from './invoice'
 import orderDetail from './orderDetail'
 import orderCustomer from './orderCustomer'
 import orderStampArea from './orderStampArea'
+import orderFunctions from './orderFunctions'
+
 import { formatMoney } from '@/setup/format.js'
 import { messageBoxYesNo } from '@/services/utils'
 
@@ -167,11 +183,13 @@ export default {
     certificate1,
     certificate1OrderNew,
     certificate2,
+    certificate2OrderNew,
     orderDetail,
     orderCustomer,
     collectionRecords,
     invoice,
-    orderStampArea
+    orderStampArea,
+    orderFunctions
   },
   props: {
     dialogType: { type: String, default: 'new' },
@@ -195,7 +213,11 @@ export default {
         // 以下為前端顯示用, 不會記錄進資料庫
         masterAmount: 0,
         subAmount: 0,
-        FirstItemName: ''
+        FirstItemName: '',
+        // 專案功能顯示(新增專用)(不記錄進資料庫)
+        showChanyunOrderID: 0,
+        showCertificate1: 0,
+        showCertificate2: 0
       },
       rules: {
         ID: [{ required: true, message: this.$t('__pleaseInput'), trigger: 'blur' }],
@@ -310,9 +332,26 @@ export default {
       // get Data
       let responseProjectDetail = await this.$api.orders.getObject({ type: 'projectDetail', ID: this.form.ProjectID })
       let projectDetail = responseProjectDetail.data.result
+      let responseProjectFunctions = await this.$api.basic.getObject({ type: 'projectFunctions', ID: this.form.ProjectID })
+      let projectFunctions = responseProjectFunctions.data.result
 
       // 填入 orderHead
       this.form.FirstItemName = projectDetail[0].ProductName
+
+      // 專案功能顯示
+      projectFunctions.forEach(item => {
+        if (item.Function === 'chanyunOrderID') {
+          this.form.showChanyunOrderID = item.Available
+        } else if (
+          item.Function === 'newCertificate1'
+        ) {
+          this.form.showCertificate1 = item.Available
+        } else if (
+          item.Function === 'newCertificate2'
+        ) {
+          this.form.showCertificate2 = item.Available
+        }
+      })
     },
     // 切換專案, 填入明細
     ddlProjectChange: async function (selected) {
@@ -321,6 +360,8 @@ export default {
       let project = responseProject.data.result[0]
       let responseProjectDetail = await this.$api.orders.getObject({ type: 'projectDetail', ID: selected })
       let projectDetail = responseProjectDetail.data.result
+      let responseProjectFunctions = await this.$api.basic.getObject({ type: 'projectFunctions', ID: selected })
+      let projectFunctions = responseProjectFunctions.data.result
 
       // 填入 orderHead
       this.form.Price = project.Price
@@ -332,6 +373,21 @@ export default {
 
       // 主專案填入 orderDetail
       this.$refs['orderDetail'].parentResetItems(projectDetail)
+
+      // 專案功能顯示
+      projectFunctions.forEach(item => {
+        if (item.Function === 'chanyunOrderID') {
+          this.form.showChanyunOrderID = item.Available
+        } else if (
+          item.Function === 'newCertificate1'
+        ) {
+          this.form.showCertificate1 = item.Available
+        } else if (
+          item.Function === 'newCertificate2'
+        ) {
+          this.form.showCertificate2 = item.Available
+        }
+      })
     },
     // 檢查輸入
     checkValidate: async function () {
@@ -345,8 +401,16 @@ export default {
           if (!isSuccess) { return }
 
           // 檢查供奉憑證資訊
-          isSuccess = await this.$refs['certificate1OrderNew'].checkValidate()
-          if (!isSuccess) { return }
+          if (this.form.showCertificate1 === 1) {
+            isSuccess = await this.$refs['certificate1OrderNew'].checkValidate()
+            if (!isSuccess) { return }
+          }
+
+          // 檢查其他附加功能
+          if (this.form.showChanyunOrderID === 1) {
+            isSuccess = await this.$refs['orderFunctions'].checkValidate()
+            if (!isSuccess) { return }
+          }
           break
       }
 
@@ -372,8 +436,16 @@ export default {
         case 'new':
           let isSuccess = await this.save(this.dialogType)
           await this.$refs['orderDetail'].beforeSave()
-          await this.$refs['orderCustomer'].save()
-          await this.$refs['certificate1OrderNew'].beforeSave() // 新增訂單才會出現
+          await this.$refs['orderCustomer'].beforeSave()
+          if (this.form.showCertificate1 === 1) {
+            await this.$refs['certificate1OrderNew'].beforeSave() // 新增訂單才會出現
+          }
+          if (this.form.showCertificate2 === 1) {
+            await this.$refs['certificate2OrderNew'].beforeSave() // 新增訂單才會出現
+          }
+          if (this.form.showChanyunOrderID === 1) {
+            await this.$refs['orderFunctions'].beforeSave()
+          }
           if (isSuccess) {
             this.$alert(this.updateMessage, 200, {
               callback: () => {
@@ -390,7 +462,11 @@ export default {
         case 'edit':
           let isSuccessEdit = await this.save(this.dialogType)
           await this.$refs['orderDetail'].beforeSave()
-          await this.$refs['orderCustomer'].save()
+          await this.$refs['orderCustomer'].beforeSave()
+
+          if (this.form.showChanyunOrderID === 1) {
+            await this.$refs['orderFunctions'].beforeSave()
+          }
           if (isSuccessEdit) {
             this.$alert(this.updateMessage, 200, {
               callback: () => {

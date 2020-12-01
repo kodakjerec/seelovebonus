@@ -60,8 +60,7 @@
 export default {
   name: 'ProjectDetail',
   props: {
-    projectID: { type: String },
-    projectDetail: { type: Array }
+    projectID: { type: String }
   },
   data () {
     return {
@@ -79,12 +78,13 @@ export default {
     }
   },
   watch: {
-    projectDetail: function () {
-      this.subList = JSON.parse(JSON.stringify(this.projectDetail))
+    projectID: function () {
+      this.bringProjectDetail()
     }
   },
   mounted () {
     this.preLoading()
+    this.bringProjectDetail()
   },
   methods: {
     // 讀取預設資料
@@ -92,6 +92,10 @@ export default {
       // 取得所有原始資料
       let response = await this.$api.basic.getDropdownList({ type: 'product' })
       this.ddlSubList = response.data.result
+    },
+    bringProjectDetail: async function () {
+      let response1 = await this.$api.basic.getObject({ type: 'projectDetail', ID: this.projectID })
+      this.subList = response1.data.result
     },
     // 存檔前先過濾
     beforeSave: async function () {

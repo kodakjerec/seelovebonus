@@ -206,6 +206,13 @@ export default {
         return data
       })
     },
+    functionsUpdate: ({ form }) => {
+      let rawData = { form }
+      return post('/orders/functionsUpdate', rawData).then(data => {
+        console.log(`%c <<< Response(/rest/orders/functionsUpdate)⤵ `, 'background-color: #E0455D; color: white; font-size: 14px; font-weight: bold;', data)
+        return data
+      })
+    },
     getDropdownList: ({ type }) => {
       let rawData = { type }
       return post('/orders/getDropdownList', rawData).then(data => {

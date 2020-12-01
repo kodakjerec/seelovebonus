@@ -104,7 +104,7 @@ export default {
       subItem: {
         OrderID: this.orderID,
         Seq: 0,
-        ProjectID: '',
+        ProjectID: this.projectID,
         ProductID: '',
         Name: '',
         QtyOrigin: 0,
@@ -126,7 +126,18 @@ export default {
     orderID: function (newValue) {
       if (newValue) {
         this.subItem.OrderID = newValue
-        this.bringOrderDetail()
+
+        this.subList.forEach(row => {
+          row.OrderID = newValue
+        })
+
+        switch (this.dialogType) {
+          case 'new':
+            break
+          case 'edit':
+            this.bringOrderDetail()
+            break
+        }
       }
     },
     parentQty: function () {
@@ -159,6 +170,7 @@ export default {
     // 存檔-Detail
     beforeSave: async function () {
       let isSuccess = false
+
       // 結合已刪除單據
       let finalResult = this.subList.concat(this.subListDeleted)
 
@@ -228,12 +240,6 @@ export default {
     // ============== 子結構 ===============
     // 新增子結構
     handleNew: function () {
-      // 檢查是否已經有主結構
-      if (this.OrderID === '') {
-        this.$refs['form'].validate()
-        return
-      }
-
       let newObj = JSON.parse(JSON.stringify(this.subItem))
       // find Maximum Seq
       let nextSeq = 1

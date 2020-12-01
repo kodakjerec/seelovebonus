@@ -168,7 +168,17 @@ export default {
     orderID: function (newValue) {
       if (newValue) {
         this.form.OrderID = newValue
-        this.bringCustomer()
+
+        switch (this.dialogType) {
+          case 'new':
+            break
+          case 'edit':
+            if (this.buttonsShowUser.new === 0) {
+              this.disableForm.CustomerID = true
+            }
+            this.bringCustomer()
+            break
+        }
       }
     },
     ddlCustomerBefore: function (value) {
@@ -179,16 +189,6 @@ export default {
   },
   mounted () {
     this.preLoading()
-
-    switch (this.dialogType) {
-      case 'new':
-        break
-      case 'edit':
-        if (this.buttonsShowUser.new === 0) {
-          this.disableForm.CustomerID = true
-        }
-        break
-    }
   },
   methods: {
     preLoading: async function () {
@@ -283,6 +283,17 @@ export default {
     checkValidate: function () {
       let isSuccess = false
       this.$refs['form'].validate((valid) => { isSuccess = valid })
+      return isSuccess
+    },
+    // 存檔前檢查
+    beforeSave: async function () {
+      let isSuccess = false
+      if (this.form.OrderID === '') {
+        return false
+      }
+
+      isSuccess = await this.save()
+
       return isSuccess
     },
     // 存檔
