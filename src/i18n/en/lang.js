@@ -20,7 +20,6 @@ export default {
   __toExcel: 'Download Excel',
   __theFollingIs: 'The folling is',
   __theAboveIs: 'The ablove is',
-  __plzChoice: 'Please Choice',
   __english: 'English',
   __language1: 'Vietnam',
   __language2: 'Taiwan',
@@ -180,6 +179,9 @@ export default {
   __signOffProcedure: 'SignOff Steps',
   __signOffGroups: 'SignOff Groups',
   __signOffLog: 'SignOff Log',
+  __extend: 'Extend',
+  __chanyun: 'Chanyun',
+  __landCertificate: 'Land Cer.',
   // 請在上方新增字串
   // 以下為錯誤處理專用
   __error400: 'Bad Request',
@@ -188,6 +190,7 @@ export default {
   __error500: 'Internal Server Error',
   __uploadFail: 'Upload Fail, please try again.',
   // 以下為驗證專用
+  __plzChoice: 'Please Choice',
   __pleaseInputUserID: 'Please Input UserID',
   __pleaseInputPassword: 'Please Input Password',
   __pleaseInput: 'Please Input',

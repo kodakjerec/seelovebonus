@@ -100,7 +100,6 @@ export default {
       if (finalResult.length === 0) { isSuccess = true }
 
       for (let index = 0; index < finalResult.length; index++) {
-        let uploadResult = false
         let row = finalResult[index]
         // 錯誤處理
         if (row.ProjectID === '' || row.Grade === null) {
@@ -109,23 +108,20 @@ export default {
         // 開始更新
         switch (row.Status) {
           case 'New':
-            uploadResult = await this.save('new', row)
+            isSuccess = await this.save('new', row)
             break
           case 'Modified':
-            uploadResult = await this.save('edit', row)
+            isSuccess = await this.save('edit', row)
             break
           case 'Deleted':
-            uploadResult = await this.save('delete', row)
+            isSuccess = await this.save('delete', row)
             break
           case '':
-            uploadResult = true
+            isSuccess = true
             break
         }
-        if (uploadResult === false) {
-          isSuccess = false
-          return
-        } else {
-          isSuccess = true
+        if (isSuccess === false) {
+          return isSuccess
         }
       }
 

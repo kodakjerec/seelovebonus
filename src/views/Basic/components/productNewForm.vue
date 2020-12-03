@@ -84,8 +84,15 @@
           </el-option>
         </el-select>
       </el-form-item>
+      <!-- BOM 子結構 -->
       <bom ref="bom" v-if="dialogType!=='new'" :productID="form.ID"></bom>
       <el-form-item v-else>{{$t('__productBOMWarrning')}}</el-form-item>
+      <!-- 專案功能 -->
+      <el-divider>{{$t('__product')+$t('__function')}}</el-divider>
+      <template v-for="fun in switchProjectFunctions">
+        {{fun.Value}}
+        <el-switch v-model="fun.Available" :key="fun.Function" active-text="ON" inactive-text="OFF" :active-value="1" :inactive-value="0"></el-switch>
+      </template>
     </el-form>
     <div slot="footer" class="dialog-footer">
       <el-button @click="cancel">{{$t('__cancel')}}</el-button>
@@ -144,7 +151,8 @@ export default {
       ddlCategory2Origin: [],
       ddlCategory2: [],
       ddlCategory3Origin: [],
-      ddlCategory3: []
+      ddlCategory3: [],
+      switchProjectFunctions: []
     }
   },
   async mounted () {
@@ -183,6 +191,10 @@ export default {
       this.ddlCategory3Origin = resItemCategory3.data.result
       this.ddlCategory1Change()
       this.ddlCategory2Change()
+
+      // 有用到的商品特殊功能
+      let responseAvailableProjectFunctions = await this.$api.basic.getObject({ type: 'productFunctions', ID: this.form.ID })
+      this.switchProjectFunctions = responseAvailableProjectFunctions.data.result
     },
     // 切換費用代號, 填入名稱
     ddlAccountingChange: function (selected) {
@@ -236,6 +248,11 @@ export default {
             isSuccess = true
           }
           break
+      }
+
+      // 商品特殊功能更新
+      for (let index = 0; index < this.switchProjectFunctions.length; index++) {
+        await this.$api.basic.productFunctionsUpdate({ form: this.switchProjectFunctions[index] })
       }
 
       if (isSuccess) {

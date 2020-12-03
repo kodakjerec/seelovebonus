@@ -105,7 +105,6 @@ export default {
       if (finalResult.length === 0) { isSuccess = true }
 
       for (let index = 0; index < finalResult.length; index++) {
-        let uploadResult = 0
         let row = finalResult[index]
         // 錯誤處理
         if (row.ProjectID === '' || row.ProudctID === '') {
@@ -114,23 +113,20 @@ export default {
         // 開始更新
         switch (row.Status) {
           case 'New':
-            uploadResult = await this.save('new', row)
+            isSuccess = await this.save('new', row)
             break
           case 'Modified':
-            uploadResult = await this.save('edit', row)
+            isSuccess = await this.save('edit', row)
             break
           case 'Deleted':
-            uploadResult = await this.save('delete', row)
+            isSuccess = await this.save('delete', row)
             break
           case '':
-            uploadResult = 1
+            isSuccess = true
             break
         }
-        if (uploadResult === 0) {
-          isSuccess = false
-          return
-        } else {
-          isSuccess = true
+        if (isSuccess === false) {
+          return isSuccess
         }
       }
 
@@ -160,11 +156,7 @@ export default {
           break
       }
 
-      if (isSuccess) {
-        return 1
-      } else {
-        return 0
-      }
+      return isSuccess
     },
     // 新增子結構
     handleNew: function () {

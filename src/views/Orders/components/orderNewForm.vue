@@ -37,7 +37,13 @@
             :disabled="disableForm.OrderDate"></el-input>
       </el-form-item>
       <!-- 專案特殊功能 -->
-      <order-functions ref="orderFunctions" :orderID="form.ID" :buttonsShowUser="buttonsShowUser" :showChanyunOrderID="form.showChanyunOrderID"></order-functions>
+      <order-functions
+        ref="orderFunctions"
+        v-show="form.showChanyunOrderID === 1"
+        :dialogType="dialogType"
+        :orderID="form.ID"
+        :buttonsShowUser="buttonsShowUser"
+        :showChanyunOrderID="form.showChanyunOrderID"></order-functions>
       <!-- 選擇專案 -->
       <el-table
         :data="projectHead"
@@ -332,26 +338,11 @@ export default {
       // get Data
       let responseProjectDetail = await this.$api.orders.getObject({ type: 'projectDetail', ID: this.form.ProjectID })
       let projectDetail = responseProjectDetail.data.result
-      let responseProjectFunctions = await this.$api.basic.getObject({ type: 'projectFunctions', ID: this.form.ProjectID })
-      let projectFunctions = responseProjectFunctions.data.result
 
       // 填入 orderHead
       this.form.FirstItemName = projectDetail[0].ProductName
 
-      // 專案功能顯示
-      projectFunctions.forEach(item => {
-        if (item.Function === 'chanyunOrderID') {
-          this.form.showChanyunOrderID = item.Available
-        } else if (
-          item.Function === 'newCertificate1'
-        ) {
-          this.form.showCertificate1 = item.Available
-        } else if (
-          item.Function === 'newCertificate2'
-        ) {
-          this.form.showCertificate2 = item.Available
-        }
-      })
+      this.bringFunctions()
     },
     // 切換專案, 填入明細
     ddlProjectChange: async function (selected) {
@@ -360,8 +351,6 @@ export default {
       let project = responseProject.data.result[0]
       let responseProjectDetail = await this.$api.orders.getObject({ type: 'projectDetail', ID: selected })
       let projectDetail = responseProjectDetail.data.result
-      let responseProjectFunctions = await this.$api.basic.getObject({ type: 'projectFunctions', ID: selected })
-      let projectFunctions = responseProjectFunctions.data.result
 
       // 填入 orderHead
       this.form.Price = project.Price
@@ -373,6 +362,13 @@ export default {
 
       // 主專案填入 orderDetail
       this.$refs['orderDetail'].parentResetItems(projectDetail)
+
+      this.bringFunctions()
+    },
+    // 帶入專案功能
+    bringFunctions: async function () {
+      let responseProjectFunctions = await this.$api.basic.getObject({ type: 'projectFunctions', ID: this.form.ProjectID })
+      let projectFunctions = responseProjectFunctions.data.result
 
       // 專案功能顯示
       projectFunctions.forEach(item => {
@@ -396,23 +392,26 @@ export default {
       // 新增訂單才會使用到
       switch (this.dialogType) {
         case 'new':
-          // 檢查客戶資訊
-          isSuccess = await this.$refs['orderCustomer'].checkValidate()
-          if (!isSuccess) { return }
-
           // 檢查供奉憑證資訊
-          if (this.form.showCertificate1 === 1) {
+          if (this.$refs['certificate1OrderNew'] !== undefined) {
             isSuccess = await this.$refs['certificate1OrderNew'].checkValidate()
             if (!isSuccess) { return }
           }
 
           // 檢查其他附加功能
-          if (this.form.showChanyunOrderID === 1) {
+          if (this.$refs['orderFunctions'] !== undefined) {
             isSuccess = await this.$refs['orderFunctions'].checkValidate()
             if (!isSuccess) { return }
           }
           break
       }
+
+      // 檢查客戶資訊
+      isSuccess = await this.$refs['orderCustomer'].checkValidate()
+      if (!isSuccess) { return }
+      // 檢查明細資訊
+      isSuccess = await this.$refs['orderDetail'].checkValidate()
+      if (!isSuccess) { return }
 
       // 檢查主表單
       await this.$refs['form'].validate((valid) => { isSuccess = valid })
@@ -431,20 +430,38 @@ export default {
       // (修改)存檔優先順序
       // 1. orderHead+orderDetail
       // 2. orderCustomer
+      let isSuccess = false
+      let saveStep = 'order'
 
       switch (this.dialogType) {
         case 'new':
-          let isSuccess = await this.save(this.dialogType)
-          await this.$refs['orderDetail'].beforeSave()
-          await this.$refs['orderCustomer'].beforeSave()
+          saveStep = 'order'
+          isSuccess = await this.save(this.dialogType)
+          if (isSuccess) {
+            saveStep = 'orderDetail'
+            isSuccess = await this.$refs['orderDetail'].beforeSave()
+          }
+          if (isSuccess) {
+            saveStep = 'orderCustomer'
+            isSuccess = await this.$refs['orderCustomer'].beforeSave()
+          }
           if (this.form.showCertificate1 === 1) {
-            await this.$refs['certificate1OrderNew'].beforeSave() // 新增訂單才會出現
+            if (isSuccess) {
+              saveStep = 'certificate1OrderNew'
+              isSuccess = await this.$refs['certificate1OrderNew'].beforeSave() // 新增訂單才會出現
+            }
           }
           if (this.form.showCertificate2 === 1) {
-            await this.$refs['certificate2OrderNew'].beforeSave() // 新增訂單才會出現
+            if (isSuccess) {
+              saveStep = 'certificate2OrderNew'
+              isSuccess = await this.$refs['certificate2OrderNew'].beforeSave() // 新增訂單才會出現
+            }
           }
           if (this.form.showChanyunOrderID === 1) {
-            await this.$refs['orderFunctions'].beforeSave()
+            if (isSuccess) {
+              saveStep = 'orderFunctions'
+              isSuccess = await this.$refs['orderFunctions'].beforeSave()
+            }
           }
           if (isSuccess) {
             this.$alert(this.updateMessage, 200, {
@@ -457,17 +474,30 @@ export default {
                 })
               }
             })
+          } else {
+            this.$alert(this.$t('__uploadFail') + ' Step: ' + saveStep)
           }
           break
         case 'edit':
-          let isSuccessEdit = await this.save(this.dialogType)
-          await this.$refs['orderDetail'].beforeSave()
-          await this.$refs['orderCustomer'].beforeSave()
-
-          if (this.form.showChanyunOrderID === 1) {
-            await this.$refs['orderFunctions'].beforeSave()
+          isSuccess = false
+          saveStep = 'order'
+          isSuccess = await this.save(this.dialogType)
+          if (isSuccess) {
+            saveStep = 'orderDetail'
+            isSuccess = await this.$refs['orderDetail'].beforeSave()
           }
-          if (isSuccessEdit) {
+          if (isSuccess) {
+            saveStep = 'orderCustomer'
+            isSuccess = await this.$refs['orderCustomer'].beforeSave()
+          }
+
+          if (isSuccess) {
+            if (this.form.showChanyunOrderID === 1) {
+              saveStep = 'orderFunctions'
+              isSuccess = await this.$refs['orderFunctions'].beforeSave()
+            }
+          }
+          if (isSuccess) {
             this.$alert(this.updateMessage, 200, {
               callback: () => {
                 this.$router.replace({
@@ -478,6 +508,8 @@ export default {
                 })
               }
             })
+          } else {
+            this.$alert(this.$t('__uploadFail') + ' Step: ' + saveStep)
           }
           break
       }

@@ -20,7 +20,6 @@ export default {
   __toExcel: '下載Excel',
   __theFollingIs: '以下為',
   __theAboveIs: '以上為',
-  __plzChoice: '請選擇',
   __english: '英文',
   __language1: '越南',
   __language2: '台灣',
@@ -180,6 +179,9 @@ export default {
   __signOffProcedure: '簽核步驟',
   __signOffGroups: '簽核群組',
   __signOffLog: '簽核歷程',
+  __extend: '擴充',
+  __chanyun: '展雲',
+  __landCertificate: '權狀',
   // 請在上方新增字串
   // 以下為錯誤處理專用
   __error400: '無法理解請求',
@@ -188,6 +190,7 @@ export default {
   __error500: '伺服器端發生未知或無法處理的錯誤。',
   __uploadFail: '更新失敗，請再嘗試一次',
   // 以下為驗證專用
+  __plzChoice: '請選擇',
   __pleaseInputUserID: '請輸入帳號',
   __pleaseInputPassword: '請輸入密碼',
   __pleaseInput: '請輸入欄位值',

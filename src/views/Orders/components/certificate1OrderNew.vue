@@ -92,7 +92,7 @@ export default {
       if (count > this.parentQty) {
         this.$message({
           message: this.$t('__exceedQtyLimit'),
-          type: 'warning'
+          type: 'error'
         })
         this.isExceedQtyLimit = true
       } else {

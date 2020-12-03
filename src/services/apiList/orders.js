@@ -215,6 +215,7 @@ export default {
     },
     getDropdownList: ({ type }) => {
       let rawData = { type }
+      console.log(rawData)
       return post('/orders/getDropdownList', rawData).then(data => {
         console.log(`%c <<< Response(/rest/orders/getDropdownList)⤵ `, 'background-color: #E0455D; color: white; font-size: 14px; font-weight: bold;', data)
         return data

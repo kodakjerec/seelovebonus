@@ -142,7 +142,8 @@ export default {
         AgentAddress: '',
         refKind: null,
         Referrer: null,
-        EmployeeID: null
+        EmployeeID: null,
+        Status: ''
       },
       rules: {
         CustomerID: [{ required: true, message: this.$t('__pleaseInput'), trigger: 'blur' }]
@@ -232,6 +233,7 @@ export default {
       this.form.refKind = row.refKind
       this.form.Referrer = row.Referrer
       this.form.EmployeeID = row.EmployeeID
+      this.form.Status = ''
 
       // 是否顯示代理人區域
       if (this.form.AgentID === '') {
@@ -266,6 +268,14 @@ export default {
       this.form.Referrer = row.Referrer
       this.form.EmployeeID = row.EmployeeID
 
+      if (this.dialogType === 'new') {
+        this.form.Status = 'New'
+      } else {
+        if (this.form.Status === '') {
+          this.form.Status = 'Modified'
+        }
+      }
+
       this.ddlCityChange()
 
       // 法定代理人
@@ -292,14 +302,25 @@ export default {
         return false
       }
 
-      isSuccess = await this.save()
+      // 開始更新
+      switch (this.form.Status) {
+        case 'New':
+          isSuccess = await this.save('new')
+          break
+        case 'Modified':
+          isSuccess = await this.save('edit')
+          break
+        case '':
+          isSuccess = true
+          break
+      }
 
       return isSuccess
     },
     // 存檔
-    save: async function () {
+    save: async function (type) {
       let isSuccess = false
-      switch (this.dialogType) {
+      switch (type) {
         case 'new':
           let responseNew = await this.$api.orders.orderCustomerNew({ form: this.form })
           if (responseNew.headers['code'] === '200') {
@@ -308,11 +329,9 @@ export default {
           break
         case 'edit':
           // 客戶資料有異動, 才要更新
-          if (this.form.CustomerID !== this.oldCustomerID) {
-            let responseEdit = await this.$api.orders.orderCustomerEdit({ form: this.form })
-            if (responseEdit.headers['code'] === '200') {
-              isSuccess = true
-            }
+          let responseEdit = await this.$api.orders.orderCustomerEdit({ form: this.form })
+          if (responseEdit.headers['code'] === '200') {
+            isSuccess = true
           }
           break
       }
