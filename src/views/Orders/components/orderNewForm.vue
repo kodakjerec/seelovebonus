@@ -54,19 +54,20 @@
           prop="ProjectID"
           :label="$t('__project')+$t('__name')">
           <template slot-scope="scope">
-            <el-select
-              prop="ProjectID"
-              v-model="scope.row[scope.column.property]"
-              filterable
-              :placeholder="$t('__plzChoice')"
-              @change="(value)=>{ddlProjectChange(value, scope.row)}"
-              style="display:block"
-              :disabled="disableForm.ProjectID">
-              <el-option v-for="item in ddlProject" :key="item.ID" :label="item.ID+' '+item.Value" :value="item.ID">
-                <span style="float: left">{{ item.Value }}</span>
-                <span style="float: right; color: #8492a6; font-size: 13px">{{ item.ID }}</span>
-              </el-option>
-            </el-select>
+            <el-form-item prop="ProjectID" label-width="0px">
+              <el-select
+                v-model="scope.row[scope.column.property]"
+                filterable
+                :placeholder="$t('__plzChoice')"
+                @change="(value)=>{ddlProjectChange(value, scope.row)}"
+                style="display:block"
+                :disabled="disableForm.ProjectID">
+                <el-option v-for="item in ddlProject" :key="item.ID" :label="item.ID+' '+item.Value" :value="item.ID">
+                  <span style="float: left">{{ item.Value }}</span>
+                  <span style="float: right; color: #8492a6; font-size: 13px">{{ item.ID }}</span>
+                </el-option>
+              </el-select>
+            </el-form-item>
           </template>
         </el-table-column>
         <el-table-column
@@ -84,7 +85,9 @@
           :label="$t('__qty')"
           width="210px">
           <template slot-scope="scope">
-            <el-input-number v-model="scope.row[scope.column.property]" :disabled="disableForm.Qty"></el-input-number>
+            <el-form-item prop="Qty" label-width="0px">
+              <el-input-number :min="1" v-model="scope.row[scope.column.property]" :disabled="disableForm.Qty"></el-input-number>
+            </el-form-item>
           </template>
         </el-table-column>
         <el-table-column
@@ -182,6 +185,7 @@ import orderFunctions from './orderFunctions'
 
 import { formatMoney } from '@/setup/format.js'
 import { messageBoxYesNo } from '@/services/utils'
+import validate from '@/setup/validate'
 
 export default {
   name: 'OrderNewForm',
@@ -229,7 +233,7 @@ export default {
         ID: [{ required: true, message: this.$t('__pleaseInput'), trigger: 'blur' }],
         OrderDate: [{ required: true, message: this.$t('__pleaseInput'), trigger: 'blur' }],
         ProjectID: [{ required: true, message: this.$t('__pleaseInput'), trigger: 'blur' }],
-        CreateID: [{ required: true, message: this.$t('__pleaseInput'), trigger: 'blur' }]
+        Qty: [{ trigger: 'blur', validator: validate.validateInputNumber }]
       },
       // 系統目前狀態權限
       buttonsShow: {
@@ -388,6 +392,8 @@ export default {
     // 檢查輸入
     checkValidate: async function () {
       let isSuccess = false
+      // 檢查主表單
+      await this.$refs['form'].validate((valid) => { isSuccess = valid })
 
       // 新增訂單才會使用到
       switch (this.dialogType) {
@@ -412,9 +418,6 @@ export default {
       // 檢查明細資訊
       isSuccess = await this.$refs['orderDetail'].checkValidate()
       if (!isSuccess) { return }
-
-      // 檢查主表單
-      await this.$refs['form'].validate((valid) => { isSuccess = valid })
 
       if (isSuccess) {
         this.beforeSave()
@@ -445,19 +448,19 @@ export default {
             saveStep = 'orderCustomer'
             isSuccess = await this.$refs['orderCustomer'].beforeSave()
           }
-          if (this.form.showCertificate1 === 1) {
+          if (this.$refs['certificate1OrderNew'] !== undefined) {
             if (isSuccess) {
               saveStep = 'certificate1OrderNew'
               isSuccess = await this.$refs['certificate1OrderNew'].beforeSave() // 新增訂單才會出現
             }
           }
-          if (this.form.showCertificate2 === 1) {
+          if (this.$refs['certificate2OrderNew'] !== undefined) {
             if (isSuccess) {
               saveStep = 'certificate2OrderNew'
               isSuccess = await this.$refs['certificate2OrderNew'].beforeSave() // 新增訂單才會出現
             }
           }
-          if (this.form.showChanyunOrderID === 1) {
+          if (this.$refs['orderFunctions'] !== undefined) {
             if (isSuccess) {
               saveStep = 'orderFunctions'
               isSuccess = await this.$refs['orderFunctions'].beforeSave()
@@ -492,7 +495,7 @@ export default {
           }
 
           if (isSuccess) {
-            if (this.form.showChanyunOrderID === 1) {
+            if (this.$refs['orderFunctions'] !== undefined) {
               saveStep = 'orderFunctions'
               isSuccess = await this.$refs['orderFunctions'].beforeSave()
             }

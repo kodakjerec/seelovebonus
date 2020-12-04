@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <el-form>
     <el-table
       v-show="orderDetail.showExpandFunctions === 1"
       :data="subList"
@@ -33,14 +33,15 @@
         <template slot-scope="scope">
           <el-input
             v-if="buttonsShowUser.new"
-            v-model="scope.row[scope.column.property]" :placeholder="$t('__pleaseInput')"></el-input>
+            v-model="scope.row[scope.column.property]" :placeholder="$t('__pleaseInput')">
+          </el-input>
           <div v-else>
             {{scope.row.Value2}}
           </div>
         </template>
       </el-table-column>
     </el-table>
-  </div>
+  </el-form>
 </template>
 
 <script>
@@ -59,12 +60,32 @@ export default {
         Function: '',
         Seq: 0,
         Value1: '',
-        Value2: ''
+        Value2: '',
+        // 前端顯示用, 不會紀錄進資料庫
+        Status: ''
       },
       subList: [],
       subListDeleted: [],
       // 下拉是選單
       ddlCertificate2: []
+    }
+  },
+  watch: {
+    // 監聽Object, 要改為 handler + deep
+    orderDetail: {
+      handler: function (newValue) {
+        let newOrderID = newValue.OrderID
+        let newOrderSeq = newValue.Seq
+        this.subList.forEach(row => {
+          row.OrderID = newOrderID
+          row.DetailSeq = newOrderSeq
+        })
+        this.subListDeleted.forEach(row => {
+          row.OrderID = newOrderID
+          row.DetailSeq = newOrderSeq
+        })
+      },
+      deep: true
     }
   },
   mounted () {
@@ -73,9 +94,13 @@ export default {
   },
   methods: {
     preLoading: async function () {
-      // 取得所有原始資料
-      let response = await this.$api.orders.getDropdownList({ type: 'certificate2ChgLandCertificate' })
-      this.ddlCertificate2 = response.data.result
+      if (this.buttonsShowUser.new === 1) {
+        if (this.orderDetail.showChgChanyunCertificate === 1) {
+        // 取得所有原始資料
+          let response = await this.$api.orders.getDropdownList({ type: 'certificate2ChgLandCertificate' })
+          this.ddlCertificate2 = response.data.result
+        }
+      }
     },
     // 帶入資料
     bringDetail: async function () {
@@ -84,9 +109,17 @@ export default {
 
       // 填入舊資料
       this.productFunctionsList.forEach(row => {
-        if (row.Seq === this.orderDetail.Seq) {
+        // 找出這筆商品所屬的所有特殊功能
+        if (row.DetailSeq === this.orderDetail.Seq) {
           if (row.Function === 'chglandCertificate') {
-            this.subList.push(row)
+            // 如果數量做過調整, 超出上限的證明編號要轉換為刪除
+            if ((this.subList.length + 1) <= this.orderDetail.Qty) {
+              row.Status = ''
+              this.subList.push(row)
+            } else {
+              row.Status = 'Deleted'
+              this.subListDeleted.push(row)
+            }
           }
         }
       })
@@ -112,6 +145,7 @@ export default {
 
           newObj.Function = 'chglandCertificate'
           newObj.Seq = nextSeq
+          newObj.Status = 'New'
 
           this.subList.push(newObj)
           index++
@@ -121,12 +155,17 @@ export default {
     // 檢察權狀是否重複
     ddlCertificate2Change: function (value, row) {
       let findDuplication = this.subList.find(item => { return item.Value1 === value && item.Seq !== row.Seq })
+
+      // 沒有重複
       if (findDuplication !== undefined) {
         this.$message({
           message: value + ' ' + this.$t('__valueUsed'),
           type: 'error'
         })
         row.Value1 = ''
+        if (row.Status === '') {
+          row.Status = 'Modified'
+        }
       }
     },
     checkValidate: function () {
@@ -135,7 +174,7 @@ export default {
       /*
         展雲換狀
       */
-      if (this.orderDetail.showExpandFunctions === 1) {
+      if (this.orderDetail.showChgChanyunCertificate === 1) {
         isSuccess = true
 
         this.subList.forEach(row => {
@@ -184,6 +223,31 @@ export default {
         if (isSuccess === false) {
           return isSuccess
         }
+      }
+
+      return isSuccess
+    },
+    save: async function (type, row) {
+      let isSuccess = false
+      switch (type) {
+        case 'new':
+          let responseNew = await this.$api.orders.orderDetailFunctionsUpdate({ form: row })
+          if (responseNew.headers['code'] === '200') {
+            isSuccess = true
+          }
+          break
+        case 'edit':
+          let responseEdit = await this.$api.orders.orderDetailFunctionsUpdate({ form: row })
+          if (responseEdit.headers['code'] === '200') {
+            isSuccess = true
+          }
+          break
+        case 'delete':
+          let responseDelete = await this.$api.orders.orderDetailFunctionsDelete({ form: row })
+          if (responseDelete.headers['code'] === '200') {
+            isSuccess = true
+          }
+          break
       }
 
       return isSuccess

@@ -100,10 +100,10 @@ export default {
     submit: function () {
       this.$refs['form'].validate((valid) => {
         if (valid) {
-          console.log('valid')
+          // valid
           this.login()
         } else {
-          console.log('error submit!!')
+          // error
           return false
         }
       })

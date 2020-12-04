@@ -6,6 +6,7 @@
   :data="subList"
   stripe
   border
+  class="orderFunctionsCSS"
   style="width: 100%">
     <el-table-column
       prop="Seq"
@@ -201,39 +202,17 @@ export default {
 
       this.reCalAmount()
     },
-    // 帶入專案功能
-    bringFunctions: async function () {
-      // reset
-      this.subListExpand = []
-
-      // 開啟專案功能
-      this.functionsList.forEach(MasterItem => {
-        if (MasterItem.Function === 'chglandCertificate') {
-          this.subList.forEach(item => {
-            if (item.ProductID === MasterItem.ProductID) {
-              item.showExpandFunctions = MasterItem.Available
-              item.showChgChanyunCertificate = MasterItem.Available
-            }
-          })
-        }
-      })
-
-      // 如果有開啟特殊功能, 自動展開明細的特殊功能
-      let expandFunctionsList = this.subList.filter(item => { return item.showExpandFunctions === 1 })
-      expandFunctionsList.forEach(item => {
-        this.subListExpand.push(item.Seq)
-      })
-    },
     checkValidate: async function () {
       let isSuccess = false
 
       if (this.$refs['orderDetailFunctions'] !== undefined) {
         isSuccess = await this.$refs['orderDetailFunctions'].checkValidate()
+        if (!isSuccess) { return }
       }
 
       // 檢查主表單
       this.subList.slice(0).forEach(row => {
-        if (row.OrderID === '' || row.Qty === 0) {
+        if (row.ProjectID === '' || row.Qty === 0) {
           this.$message({
             message: this.$t('__pleaseInput') + ' ' + this.$t('__project') + this.$t('__detail'),
             type: 'error'
@@ -395,12 +374,6 @@ export default {
 
       this.reCalAmount()
     },
-    // expand
-    expandChange: function (row, expandedRows) {
-      expandedRows.forEach(item => {
-        this.subListExpand.push(item.Seq)
-      })
-    },
     // 重新計算專案總價
     reCalAmount: function () {
       let masterAmount = 0; let subAmount = 0; let tempAmount = 0
@@ -419,6 +392,36 @@ export default {
       this.$emit('reCalculateDetail', {
         masterAmount: masterAmount,
         subAmount: subAmount
+      })
+    },
+    // ============== 明細特殊功能 ===============
+    // expand
+    expandChange: function (row, expandedRows) {
+      expandedRows.forEach(item => {
+        this.subListExpand.push(item.Seq)
+      })
+    },
+    // 帶入專案功能
+    bringFunctions: async function () {
+      // reset
+      this.subListExpand = []
+
+      // 開啟專案功能
+      this.functionsList.forEach(MasterItem => {
+        if (MasterItem.Function === 'chglandCertificate') {
+          this.subList.forEach(item => {
+            if (item.ProductID === MasterItem.ProductID) {
+              item.showExpandFunctions = MasterItem.Available
+              item.showChgChanyunCertificate = MasterItem.Available
+            }
+          })
+        }
+      })
+
+      // 如果有開啟特殊功能, 自動展開明細的特殊功能
+      let expandFunctionsList = this.subList.filter(item => { return item.showExpandFunctions === 1 })
+      expandFunctionsList.forEach(item => {
+        this.subListExpand.push(item.Seq)
       })
     },
     // ============== 父視窗使用的函數 ===============
@@ -449,3 +452,10 @@ export default {
   }
 }
 </script>
+<style lang="scss" scoped>
+.orderFunctionsCSS {
+  /deep/ tr > td.el-table__expanded-cell {
+    background-color: bisque;
+  }
+}
+</style>

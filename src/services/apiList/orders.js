@@ -206,10 +206,24 @@ export default {
         return data
       })
     },
-    functionsUpdate: ({ form }) => {
+    orderFunctionsUpdate: ({ form }) => {
       let rawData = { form }
-      return post('/orders/functionsUpdate', rawData).then(data => {
-        console.log(`%c <<< Response(/rest/orders/functionsUpdate)⤵ `, 'background-color: #E0455D; color: white; font-size: 14px; font-weight: bold;', data)
+      return post('/orders/orderFunctionsUpdate', rawData).then(data => {
+        console.log(`%c <<< Response(/rest/orders/orderFunctionsUpdate)⤵ `, 'background-color: #E0455D; color: white; font-size: 14px; font-weight: bold;', data)
+        return data
+      })
+    },
+    orderDetailFunctionsUpdate: ({ form }) => {
+      let rawData = { form }
+      return post('/orders/orderDetailFunctionsUpdate', rawData).then(data => {
+        console.log(`%c <<< Response(/rest/orders/orderDetailFunctionsUpdate)⤵ `, 'background-color: #E0455D; color: white; font-size: 14px; font-weight: bold;', data)
+        return data
+      })
+    },
+    orderDetailFunctionsDelete: ({ form }) => {
+      let rawData = { form }
+      return post('/orders/orderDetailFunctionsDelete', rawData).then(data => {
+        console.log(`%c <<< Response(/rest/orders/orderDetailFunctionsDelete)⤵ `, 'background-color: #E0455D; color: white; font-size: 14px; font-weight: bold;', data)
         return data
       })
     },

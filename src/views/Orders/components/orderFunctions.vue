@@ -1,5 +1,5 @@
 <template>
-  <el-form ref="form" :model="form" :rules="rules" label-width="10vw" label-position="right" style="background-color: lightyellow">
+  <el-form ref="form" :model="form" :rules="rules" label-width="10vw" label-position="right" class="orderFunctionsCSS">
     <el-form-item v-if="showChanyunOrderID" :label="'展雲-契約單號'" prop="Value">
       <el-input v-model="form.Value" :placeholder="$t('__pleaseInput')" :disabled="buttonsShowUser.new === 0" @input="inputChange"></el-input>
     </el-form-item>
@@ -51,7 +51,6 @@ export default {
     },
     // 有修改資料
     inputChange: function () {
-      console.log(this.form.Status)
       if (this.dialogType === 'new') {
         this.form.Status = 'New'
       } else {
@@ -90,7 +89,7 @@ export default {
     // 存檔
     save: async function (type) {
       let isSuccess = false
-      let responseNew = await this.$api.orders.functionsUpdate({ form: this.form })
+      let responseNew = await this.$api.orders.orderFunctionsUpdate({ form: this.form })
       if (responseNew.headers['code'] === '200') {
         isSuccess = true
       }
@@ -99,3 +98,9 @@ export default {
   }
 }
 </script>
+
+<style lang="scss" scoped>
+.orderFunctionsCSS {
+  background-color: bisque;
+}
+</style>
