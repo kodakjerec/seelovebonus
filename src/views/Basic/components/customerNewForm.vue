@@ -185,6 +185,7 @@
       <!-- 以上為法定代理人 -->
     </el-form>
     <div slot="footer" class="dialog-footer">
+      <el-button v-show="dialogType === 'edit' &&  buttonsShowUser.delete" type="danger" @click="deleteItem">{{$t('__delete')}}</el-button>
       <el-button @click="cancel">{{$t('__cancel')}}</el-button>
       <el-button v-show="buttonsShowUser.save" type="primary" @click="checkValidate">{{$t('__save')}}</el-button>
     </div>
@@ -193,6 +194,8 @@
 
 <script>
 import validate from '@/setup/validate'
+import { messageBoxYesNo } from '@/services/utils'
+
 export default {
   name: 'CustomerNewForm',
   props: {
@@ -429,7 +432,7 @@ export default {
     checkValidate: function () {
       this.$refs['form'].validate((valid) => {
         if (valid) {
-          this.save()
+          this.save(this.dialogType)
           return true
         } else {
           return false
@@ -440,10 +443,36 @@ export default {
     cancel: function () {
       this.$emit('dialog-cancel')
     },
+    // 刪除
+    deleteItem: async function () {
+      let answerAction = await messageBoxYesNo(this.$t('__delete') + this.$t('__customer') + ' ' + this.form.ID, this.$t('__delete'))
+
+      switch (answerAction) {
+        case 'confirm':
+          let isSuccessEdit = await this.save('delete')
+          if (isSuccessEdit) {
+            this.$alert(this.updateMessage, 200, {
+              callback: () => {
+                this.$router.push({
+                  name: this.parent,
+                  params: {
+                    returnType: 'save'
+                  }
+                })
+              }
+            })
+          }
+          break
+        case 'cancel':
+          break
+        case 'close':
+          break
+      }
+    },
     // 存檔
-    save: async function () {
+    save: async function (type) {
       let isSuccess = false
-      switch (this.dialogType) {
+      switch (type) {
         case 'new':
           let responseNew = await this.$api.basic.customerNew({ form: this.form })
           if (responseNew.headers['code'] === '200') {
@@ -456,6 +485,16 @@ export default {
           if (responseEdit.headers['code'] === '200') {
             this.$alert(responseEdit.data.result[0].message, responseEdit.data.result[0].code)
             isSuccess = true
+          }
+          break
+        case 'delete':
+          let responseDelete = await this.$api.basic.customerDelete({ form: this.form })
+          if (responseDelete.headers['code'] === '200') {
+            this.$alert(responseDelete.data.result[0].message, responseDelete.data.result[0].code)
+            isSuccess = true
+          } else {
+            this.$alert(responseDelete.data.result.message, responseDelete.data.result.code)
+            isSuccess = false
           }
           break
       }

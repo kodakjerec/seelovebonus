@@ -1,15 +1,15 @@
 <template>
   <el-form>
-    <el-button-group>
+    <el-button-group style="padding-bottom: 5px">
       <el-button v-show="buttonsShowUser.new" type="primary" icon="el-icon-plus" @click.prevent="showForm('new')">{{$t('__new')}}</el-button>
+      <search-button @search="search"></search-button>
     </el-button-group>
-    <search-button @search="search"></search-button>
-    <p style="height:1px" />
     <el-table
       :data="storageAddressShow"
       stripe
       border
       @row-click="handleClick"
+      :row-class-name="tableRowClassName"
       style="width: 100%">
       <el-table-column
         prop="ID"
@@ -27,9 +27,13 @@
         prop="AreaName"
         :label="$t('__area')">
       </el-table-column>
-      <el-table-column
-        prop="Volume"
-        :label="$t('__volume')">
+      <el-table-column>
+        <template slot="header">
+          {{$t('__volume')+'('+$t('__length')+'*'+$t('__width')+'*'+$t('__height')+')'}}
+        </template>
+        <template slot-scope="scope">
+          {{scope.row.Length + '*' + scope.row.Width + '*' + scope.row.Height}}
+        </template>
       </el-table-column>
     </el-table>
     <new-form
@@ -88,6 +92,12 @@ export default {
       this.buttonsShowUser.edit = progPermission.fun2
       this.buttonsShowUser.save = progPermission.fun2
       this.buttonsShowUser.delete = progPermission.fun3
+    },
+    // table 變更顏色
+    tableRowClassName ({ row, rowIndex }) {
+      if (row['Status'] === '0') {
+        return 'disabled-row'
+      }
     },
     handleClick: async function (row, column, event) {
       // 取得可以用的選單

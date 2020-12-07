@@ -23,6 +23,13 @@ export default {
         return data
       })
     },
+    companyDelete: ({ form }) => {
+      let rawData = { form }
+      return post('/basic/companyDelete', rawData).then(data => {
+        console.log(`%c <<< Response(/rest/basic/companyDelete)⤵ `, 'background-color: #E0455D; color: white; font-size: 14px; font-weight: bold;', data)
+        return data
+      })
+    },
     customersShow: ({ keyword }) => {
       let rawData = { keyword }
       return post('/basic/customersShow', rawData).then(data => {
@@ -41,6 +48,13 @@ export default {
       let rawData = { form }
       return post('/basic/customerEdit', rawData).then(data => {
         console.log(`%c <<< Response(/rest/basic/customerEdit)⤵ `, 'background-color: #E0455D; color: white; font-size: 14px; font-weight: bold;', data)
+        return data
+      })
+    },
+    customerDelete: ({ form }) => {
+      let rawData = { form }
+      return post('/basic/customerDelete', rawData).then(data => {
+        console.log(`%c <<< Response(/rest/basic/customerDelete)⤵ `, 'background-color: #E0455D; color: white; font-size: 14px; font-weight: bold;', data)
         return data
       })
     },
@@ -65,6 +79,13 @@ export default {
         return data
       })
     },
+    employeeDelete: ({ form }) => {
+      let rawData = { form }
+      return post('/basic/employeeDelete', rawData).then(data => {
+        console.log(`%c <<< Response(/rest/basic/employeeDelete)⤵ `, 'background-color: #E0455D; color: white; font-size: 14px; font-weight: bold;', data)
+        return data
+      })
+    },
     productsShow: ({ keyword }) => {
       let rawData = { keyword }
       return post('/basic/productsShow', rawData).then(data => {
@@ -83,6 +104,13 @@ export default {
       let rawData = { form }
       return post('/basic/productEdit', rawData).then(data => {
         console.log(`%c <<< Response(/rest/basic/productEdit)⤵ `, 'background-color: #E0455D; color: white; font-size: 14px; font-weight: bold;', data)
+        return data
+      })
+    },
+    productDelete: ({ form }) => {
+      let rawData = { form }
+      return post('/basic/productDelete', rawData).then(data => {
+        console.log(`%c <<< Response(/rest/basic/productDelete)⤵ `, 'background-color: #E0455D; color: white; font-size: 14px; font-weight: bold;', data)
         return data
       })
     },
@@ -125,6 +153,13 @@ export default {
       let rawData = { form }
       return post('/basic/projectEdit', rawData).then(data => {
         console.log(`%c <<< Response(/rest/basic/projectEdit)⤵ `, 'background-color: #E0455D; color: white; font-size: 14px; font-weight: bold;', data)
+        return data
+      })
+    },
+    projectDelete: ({ form }) => {
+      let rawData = { form }
+      return post('/basic/projectDelete', rawData).then(data => {
+        console.log(`%c <<< Response(/rest/basic/projectDelete)⤵ `, 'background-color: #E0455D; color: white; font-size: 14px; font-weight: bold;', data)
         return data
       })
     },
@@ -219,17 +254,17 @@ export default {
         return data
       })
     },
-    storageAddressNew: ({ form }) => {
+    storageAddressUpdate: ({ form }) => {
       let rawData = { form }
-      return post('/basic/storageAddressNew', rawData).then(data => {
-        console.log(`%c <<< Response(/rest/basic/storageAddressNew)⤵ `, 'background-color: #E0455D; color: white; font-size: 14px; font-weight: bold;', data)
+      return post('/basic/storageAddressUpdate', rawData).then(data => {
+        console.log(`%c <<< Response(/rest/basic/storageAddressUpdate)⤵ `, 'background-color: #E0455D; color: white; font-size: 14px; font-weight: bold;', data)
         return data
       })
     },
-    storageAddressEdit: ({ form }) => {
+    storageAddressDelete: ({ form }) => {
       let rawData = { form }
-      return post('/basic/storageAddressEdit', rawData).then(data => {
-        console.log(`%c <<< Response(/rest/basic/storageAddressEdit)⤵ `, 'background-color: #E0455D; color: white; font-size: 14px; font-weight: bold;', data)
+      return post('/basic/storageAddressDelete', rawData).then(data => {
+        console.log(`%c <<< Response(/rest/basic/storageAddressDelete)⤵ `, 'background-color: #E0455D; color: white; font-size: 14px; font-weight: bold;', data)
         return data
       })
     },
