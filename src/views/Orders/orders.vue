@@ -209,6 +209,11 @@ export default {
           break
       }
 
+      // 狀態小的單據優先往前
+      tempData = tempData.slice().sort(function (x, y) {
+        return x.Status - y.Status
+      })
+
       // 切換分頁
       return tempData.slice((this.pagination.currentPage - 1) * this.pagination.pageSize, this.pagination.pageSize * this.pagination.currentPage)
     }
@@ -218,7 +223,7 @@ export default {
     let start = new Date()
     let end = new Date()
     let year = start.getFullYear()
-    let month = start.getMonth() - 3
+    let month = start.getMonth() - 6
     start = new Date(year, month, 1, 12)
     this.searchContent.StartDate = start.toISOString().slice(0, 10)
     this.searchContent.EndDate = end.toISOString().slice(0, 10)

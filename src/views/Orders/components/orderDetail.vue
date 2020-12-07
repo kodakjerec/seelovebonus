@@ -223,8 +223,12 @@ export default {
 
       // 檢查主表單
       this.subList.slice(0).forEach(row => {
-        isSuccess = this.$refs['orderDetailFunctions' + row.Seq].checkValidate()
-        if (!isSuccess) { return }
+        if (row.showChgChanyunCertificate === 1) {
+          isSuccess = this.$refs['orderDetailFunctions' + row.Seq].checkValidate()
+        } else {
+          isSuccess = true
+        }
+        if (!isSuccess) { return isSuccess }
 
         if (row.ProjectID === '' || row.Qty === 0) {
           this.$message({
@@ -461,7 +465,7 @@ export default {
         this.handleNew()
         let rowParent = projectDetail[index]
         let row = this.subList[this.subList.length - 1]
-        this.ddlSubListChange(rowParent.ProductID, row, 0)
+        this.fillSubList(row, rowParent, 0)
       }
     }
   }
