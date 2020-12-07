@@ -129,7 +129,7 @@ export default {
             isSuccess = true
             break
         }
-        if (isSuccess === false) {
+        if (!isSuccess) {
           this.$alert(this.$t('__uploadFail'))
           return isSuccess
         }

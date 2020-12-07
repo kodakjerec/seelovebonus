@@ -399,13 +399,13 @@ export default {
       switch (this.dialogType) {
         case 'new':
           // 檢查供奉憑證資訊
-          if (this.$refs['certificate1OrderNew'] !== undefined) {
+          if (this.form.showCertificate1 === 1) {
             isSuccess = await this.$refs['certificate1OrderNew'].checkValidate()
             if (!isSuccess) { return }
           }
 
           // 檢查其他附加功能
-          if (this.$refs['orderFunctions'] !== undefined) {
+          if (this.form.showChanyunOrderID === 1) {
             isSuccess = await this.$refs['orderFunctions'].checkValidate()
             if (!isSuccess) { return }
           }
@@ -448,19 +448,19 @@ export default {
             saveStep = 'orderCustomer'
             isSuccess = await this.$refs['orderCustomer'].beforeSave()
           }
-          if (this.$refs['certificate1OrderNew'] !== undefined) {
+          if (this.form.showCertificate1 === 1) {
             if (isSuccess) {
               saveStep = 'certificate1OrderNew'
               isSuccess = await this.$refs['certificate1OrderNew'].beforeSave() // 新增訂單才會出現
             }
           }
-          if (this.$refs['certificate2OrderNew'] !== undefined) {
+          if (this.form.showCertificate2 === 1) {
             if (isSuccess) {
               saveStep = 'certificate2OrderNew'
               isSuccess = await this.$refs['certificate2OrderNew'].beforeSave() // 新增訂單才會出現
             }
           }
-          if (this.$refs['orderFunctions'] !== undefined) {
+          if (this.form.showChanyunOrderID === 1) {
             if (isSuccess) {
               saveStep = 'orderFunctions'
               isSuccess = await this.$refs['orderFunctions'].beforeSave()
@@ -495,7 +495,7 @@ export default {
           }
 
           if (isSuccess) {
-            if (this.$refs['orderFunctions'] !== undefined) {
+            if (this.form.showChanyunOrderID === 1) {
               saveStep = 'orderFunctions'
               isSuccess = await this.$refs['orderFunctions'].beforeSave()
             }

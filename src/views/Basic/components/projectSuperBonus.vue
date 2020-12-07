@@ -110,9 +110,7 @@ export default {
             isSuccess = true
             break
         }
-        if (isSuccess === false) {
-          return isSuccess
-        }
+        if (!isSuccess) { return isSuccess }
       }
 
       if (isSuccess) {

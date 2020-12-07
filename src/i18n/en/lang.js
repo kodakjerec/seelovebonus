@@ -161,7 +161,7 @@ export default {
   __swipeCard: 'Swipe',
   __announcement: 'Announcement',
   __caption: 'Caption',
-  __deleteOrder: 'Delete Order!<br/>If there are "consecration certificates","payments","invoices". That can\'t be deleted.',
+  __deleteOrder: 'Delete Order!<br/>If there are "payments","invoices". That can\'t be deleted.',
   __invalidOrder: 'Invalid Order!<br/>If there are "payments","invoices". That can\'t be invalided.',
   __pv: 'PV',
   __ascending: 'Small→Big',

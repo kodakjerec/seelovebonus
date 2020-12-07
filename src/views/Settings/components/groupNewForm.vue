@@ -189,9 +189,7 @@ export default {
           break
       }
 
-      if (isSuccess === false) {
-        return
-      }
+      if (!isSuccess) { return isSuccess }
       // 已經有最終的結果
       // console.log(this.finalResult)
       // ProgList 比對 finalResult

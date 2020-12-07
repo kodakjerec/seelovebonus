@@ -24,11 +24,13 @@
           :placeholder="$t('__plzChoice')"
           @change="(value)=>{ddlSubListChange(value, scope.row, 1)}"
           style="display:block">
-          <el-option v-for="item in ddlSubList" :key="item.ProductID" :value="item.ProductID">
-            <!-- 商品明細特別加上價格 -->
-            <span style="float: left">{{ item.ProductName + ' ['+ formatterMoneyUS(null,null,item.Price,null) + ']' }}</span>
-            <span style="float: right; color: #8492a6; font-size: 13px">{{ item.ProductID }}</span>
-          </el-option>
+          <el-option-group v-for="group in ddlSubList" :key="group.Category1Name" :label="group.Category1Name">
+            <el-option v-for="item in group.options" :key="item.ProductID" :value="item.ProductID">
+              <!-- 商品明細特別加上價格 -->
+              <span style="float: left">{{ item.ProductName + ' ['+ formatterMoneyUS(null,null,item.Price,null) + ']' }}</span>
+              <span style="float: right; color: #8492a6; font-size: 13px">{{ item.ProductID }}</span>
+            </el-option>
+          </el-option-group>
         </el-select>
         <div v-else>
           {{scope.row.ProductID}}
@@ -51,6 +53,7 @@
       width="200px">
       <template slot-scope="scope">
         <el-input-number
+          :min="1"
           v-if="buttonsShowUser.new && scope.row.ItemType === 1"
           v-model="scope.row[scope.column.property]"
           @change="(currentValue, oldValue)=>{qtyChange(currentValue, oldValue, scope.row)}"></el-input-number>
@@ -94,7 +97,7 @@
       </template>
       <template slot-scope="scope">
         <order-detail-functions
-          ref="orderDetailFunctions"
+          :ref="'orderDetailFunctions' + scope.row.Seq"
           :buttonsShowUser="buttonsShowUser"
           :orderDetail="scope.row"
           :productFunctionsList="productFunctionsList">
@@ -145,6 +148,7 @@ export default {
       subListExpand: [], // 要展開的明細
       productFunctionsList: [], // 特殊功能清單(所有商品)
       // 下拉是選單
+      originDDLSubList: [],
       ddlSubList: [],
       functionsList: [] // 商品+特殊功能
     }
@@ -185,7 +189,19 @@ export default {
     preLoading: async function () {
       // 取得所有原始資料
       let response = await this.$api.orders.getDropdownList({ type: 'productsForOrderDetail' })
-      this.ddlSubList = response.data.result
+      this.originDDLSubList = response.data.result
+      // 做select group 處理
+      // 找出主key
+      this.originDDLSubList.forEach(item => {
+        let findObject = this.ddlSubList.find(item2 => { return item2.Category1Name === item.Category1Name })
+        if (findObject === undefined) {
+          this.ddlSubList.push(item)
+        }
+      })
+      // group 分組選項
+      this.ddlSubList.forEach(item => {
+        item.options = this.originDDLSubList.filter(item2 => item2.Category1Name === item.Category1Name)
+      })
 
       let responseDetail = await this.$api.orders.getObject({ type: 'productFunctons', ID: this.orderID })
       this.productFunctionsList = responseDetail.data.result
@@ -205,13 +221,11 @@ export default {
     checkValidate: async function () {
       let isSuccess = false
 
-      if (this.$refs['orderDetailFunctions'] !== undefined) {
-        isSuccess = await this.$refs['orderDetailFunctions'].checkValidate()
-        if (!isSuccess) { return }
-      }
-
       // 檢查主表單
       this.subList.slice(0).forEach(row => {
+        isSuccess = this.$refs['orderDetailFunctions' + row.Seq].checkValidate()
+        if (!isSuccess) { return }
+
         if (row.ProjectID === '' || row.Qty === 0) {
           this.$message({
             message: this.$t('__pleaseInput') + ' ' + this.$t('__project') + this.$t('__detail'),
@@ -226,14 +240,6 @@ export default {
     beforeSave: async function () {
       let isSuccess = false
 
-      // 檢查額外功能存檔
-      if (this.$refs['orderDetailFunctions'] !== undefined) {
-        isSuccess = this.$refs['orderDetailFunctions'].beforeSave()
-        if (isSuccess === false) {
-          return isSuccess
-        }
-      }
-
       // 結合已刪除單據
       let finalResult = this.subList.concat(this.subListDeleted)
 
@@ -244,12 +250,23 @@ export default {
         if (row.OrderID === '' || row.Qty === 0) {
           continue
         }
+
         // 開始更新
         switch (row.Status) {
           case 'New':
+          // 檢查額外功能存檔
+            if (row.showExpandFunctions === 1) {
+              isSuccess = this.$refs['orderDetailFunctions' + row.Seq].beforeSave()
+              if (!isSuccess) { return isSuccess }
+            }
             isSuccess = await this.save('new', row)
             break
           case 'Modified':
+            // 檢查額外功能存檔
+            if (row.showExpandFunctions === 1) {
+              isSuccess = this.$refs['orderDetailFunctions' + row.Seq].beforeSave()
+              if (!isSuccess) { return isSuccess }
+            }
             isSuccess = await this.save('edit', row)
             break
           case 'Deleted':
@@ -260,9 +277,7 @@ export default {
             break
         }
         // 檢查
-        if (isSuccess === false) {
-          return isSuccess
-        }
+        if (!isSuccess) { return isSuccess }
       }
 
       return isSuccess
@@ -328,7 +343,7 @@ export default {
     },
     // 下拉式選擇商品
     ddlSubListChange: function (selected, row, ItemType) {
-      let findSubList = this.ddlSubList.find(item => item.ProductID === selected)
+      let findSubList = this.originDDLSubList.find(item => item.ProductID === selected)
       this.fillSubList(row, findSubList, ItemType)
     },
     // 填入選擇商品: 一般商品
@@ -368,8 +383,8 @@ export default {
         row.Status = 'Modified'
       }
 
-      if (this.$refs['orderDetailFunctions'] !== undefined) {
-        this.$refs['orderDetailFunctions'].qtyChange(currentValue)
+      if (row.showExpandFunctions === 1 && this.$refs['orderDetailFunctions' + row.Seq] !== undefined) {
+        this.$refs['orderDetailFunctions' + row.Seq].qtyChange(currentValue)
       }
 
       this.reCalAmount()

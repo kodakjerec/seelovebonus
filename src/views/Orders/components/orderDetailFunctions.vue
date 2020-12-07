@@ -73,7 +73,7 @@ export default {
   watch: {
     // 監聽Object, 要改為 handler + deep
     orderDetail: {
-      handler: function (newValue) {
+      handler: function (newValue, oldValue) {
         let newOrderID = newValue.OrderID
         let newOrderSeq = newValue.Seq
         this.subList.forEach(row => {
@@ -128,7 +128,7 @@ export default {
         展雲換狀
       */
       // 新資料
-      if (this.orderDetail.showExpandFunctions === 1) {
+      if (this.orderDetail.showChgChanyunCertificate === 1) {
         let index = 0
         let loopMax = (this.orderDetail.Qty - this.subList.length)
         while (index < loopMax) {
@@ -220,9 +220,7 @@ export default {
             break
         }
         // 檢查
-        if (isSuccess === false) {
-          return isSuccess
-        }
+        if (!isSuccess) { return isSuccess }
       }
 
       return isSuccess
