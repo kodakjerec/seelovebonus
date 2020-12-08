@@ -261,6 +261,13 @@ export default {
         return data
       })
     },
+    storageAddressBatchIns: ({ form }) => {
+      let rawData = { form }
+      return post('/basic/storageAddressBatchIns', rawData).then(data => {
+        console.log(`%c <<< Response(/rest/basic/storageAddressBatchIns)⤵ `, 'background-color: #E0455D; color: white; font-size: 14px; font-weight: bold;', data)
+        return data
+      })
+    },
     storageAddressDelete: ({ form }) => {
       let rawData = { form }
       return post('/basic/storageAddressDelete', rawData).then(data => {

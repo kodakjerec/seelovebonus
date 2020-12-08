@@ -185,13 +185,15 @@ export default {
         case 'retakeID':
           // 停用舊單據
           this.form.Status = '0'
-          await this.$api.orders.orderCertificate2Edit({ form: this.form })
-          // 新增單據
-          this.form.Status = '1'
-          let responseRetakeID = await this.$api.orders.orderCertificate2New({ form: this.form })
-          if (responseRetakeID.headers['code'] === '200') {
-            this.$alert(responseRetakeID.data.result[0].message, responseRetakeID.data.result[0].code)
-            isSuccess = true
+          let responseRetake = await this.$api.orders.orderCertificate2Edit({ form: this.form })
+          if (responseRetake.headers['code'] === '200') {
+            // 新增單據
+            this.form.Status = '1'
+            let responseRetakeID = await this.$api.orders.orderCertificate2New({ form: this.form })
+            if (responseRetakeID.headers['code'] === '200') {
+              this.$alert(responseRetakeID.data.result[0].message, responseRetakeID.data.result[0].code)
+              isSuccess = true
+            }
           }
           break
       }

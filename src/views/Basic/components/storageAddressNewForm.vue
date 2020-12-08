@@ -1,8 +1,50 @@
 <template>
   <el-dialog :title="myTitle" :visible="dialogShow" center width="80vw" @close="cancel">
     <el-form ref="form" :model="form" :rules="rules" label-width="10vw" label-position="right">
+      <el-form-item>
+        <el-switch
+          v-if="dialogType === 'new'"
+          v-model="batchInsert"
+          :active-text="$t('__batch')+$t('__new')"
+          :inactive-text="$t('__new')"></el-switch>
+      </el-form-item>
+      <!-- 單一新增 -->
       <el-form-item :label="$t('__storageAddress')+$t('__id')" prop="ID">
-        <el-input v-model="form.ID" autocomplete="off" :disabled="disableForm.ID" maxlength="20" show-word-limit></el-input>
+        <el-input v-model="form.ID" autocomplete="off" :disabled="disableForm.ID" maxlength="20" show-word-limit @change="batchInsertChange"></el-input>
+      </el-form-item>
+      <!-- 批次新增 -->
+      <template v-if="dialogType === 'new' && batchInsert === true">
+        <el-form-item :label="$t('__row')">
+          <el-col :span="6">
+            <el-input-number v-model="form.RowStart" :min="1" :max="99" @change="batchInsertChange"></el-input-number>
+            <el-input-number v-model="form.RowEnd" :min="1" :max="99" @change="batchInsertChange"></el-input-number>
+          </el-col>
+          <el-col :span="6">
+            <el-form-item :label="$t('__column')">
+              <el-input-number v-model="form.ColumnStart" :min="1" :max="99" @change="batchInsertChange"></el-input-number>
+              <el-input-number v-model="form.ColumnEnd" :min="1" :max="99" @change="batchInsertChange"></el-input-number>
+            </el-form-item>
+          </el-col>
+          <el-col :span="6">
+            <el-form-item :label="$t('__location')">
+              <el-input-number v-model="form.LocationStart" :min="1" :max="99" @change="batchInsertChange"></el-input-number>
+              <el-input-number v-model="form.LocationEnd" :min="1" :max="99" @change="batchInsertChange"></el-input-number>
+            </el-form-item>
+          </el-col>
+        </el-form-item>
+        <el-form-item>
+          {{form.GuessResult}}
+        </el-form-item>
+      </template>
+      <el-form-item :label="$t('__max')+$t('__qty')">
+        <el-col :span="6">
+          <el-input-number v-model="form.MaxQty" :min="1" :max="999999"></el-input-number>
+        </el-col>
+        <el-col :span="12">
+          <el-form-item :label="$t('__avgQty')">
+            <el-input-number v-model="form.AvgQty" :min="0" :max="999999"></el-input-number>
+          </el-form-item>
+        </el-col>
       </el-form-item>
       <el-form-item :label="$t('__limit') + $t('__itemCategory')">
         <template slot="label">
@@ -127,8 +169,19 @@ export default {
         Length: 0,
         Width: 0,
         Height: 0,
-        Status: '1'
+        MaxQty: 1,
+        AvgQty: 0,
+        Status: '1',
+        // 批次新增用, 不會記錄進資料庫
+        RowStart: 1,
+        RowEnd: 15,
+        ColumnStart: 1,
+        ColumnEnd: 15,
+        LocationStart: 1,
+        LocationEnd: 15,
+        GuessResult: ''
       },
+      batchInsert: false, // 開啟批次新增
       rules: {
         ID: [{ required: true, message: this.$t('__pleaseInput'), trigger: 'blur' }],
         Building: [{ required: true, message: this.$t('__pleaseInput'), trigger: 'blur' }],
@@ -202,7 +255,11 @@ export default {
       let isSuccess = false
       await this.$refs['form'].validate((valid) => { isSuccess = valid })
       if (isSuccess) {
-        this.save(this.dialogType)
+        if (this.batchInsert === false) {
+          this.save(this.dialogType)
+        } else {
+          this.save('batchInsert')
+        }
       }
     },
     // 取消
@@ -252,9 +309,13 @@ export default {
           if (responseDelete.headers['code'] === '200') {
             this.$alert(responseDelete.data.result[0].message, responseDelete.data.result[0].code)
             isSuccess = true
-          } else {
-            this.$alert(responseDelete.data.result.message, responseDelete.data.result.code)
-            isSuccess = false
+          }
+          break
+        case 'batchInsert':
+          let responseBatchIns = await this.$api.basic.storageAddressBatchIns({ form: this.form })
+          if (responseBatchIns.headers['code'] === '200') {
+            this.$alert(responseBatchIns.data.result[0].message, responseBatchIns.data.result[0].code)
+            isSuccess = true
           }
           break
       }
@@ -292,6 +353,25 @@ export default {
       if (this.isLoadingFinish) {
         this.form.Area = null
       }
+    },
+    // 批次處理
+    batchInsertChange: function () {
+      let locationB = ''
+      let locationE = ''
+      let locationTotal = 0
+
+      locationB = this.form.ID
+      locationB += this.form.RowStart < 10 ? '0' + this.form.RowStart : this.form.RowStart
+      locationB += this.form.ColumnStart < 10 ? '0' + this.form.ColumnStart : this.form.ColumnStart
+      locationB += this.form.LocationStart < 10 ? '0' + this.form.LocationStart : this.form.LocationStart
+      locationE = this.form.ID
+      locationE += this.form.RowEnd < 10 ? '0' + this.form.RowEnd : this.form.RowEnd
+      locationE += this.form.ColumnEnd < 10 ? '0' + this.form.ColumnEnd : this.form.ColumnEnd
+      locationE += this.form.LocationEnd < 10 ? '0' + this.form.LocationEnd : this.form.LocationEnd
+
+      locationTotal = (this.form.RowEnd - this.form.RowStart + 1) * (this.form.ColumnEnd - this.form.ColumnStart + 1) * (this.form.LocationEnd - this.form.LocationStart + 1)
+
+      this.form.GuessResult = this.$t('__storageAddress') + 'Start: ' + locationB + ' ~ ' + locationE + ', ' + this.$t('__total') + this.$t('__qty') + ': ' + locationTotal
     }
   }
 }

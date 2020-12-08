@@ -29,11 +29,31 @@
       </el-table-column>
       <el-table-column>
         <template slot="header">
+          {{$t('__storageAddress')}}{{'(' + $t('__building') + '-' + $t('__floor') + '-' + $t('__area') + ')'}}
+        </template>
+        <template slot-scope="scope">
+          {{scope.row.Building + '-' + scope.row.Floor + '-' + scope.row.Area}}
+        </template>
+      </el-table-column>
+      <el-table-column>
+        <template slot="header">
           {{$t('__volume')+'('+$t('__length')+'*'+$t('__width')+'*'+$t('__height')+')'}}
         </template>
         <template slot-scope="scope">
           {{scope.row.Length + '*' + scope.row.Width + '*' + scope.row.Height}}
         </template>
+      </el-table-column>
+      <el-table-column>
+        <template slot="header">
+          {{$t('__limit')}}{{$t('__itemCategory')}}
+        </template>
+        <template slot-scope="scope">
+          {{scope.row.Category1Name + '-' + scope.row.Category2Name + '-' + scope.row.Category3Name}}
+        </template>
+      </el-table-column>
+      <el-table-column
+        prop="Memo"
+        :label="$t('__memo')">
       </el-table-column>
     </el-table>
     <new-form
