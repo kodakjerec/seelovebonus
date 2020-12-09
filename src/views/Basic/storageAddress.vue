@@ -72,7 +72,7 @@ import searchButton from '@/components/searchButton'
 import newForm from './components/storageAddressNewForm'
 
 export default {
-  name: 'StockShow',
+  name: 'StorageAddressShow',
   components: {
     searchButton,
     newForm
@@ -101,9 +101,7 @@ export default {
   methods: {
     // 讀入系統清單
     preLoading: async function () {
-      // 顯示專用
-      let response2 = await this.$api.basic.storageAddressShow({ keyword: this.searchKeyWord })
-      this.storageAddressShow = response2.data.result
+      this.search('')
     },
     // 使用者權限
     userPermission: async function () {

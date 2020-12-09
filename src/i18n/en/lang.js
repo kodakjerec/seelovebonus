@@ -193,6 +193,8 @@ export default {
   __extend: 'Extend',
   __chanyun: 'Chanyun',
   __landCertificate: 'Land Cer.',
+  __inBoundOrder: 'InBound Order',
+  __supplier: 'Supplier',
   // 請在上方新增字串
   // 以下為錯誤處理專用
   __error400: 'Bad Request',

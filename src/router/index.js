@@ -93,7 +93,8 @@ const routes = [
   {
     path: '/Orders/OrderSignOffManual',
     name: 'OrderSignOffManual',
-    component: () => import('@/views/Orders/components/orderSignOffManual')
+    component: () => import('@/views/Orders/components/orderSignOffManual'),
+    props: true
   },
   {
     path: '/Orders/OrderSignOffLog',
@@ -139,6 +140,17 @@ const routes = [
     path: '/Settings/Announcement',
     name: 'Announcement',
     component: () => import('@/views/Settings/announcementShow')
+  },
+  {
+    path: '/Stock/InBoundOrder',
+    name: 'InBoundOrder',
+    component: () => import('@/views/Stock/inBoundOrder')
+  },
+  {
+    path: '/Stock/InBoundOrderNewForm',
+    name: 'InBoundOrderNewForm',
+    component: () => import('@/views/Stock/components/inBoundOrderNewForm'),
+    props: true
   }
 ]
 

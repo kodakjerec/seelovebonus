@@ -23,7 +23,8 @@ import { formatDateTime } from '@/setup/format.js'
 export default {
   name: 'OrderSignOffLog',
   props: {
-    ID: { type: String }
+    ID: { type: String },
+    parent: { type: String }
   },
   data () {
     return {
@@ -44,7 +45,7 @@ export default {
     },
     goBack: function () {
       this.$router.push({
-        name: 'Orders'
+        name: this.parent
       })
     }
   }

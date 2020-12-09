@@ -104,10 +104,22 @@
 <script>
 export default {
   name: 'orderSignOffManual',
+  props: {
+    orderType: { type: String },
+    parent: { type: String }
+  },
   data () {
     return {
       steps: [],
       step: {},
+      subItem: {
+        Seq: '0',
+        ParentSeq: '0',
+        UserType: 0,
+        ID: '',
+        // 顯示用, 部紀錄資料庫
+        GroupName: ''
+      },
       permissions: [],
       myTitle: this.$t('__signOffProcedure'),
       myTitle2: this.$t('__edit') + this.$t('__signOffProcedure'),
@@ -123,10 +135,10 @@ export default {
   },
   methods: {
     preLoading: async function () {
-      let response = await this.$api.signOff.getObject({ type: 'signOffProcedure', ID: 'order' })
+      let response = await this.$api.signOff.getObject({ type: 'signOffProcedure', ID: this.orderType })
       this.steps = response.data.result
 
-      let responsePermission = await this.$api.signOff.getObject({ type: 'signOffPermission', ID: 'order' })
+      let responsePermission = await this.$api.signOff.getObject({ type: 'signOffPermission', ID: this.orderType })
       this.permissions = responsePermission.data.result
       this.steps.forEach(item => {
         item.Status = ''
@@ -140,7 +152,7 @@ export default {
     },
     goBack: function () {
       this.$router.push({
-        name: 'Orders'
+        name: this.parent
       })
     },
     handleClick: function (row, column, event) {
@@ -201,7 +213,7 @@ export default {
     },
     // 新增子結構
     handleNew: function () {
-      let newObj = JSON.parse(JSON.stringify(this.step.subList[0]))
+      let newObj = JSON.parse(JSON.stringify(this.subItem))
       // find Maximum Seq
       let nextSeq = 1
       if (this.step.subList.length === 0) {
@@ -213,6 +225,7 @@ export default {
       }
 
       // 新增 item
+      newObj.ParentSeq = this.step.Seq
       newObj.ID = ''
       newObj.GroupName = ''
       newObj.UserType = 0

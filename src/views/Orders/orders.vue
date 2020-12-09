@@ -392,7 +392,11 @@ export default {
     // 開啟 簽核說明
     openSignOffManual: function () {
       this.$router.push({
-        name: 'OrderSignOffManual'
+        name: 'OrderSignOffManual',
+        params: {
+          orderType: 'order',
+          parent: 'Orders'
+        }
       })
     },
     // 開啟 簽核歷程
@@ -400,7 +404,8 @@ export default {
       this.$router.push({
         name: 'OrderSignOffLog',
         params: {
-          ID: row.ID
+          ID: row.ID,
+          parent: 'Orders'
         }
       })
     }

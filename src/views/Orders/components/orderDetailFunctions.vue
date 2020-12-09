@@ -23,7 +23,7 @@
             </el-option>
           </el-select>
           <div v-else>
-            {{scope.row.Value1}}
+            {{scope.row[scope.column.property]}}
           </div>
         </template>
       </el-table-column>
@@ -36,7 +36,7 @@
             v-model="scope.row[scope.column.property]" :placeholder="$t('__pleaseInput')">
           </el-input>
           <div v-else>
-            {{scope.row.Value2}}
+            {{scope.row[scope.column.property]}}
           </div>
         </template>
       </el-table-column>

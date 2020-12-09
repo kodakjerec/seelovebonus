@@ -90,7 +90,7 @@
           </el-form-item>
         </el-col>
         <el-col :span="8">
-          <el-form-item prop="Floor">
+          <el-form-item>
             <el-select v-model="form.Floor" value-key="value" :placeholder="$t('__plzChoice')" @change="ddlFloorChange">
               <el-option v-for="item in ddlFloor" :key="item.ID" :label="item.Value" :value="item.ID">
                 <span style="float: left">{{ item.Value }}</span>
@@ -100,7 +100,7 @@
           </el-form-item>
         </el-col>
         <el-col :span="8">
-          <el-form-item prop="Area">
+          <el-form-item>
             <el-select v-model="form.Area" value-key="value" :placeholder="$t('__plzChoice')">
               <el-option v-for="item in ddlArea" :key="item.ID" :label="item.Value" :value="item.ID">
                 <span style="float: left">{{ item.Value }}</span>
@@ -184,9 +184,7 @@ export default {
       batchInsert: false, // 開啟批次新增
       rules: {
         ID: [{ required: true, message: this.$t('__pleaseInput'), trigger: 'blur' }],
-        Building: [{ required: true, message: this.$t('__pleaseInput'), trigger: 'blur' }],
-        Floor: [{ required: true, message: this.$t('__pleaseInput'), trigger: 'blur' }],
-        Area: [{ required: true, message: this.$t('__pleaseInput'), trigger: 'blur' }]
+        Building: [{ required: true, message: this.$t('__pleaseInput'), trigger: 'blur' }]
       },
       disableForm: {
         ID: false
