@@ -35,7 +35,7 @@
         {{formatterMoney(null,null,form.Amount,null)}}
       </el-form-item>
       <el-form-item :label="$t('__supplier')">
-        <el-select v-model="form.Supplier" value-key="value" :placeholder="$t('__plzChoice')">
+        <el-select v-model="form.Supplier" value-key="value" :placeholder="$t('__plzChoice')" :disabled="disableForm.OrderDate">
           <el-option v-for="item in ddlCompanies" :key="item.ID" :label="item.Value" :value="item.ID">
             <span style="float: left">{{ item.Value }}</span>
             <span style="float: right; color: #8492a6; font-size: 13px">{{ item.ID }}</span>
@@ -49,16 +49,16 @@
       </el-form-item>
     </el-form>
     <!-- 明細 -->
-    <in-bound-order-detail
-      ref="inBoundOrderDetail"
+    <inbound-order-detail
+      ref="inboundOrderDetail"
       :dialogType="dialogType"
       :buttonsShowUser="buttonsShowUser"
       :orderID="form.ID"
-      @reCalculateDetail="reCalculateDetail"></in-bound-order-detail>
+      @reCalculateDetail="reCalculateDetail"></inbound-order-detail>
     <div slot="footer" class="dialog-footer">
-      <el-button v-show="dialogType === 'edit' &&  buttonsShowUser.delete" type="danger" @click="deleteItem">{{$t('__delete')}}</el-button>
+      <el-button v-show="buttonsShow.delete && buttonsShowUser.delete" type="danger" @click="deleteItem">{{$t('__delete')}}</el-button>
       <el-button @click="cancel">{{$t('__cancel')}}</el-button>
-      <el-button v-show="buttonsShowUser.save" type="primary" @click="checkValidate">{{$t('__save')}}</el-button>
+      <el-button v-show="buttonsShow.save && buttonsShowUser.save" type="primary" @click="checkValidate">{{$t('__save')}}</el-button>
     </div>
   </div>
 </template>
@@ -66,18 +66,18 @@
 <script>
 import { formatMoney } from '@/setup/format.js'
 import { messageBoxYesNo } from '@/services/utils'
-import inBoundOrderDetail from './inBoundOrderDetail'
+import inboundOrderDetail from './inboundOrderDetail'
 
 export default {
-  name: 'InBoundOrderNewForm',
+  name: 'InboundOrderNewForm',
   components: {
-    inBoundOrderDetail
+    inboundOrderDetail
   },
   props: {
     dialogType: { type: String, default: 'new' },
     dialogShow: { type: Boolean, default: false },
-    inBoundOrder: { type: Object },
-    parent: { type: String, default: 'InBoundOrder' },
+    inboundOrder: { type: Object },
+    parent: { type: String, default: 'InboundOrder' },
     buttonsShowUser: { type: Object }
   },
   data () {
@@ -117,7 +117,7 @@ export default {
   mounted () {
     switch (this.dialogType) {
       case 'new':
-        this.myTitle = this.$t('__new') + this.$t('__inBoundOrder')
+        this.myTitle = this.$t('__new') + this.$t('__inboundOrder')
         this.disableForm.ID = true
         this.form.OrderDate = new Date()
         this.buttonsShow = {
@@ -129,9 +129,39 @@ export default {
         }
         break
       case 'edit':
-        this.myTitle = this.$t('__edit') + this.$t('__inBoundOrder')
-        this.form = JSON.parse(JSON.stringify(this.inBoundOrder))
-        this.disableForm.ID = true
+        this.myTitle = this.$t('__edit') + this.$t('__inboundOrder')
+        this.form = JSON.parse(JSON.stringify(this.inboundOrder))
+
+        // 帶入原始單據狀態, 開啟或關閉
+        let intStatus = parseInt(this.form.Status)
+        if (intStatus === 0) {
+          // 是否允許修改
+          this.disableForm.ID = true
+          this.disableForm.OrderDate = true
+
+          this.buttonsShow = {
+            new: 0,
+            edit: 0,
+            save: 0,
+            delete: 0,
+            search: 0
+          }
+        } else if (intStatus > 0) {
+          // 是否允許修改
+          this.disableForm.ID = true
+
+          if (this.buttonsShowUser.edit === 0) {
+            this.disableForm.OrderDate = true
+          }
+
+          this.buttonsShow = {
+            new: 1,
+            edit: 1,
+            save: 1,
+            delete: 1,
+            search: 1
+          }
+        }
         break
     }
     this.preLoading()
@@ -156,7 +186,7 @@ export default {
       await this.$refs['form'].validate((valid) => { isSuccess = valid })
 
       // 檢查明細資訊
-      isSuccess = await this.$refs['inBoundOrderDetail'].checkValidate()
+      isSuccess = await this.$refs['inboundOrderDetail'].checkValidate()
       if (!isSuccess) { return }
 
       if (isSuccess) {
@@ -172,7 +202,7 @@ export default {
       isSuccess = await this.save(this.dialogType)
       if (isSuccess) {
         saveStep = 'orderDetail'
-        isSuccess = await this.$refs['inBoundOrderDetail'].beforeSave()
+        isSuccess = await this.$refs['inboundOrderDetail'].beforeSave()
       }
 
       if (isSuccess) {
@@ -231,7 +261,7 @@ export default {
       switch (type) {
         case 'new':
         case 'edit':
-          let responseUpdate = await this.$api.stock.inBoundOrderUpdate({ form: this.form })
+          let responseUpdate = await this.$api.stock.inboundOrderUpdate({ form: this.form })
           if (responseUpdate.headers['code'] === '200') {
             isSuccess = true
             this.form.ID = responseUpdate.data.result[0].ID
@@ -239,7 +269,7 @@ export default {
           }
           break
         case 'delete':
-          let responseDelete = await this.$api.stock.inBoundOrderDelete({ form: this.form })
+          let responseDelete = await this.$api.stock.inboundOrderDelete({ form: this.form })
           if (responseDelete.headers['code'] === '200') {
             isSuccess = true
             this.updateMessage = responseDelete.data.result[0].message

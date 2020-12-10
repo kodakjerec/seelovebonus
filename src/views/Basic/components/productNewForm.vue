@@ -75,6 +75,7 @@
             <span style="float: right; color: #8492a6; font-size: 13px">{{ item.ID }}</span>
           </el-option>
         </el-select>
+         {{$t('__inventory')}}<el-switch v-model="form.Inventory" active-text="ON" inactive-text="OFF" :active-value="1" :inactive-value="0"></el-switch>
       </el-form-item>
       <el-form-item :label="$t('__bom')">
         <el-select v-model="form.BOM" value-key="value" :placeholder="$t('__plzChoice')" disabled>
@@ -132,7 +133,8 @@ export default {
         Category1: null,
         Category2: null,
         Category3: null,
-        Status: '1'
+        Status: '1',
+        Inventory: 0
       },
       rules: {
         ID: [{ required: true, message: this.$t('__pleaseInput'), trigger: 'blur' }],
@@ -205,29 +207,29 @@ export default {
       this.form.AccountingName = findObject.Value
     },
     // 檢查輸入
-    checkValidate: function () {
-      let tempThis = this
-      this.$refs['form'].validate(async function (valid) {
-        if (valid) {
-          switch (tempThis.dialogType) {
-            case 'new':
-              tempThis.save()
-              break
-            case 'edit':
-              let isSuccess = false
+    checkValidate: async function () {
+      let isSuccess = false
+      this.$refs['form'].validate(function (valid) { isSuccess = valid })
+      if (isSuccess) {
+        switch (this.dialogType) {
+          case 'new':
+            this.save('new')
+            break
+          case 'edit':
+            let isSuccess = false
 
-              isSuccess = await tempThis.$refs['bom'].beforeSave()
+            isSuccess = await this.$refs['bom'].beforeSave()
 
-              if (isSuccess) {
-                tempThis.save(this.dialogType)
-              }
-              break
-          }
-          return true
-        } else {
-          return false
+            if (isSuccess) {
+              isSuccess = this.save(this.dialogType)
+            }
+            break
         }
-      })
+      }
+
+      if (isSuccess) {
+        this.$emit('dialog-save')
+      }
     },
     // 取消
     cancel: function () {
@@ -294,9 +296,7 @@ export default {
         await this.$api.basic.productFunctionsUpdate({ form: this.switchProjectFunctions[index] })
       }
 
-      if (isSuccess) {
-        this.$emit('dialog-save')
-      }
+      return isSuccess
     },
     // 商品大類變更
     ddlCategory1Change: function () {

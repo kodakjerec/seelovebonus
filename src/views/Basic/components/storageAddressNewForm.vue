@@ -36,7 +36,7 @@
           {{form.GuessResult}}
         </el-form-item>
       </template>
-      <el-form-item :label="$t('__max')+$t('__qty')">
+      <el-form-item :label="$t('__max')+$t('__inventory')">
         <el-col :span="6">
           <el-input-number v-model="form.MaxQty" :min="1" :max="999999"></el-input-number>
         </el-col>

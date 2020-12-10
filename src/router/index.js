@@ -142,15 +142,20 @@ const routes = [
     component: () => import('@/views/Settings/announcementShow')
   },
   {
-    path: '/Stock/InBoundOrder',
-    name: 'InBoundOrder',
-    component: () => import('@/views/Stock/inBoundOrder')
+    path: '/Stock/InboundOrder',
+    name: 'InboundOrder',
+    component: () => import('@/views/Stock/inboundOrder')
   },
   {
-    path: '/Stock/InBoundOrderNewForm',
-    name: 'InBoundOrderNewForm',
-    component: () => import('@/views/Stock/components/inBoundOrderNewForm'),
+    path: '/Stock/InboundOrderNewForm',
+    name: 'InboundOrderNewForm',
+    component: () => import('@/views/Stock/components/inboundOrderNewForm'),
     props: true
+  },
+  {
+    path: '/Stock/StockNow',
+    name: 'StockNow',
+    component: () => import('@/views/Stock/stockNow')
   }
 ]
 

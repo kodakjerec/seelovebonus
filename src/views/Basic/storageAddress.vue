@@ -15,23 +15,12 @@
         prop="ID"
         :label="$t('__storageAddress')+$t('__id')">
       </el-table-column>
-      <el-table-column
-        prop="BuildingName"
-        :label="$t('__building')">
-      </el-table-column>
-      <el-table-column
-        prop="FloorName"
-        :label="$t('__floor')">
-      </el-table-column>
-      <el-table-column
-        prop="AreaName"
-        :label="$t('__area')">
-      </el-table-column>
       <el-table-column>
         <template slot="header">
           {{$t('__storageAddress')}}{{'(' + $t('__building') + '-' + $t('__floor') + '-' + $t('__area') + ')'}}
         </template>
         <template slot-scope="scope">
+          {{scope.row.BuildingName + '-' + scope.row.FloorName + '-' + scope.row.AreaName}}<br/>
           {{scope.row.Building + '-' + scope.row.Floor + '-' + scope.row.Area}}
         </template>
       </el-table-column>
@@ -50,6 +39,10 @@
         <template slot-scope="scope">
           {{scope.row.Category1Name + '-' + scope.row.Category2Name + '-' + scope.row.Category3Name}}
         </template>
+      </el-table-column>
+      <el-table-column
+        prop="MaxQty"
+        :label="$t('__max') + $t('__inventory')">
       </el-table-column>
       <el-table-column
         prop="Memo"

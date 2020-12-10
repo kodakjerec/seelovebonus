@@ -5,7 +5,7 @@
       <search-button @search="search"></search-button>
     </el-button-group>
     <el-table
-      :data="inBoundOrderShow"
+      :data="inboundOrderShow"
       stripe
       border
       @row-click="handleClick"
@@ -43,6 +43,11 @@
             size="mini"
             type="danger"
             @click.native.stop="signOffDeny(scope.$index, scope.row)">{{$t('__signOffDeny')}}</el-button>
+          <el-button
+            v-show="scope.row.Status === '2'"
+            size="mini"
+            type="primary"
+            @click.native.stop="putOn(scope.$index, scope.row)">{{$t('__putOn')}}</el-button>
         </template>
       </el-table-column>
       <el-table-column
@@ -51,7 +56,7 @@
       </el-table-column>
       <el-table-column
         prop="ID"
-        :label="$t('__inBoundOrder')+$t('__id')">
+        :label="$t('__inboundOrder')+$t('__id')">
       </el-table-column>
       <el-table-column
         prop="OrderDate"
@@ -72,7 +77,7 @@
     v-if="dialogShow"
     :dialog-type="dialogType"
     :dialog-show="dialogShow"
-    :inBoundOrder="inBoundOrder"
+    :inboundOrder="inboundOrder"
     :buttonsShowUser="buttonsShowUser"
     @dialog-cancel="dialogCancel()"
     @dialog-save="dialogSave()"></new-form>
@@ -90,11 +95,11 @@
 <script>
 import searchButton from '@/components/searchButton'
 import signOffDialog from '@/views/Orders/components/signOffDialog'
-import newForm from './components/inBoundOrderNewForm'
+import newForm from './components/inboundOrderNewForm'
 import { formatMoney, formatDate } from '@/setup/format.js'
 
 export default {
-  name: 'InBoundOrderShow',
+  name: 'InboundOrderShow',
   components: {
     searchButton,
     signOffDialog,
@@ -104,8 +109,8 @@ export default {
     return {
       dialogType: 'new',
       dialogShow: false,
-      inBoundOrderShow: [],
-      inBoundOrder: {},
+      inboundOrderShow: [],
+      inboundOrder: {},
       searchKeyWord: '',
       // 使用者能看到的權限
       buttonsShowUser: {
@@ -152,19 +157,26 @@ export default {
     },
     handleClick: async function (row, column, event) {
       // 取得可以用的選單
-      let responseRow = await this.$api.stock.getObject({ type: 'inBoundOrder', ID: row.ID })
-      this.inBoundOrder = responseRow.data.result[0]
+      let responseRow = await this.$api.stock.getObject({ type: 'inboundOrder', ID: row.ID })
+      this.inboundOrder = responseRow.data.result[0]
 
+      // 簽核管理
+      if (row.StatusSignOff === 0) {
+        this.buttonsShowUser.new = 0
+        this.buttonsShowUser.edit = 0
+        this.buttonsShowUser.save = 0
+        this.buttonsShowUser.delete = 0
+      }
       // 權限管理
       this.buttonsShowUser.save = this.buttonsShowUser.edit
 
       // 進入修改
       this.$router.push({
-        name: 'InBoundOrderNewForm',
+        name: 'InboundOrderNewForm',
         params: {
           dialogType: 'edit',
-          inBoundOrder: this.inBoundOrder,
-          parent: 'InBoundOrder',
+          inboundOrder: this.inboundOrder,
+          parent: 'InboundOrder',
           buttonsShowUser: this.buttonsShowUser
         }
       })
@@ -175,11 +187,11 @@ export default {
       this.buttonsShowUser.save = this.buttonsShowUser.new
 
       this.$router.push({
-        name: 'InBoundOrderNewForm',
+        name: 'InboundOrderNewForm',
         params: {
           dialogType: 'new',
-          inBoundOrder: this.inBoundOrder,
-          parent: 'InBoundOrder',
+          inboundOrder: this.inboundOrder,
+          parent: 'InboundOrder',
           buttonsShowUser: this.buttonsShowUser
         }
       })
@@ -193,11 +205,18 @@ export default {
     },
     // 搜尋
     search: async function (value) {
-      this.searchKeyWord = value
-      let response2 = await this.$api.stock.inBoundOrderShow({
+      if (value !== undefined) {
+        this.searchKeyWord = value
+      }
+      let response2 = await this.$api.stock.inboundOrderShow({
         keyword: this.searchKeyWord,
         ID: this.$store.state.userID })
-      this.inBoundOrderShow = response2.data.result
+      this.inboundOrderShow = response2.data.result
+    },
+    // 上架
+    putOn: async function (index, row) {
+      await this.$api.stock.inboundOrderPutOn({ form: row })
+      this.search()
     },
     // 簽核相關
     // 送簽
@@ -224,7 +243,7 @@ export default {
     },
     // 批次送簽
     batchSignOffAgree: function () {
-      this.originData
+      this.inboundOrderShow
         .filter(row => { return row.StatusSignOff === 1 })
         .forEach(row => {
           this.signOffList.push({
@@ -239,7 +258,7 @@ export default {
     },
     // 批次否決
     batchSignOffDeny: function () {
-      this.originData
+      this.inboundOrderShow
         .filter(row => { return row.StatusSignOff === 1 })
         .forEach(row => {
           this.signOffList.push({
@@ -269,7 +288,7 @@ export default {
         name: 'OrderSignOffManual',
         params: {
           orderType: 'inbound',
-          parent: 'InBoundOrder'
+          parent: 'InboundOrder'
         }
       })
     },
@@ -279,7 +298,7 @@ export default {
         name: 'OrderSignOffLog',
         params: {
           ID: row.ID,
-          parent: 'InBoundOrder'
+          parent: 'InboundOrder'
         }
       })
     }

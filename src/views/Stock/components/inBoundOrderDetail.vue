@@ -116,7 +116,7 @@
 import { formatMoney } from '@/setup/format.js'
 
 export default {
-  name: 'inBoundOrderDetail',
+  name: 'inboundOrderDetail',
   props: {
     dialogType: { type: String, default: 'new' },
     buttonsShowUser: { type: Object },
@@ -172,6 +172,7 @@ export default {
       // 取得所有原始資料
       let response = await this.$api.orders.getDropdownList({ type: 'productsForOrderDetail' })
       this.originDDLSubList = response.data.result
+      this.originDDLSubList = this.originDDLSubList.filter(item => item.Inventory === 1)
 
       let response2 = await this.$api.basic.getDropdownList({ type: 'storageAddress' })
       this.ddlStorageID = response2.data.result
@@ -191,7 +192,7 @@ export default {
     },
     // 修改狀態, 取得明細
     bringOrderDetail: async function () {
-      let responseDetail = await this.$api.stock.getObject({ type: 'inBoundOrderDetail', ID: this.orderID })
+      let responseDetail = await this.$api.stock.getObject({ type: 'inboundOrderDetail', ID: this.orderID })
       this.subList = responseDetail.data.result
 
       this.reCalAmount()
@@ -262,13 +263,13 @@ export default {
       switch (type) {
         case 'new':
         case 'edit':
-          let responseEdit = await this.$api.stock.inBoundOrderDetailUpdate({ form: row })
+          let responseEdit = await this.$api.stock.inboundOrderDetailUpdate({ form: row })
           if (responseEdit.headers['code'] === '200') {
             isSuccess = true
           }
           break
         case 'delete':
-          let responseDelete = await this.$api.stock.inBoundOrderDetailDelete({ form: row })
+          let responseDelete = await this.$api.stock.inboundOrderDetailDelete({ form: row })
           if (responseDelete.headers['code'] === '200') {
             isSuccess = true
           }

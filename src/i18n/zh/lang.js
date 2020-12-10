@@ -193,8 +193,10 @@ export default {
   __extend: '擴充',
   __chanyun: '展雲',
   __landCertificate: '權狀',
-  __inBoundOrder: '入庫單',
+  __inboundOrder: '入庫單',
   __supplier: '供應商',
+  __inventory: '存貨',
+  __putOn: '上架',
   // 請在上方新增字串
   // 以下為錯誤處理專用
   __error400: '無法理解請求',
