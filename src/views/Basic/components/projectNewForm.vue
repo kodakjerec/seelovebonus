@@ -2,7 +2,14 @@
   <el-dialog :title="myTitle" :visible="dialogShow" center width="80vw" @close="cancel">
     <el-form ref="form" :model="form" :rules="rules" label-width="10vw" label-position="right">
       <el-form-item :label="$t('__project')+$t('__id')" prop="ID">
-        <el-input v-model="form.ID" autocomplete="off" :disabled="disableForm.ID" maxlength="20" show-word-limit></el-input>
+        <el-col :span="10">
+          <el-input v-model="form.ID" autocomplete="off" :disabled="disableForm.ID" maxlength="20" show-word-limit></el-input>
+        </el-col>
+        <el-col :span="14">
+          <el-form-item :label="$t('__projectOrderPrefix')" prop="Prefix">
+            <el-input v-model="form.Prefix" autocomplete="off" :disabled="disableForm.ID" maxlength="20" show-word-limit></el-input>
+          </el-form-item>
+        </el-col>
       </el-form-item>
       <el-form-item :label="$t('__project')+$t('__name')" prop="Name">
           <el-input v-model="form.Name" autocomplete="off" maxlength="40" show-word-limit></el-input>
@@ -30,20 +37,28 @@
         </el-col>
       </el-form-item>
       <el-form-item :label="$t('__price')">
-          <el-input-number v-model.number="form.Price" :min="0"></el-input-number>
+          <el-input-number v-model.number="form.Price"></el-input-number>
           <span>{{$t('__dollar')}}</span>
       </el-form-item>
       <el-form-item :label="$t('__pv')">
           <el-input-number v-model.number="form.PV" :precision="2" :min="0"></el-input-number>
           <span>{{$t('__100PercentInput100')}}</span>
       </el-form-item>
+      <!-- 專案明細 -->
       <template v-if="dialogType!=='new'">
         <el-divider>{{$t('__project')+$t('__detail')}}</el-divider>
-        <bom ref="bom" :projectID="form.ID" :projectDetail="projectDetail"></bom>
+        <project-detail ref="projectDetail" :projectID="form.ID"></project-detail>
       </template>
       <el-form-item v-else>{{$t('__projectDetailWarrning')}}</el-form-item>
+      <!-- 專案功能 -->
+      <el-divider>{{$t('__project')+$t('__function')}}</el-divider>
+      <template v-for="fun in switchProjectFunctions">
+        {{fun.Value}}
+        <el-switch v-model="fun.Available" :key="fun.Function" active-text="ON" inactive-text="OFF" :active-value="1" :inactive-value="0"></el-switch>
+      </template>
     </el-form>
     <div slot="footer" class="dialog-footer">
+      <el-button v-show="dialogType === 'edit' &&  buttonsShowUser.delete" type="danger" @click="deleteItem">{{$t('__delete')}}</el-button>
       <el-button @click="cancel">{{$t('__cancel')}}</el-button>
       <el-button v-show="buttonsShowUser.save" type="primary" @click="checkValidate">{{$t('__save')}}</el-button>
     </div>
@@ -51,11 +66,13 @@
 </template>
 
 <script>
-import bom from './projectDetail'
+import projectDetail from './projectDetail'
+import { messageBoxYesNo } from '@/services/utils'
+
 export default {
   name: 'ProjectNewForm',
   components: {
-    bom
+    projectDetail
   },
   props: {
     dialogType: { type: String, default: 'new' },
@@ -71,21 +88,23 @@ export default {
         StartDate: '',
         EndDate: '',
         Price: 0,
-        PV: 100
+        PV: 100,
+        Prefix: ''
       },
       rules: {
         ID: [{ required: true, message: this.$t('__pleaseInput'), trigger: 'blur' }],
         Name: [{ required: true, message: this.$t('__pleaseInput'), trigger: 'blur' }],
         StartDate: [{ required: true, message: this.$t('__pleaseInput'), trigger: 'blur' }],
-        EndDate: [{ required: true, message: this.$t('__pleaseInput'), trigger: 'blur' }]
+        EndDate: [{ required: true, message: this.$t('__pleaseInput'), trigger: 'blur' }],
+        Prefix: [{ required: true, message: this.$t('__pleaseInput'), trigger: 'blur' }]
       },
       disableForm: {
         ID: false
       },
       myTitle: '',
-      projectDetail: [],
-      projectPBonus: [],
-      projectSuperBonus: []
+      AvailableFunctions: [],
+      // 下拉是選單
+      switchProjectFunctions: []
     }
   },
   mounted () {
@@ -96,8 +115,10 @@ export default {
         break
       case 'edit':
         this.myTitle = this.$t('__edit') + this.$t('__project')
-        this.form = JSON.parse(JSON.stringify(this.project))
         this.disableForm.ID = true
+        this.disableForm.Prefix = true
+
+        this.form = JSON.parse(JSON.stringify(this.project))
         break
     }
     this.preLoading()
@@ -105,22 +126,23 @@ export default {
   methods: {
     // 讀取預設資料
     preLoading: async function () {
-      const response1 = await this.$api.basic.getObject({ type: 'projectDetail', ID: this.form.ID })
-      this.projectDetail = response1.data.result
+      // 有用到的專案功能
+      let responseAvailableProjectFunctions = await this.$api.basic.getObject({ type: 'projectFunctions', ID: this.form.ID })
+      this.switchProjectFunctions = responseAvailableProjectFunctions.data.result
     },
     // 檢查輸入
     checkValidate: async function () {
       if (this.dialogType !== 'new') {
       // check BOM
         let isSuccess = false
-        isSuccess = await this.$refs['bom'].beforeSave()
+        isSuccess = await this.$refs['projectDetail'].beforeSave()
         if (!isSuccess) { return }
       }
 
       // 檢查主表單
       this.$refs['form'].validate((valid) => {
         if (valid) {
-          this.save()
+          this.save(this.dialogType)
         }
       })
     },
@@ -128,24 +150,70 @@ export default {
     cancel: function () {
       this.$emit('dialog-cancel')
     },
+    // 刪除
+    deleteItem: async function () {
+      let answerAction = await messageBoxYesNo(this.$t('__delete') + this.$t('__project') + ' ' + this.form.ID, this.$t('__delete'))
+
+      switch (answerAction) {
+        case 'confirm':
+          let isSuccessEdit = await this.save('delete')
+          if (isSuccessEdit) {
+            this.$alert(this.updateMessage, 200, {
+              callback: () => {
+                this.$router.push({
+                  name: this.parent,
+                  params: {
+                    returnType: 'save'
+                  }
+                })
+              }
+            })
+          }
+          break
+        case 'cancel':
+          break
+        case 'close':
+          break
+      }
+    },
     // 存檔
-    save: async function () {
+    save: async function (type) {
       let isSuccess = false
-      switch (this.dialogType) {
+      switch (type) {
         case 'new':
-          const responseNew = await this.$api.basic.projectNew({ form: this.form })
+          let responseNew = await this.$api.basic.projectNew({ form: this.form })
           if (responseNew.headers['code'] === '200') {
             this.$alert(responseNew.data.result[0].message, responseNew.data.result[0].code)
             isSuccess = true
+
+            // 更新專案功能代號
+            this.switchProjectFunctions.forEach(item => {
+              item.ProjectID = this.form.ID
+            })
           }
           break
         case 'edit':
-          const responseEdit = await this.$api.basic.projectEdit({ form: this.form })
+          let responseEdit = await this.$api.basic.projectEdit({ form: this.form })
           if (responseEdit.headers['code'] === '200') {
             this.$alert(responseEdit.data.result[0].message, responseEdit.data.result[0].code)
             isSuccess = true
           }
           break
+        case 'delete':
+          let responseDelete = await this.$api.basic.projectDelete({ form: this.form })
+          if (responseDelete.headers['code'] === '200') {
+            this.$alert(responseDelete.data.result[0].message, responseDelete.data.result[0].code)
+            isSuccess = true
+          } else {
+            this.$alert(responseDelete.data.result.message, responseDelete.data.result.code)
+            isSuccess = false
+          }
+          break
+      }
+
+      // 專案功能更新
+      for (let index = 0; index < this.switchProjectFunctions.length; index++) {
+        await this.$api.basic.projectFunctionsUpdate({ form: this.switchProjectFunctions[index] })
       }
 
       if (isSuccess) {

@@ -162,12 +162,12 @@ export default {
     },
     // 讀取預設資料
     preLoading: async function () {
-      const response2 = await this.$api.reports.getDropdownList({ type: 'cer1Duration' })
+      let response2 = await this.$api.reports.getDropdownList({ type: 'cer1Duration' })
       this.ddlReportDuration = response2.data.result
-      const response3 = await this.$api.basic.getDropdownList({ type: 'status' })
+      let response3 = await this.$api.basic.getDropdownList({ type: 'status' })
       this.ddlStatus = response3.data.result
 
-      const response4 = await this.$api.orders.getDropdownList({ type: 'certificate1Prefix' })
+      let response4 = await this.$api.orders.getDropdownList({ type: 'certificate1Prefix' })
       this.ddlPrefix = response4.data.result
       this.form.Prefix = this.ddlPrefix[0].ID
     },
@@ -189,14 +189,14 @@ export default {
       let isSuccess = false
       switch (type) {
         case 'new':
-          const responseNew = await this.$api.orders.orderCertificate1New({ form: this.form })
+          let responseNew = await this.$api.orders.orderCertificate1New({ form: this.form })
           if (responseNew.headers['code'] === '200') {
             this.$alert(responseNew.data.result[0].message, responseNew.data.result[0].code)
             isSuccess = true
           }
           break
         case 'edit':
-          const responseEdit = await this.$api.orders.orderCertificate1Edit({ form: this.form })
+          let responseEdit = await this.$api.orders.orderCertificate1Edit({ form: this.form })
           if (responseEdit.headers['code'] === '200') {
             this.$alert(responseEdit.data.result[0].message, responseEdit.data.result[0].code)
             isSuccess = true
@@ -204,7 +204,7 @@ export default {
           isSuccess = true
           break
         case 'delete':
-          const responseDelete = await this.$api.orders.orderCertificate1Delete({ form: this.form })
+          let responseDelete = await this.$api.orders.orderCertificate1Delete({ form: this.form })
           if (responseDelete.headers['code'] === '200') {
             this.$alert(responseDelete.data.result[0].message, responseDelete.data.result[0].code)
             isSuccess = true
@@ -216,7 +216,7 @@ export default {
           await this.$api.orders.orderCertificate1Edit({ form: this.form })
           // 新增單據
           this.form.Status = '1'
-          const responseRetakeID = await this.$api.orders.orderCertificate1New({ form: this.form })
+          let responseRetakeID = await this.$api.orders.orderCertificate1New({ form: this.form })
           if (responseRetakeID.headers['code'] === '200') {
             this.$alert(responseRetakeID.data.result[0].message, responseRetakeID.data.result[0].code)
             isSuccess = true

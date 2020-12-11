@@ -64,6 +64,7 @@ export default {
   },
   props: {
     buttonsShow: { type: Object },
+    buttonsShowUser: { type: Object },
     orderID: { type: String }
   },
   data () {
@@ -72,15 +73,7 @@ export default {
       dialogShow: false,
       invoiceHeadShow: [],
       invoiceHead: {},
-      activeName: '',
-      // 使用者能看到的權限
-      buttonsShowUser: {
-        new: 1,
-        edit: 1,
-        save: 1,
-        delete: 1,
-        search: 1
-      }
+      activeName: ''
     }
   },
   watch: {
@@ -90,7 +83,6 @@ export default {
   },
   mounted () {
     if (this.orderID) { this.preLoading() }
-    this.userPermission()
   },
   methods: {
     formatterDate: function (row, column, cellValue, index) {
@@ -100,19 +92,11 @@ export default {
       return formatMoney(cellValue)
     },
     preLoading: async function () {
-      const responseRecords = await this.$api.orders.getObject({ type: 'invoiceHead', ID: this.orderID })
+      let responseRecords = await this.$api.orders.getObject({ type: 'invoiceHead', ID: this.orderID })
       this.invoiceHeadShow = responseRecords.data.result
       if (this.invoiceHeadShow && this.invoiceHeadShow.length > 0) {
         this.activeName = '1'
       }
-    },
-    // 使用者權限
-    userPermission: async function () {
-      let progPermission = this.$store.state.userProg.filter(item => { return item.Path === '/Orders/Invoices' })[0]
-      this.buttonsShowUser.new = progPermission.fun1
-      this.buttonsShowUser.edit = progPermission.fun2
-      this.buttonsShowUser.save = progPermission.fun2
-      this.buttonsShowUser.delete = progPermission.fun3
     },
     handleClick: async function (row, column, event) {
       // 取得可以用的選單

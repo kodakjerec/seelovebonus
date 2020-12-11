@@ -8,6 +8,7 @@
       :data="results"
       stripe
       border
+      :span-method="objectSpanMethod"
       :height="tableHeight"
       @row-click="handleClick"
       :row-class-name="tableRowClassName"
@@ -80,6 +81,7 @@ export default {
       employee: {},
       searchKeyWord: '',
       tableHeight: (screen.height * 7 / 9),
+      tableSpanList: [],
       pagination: {
         currentPage: 1,
         pageSizeList: [10, 20, 30],
@@ -149,7 +151,7 @@ export default {
     // 搜尋
     search: async function (value) {
       this.searchKeyWord = value
-      const response2 = await this.$api.basic.employeesShow({ keyword: this.searchKeyWord })
+      let response2 = await this.$api.basic.employeesShow({ keyword: this.searchKeyWord })
       this.originData = response2.data.result
 
       this.pageChange()
@@ -165,6 +167,41 @@ export default {
     },
     pageChange: function () {
       this.results = this.originData.slice((this.pagination.currentPage - 1) * this.pagination.pageSize, this.pagination.pageSize * this.pagination.currentPage)
+
+      // table span
+      this.tableSpanList = []
+      this.results.forEach(row => {
+        let findObject = this.tableSpanList.find(row2 => { return row2.SpanID === row.CompanyID })
+        if (findObject === undefined) {
+          let firstIndex = this.results.findIndex(row3 => row3.CompanyID === row.CompanyID)
+          this.tableSpanList.push({
+            SpanID: row.CompanyID,
+            rowIndex: firstIndex,
+            Qty: 1
+          })
+        } else {
+          findObject.Qty += 1
+        }
+      })
+    },
+    // table span method
+    objectSpanMethod: function (row, column, rowIndex, columnIndex) {
+      if (row.columnIndex === 0) {
+        let findObject = this.tableSpanList.find(item => { return item.SpanID === row.row.CompanyID })
+        // 沒找到
+        if (findObject === undefined) {
+          return [1, 0]
+        } else {
+          // 有找到
+          // 是第一筆, 就要做 colspan
+          if (row.rowIndex === findObject.rowIndex) {
+            return [findObject.Qty, 1]
+          } else {
+            // 其他筆
+            return [1, 0]
+          }
+        }
+      }
     }
   }
 }

@@ -91,6 +91,18 @@ const routes = [
     component: () => import('@/views/Orders/certificate2Show')
   },
   {
+    path: '/Orders/OrderSignOffManual',
+    name: 'OrderSignOffManual',
+    component: () => import('@/views/Orders/components/orderSignOffManual'),
+    props: true
+  },
+  {
+    path: '/Orders/OrderSignOffLog',
+    name: 'OrderSignOffLog',
+    component: () => import('@/views/Orders/components/orderSignOffLog'),
+    props: true
+  },
+  {
     path: '/Reports',
     name: 'Reports'
   },
@@ -128,6 +140,22 @@ const routes = [
     path: '/Settings/Announcement',
     name: 'Announcement',
     component: () => import('@/views/Settings/announcementShow')
+  },
+  {
+    path: '/Stock/InboundOrder',
+    name: 'InboundOrder',
+    component: () => import('@/views/Stock/inboundOrder')
+  },
+  {
+    path: '/Stock/InboundOrderNewForm',
+    name: 'InboundOrderNewForm',
+    component: () => import('@/views/Stock/components/inboundOrderNewForm'),
+    props: true
+  },
+  {
+    path: '/Stock/StockNow',
+    name: 'StockNow',
+    component: () => import('@/views/Stock/stockNow')
   }
 ]
 

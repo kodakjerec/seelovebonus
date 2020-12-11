@@ -1,10 +1,10 @@
 <template>
   <el-form>
-    <el-button-group>
+    <el-button-group style="padding-bottom: 5px">
+      <el-button class="hideButton" icon="el-icon-more"><!-- 排版用,避免沒按鈕跑版 --></el-button>
       <el-button v-show="buttonsShowUser.new" type="primary" icon="el-icon-plus" @click.prevent="showForm('new')">{{$t('__new')}}</el-button>
+      <search-button @search="search"></search-button>
     </el-button-group>
-    <search-button @search="search"></search-button>
-    <p style="height:1px" />
     <el-table
       :data="list"
       stripe
@@ -90,7 +90,7 @@ export default {
     },
     // 讀入使用者清單
     preLoading: async function () {
-      const response = await this.$api.settings.announcementShow({ keyword: this.searchKeyWord })
+      let response = await this.$api.settings.announcementShow({ keyword: this.searchKeyWord })
       this.list = response.data.result
     },
     // 使用者權限
@@ -128,7 +128,7 @@ export default {
     // 搜尋
     search: async function (value) {
       this.searchKeyWord = value
-      const response2 = await this.$api.settings.announcementShow({ keyword: this.searchKeyWord })
+      let response2 = await this.$api.settings.announcementShow({ keyword: this.searchKeyWord })
       this.list = response2.data.result
     }
   }

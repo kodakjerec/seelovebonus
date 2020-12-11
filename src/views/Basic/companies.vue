@@ -166,7 +166,7 @@ export default {
     // 搜尋
     search: async function (value) {
       this.searchKeyWord = value
-      const response2 = await this.$api.basic.companiesShow({ keyword: this.searchKeyWord })
+      let response2 = await this.$api.basic.companiesShow({ keyword: this.searchKeyWord })
       this.originData = response2.data.result
 
       this.pageChange()

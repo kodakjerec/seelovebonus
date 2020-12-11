@@ -1,35 +1,52 @@
 <template>
   <el-form>
-    <el-button-group>
+    <el-button-group style="padding-bottom: 5px">
       <el-button v-show="buttonsShowUser.new" type="primary" icon="el-icon-plus" @click.prevent="showForm('new')">{{$t('__new')}}</el-button>
+      <search-button @search="search"></search-button>
     </el-button-group>
-    <search-button @search="search"></search-button>
-    <p style="height:1px" />
     <el-table
       :data="storageAddressShow"
       stripe
       border
       @row-click="handleClick"
+      :row-class-name="tableRowClassName"
       style="width: 100%">
       <el-table-column
         prop="ID"
         :label="$t('__storageAddress')+$t('__id')">
       </el-table-column>
-      <el-table-column
-        prop="BuildingName"
-        :label="$t('__building')">
+      <el-table-column>
+        <template slot="header">
+          {{$t('__storageAddress')}}{{'(' + $t('__building') + '-' + $t('__floor') + '-' + $t('__area') + ')'}}
+        </template>
+        <template slot-scope="scope">
+          {{scope.row.BuildingName + '-' + scope.row.FloorName + '-' + scope.row.AreaName}}<br/>
+          {{scope.row.Building + '-' + scope.row.Floor + '-' + scope.row.Area}}
+        </template>
+      </el-table-column>
+      <el-table-column>
+        <template slot="header">
+          {{$t('__volume')+'('+$t('__length')+'*'+$t('__width')+'*'+$t('__height')+')'}}
+        </template>
+        <template slot-scope="scope">
+          {{scope.row.Length + '*' + scope.row.Width + '*' + scope.row.Height}}
+        </template>
+      </el-table-column>
+      <el-table-column>
+        <template slot="header">
+          {{$t('__limit')}}{{$t('__itemCategory')}}
+        </template>
+        <template slot-scope="scope">
+          {{scope.row.Category1Name + '-' + scope.row.Category2Name + '-' + scope.row.Category3Name}}
+        </template>
       </el-table-column>
       <el-table-column
-        prop="FloorName"
-        :label="$t('__floor')">
+        prop="MaxQty"
+        :label="$t('__max') + $t('__inventory')">
       </el-table-column>
       <el-table-column
-        prop="AreaName"
-        :label="$t('__area')">
-      </el-table-column>
-      <el-table-column
-        prop="Volume"
-        :label="$t('__volume')">
+        prop="Memo"
+        :label="$t('__memo')">
       </el-table-column>
     </el-table>
     <new-form
@@ -48,7 +65,7 @@ import searchButton from '@/components/searchButton'
 import newForm from './components/storageAddressNewForm'
 
 export default {
-  name: 'StockShow',
+  name: 'StorageAddressShow',
   components: {
     searchButton,
     newForm
@@ -77,9 +94,7 @@ export default {
   methods: {
     // 讀入系統清單
     preLoading: async function () {
-      // 顯示專用
-      const response2 = await this.$api.basic.storageAddressShow({ keyword: this.searchKeyWord })
-      this.storageAddressShow = response2.data.result
+      this.search('')
     },
     // 使用者權限
     userPermission: async function () {
@@ -88,6 +103,12 @@ export default {
       this.buttonsShowUser.edit = progPermission.fun2
       this.buttonsShowUser.save = progPermission.fun2
       this.buttonsShowUser.delete = progPermission.fun3
+    },
+    // table 變更顏色
+    tableRowClassName ({ row, rowIndex }) {
+      if (row['Status'] === '0') {
+        return 'disabled-row'
+      }
     },
     handleClick: async function (row, column, event) {
       // 取得可以用的選單
@@ -119,7 +140,7 @@ export default {
     // 搜尋
     search: async function (value) {
       this.searchKeyWord = value
-      const response2 = await this.$api.basic.storageAddressShow({ keyword: this.searchKeyWord })
+      let response2 = await this.$api.basic.storageAddressShow({ keyword: this.searchKeyWord })
       this.storageAddressShow = response2.data.result
     }
   }

@@ -177,6 +177,13 @@ const validate = {
       callback(new Error(i18n.t('__pleaseInputLength') + '7'))
     }
     callback()
+  },
+  // 驗證數字 for el-input-number
+  validateInputNumber: (rule, value, callback) => {
+    if (value <= 0) {
+      callback(new Error(i18n.t('__pleaseInputNumber')))
+    }
+    callback()
   }
 }
 

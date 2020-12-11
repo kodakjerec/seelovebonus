@@ -128,10 +128,6 @@
         </el-select>
       </el-form-item>
     </el-form>
-    <div slot="footer" class="dialog-footer">
-      <el-button @click.prevent="cancel">{{$t('__cancel')}}</el-button>
-      <el-button v-show="buttonsShowUser.save" type="primary" @click.prevent="checkValidate">{{$t('__save')}}</el-button>
-    </div>
     <el-collapse v-model="activeName" accordion="">
         <el-collapse-item name="1">
           <template slot="title">
@@ -142,12 +138,18 @@
           </exceedingDateLog>
         </el-collapse-item>
     </el-collapse>
+    <div slot="footer" class="dialog-footer">
+      <el-button v-show="dialogType === 'edit' &&  buttonsShowUser.delete" type="danger" @click="deleteItem">{{$t('__delete')}}</el-button>
+      <el-button @click.prevent="cancel">{{$t('__cancel')}}</el-button>
+      <el-button v-show="buttonsShowUser.save" type="primary" @click.prevent="checkValidate">{{$t('__save')}}</el-button>
+    </div>
   </el-dialog>
 </template>
 
 <script>
 import validate from '@/setup/validate.js'
 import exceedingDateLog from './companyExceedingDateLog'
+import { messageBoxYesNo } from '@/services/utils'
 
 export default {
   name: 'CompanyNewForm',
@@ -229,28 +231,28 @@ export default {
     // 讀取預設資料
     preLoading: async function () {
       // 取得所有原始資料
-      const response = await this.$api.basic.getDropdownList({ type: 'post' })
+      let response = await this.$api.basic.getDropdownList({ type: 'post' })
       this.postData = response.data.result
 
-      const response1 = await this.$api.basic.getDropdownList({ type: 'country' })
+      let response1 = await this.$api.basic.getDropdownList({ type: 'country' })
       this.ddlCountry = response1.data.result
-      const response2 = await this.$api.basic.getDropdownList({ type: 'city' })
+      let response2 = await this.$api.basic.getDropdownList({ type: 'city' })
       this.ddlCity = response2.data.result
       this.ddlCityChange()
 
-      const response3 = await this.$api.basic.getDropdownList({ type: 'status' })
+      let response3 = await this.$api.basic.getDropdownList({ type: 'status' })
       this.ddlStatus = response3.data.result
 
-      const responseCustomers = await this.$api.basic.getDropdownList({ type: 'customers' })
+      let responseCustomers = await this.$api.basic.getDropdownList({ type: 'customers' })
       this.customersData = responseCustomers.data.result
-      const responseEmployees = await this.$api.basic.getDropdownList({ type: 'customerEmployees' })
+      let responseEmployees = await this.$api.basic.getDropdownList({ type: 'customerEmployees' })
       this.employeesData = responseEmployees.data.result
-      const responseCompanies = await this.$api.basic.getDropdownList({ type: 'companyParent' })
+      let responseCompanies = await this.$api.basic.getDropdownList({ type: 'companyParent' })
       this.companiesData = responseCompanies.data.result
-      const response5 = await this.$api.basic.getDropdownList({ type: 'refKind' })
+      let response5 = await this.$api.basic.getDropdownList({ type: 'refKind' })
       this.ddlRefKind = response5.data.result
       this.ddlRefKindChange()
-      const response7 = await this.$api.basic.getDropdownList({ type: 'employeesList' })
+      let response7 = await this.$api.basic.getDropdownList({ type: 'employeesList' })
       this.ddlEmployeeID = response7.data.result
     },
     // 過濾郵遞區號
@@ -281,7 +283,7 @@ export default {
     checkValidate: function () {
       this.$refs['form'].validate((valid) => {
         if (valid) {
-          this.save()
+          this.save(this.dialogType)
           return true
         } else {
           return false
@@ -292,22 +294,58 @@ export default {
     cancel: function () {
       this.$emit('dialog-cancel')
     },
+    // 刪除
+    deleteItem: async function () {
+      let answerAction = await messageBoxYesNo(this.$t('__delete') + this.$t('__company') + ' ' + this.form.ID, this.$t('__delete'))
+
+      switch (answerAction) {
+        case 'confirm':
+          let isSuccessEdit = await this.save('delete')
+          if (isSuccessEdit) {
+            this.$alert(this.updateMessage, 200, {
+              callback: () => {
+                this.$router.push({
+                  name: this.parent,
+                  params: {
+                    returnType: 'save'
+                  }
+                })
+              }
+            })
+          }
+          break
+        case 'cancel':
+          break
+        case 'close':
+          break
+      }
+    },
     // 存檔
-    save: async function () {
+    save: async function (type) {
       let isSuccess = false
-      switch (this.dialogType) {
+      switch (type) {
         case 'new':
-          const responseNew = await this.$api.basic.companyNew({ form: this.form })
+          let responseNew = await this.$api.basic.companyNew({ form: this.form })
           if (responseNew.headers['code'] === '200') {
             this.$alert(responseNew.data.result[0].message, responseNew.data.result[0].code)
             isSuccess = true
           }
           break
         case 'edit':
-          const responseEdit = await this.$api.basic.companyEdit({ form: this.form })
+          let responseEdit = await this.$api.basic.companyEdit({ form: this.form })
           if (responseEdit.headers['code'] === '200') {
             this.$alert(responseEdit.data.result[0].message, responseEdit.data.result[0].code)
             isSuccess = true
+          }
+          break
+        case 'delete':
+          let responseDelete = await this.$api.basic.companyDelete({ form: this.form })
+          if (responseDelete.headers['code'] === '200') {
+            this.$alert(responseDelete.data.result[0].message, responseDelete.data.result[0].code)
+            isSuccess = true
+          } else {
+            this.$alert(responseDelete.data.result.message, responseDelete.data.result.code)
+            isSuccess = false
           }
           break
       }

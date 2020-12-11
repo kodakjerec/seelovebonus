@@ -1,6 +1,7 @@
 <template>
   <el-form>
     <el-button-group style="padding-bottom: 5px">
+      <el-button class="hideButton" icon="el-icon-more"><!-- 排版用,避免沒按鈕跑版 --></el-button>
       <el-button v-show="buttonsShowUser.new" type="primary" icon="el-icon-plus" @click.prevent="showForm('new')">{{$t('__new')}}</el-button>
       <search-button :options="sortable.orderByList" :originOrderBy="sortable.orderBy" :originOrderByValue="sortable.orderByValue" @search="search" @reOrder="reOrder">
       <el-tooltip slot="body" effect="light" :content="$t('__filter')" placement="top-start">
@@ -27,7 +28,6 @@
       </el-popover>
       </el-tooltip>
       </search-button>
-
     </el-button-group>
     <el-table
       :data="results"
@@ -38,20 +38,60 @@
       :row-class-name="tableRowClassName"
       style="width: 100%">
       <el-table-column
-        prop="ID"
-        :label="$t('__orderID')">
+        align="left"
+        width="150px">
+        <template slot="header">
+          <el-button
+            type="text"
+            size="mini" @click.prevent="openSignOffManual">{{$t('__signOffSettings')}}</el-button>
+          <br/>
+          {{$t('__batch')+$t('__signOff')}}
+          <br/>
+          <el-button
+            size="mini"
+            @click="batchSignOffAgree()">{{$t('__signOffAgree')}}</el-button>
+          <el-button
+            size="mini"
+            @click="batchSignOffDeny()">{{$t('__signOffDeny')}}</el-button>
+        </template>
+        <template slot-scope="scope">
+          <el-button
+            type="text"
+            size="mini" @click.native.stop="openSignOffLog(scope.row)">{{$t('__signOffLog')}}</el-button>
+          <br/>
+          <el-button
+            v-show="scope.row.StatusSignOff === 1"
+            size="mini"
+            type="primary"
+            @click.native.stop="signOffAgree(scope.$index, scope.row)">{{$t('__signOffAgree')}}</el-button>
+          <el-button
+            v-show="scope.row.StatusSignOff === 1"
+            size="mini"
+            type="danger"
+            @click.native.stop="signOffDeny(scope.$index, scope.row)">{{$t('__signOffDeny')}}</el-button>
+        </template>
       </el-table-column>
       <el-table-column
-        prop="OrderDate"
-        :label="$t('__order')+$t('__date')"
-        :formatter="formatterDate">
+        prop="StatusName"
+        :label="$t('__status')">
+      </el-table-column>
+      <el-table-column>
+        <template slot="header">
+          {{$t('__orderID')}}<br/>{{$t('__customer')+$t('__name')}}<br/>{{$t('__referrer')}}
+        </template>
+        <template slot-scope="scope">
+          {{scope.row.ID}}<br/>{{scope.row.CustomerName}}<br/>{{scope.row.ReferrerName}}
+        </template>
+      </el-table-column>
+      <el-table-column>
+        <template slot="header">
+          {{$t('__order')+$t('__date')}}<br/>{{$t('__project')+$t('__name')}}<br/>{{$t('__amount')}}
+        </template>
+        <template slot-scope="scope">
+          {{formatterDate(null,null,scope.row.OrderDate,null)}}<br/>{{scope.row.ProjectName}}<br/>{{formatterMoney(null,null,scope.row.Amount,null)}}
+        </template>
       </el-table-column>
       <el-table-column
-        prop="CustomerName"
-        :label="$t('__orderCustomer')+$t('__name')">
-      </el-table-column>
-      <el-table-column
-        prop="Certificate1List"
         :label="$t('__certificate1')">
         <template slot-scope="scope">
           <div v-for="item in scope.row.Certificate1List" :key="item.Certificate1">
@@ -60,16 +100,14 @@
         </template>
       </el-table-column>
       <el-table-column
-        prop="Certificate2List"
         :label="$t('__certificate2')">
         <template slot-scope="scope">
           <div v-for="item in scope.row.Certificate2List" :key="item.Certificate2">
-            {{item.Certificate2}}
+            {{item.Certificate2}}<template v-if="item['Status']==='0'">(停用)</template>
           </div>
         </template>
       </el-table-column>
       <el-table-column
-        prop="InvoiceList"
         :label="$t('__invoice')">
         <template slot-scope="scope">
           <div v-for="item in scope.row.InvoiceList" :key="item.InvoiceID">
@@ -77,25 +115,8 @@
           </div>
         </template>
       </el-table-column>
-      <el-table-column
-        prop="ReferrerName"
-        :label="$t('__referrer')">
-      </el-table-column>
-      <el-table-column
-        prop="ProjectName"
-        :label="$t('__project')+$t('__name')">
-      </el-table-column>
-      <el-table-column
-        prop="StatusName"
-        :label="$t('__status')">
-      </el-table-column>
-      <el-table-column
-        prop="Amount"
-        :label="$t('__amount')"
-        :formatter="formatterMoney"
-        width="100px">
-      </el-table-column>
     </el-table>
+    <!-- 分頁 -->
     <el-pagination
       background
       @size-change="handleSizeChange"
@@ -106,25 +127,33 @@
       layout="total, sizes, prev, pager, next, jumper"
       :total="originData.length">
     </el-pagination>
+    <!-- 簽核小視窗 -->
+    <sign-off-dialog
+      :dialogShow="dialogShowSignOff"
+      :signOffList="signOffList"
+      :signOffChoice="signOffChoice"
+      @finish="signOffFinish"
+      @cancel="signOffCancel"
+    ></sign-off-dialog>
   </el-form>
 </template>
 
 <script>
 import searchButton from '@/components/searchButton'
+import signOffDialog from './components/signOffDialog'
 import { formatMoney, formatDate } from '@/setup/format.js'
 
 export default {
   name: 'Orders',
   components: {
-    searchButton
+    searchButton,
+    signOffDialog
   },
   data () {
     return {
-      dialogType: 'new',
-      dialogShow: false,
       originData: [],
       order: {},
-      searchContent: {
+      searchContent: { // 搜尋
         searchKeyWord: '',
         searchShowMore: false,
         StartDate: new Date(),
@@ -136,19 +165,23 @@ export default {
         pageSizeList: [10, 20, 30],
         pageSize: 10
       },
-      sortable: {
+      sortable: { // 排序
         orderByList: [{ ID: 'ID', Value: this.$t('__orderID') }, { ID: 'OrderDate', Value: this.$t('__order') + this.$t('__date') }], // 排序
         orderBy: 'descending', // 排序方式
         orderByValue: 'ID' // 預設排序欄位
       },
       // 使用者能看到的權限
       buttonsShowUser: {
-        new: 1,
-        edit: 1,
-        save: 1,
-        delete: 1,
-        search: 1
-      }
+        new: 0,
+        edit: 0,
+        save: 0,
+        delete: 0,
+        search: 0
+      },
+      // 簽核
+      dialogShowSignOff: false,
+      signOffList: [],
+      signOffChoice: 0
     }
   },
   computed: {
@@ -176,6 +209,11 @@ export default {
           break
       }
 
+      // 狀態小的單據優先往前
+      tempData = tempData.slice().sort(function (x, y) {
+        return x.Status - y.Status
+      })
+
       // 切換分頁
       return tempData.slice((this.pagination.currentPage - 1) * this.pagination.pageSize, this.pagination.pageSize * this.pagination.currentPage)
     }
@@ -185,7 +223,7 @@ export default {
     let start = new Date()
     let end = new Date()
     let year = start.getFullYear()
-    let month = start.getMonth() - 3
+    let month = start.getMonth() - 6
     start = new Date(year, month, 1, 12)
     this.searchContent.StartDate = start.toISOString().slice(0, 10)
     this.searchContent.EndDate = end.toISOString().slice(0, 10)
@@ -224,6 +262,13 @@ export default {
       let responseRow = await this.$api.orders.getObject({ type: 'orderHead', ID: row.ID })
       this.order = responseRow.data.result[0]
 
+      // 簽核管理
+      if (row.StatusSignOff === 0) {
+        this.buttonsShowUser.new = 0
+        this.buttonsShowUser.edit = 0
+        this.buttonsShowUser.save = 0
+        this.buttonsShowUser.delete = 0
+      }
       // 權限管理
       this.buttonsShowUser.save = this.buttonsShowUser.edit
 
@@ -253,17 +298,14 @@ export default {
         }
       })
     },
-    dialogCancel: function () {
-      this.dialogShow = false
-    },
-    dialogSave: function () {
-      this.dialogShow = false
-      this.preLoading()
-    },
     // 搜尋
     search: async function (value) {
       this.searchContent.searchKeyWord = value
-      const response2 = await this.$api.orders.ordersShow({ keyword: this.searchContent.searchKeyWord, StartDate: this.searchContent.StartDate, EndDate: this.searchContent.EndDate })
+      let response2 = await this.$api.orders.ordersShow({
+        keyword: this.searchContent.searchKeyWord,
+        StartDate: this.searchContent.StartDate,
+        EndDate: this.searchContent.EndDate,
+        ID: this.$store.state.userID })
       this.originData = response2.data.result
       this.originData.forEach(item => {
         if (item.Certificate1List) { item.Certificate1List = JSON.parse(item.Certificate1List) }
@@ -282,13 +324,91 @@ export default {
     },
     handleCurrentChange: function (val) {
       this.pagination.currentPage = val
+    },
+    // 簽核相關
+    // 送簽
+    signOffAgree: function (index, row) {
+      this.signOffList.push({
+        OrderID: row.ID,
+        Type: 'order',
+        Prefix: row.Prefix,
+        Status: row.Status
+      })
+      this.signOffChoice = 1
+      this.dialogShowSignOff = true
+    },
+    // 否決
+    signOffDeny: function (index, row) {
+      this.signOffList.push({
+        OrderID: row.ID,
+        Type: 'order',
+        Prefix: row.Prefix,
+        Status: row.Status
+      })
+      this.signOffChoice = 0
+      this.dialogShowSignOff = true
+    },
+    // 批次送簽
+    batchSignOffAgree: function () {
+      this.originData
+        .filter(row => { return row.StatusSignOff === 1 })
+        .forEach(row => {
+          this.signOffList.push({
+            OrderID: row.ID,
+            Type: 'order',
+            Prefix: row.Prefix,
+            Status: row.Status
+          })
+        })
+      this.signOffChoice = 1
+      this.dialogShowSignOff = true
+    },
+    // 批次否決
+    batchSignOffDeny: function () {
+      this.originData
+        .filter(row => { return row.StatusSignOff === 1 })
+        .forEach(row => {
+          this.signOffList.push({
+            OrderID: row.ID,
+            Type: 'order',
+            Prefix: row.Prefix,
+            Status: row.Status
+          })
+        })
+      this.signOffChoice = 0
+      this.dialogShowSignOff = true
+    },
+    // 關閉 批次視窗
+    signOffFinish: function () {
+      this.signOffList = []
+      this.dialogShowSignOff = false
+      this.search('')
+    },
+    // 取消 批次視窗
+    signOffCancel: function () {
+      this.signOffList = []
+      this.dialogShowSignOff = false
+    },
+    // 開啟 簽核說明
+    openSignOffManual: function () {
+      this.$router.push({
+        name: 'OrderSignOffManual',
+        params: {
+          orderType: 'order',
+          parent: 'Orders'
+        }
+      })
+    },
+    // 開啟 簽核歷程
+    openSignOffLog: function (row) {
+      this.$router.push({
+        name: 'OrderSignOffLog',
+        params: {
+          ID: row.ID,
+          parent: 'Orders'
+        }
+      })
     }
   }
 }
 </script>
-
-<style lang="scss" scoped>
-.hideButton {
-  visibility: hidden;
-}
-</style>

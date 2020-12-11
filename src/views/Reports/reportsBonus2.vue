@@ -94,7 +94,7 @@ export default {
     start = new Date(year, month, 1, 12)
     this.startDateChange(start)
 
-    let defaultCompany = this.ddlCompanies.find(item => { return item.ID === '83799023' })
+    let defaultCompany = this.ddlCompanies.find(item => { return item.ID === '83799375' })
     if (defaultCompany) {
       this.form.CompanyID = defaultCompany.ID
       this.ddlCompaniesChange(this.form.CompanyID)
@@ -103,7 +103,7 @@ export default {
   methods: {
     // 讀入系統清單
     preLoading: async function () {
-      const response = await this.$api.reports.getDropdownList({ type: 'companies' })
+      let response = await this.$api.reports.getDropdownList({ type: 'companies' })
       this.ddlCompanies = response.data.result
     },
     // 使用者權限

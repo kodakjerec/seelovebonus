@@ -24,6 +24,14 @@
           </template>
         </el-table-column>
         <el-table-column
+          prop="Price"
+          :label="$t('__price')"
+          width="210px">
+          <template slot-scope="scope">
+            <el-input-number v-model="scope.row[scope.column.property]" @change="(currentValue, oldValue)=>{priceChange(currentValue, oldValue, scope.row)}"></el-input-number>
+          </template>
+        </el-table-column>
+        <el-table-column
           prop="Qty"
           :label="$t('__qty')"
           width="210px">
@@ -52,17 +60,18 @@
 </template>
 
 <script>
+import { formatMoney } from '@/setup/format.js'
+
 export default {
   name: 'ProductBOM',
   props: {
-    productID: { type: String },
-    productBOM: { type: Array }
+    productID: { type: String }
   },
   data () {
     return {
       // 子結構
       // Status: '', New, Modified, Deleted
-      subItem: { ProductID: '', Seq: 0, SubID: '', Qty: 1, Status: '' },
+      subItem: { ProductID: '', Seq: 0, SubID: '', Qty: 1, Status: '', Price: 0 },
       subList: [],
       subListDeleted: [],
       // 下拉是選單
@@ -70,29 +79,36 @@ export default {
     }
   },
   watch: {
-    productBOM: function () {
-      this.subList = JSON.parse(JSON.stringify(this.productBOM))
+    productID: function (newValue) {
+      this.bringProductBOM()
     }
   },
   mounted () {
     this.preLoading()
+    this.bringProductBOM()
   },
   methods: {
+    formatterMoney: function (row, column, cellValue, index) {
+      return formatMoney(cellValue)
+    },
     // 讀取預設資料
     preLoading: async function () {
       // 取得所有原始資料
-      const response = await this.$api.basic.getDropdownList({ type: 'product' })
+      let response = await this.$api.basic.getDropdownList({ type: 'product' })
       this.ddlSubList = response.data.result
+    },
+    bringProductBOM: async function () {
+      let responseBOM = await this.$api.basic.getObject({ type: 'productBOM', ID: this.productID })
+      this.subList = responseBOM.data.result
     },
     // 存檔前先過濾
     beforeSave: async function () {
       let isSuccess = false
       // 結合已刪除單據
-      const finalResult = this.subList.concat(this.subListDeleted)
+      let finalResult = this.subList.concat(this.subListDeleted)
       if (finalResult.length === 0) { isSuccess = true }
 
       for (let index = 0; index < finalResult.length; index++) {
-        let uploadResult = 0
         let row = finalResult[index]
         // 錯誤處理
         if (row.ProductID === '' || row.SubID === '') {
@@ -101,62 +117,51 @@ export default {
         // 開始更新
         switch (row.Status) {
           case 'New':
-            uploadResult = await this.save('new', row)
+            isSuccess = await this.save('new', row)
             break
           case 'Modified':
-            uploadResult = await this.save('edit', row)
+            isSuccess = await this.save('edit', row)
             break
           case 'Deleted':
-            uploadResult = await this.save('delete', row)
+            isSuccess = await this.save('delete', row)
             break
           case '':
-            uploadResult = 1
+            isSuccess = true
             break
         }
-        if (uploadResult === 0) {
-          isSuccess = false
-          return
-        } else {
-          isSuccess = true
+        if (!isSuccess) {
+          this.$alert(this.$t('__uploadFail'))
+          return isSuccess
         }
       }
 
-      if (isSuccess) {
-        return isSuccess
-      } else {
-        this.$alert(this.$t('__uploadFail'))
-        return isSuccess
-      }
+      return isSuccess
     },
     // 存檔
     save: async function (type, row) {
       let isSuccess = false
       switch (type) {
         case 'new':
-          const responseNew = await this.$api.basic.productBOMNew({ form: row })
+          let responseNew = await this.$api.basic.productBOMNew({ form: row })
           if (responseNew.headers['code'] === '200') {
             isSuccess = true
           }
           break
         case 'edit':
-          const responseEdit = await this.$api.basic.productBOMEdit({ form: row })
+          let responseEdit = await this.$api.basic.productBOMEdit({ form: row })
           if (responseEdit.headers['code'] === '200') {
             isSuccess = true
           }
           break
         case 'delete':
-          const responseDelete = await this.$api.basic.productBOMDelete({ form: row })
+          let responseDelete = await this.$api.basic.productBOMDelete({ form: row })
           if (responseDelete.headers['code'] === '200') {
             isSuccess = true
           }
           break
       }
 
-      if (isSuccess) {
-        return 1
-      } else {
-        return 0
-      }
+      return isSuccess
     },
     // 新增子結構
     handleNew: function () {
@@ -189,6 +194,13 @@ export default {
     },
     // 下拉式選擇商品
     ddlSubListChange: function (selected, row) {
+      let findSubList = this.ddlSubList.find(item => item.ID === selected)
+      row.Price = findSubList.Price
+      if (row.Status === '') {
+        row.Status = 'Modified'
+      }
+    },
+    priceChange: function (currentValue, oldValue, row) {
       if (row.Status === '') {
         row.Status = 'Modified'
       }

@@ -146,11 +146,11 @@ export default {
   methods: {
     // 讀取預設資料
     preLoading: async function () {
-      const response3 = await this.$api.orders.getDropdownList({ type: 'employee' })
+      let response3 = await this.$api.orders.getDropdownList({ type: 'employee' })
       this.ddlCreateID = response3.data.result
-      const response1 = await this.$api.orders.getDropdownList({ type: 'paymentMethod' })
+      let response1 = await this.$api.orders.getDropdownList({ type: 'paymentMethod' })
       this.ddlPaymentMethod = response1.data.result
-      const response2 = await this.$api.orders.getDropdownList({ type: 'bankID' })
+      let response2 = await this.$api.orders.getDropdownList({ type: 'bankID' })
       this.ddlBankID = response2.data.result
     },
     // 檢查輸入
@@ -189,21 +189,21 @@ export default {
       let isSuccess = false
       switch (type) {
         case 'new':
-          const responseNew = await this.$api.orders.collectionRecordsNew({ form: this.form })
+          let responseNew = await this.$api.orders.collectionRecordsNew({ form: this.form })
           if (responseNew.headers['code'] === '200') {
             this.$alert(responseNew.data.result[0].message, responseNew.data.result[0].code)
             isSuccess = true
           }
           break
         case 'edit':
-          const responseEdit = await this.$api.orders.collectionRecordsEdit({ form: this.form })
+          let responseEdit = await this.$api.orders.collectionRecordsEdit({ form: this.form })
           if (responseEdit.headers['code'] === '200') {
             this.$alert(responseEdit.data.result[0].message, responseEdit.data.result[0].code)
             isSuccess = true
           }
           break
         case 'delete':
-          const responseDelete = await this.$api.orders.collectionRecordsDelete({ form: this.form })
+          let responseDelete = await this.$api.orders.collectionRecordsDelete({ form: this.form })
           if (responseDelete.headers['code'] === '200') {
             this.$alert(responseDelete.data.result[0].message, responseDelete.data.result[0].code)
             isSuccess = true

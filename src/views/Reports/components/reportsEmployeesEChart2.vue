@@ -43,7 +43,7 @@ export default {
       this.treeData.name = value + '\n' + this.companyNickname
       await this.preLoading()
 
-      const option = {
+      let option = {
         tooltip: {
           trigger: 'item',
           triggerOn: 'mousemove'
@@ -57,7 +57,7 @@ export default {
     this.eChart = echarts.init(document.getElementById('eChart2'))
     await this.preLoading()
 
-    const option = {
+    let option = {
       tooltip: {
         trigger: 'item',
         triggerOn: 'mousemove'
@@ -69,7 +69,7 @@ export default {
   },
   methods: {
     preLoading: async function () {
-      const response1 = await this.$api.basic.getObject({ type: 'employeesHierarchy', ID: this.companyID })
+      let response1 = await this.$api.basic.getObject({ type: 'employeesHierarchy', ID: this.companyID })
       this.rawData = response1.data.result
 
       // 找出最深階層

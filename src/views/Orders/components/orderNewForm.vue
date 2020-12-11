@@ -2,8 +2,11 @@
   <div>
     <h1>{{myTitle}}</h1>
     <el-form ref="form" :model="form" :rules="rules" label-width="10vw" label-position="right">
-      <el-form-item :label="$t('__orderID')+'：'">
-        <el-col :span="4">
+      <el-form-item :label="$t('__orderID')">
+        <el-col :span="2" v-if="dialogType === 'new'">
+          {{form.Prefix}}
+        </el-col>
+        <el-col :span="5">
           <el-input v-model="form.ID" :placeholder="$t('__afterSaveWillShow')" :disabled="disableForm.ID"></el-input>
         </el-col>
         <el-col :span="6">
@@ -16,7 +19,7 @@
             </el-select>
           </el-form-item>
         </el-col>
-        <el-col :span="6">
+        <el-col :span="11">
           <el-form-item :label="$t('__order')+$t('__date')+'：'" prop="OrderDate">
             <el-date-picker
               v-model="form.OrderDate"
@@ -28,6 +31,19 @@
           </el-form-item>
         </el-col>
       </el-form-item>
+      <!-- 備註 -->
+      <el-form-item :label="$t('__memo')">
+          <el-input v-model="form.Memo" type="textarea" rows="2" autocomplete="off" maxlength="100" show-word-limit
+            :disabled="disableForm.OrderDate"></el-input>
+      </el-form-item>
+      <!-- 專案特殊功能 -->
+      <order-functions
+        ref="orderFunctions"
+        v-show="form.showChanyunOrderID === 1"
+        :dialogType="dialogType"
+        :orderID="form.ID"
+        :buttonsShowUser="buttonsShowUser"
+        :showChanyunOrderID="form.showChanyunOrderID"></order-functions>
       <!-- 選擇專案 -->
       <el-table
         :data="projectHead"
@@ -38,8 +54,14 @@
           prop="ProjectID"
           :label="$t('__project')+$t('__name')">
           <template slot-scope="scope">
-            <el-form-item prop="ProjectID">
-              <el-select v-model="scope.row[scope.column.property]" filterable :placeholder="$t('__plzChoice')" @change="(value)=>{ddlProjectChange(value, scope.row)}" style="display:block" :disabled="disableForm.ProjectID">
+            <el-form-item prop="ProjectID" label-width="0px">
+              <el-select
+                v-model="scope.row[scope.column.property]"
+                filterable
+                :placeholder="$t('__plzChoice')"
+                @change="(value)=>{ddlProjectChange(value, scope.row)}"
+                style="display:block"
+                :disabled="disableForm.ProjectID">
                 <el-option v-for="item in ddlProject" :key="item.ID" :label="item.ID+' '+item.Value" :value="item.ID">
                   <span style="float: left">{{ item.Value }}</span>
                   <span style="float: right; color: #8492a6; font-size: 13px">{{ item.ID }}</span>
@@ -63,14 +85,21 @@
           :label="$t('__qty')"
           width="210px">
           <template slot-scope="scope">
-            <el-input-number v-model="scope.row[scope.column.property]" @change="(currentValue, oldValue)=>{qtyChange(currentValue, oldValue, scope.row)}" :disabled="disableForm.Qty"></el-input-number>
+            <el-form-item prop="Qty" label-width="0px">
+              <el-input-number :min="1" v-model="scope.row[scope.column.property]" :disabled="disableForm.Qty"></el-input-number>
+            </el-form-item>
           </template>
         </el-table-column>
         <el-table-column
-          prop="Amount"
-          :label="$t('__amount')"
+          prop="masterAmount"
+          :label="$t('__total') + $t('__amount')"
           :formatter="formatterMoney"
-          width="100px">
+          width="200px">
+          <div slot-scope="scope">
+            <div style="display:inline;float:left">{{$t('__master') + $t('__amount')}}</div><div style="display:inline;float:right">{{formatterMoneyUS(scope.row.masterAmount)}}</div><br/>
+            <div style="display:inline;float:left">{{$t('__sub') + $t('__amount')}}</div><div style="display:inline;float:right">{{formatterMoneyUS(scope.row.subAmount)}}</div><br/>
+            <div style="display:inline;float:left">{{$t('__total') + $t('__amount')}}</div><div style="display:inline;float:right">{{formatterMoneyUS(scope.row.Amount)}}</div>
+          </div>
         </el-table-column>
       </el-table>
     </el-form>
@@ -78,89 +107,60 @@
     <order-detail
       ref="orderDetail"
       :dialogType="dialogType"
+      :buttonsShowUser="buttonsShowUser"
       :orderID="form.ID"
       :projectID="form.ProjectID"
-      :orderDetail="orderDetail"
-      :parentQty="form.Qty"></order-detail>
+      :parentQty="form.Qty"
+      @reCalculateDetail="reCalculateDetail"></order-detail>
     <!-- 訂購者資料 -->
     <order-customer
       ref="orderCustomer"
       :dialogType="dialogType"
+      :buttonsShowUser="buttonsShowUser"
       :orderID="form.ID"
-      :orderCustomer="orderCustomer"
       :ddlCustomerBefore="ddlCustomer"></order-customer>
     <template v-if="dialogType !== 'new'">
       <!-- 供奉憑證 -->
       <certificate1
         :buttonsShow="buttonsShow"
+        :buttonsShowUser="buttonsShowUser"
         :orderID="form.ID"></certificate1>
       <!-- 換狀證明 -->
       <certificate2
         :buttonsShow="buttonsShow"
+        :buttonsShowUser="buttonsShowUser"
         :orderID="form.ID"></certificate2>
       <!-- 付款資訊 -->
       <collection-records
         ref="collectionRecords"
         :buttonsShow="buttonsShow"
+        :buttonsShowUser="buttonsShowUser"
         :orderID="form.ID"></collection-records>
       <!-- 發票資訊 -->
       <invoice
         ref="invoice"
         :buttonsShow="buttonsShow"
+        :buttonsShowUser="buttonsShowUser"
         :orderID="form.ID"
         @refreshCollectionRecords="refreshCollectionRecords()"></invoice>
       <!-- 蓋章區域 -->
-      <el-table
-        :data="stampShow"
-        stripe
-        border
-        style="width: 100%">
-        <el-table-column :label="$t('__defaultCompanyName')">
-          <el-table-column
-            :label="$t('__orderSpace1')">
-          </el-table-column>
-          <el-table-column
-            :label="$t('__orderSpace2')">
-          </el-table-column>
-          <el-table-column
-            :label="$t('__orderCreateID')">
-            <template slot-scope="scope">
-              {{scope.row.CreateID}}<br/>{{scope.row.CreateIDName}}
-            </template>
-          </el-table-column>
-          <el-table-column
-            :label="$t('__refEmployeeID')">
-            <template slot-scope="scope">
-              {{scope.row.EmployeeID}}<br/>{{scope.row.EmployeeIDName}}
-            </template>
-          </el-table-column>
-        </el-table-column>
-        <el-table-column :label="$t('__defaultDepart')">
-          <el-table-column
-            :label="$t('__company')">
-            <template slot-scope="scope">
-              {{scope.row.CompanyID}}<br/>{{scope.row.CompanyName}}
-            </template>
-          </el-table-column>
-          <el-table-column
-            :label="$t('__referrer')">
-            <template slot-scope="scope">
-              {{scope.row.Referrer}}<br/>{{scope.row.ReferrerName}}
-            </template>
-          </el-table-column>
-          <el-table-column
-            :label="$t('__orderSpace3')">
-          </el-table-column>
-        </el-table-column>
-      </el-table>
+      <orderStampArea
+        :orderID="form.ID"></orderStampArea>
       </template>
     <template v-else>
       <span v-html="$t('__orderDetailWarrning')"></span>
       <certificate1-order-new
+        v-show="form.showCertificate1 === 1"
         ref="certificate1OrderNew"
         :orderID="form.ID"
         :parentQty="form.Qty"></certificate1-order-new>
+      <certificate2-order-new
+        v-show="form.showCertificate2 === 1"
+        ref="certificate2OrderNew"
+        :orderID="form.ID"
+        :parentQty="form.Qty"></certificate2-order-new>
     </template>
+    <!-- 底部操作按鈕 -->
     <div slot="footer" class="dialog-footer">
       <br/>
       <el-button v-show="buttonsShow.delete && buttonsShowUser.delete && form.Status < '2'" type="danger" @click="deleteOrder">{{$t('__delete')}}</el-button>
@@ -175,12 +175,17 @@
 import certificate1 from './certificate1'
 import certificate1OrderNew from './certificate1OrderNew'
 import certificate2 from './certificate2'
-import orderDetail from './orderDetail'
-import orderCustomer from './orderCustomer'
+import certificate2OrderNew from './certificate2OrderNew'
 import collectionRecords from './collectionRecords'
 import invoice from './invoice'
+import orderDetail from './orderDetail'
+import orderCustomer from './orderCustomer'
+import orderStampArea from './orderStampArea'
+import orderFunctions from './orderFunctions'
+
 import { formatMoney } from '@/setup/format.js'
 import { messageBoxYesNo } from '@/services/utils'
+import validate from '@/setup/validate'
 
 export default {
   name: 'OrderNewForm',
@@ -188,10 +193,13 @@ export default {
     certificate1,
     certificate1OrderNew,
     certificate2,
+    certificate2OrderNew,
     orderDetail,
     orderCustomer,
     collectionRecords,
-    invoice
+    invoice,
+    orderStampArea,
+    orderFunctions
   },
   props: {
     dialogType: { type: String, default: 'new' },
@@ -210,13 +218,22 @@ export default {
         Price: 0,
         Qty: 1,
         Amount: 0,
-        FirstItemName: ''
+        Prefix: '',
+        Memo: '',
+        // 以下為前端顯示用, 不會記錄進資料庫
+        masterAmount: 0,
+        subAmount: 0,
+        FirstItemName: '',
+        // 專案功能顯示(新增專用)(不記錄進資料庫)
+        showChanyunOrderID: 0,
+        showCertificate1: 0,
+        showCertificate2: 0
       },
       rules: {
         ID: [{ required: true, message: this.$t('__pleaseInput'), trigger: 'blur' }],
         OrderDate: [{ required: true, message: this.$t('__pleaseInput'), trigger: 'blur' }],
         ProjectID: [{ required: true, message: this.$t('__pleaseInput'), trigger: 'blur' }],
-        CreateID: [{ required: true, message: this.$t('__pleaseInput'), trigger: 'blur' }]
+        Qty: [{ trigger: 'blur', validator: validate.validateInputNumber }]
       },
       // 系統目前狀態權限
       buttonsShow: {
@@ -235,15 +252,6 @@ export default {
       },
       myTitle: '',
       projectHead: [],
-      orderDetail: [],
-      orderCustomer: {},
-      certificate1List: [],
-      stampShow: [{
-        CreateIDName: null,
-        EmployeeIDName: null,
-        CompanyName: null,
-        ReferrerName: null
-      }],
       updateMessage: '', // 更新資料庫後回傳的訊息
       // 以下為下拉式選單專用
       ddlOrderStatus: [],
@@ -269,12 +277,17 @@ export default {
       case 'edit':
         this.myTitle = this.$t('__edit') + this.$t('__orderPaper')
         this.form = JSON.parse(JSON.stringify(this.order))
-        this.disableForm.ID = true
-        this.disableForm.ProjectID = true
-        this.disableForm.Qty = true
-        this.disableForm.CreateID = true
 
-        if (this.form.Status === '0') {
+        // 帶入原始單據狀態, 開啟或關閉
+        let intStatus = parseInt(this.form.Status)
+        if (intStatus === 0) {
+          // 是否允許修改
+          this.disableForm.ID = true
+          this.disableForm.ProjectID = true
+          this.disableForm.Qty = true
+          this.disableForm.CreateID = true
+          this.disableForm.OrderDate = true
+
           this.buttonsShow = {
             new: 0,
             edit: 0,
@@ -282,7 +295,17 @@ export default {
             delete: 0,
             search: 0
           }
-        } else {
+        } else if (intStatus > 0) {
+          // 是否允許修改
+          this.disableForm.ID = true
+          this.disableForm.ProjectID = true
+          this.disableForm.CreateID = true
+
+          if (this.buttonsShowUser.edit === 0) {
+            this.disableForm.OrderDate = true
+            this.disableForm.Qty = true
+          }
+
           this.buttonsShow = {
             new: 1,
             edit: 1,
@@ -302,71 +325,99 @@ export default {
     formatterMoney: function (row, column, cellValue, index) {
       return formatMoney(cellValue)
     },
+    formatterMoneyUS: function (cellValue) {
+      return formatMoney(cellValue, 'US')
+    },
     // 讀取預設資料
     preLoading: async function () {
-      const response1 = await this.$api.orders.getDropdownList({ type: 'orderStatus' })
+      let response1 = await this.$api.orders.getDropdownList({ type: 'orderStatus' })
       this.ddlOrderStatus = response1.data.result
-      const response2 = await this.$api.orders.getDropdownList({ type: 'project' })
+      let response2 = await this.$api.orders.getDropdownList({ type: 'project' })
       this.ddlProject = response2.data.result
-      const response4 = await this.$api.orders.getDropdownList({ type: 'customer' })
+      let response4 = await this.$api.orders.getDropdownList({ type: 'customer' })
       this.ddlCustomer = response4.data.result
-
-      const responseDetail = await this.$api.orders.getObject({ type: 'orderDetail', ID: this.form.ID })
-      this.orderDetail = responseDetail.data.result
-      const responseCustomer = await this.$api.orders.getObject({ type: 'orderCustomer', ID: this.form.ID })
-      this.orderCustomer = responseCustomer.data.result[0]
-      const responseStampShow = await this.$api.orders.getObject({ type: 'orderStampShow', ID: this.form.ID })
-      this.stampShow = responseStampShow.data.result
     },
     // 點擊"修改專案", 填入明細
     bringProject: async function () {
       // get Data
-      const responseProjectDetail = await this.$api.orders.getObject({ type: 'projectDetail', ID: this.form.ProjectID })
+      let responseProjectDetail = await this.$api.orders.getObject({ type: 'projectDetail', ID: this.form.ProjectID })
       let projectDetail = responseProjectDetail.data.result
 
       // 填入 orderHead
       this.form.FirstItemName = projectDetail[0].ProductName
+
+      this.bringFunctions()
     },
     // 切換專案, 填入明細
     ddlProjectChange: async function (selected) {
       // get Data
-      const responseProject = await this.$api.orders.getObject({ type: 'project', ID: selected })
+      let responseProject = await this.$api.orders.getObject({ type: 'project', ID: selected })
       let project = responseProject.data.result[0]
-      const responseProjectDetail = await this.$api.orders.getObject({ type: 'projectDetail', ID: selected })
+      let responseProjectDetail = await this.$api.orders.getObject({ type: 'projectDetail', ID: selected })
       let projectDetail = responseProjectDetail.data.result
 
       // 填入 orderHead
       this.form.Price = project.Price
       this.form.Qty = 1
-      this.form.Amount = this.form.Price * this.form.Qty
+      this.form.Prefix = project.Prefix
+
+      // 主專案第一個商品名稱
       this.form.FirstItemName = projectDetail[0].ProductName
 
-      // 填入 orderDetail
+      // 主專案填入 orderDetail
       this.$refs['orderDetail'].parentResetItems(projectDetail)
+
+      this.bringFunctions()
     },
-    qtyChange: function (currentValue, oldValue, row) {
-      // 填入 orderHead
-      this.form.Amount = this.form.Price * this.form.Qty
+    // 帶入專案功能
+    bringFunctions: async function () {
+      let responseProjectFunctions = await this.$api.basic.getObject({ type: 'projectFunctions', ID: this.form.ProjectID })
+      let projectFunctions = responseProjectFunctions.data.result
+
+      // 專案功能顯示
+      projectFunctions.forEach(item => {
+        if (item.Function === 'chanyunOrderID') {
+          this.form.showChanyunOrderID = item.Available
+        } else if (
+          item.Function === 'newCertificate1'
+        ) {
+          this.form.showCertificate1 = item.Available
+        } else if (
+          item.Function === 'newCertificate2'
+        ) {
+          this.form.showCertificate2 = item.Available
+        }
+      })
     },
     // 檢查輸入
     checkValidate: async function () {
       let isSuccess = false
+      // 檢查主表單
+      await this.$refs['form'].validate((valid) => { isSuccess = valid })
 
       // 新增訂單才會使用到
       switch (this.dialogType) {
         case 'new':
-          // 檢查客戶資訊
-          isSuccess = await this.$refs['orderCustomer'].checkValidate()
-          if (!isSuccess) { return }
-
           // 檢查供奉憑證資訊
-          isSuccess = await this.$refs['certificate1OrderNew'].checkValidate()
-          if (!isSuccess) { return }
+          if (this.form.showCertificate1 === 1) {
+            isSuccess = await this.$refs['certificate1OrderNew'].checkValidate()
+            if (!isSuccess) { return }
+          }
+
+          // 檢查其他附加功能
+          if (this.form.showChanyunOrderID === 1) {
+            isSuccess = await this.$refs['orderFunctions'].checkValidate()
+            if (!isSuccess) { return }
+          }
           break
       }
 
-      // 檢查主表單
-      await this.$refs['form'].validate((valid) => { isSuccess = valid })
+      // 檢查客戶資訊
+      isSuccess = await this.$refs['orderCustomer'].checkValidate()
+      if (!isSuccess) { return }
+      // 檢查明細資訊
+      isSuccess = await this.$refs['orderDetail'].checkValidate()
+      if (!isSuccess) { return }
 
       if (isSuccess) {
         this.beforeSave()
@@ -382,13 +433,39 @@ export default {
       // (修改)存檔優先順序
       // 1. orderHead+orderDetail
       // 2. orderCustomer
+      let isSuccess = false
+      let saveStep = 'order'
 
       switch (this.dialogType) {
         case 'new':
-          let isSuccess = await this.save(this.dialogType)
-          await this.$refs['orderDetail'].beforeSave()
-          await this.$refs['orderCustomer'].save()
-          await this.$refs['certificate1OrderNew'].beforeSave() // 新增訂單才會出現
+          saveStep = 'order'
+          isSuccess = await this.save(this.dialogType)
+          if (isSuccess) {
+            saveStep = 'orderDetail'
+            isSuccess = await this.$refs['orderDetail'].beforeSave()
+          }
+          if (isSuccess) {
+            saveStep = 'orderCustomer'
+            isSuccess = await this.$refs['orderCustomer'].beforeSave()
+          }
+          if (this.form.showCertificate1 === 1) {
+            if (isSuccess) {
+              saveStep = 'certificate1OrderNew'
+              isSuccess = await this.$refs['certificate1OrderNew'].beforeSave() // 新增訂單才會出現
+            }
+          }
+          if (this.form.showCertificate2 === 1) {
+            if (isSuccess) {
+              saveStep = 'certificate2OrderNew'
+              isSuccess = await this.$refs['certificate2OrderNew'].beforeSave() // 新增訂單才會出現
+            }
+          }
+          if (this.form.showChanyunOrderID === 1) {
+            if (isSuccess) {
+              saveStep = 'orderFunctions'
+              isSuccess = await this.$refs['orderFunctions'].beforeSave()
+            }
+          }
           if (isSuccess) {
             this.$alert(this.updateMessage, 200, {
               callback: () => {
@@ -400,13 +477,30 @@ export default {
                 })
               }
             })
+          } else {
+            this.$alert(this.$t('__uploadFail') + ' Step: ' + saveStep)
           }
           break
         case 'edit':
-          let isSuccessEdit = await this.save(this.dialogType)
-          await this.$refs['orderDetail'].beforeSave()
-          await this.$refs['orderCustomer'].save()
-          if (isSuccessEdit) {
+          isSuccess = false
+          saveStep = 'order'
+          isSuccess = await this.save(this.dialogType)
+          if (isSuccess) {
+            saveStep = 'orderDetail'
+            isSuccess = await this.$refs['orderDetail'].beforeSave()
+          }
+          if (isSuccess) {
+            saveStep = 'orderCustomer'
+            isSuccess = await this.$refs['orderCustomer'].beforeSave()
+          }
+
+          if (isSuccess) {
+            if (this.form.showChanyunOrderID === 1) {
+              saveStep = 'orderFunctions'
+              isSuccess = await this.$refs['orderFunctions'].beforeSave()
+            }
+          }
+          if (isSuccess) {
             this.$alert(this.updateMessage, 200, {
               callback: () => {
                 this.$router.replace({
@@ -417,6 +511,8 @@ export default {
                 })
               }
             })
+          } else {
+            this.$alert(this.$t('__uploadFail') + ' Step: ' + saveStep)
           }
           break
       }
@@ -435,7 +531,7 @@ export default {
       let isSuccess = false
       switch (type) {
         case 'new':
-          const responseNew = await this.$api.orders.orderNew({ form: this.form })
+          let responseNew = await this.$api.orders.orderNew({ form: this.form })
           if (responseNew.headers['code'] === '200') {
             isSuccess = true
             // 取得單號回填後續資料
@@ -444,7 +540,7 @@ export default {
           }
           break
         case 'edit':
-          const responseEdit = await this.$api.orders.orderEdit({ form: this.form })
+          let responseEdit = await this.$api.orders.orderEdit({ form: this.form })
           if (responseEdit.headers['code'] === '200') {
             isSuccess = true
             // 取得單號回填後續資料
@@ -453,14 +549,14 @@ export default {
           }
           break
         case 'delete':
-          const responseDelete = await this.$api.orders.orderDelete({ form: this.form })
+          let responseDelete = await this.$api.orders.orderDelete({ form: this.form })
           if (responseDelete.headers['code'] === '200') {
             isSuccess = true
             this.updateMessage = responseDelete.data.result[0].message
           }
           break
         case 'invalid':
-          const responseInvalid = await this.$api.orders.orderInvalid({ form: this.form })
+          let responseInvalid = await this.$api.orders.orderInvalid({ form: this.form })
           if (responseInvalid.headers['code'] === '200') {
             isSuccess = true
             this.updateMessage = responseInvalid.data.result[0].message
@@ -525,6 +621,13 @@ export default {
     // 儲存發票後更新付款紀錄資訊
     refreshCollectionRecords: function () {
       this.$refs['collectionRecords'].preLoading()
+    },
+    // 子->父: 統計商品明細總價
+    reCalculateDetail: function (object) {
+      const { masterAmount, subAmount } = object
+      this.form.masterAmount = masterAmount
+      this.form.subAmount = subAmount
+      this.form.Amount = masterAmount + subAmount
     }
   }
 }

@@ -111,10 +111,10 @@ export default {
   methods: {
     // 讀入系統清單
     preLoading: async function () {
-      const response = await this.$api.settings.getDropdownList({ type: 'systemSettings' })
+      let response = await this.$api.settings.getDropdownList({ type: 'systemSettings' })
       this.settingsOrigin = response.data.result
 
-      const response2 = await this.$api.settings.getDropdownList({ type: 'settingsType' })
+      let response2 = await this.$api.settings.getDropdownList({ type: 'settingsType' })
       this.ddlCategory = response2.data.result
     },
     // 篩選

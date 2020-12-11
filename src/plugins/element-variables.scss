@@ -60,7 +60,17 @@ $--disabled-color-base: $--color-black !default;
 
 /* Table
 -------------------------- */
+// border 顏色
 $--table-border-color: $--color-black;
+
+// 停用單據的row, 灰色表示
+div.el-table__body-wrapper.is-scrolling-none > table > tbody > tr.el-table__row.disabled-row > td {
+  background: lightgray;
+}
+// 標題列特殊顏色
+div.el-table__header-wrapper > table > thead > tr > th {
+  background: rgb(253,245,230)
+}
 
 /* Input
 -------------------------- */
@@ -69,8 +79,10 @@ $--input-focus-fill: yellow !default;
 // $--input-medium-font-size: $--font-size-base !default;
 // $--input-small-font-size: $--font-size-small !default;
 
-div.el-table__body-wrapper.is-scrolling-none > table > tbody > tr.el-table__row.disabled-row > td {
-  background: lightgray;
+/* Button
+-------------------------- */
+button.el-button.hideButton.el-button--default {
+  visibility: hidden;
 }
 
 @import "~element-ui/packages/theme-chalk/src/index";

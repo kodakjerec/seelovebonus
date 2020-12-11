@@ -100,17 +100,17 @@ export default {
     submit: function () {
       this.$refs['form'].validate((valid) => {
         if (valid) {
-          console.log('valid')
+          // valid
           this.login()
         } else {
-          console.log('error submit!!')
+          // error
           return false
         }
       })
     },
     // 送出登入API
     login: async function () {
-      const response = await this.$api.login.login({
+      let response = await this.$api.login.login({
         UserID: this.form.UserID,
         Password: this.form.Password
       })
@@ -125,13 +125,13 @@ export default {
         })
 
         // 讀入 menu
-        const response2 = await this.$api.login.getMenu({
+        let response2 = await this.$api.login.getMenu({
           UserID: this.form.UserID
         })
         this.$store.dispatch('setMenuList', response2.data)
 
         // 讀入 使用者權限
-        const response3 = await this.$api.settings.getUserProg({
+        let response3 = await this.$api.settings.getUserProg({
           UserID: this.form.UserID
         })
         this.$store.dispatch('setUserProg', response3.data.userProg)

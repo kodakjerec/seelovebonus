@@ -118,8 +118,8 @@ export default {
   name: 'OrderCustomer',
   props: {
     dialogType: { type: String, default: 'new' },
+    buttonsShowUser: { type: Object },
     orderID: { type: String },
-    orderCustomer: { type: Object },
     ddlCustomerBefore: { tpye: Array }
   },
   data () {
@@ -142,7 +142,8 @@ export default {
         AgentAddress: '',
         refKind: null,
         Referrer: null,
-        EmployeeID: null
+        EmployeeID: null,
+        Status: ''
       },
       rules: {
         CustomerID: [{ required: true, message: this.$t('__pleaseInput'), trigger: 'blur' }]
@@ -151,6 +152,7 @@ export default {
         CustomerID: false
       },
       showAgentData: true,
+      oldCustomerID: '', // 修改狀態專用, 沒有變更客戶代號就不用更新
       // 以下為下拉式選單專用
       postData: [],
       ddlCountry: [],
@@ -167,24 +169,17 @@ export default {
     orderID: function (newValue) {
       if (newValue) {
         this.form.OrderID = newValue
-      }
-    },
-    orderCustomer: function () {
-      if (this.orderCustomer) {
-        this.form = JSON.parse(JSON.stringify(this.orderCustomer))
 
-        // 是否顯示代理人區域
-        if (this.dialogType !== 'new') {
-          if (this.form.AgentID === '') {
-            this.showAgentData = false
-          }
+        switch (this.dialogType) {
+          case 'new':
+            break
+          case 'edit':
+            if (this.buttonsShowUser.new === 0) {
+              this.disableForm.CustomerID = true
+            }
+            this.bringCustomer()
+            break
         }
-
-        // 切換城市下拉式選單
-        this.ddlCityChange()
-
-        // 法定代理人
-        this.ddlAgentCityChange()
       }
     },
     ddlCustomerBefore: function (value) {
@@ -195,14 +190,6 @@ export default {
   },
   mounted () {
     this.preLoading()
-
-    switch (this.dialogType) {
-      case 'new':
-        break
-      case 'edit':
-        this.disableForm.CustomerID = true
-        break
-    }
   },
   methods: {
     preLoading: async function () {
@@ -210,17 +197,54 @@ export default {
         this.ddlCustomer = this.ddlCustomerBefore
       }
 
-      const response = await this.$api.basic.getDropdownList({ type: 'post' })
+      let response = await this.$api.basic.getDropdownList({ type: 'post' })
       this.postData = response.data.result
 
-      const response1 = await this.$api.basic.getDropdownList({ type: 'country' })
+      let response1 = await this.$api.basic.getDropdownList({ type: 'country' })
       this.ddlCountry = response1.data.result
-      const response2 = await this.$api.basic.getDropdownList({ type: 'city' })
+      let response2 = await this.$api.basic.getDropdownList({ type: 'city' })
       this.ddlCity = response2.data.result
 
       // 法定代理人
       this.ddlAgentCountry = response1.data.result
       this.ddlAgentCity = response2.data.result
+    },
+    // 修改狀態:取得客戶資料
+    bringCustomer: async function () {
+      let responseCustomer = await this.$api.orders.getObject({ type: 'orderCustomer', ID: this.orderID })
+      let row = responseCustomer.data.result[0]
+
+      this.oldCustomerID = row.CustomerID
+      this.form.CustomerID = row.CustomerID
+
+      this.form.TelHome = row.TelHome
+      this.form.TelMobile = row.TelMobile
+      this.form.EMail = row.EMail
+      this.form.Country = row.Country
+      this.form.City = row.City
+      this.form.Post = row.Post
+      this.form.Address = row.Address
+      this.form.AgentID = row.AgentID
+      this.form.AgentName = row.AgentName
+      this.form.AgentCountry = row.AgentCountry
+      this.form.AgentCity = row.AgentCity
+      this.form.AgentPost = row.AgentPost
+      this.form.AgentAddress = row.AgentAddress
+      this.form.refKind = row.refKind
+      this.form.Referrer = row.Referrer
+      this.form.EmployeeID = row.EmployeeID
+      this.form.Status = ''
+
+      // 是否顯示代理人區域
+      if (this.form.AgentID === '') {
+        this.showAgentData = false
+      }
+
+      // 切換城市下拉式選單
+      this.ddlCityChange()
+
+      // 法定代理人
+      this.ddlAgentCityChange()
     },
     // 選定客戶取得資料
     ddlCustomerChange: async function () {
@@ -244,6 +268,14 @@ export default {
       this.form.Referrer = row.Referrer
       this.form.EmployeeID = row.EmployeeID
 
+      if (this.dialogType === 'new') {
+        this.form.Status = 'New'
+      } else {
+        if (this.form.Status === '') {
+          this.form.Status = 'Modified'
+        }
+      }
+
       this.ddlCityChange()
 
       // 法定代理人
@@ -263,18 +295,44 @@ export default {
       this.$refs['form'].validate((valid) => { isSuccess = valid })
       return isSuccess
     },
-    // 存檔
-    save: async function () {
+    // 存檔前檢查
+    beforeSave: async function () {
       let isSuccess = false
-      switch (this.dialogType) {
+      if (this.form.OrderID === '') {
+        return false
+      }
+
+      // 開始更新
+      switch (this.form.Status) {
+        case 'New':
+          isSuccess = await this.save('new')
+          break
+        case 'Modified':
+          isSuccess = await this.save('edit')
+          break
+        case '':
+          isSuccess = true
+          break
+      }
+
+      return isSuccess
+    },
+    // 存檔
+    save: async function (type) {
+      let isSuccess = false
+      switch (type) {
         case 'new':
-          const responseNew = await this.$api.orders.orderCustomerNew({ form: this.form })
+          let responseNew = await this.$api.orders.orderCustomerNew({ form: this.form })
           if (responseNew.headers['code'] === '200') {
             isSuccess = true
           }
           break
         case 'edit':
-          isSuccess = true
+          // 客戶資料有異動, 才要更新
+          let responseEdit = await this.$api.orders.orderCustomerEdit({ form: this.form })
+          if (responseEdit.headers['code'] === '200') {
+            isSuccess = true
+          }
           break
       }
 

@@ -8,9 +8,16 @@
       :data="productsShow"
       stripe
       border
+      :span-method="objectSpanMethod"
       @row-click="handleClick"
       :row-class-name="tableRowClassName"
       style="width: 100%">
+      <el-table-column :label="$t('__itemCategory')" prop="Category1Name" min-width="30px">
+      </el-table-column>
+      <el-table-column prop="Category2Name" min-width="30px">
+      </el-table-column>
+      <el-table-column prop="Category3Name" min-width="30px">
+      </el-table-column>
       <el-table-column
         prop="ID"
         :label="$t('__product')+$t('__id')">
@@ -24,16 +31,19 @@
         :label="$t('__accounting')+$t('__name')">
       </el-table-column>
       <el-table-column
-        prop="Qty"
-        :label="$t('__qty')">
-      </el-table-column>
-      <el-table-column
-        prop="UnitName"
-        :label="$t('__unit')+$t('__name')">
+        :label="$t('__qty') + ' ' + $t('__unit')+$t('__name')">
+        <template slot-scope="scope">
+          {{scope.row.Qty + ' ' + scope.row.UnitName}}
+        </template>
       </el-table-column>
       <el-table-column
         prop="Price"
         :label="$t('__price')"
+        :formatter="formatterMoney">
+      </el-table-column>
+      <el-table-column
+        prop="Cost"
+        :label="$t('__cost')"
         :formatter="formatterMoney">
       </el-table-column>
       <el-table-column
@@ -68,6 +78,7 @@ export default {
       dialogType: 'new',
       dialogShow: false,
       productsShow: [],
+      tableSpanList: [],
       product: {},
       searchKeyWord: '',
       // 使用者能看到的權限
@@ -97,8 +108,7 @@ export default {
     // 讀入系統清單
     preLoading: async function () {
       // 顯示專用
-      const response2 = await this.$api.basic.productsShow({ keyword: this.searchKeyWord })
-      this.productsShow = response2.data.result
+      this.search('')
     },
     // 使用者權限
     userPermission: async function () {
@@ -138,8 +148,43 @@ export default {
     // 搜尋
     search: async function (value) {
       this.searchKeyWord = value
-      const response2 = await this.$api.basic.productsShow({ keyword: this.searchKeyWord })
+      let response2 = await this.$api.basic.productsShow({ keyword: this.searchKeyWord })
       this.productsShow = response2.data.result
+
+      // table span
+      this.tableSpanList = []
+      this.productsShow.forEach(row => {
+        let findObject = this.tableSpanList.find(row2 => { return row2.SpanID === row.Category1Name })
+        if (findObject === undefined) {
+          let firstIndex = this.productsShow.findIndex(row3 => row3.Category1Name === row.Category1Name)
+          this.tableSpanList.push({
+            SpanID: row.Category1Name,
+            rowIndex: firstIndex,
+            Qty: 1
+          })
+        } else {
+          findObject.Qty += 1
+        }
+      })
+    },
+    // table span method
+    objectSpanMethod: function (row, column, rowIndex, columnIndex) {
+      if (row.columnIndex === 0) {
+        let findObject = this.tableSpanList.find(item => { return item.SpanID === row.row.Category1Name })
+        // 沒找到
+        if (findObject === undefined) {
+          return [1, 0]
+        } else {
+          // 有找到
+          // 是第一筆, 就要做 colspan
+          if (row.rowIndex === findObject.rowIndex) {
+            return [findObject.Qty, 1]
+          } else {
+            // 其他筆
+            return [1, 0]
+          }
+        }
+      }
     }
   }
 }

@@ -32,12 +32,12 @@
       </el-form-item>
       <el-form-item :label="$t('__price')">
         <el-col :span="10">
-          <el-input-number v-model.number="form.Price" :min="0"></el-input-number>
+          <el-input-number v-model.number="form.Price"></el-input-number>
           <span>{{$t('__dollar')}}</span>
         </el-col>
         <el-col :span="14">
           <el-form-item :label="$t('__cost')">
-            <el-input-number v-model.number="form.Cost" :min="0"></el-input-number>
+            <el-input-number v-model.number="form.Cost"></el-input-number>
             <span>{{$t('__dollar')}}</span>
           </el-form-item>
         </el-col>
@@ -75,6 +75,7 @@
             <span style="float: right; color: #8492a6; font-size: 13px">{{ item.ID }}</span>
           </el-option>
         </el-select>
+         {{$t('__inventory')}}<el-switch v-model="form.Inventory" active-text="ON" inactive-text="OFF" :active-value="1" :inactive-value="0"></el-switch>
       </el-form-item>
       <el-form-item :label="$t('__bom')">
         <el-select v-model="form.BOM" value-key="value" :placeholder="$t('__plzChoice')" disabled>
@@ -84,10 +85,18 @@
           </el-option>
         </el-select>
       </el-form-item>
-      <bom ref="bom" v-if="dialogType!=='new'" :productID="form.ID" :productBOM="productBOM"></bom>
+      <!-- BOM 子結構 -->
+      <bom ref="bom" v-if="dialogType!=='new'" :productID="form.ID"></bom>
       <el-form-item v-else>{{$t('__productBOMWarrning')}}</el-form-item>
+      <!-- 專案功能 -->
+      <el-divider>{{$t('__product')+$t('__function')}}</el-divider>
+      <template v-for="fun in switchProjectFunctions">
+        {{fun.Value}}
+        <el-switch v-model="fun.Available" :key="fun.Function" active-text="ON" inactive-text="OFF" :active-value="1" :inactive-value="0"></el-switch>
+      </template>
     </el-form>
     <div slot="footer" class="dialog-footer">
+      <el-button v-show="dialogType === 'edit' &&  buttonsShowUser.delete" type="danger" @click="deleteItem">{{$t('__delete')}}</el-button>
       <el-button @click="cancel">{{$t('__cancel')}}</el-button>
       <el-button v-show="buttonsShowUser.save" type="primary" @click="checkValidate">{{$t('__save')}}</el-button>
     </div>
@@ -96,6 +105,8 @@
 
 <script>
 import bom from './productBOM'
+import { messageBoxYesNo } from '@/services/utils'
+
 export default {
   name: 'ProductNewForm',
   components: {
@@ -122,7 +133,8 @@ export default {
         Category1: null,
         Category2: null,
         Category3: null,
-        Status: '1'
+        Status: '1',
+        Inventory: 0
       },
       rules: {
         ID: [{ required: true, message: this.$t('__pleaseInput'), trigger: 'blur' }],
@@ -134,7 +146,6 @@ export default {
         ID: false
       },
       myTitle: '',
-      productBOM: [],
       isLoadingFinish: false, // 讀取完畢
       // 以下為下拉式選單專用
       ddlAccounting: [],
@@ -145,7 +156,8 @@ export default {
       ddlCategory2Origin: [],
       ddlCategory2: [],
       ddlCategory3Origin: [],
-      ddlCategory3: []
+      ddlCategory3: [],
+      switchProjectFunctions: []
     }
   },
   async mounted () {
@@ -167,25 +179,27 @@ export default {
   methods: {
     // 讀取預設資料
     preLoading: async function () {
-      const response1 = await this.$api.basic.getDropdownList({ type: 'accounting' })
+      let response1 = await this.$api.basic.getDropdownList({ type: 'accounting' })
       this.ddlAccounting = response1.data.result
-      const response2 = await this.$api.basic.getDropdownList({ type: 'unit' })
+      let response2 = await this.$api.basic.getDropdownList({ type: 'unit' })
       this.ddlUnit = response2.data.result
-      const response3 = await this.$api.basic.getDropdownList({ type: 'status' })
+      let response3 = await this.$api.basic.getDropdownList({ type: 'status' })
       this.ddlBOM = response3.data.result
-      const response4 = await this.$api.basic.getDropdownList({ type: 'status' })
+      let response4 = await this.$api.basic.getDropdownList({ type: 'status' })
       this.ddlStatus = response4.data.result
-      const responseBOM = await this.$api.basic.getObject({ type: 'productBOM', ID: this.form.ID })
-      this.productBOM = responseBOM.data.result
 
-      const resItemCategory1 = await this.$api.basic.getDropdownList({ type: 'itemCategory1' })
+      let resItemCategory1 = await this.$api.basic.getDropdownList({ type: 'itemCategory1' })
       this.ddlCategory1 = resItemCategory1.data.result
-      const resItemCategory2 = await this.$api.basic.getDropdownList({ type: 'itemCategory2' })
+      let resItemCategory2 = await this.$api.basic.getDropdownList({ type: 'itemCategory2' })
       this.ddlCategory2Origin = resItemCategory2.data.result
-      const resItemCategory3 = await this.$api.basic.getDropdownList({ type: 'itemCategory3' })
+      let resItemCategory3 = await this.$api.basic.getDropdownList({ type: 'itemCategory3' })
       this.ddlCategory3Origin = resItemCategory3.data.result
       this.ddlCategory1Change()
       this.ddlCategory2Change()
+
+      // 有用到的商品特殊功能
+      let responseAvailableProjectFunctions = await this.$api.basic.getObject({ type: 'productFunctions', ID: this.form.ID })
+      this.switchProjectFunctions = responseAvailableProjectFunctions.data.result
     },
     // 切換費用代號, 填入名稱
     ddlAccountingChange: function (selected) {
@@ -193,57 +207,96 @@ export default {
       this.form.AccountingName = findObject.Value
     },
     // 檢查輸入
-    checkValidate: function () {
-      let tempThis = this
-      this.$refs['form'].validate(async function (valid) {
-        if (valid) {
-          switch (tempThis.dialogType) {
-            case 'new':
-              tempThis.save()
-              break
-            case 'edit':
-              let isSuccess = false
+    checkValidate: async function () {
+      let isSuccess = false
+      this.$refs['form'].validate(function (valid) { isSuccess = valid })
+      if (isSuccess) {
+        switch (this.dialogType) {
+          case 'new':
+            this.save('new')
+            break
+          case 'edit':
+            let isSuccess = false
 
-              isSuccess = await tempThis.$refs['bom'].beforeSave()
+            isSuccess = await this.$refs['bom'].beforeSave()
 
-              if (isSuccess) {
-                tempThis.save()
-              }
-              break
-          }
-          return true
-        } else {
-          return false
+            if (isSuccess) {
+              isSuccess = this.save(this.dialogType)
+            }
+            break
         }
-      })
+      }
+
+      if (isSuccess) {
+        this.$emit('dialog-save')
+      }
     },
     // 取消
     cancel: function () {
       this.$emit('dialog-cancel')
     },
+    // 刪除
+    deleteItem: async function () {
+      let answerAction = await messageBoxYesNo(this.$t('__delete') + this.$t('__product') + ' ' + this.form.ID, this.$t('__delete'))
+
+      switch (answerAction) {
+        case 'confirm':
+          let isSuccessEdit = await this.save('delete')
+          if (isSuccessEdit) {
+            this.$alert(this.updateMessage, 200, {
+              callback: () => {
+                this.$router.push({
+                  name: this.parent,
+                  params: {
+                    returnType: 'save'
+                  }
+                })
+              }
+            })
+          }
+          break
+        case 'cancel':
+          break
+        case 'close':
+          break
+      }
+    },
     // 存檔
-    save: async function () {
+    save: async function (type) {
       let isSuccess = false
-      switch (this.dialogType) {
+      switch (type) {
         case 'new':
-          const responseNew = await this.$api.basic.productNew({ form: this.form })
+          let responseNew = await this.$api.basic.productNew({ form: this.form })
           if (responseNew.headers['code'] === '200') {
             this.$alert(responseNew.data.result[0].message, responseNew.data.result[0].code)
             isSuccess = true
           }
           break
         case 'edit':
-          const responseEdit = await this.$api.basic.productEdit({ form: this.form })
+          let responseEdit = await this.$api.basic.productEdit({ form: this.form })
           if (responseEdit.headers['code'] === '200') {
             this.$alert(responseEdit.data.result[0].message, responseEdit.data.result[0].code)
             isSuccess = true
           }
           break
+        case 'delete':
+          let responseDelete = await this.$api.basic.productDelete({ form: this.form })
+          if (responseDelete.headers['code'] === '200') {
+            this.$alert(responseDelete.data.result[0].message, responseDelete.data.result[0].code)
+            isSuccess = true
+          } else {
+            this.$alert(responseDelete.data.result.message, responseDelete.data.result.code)
+            isSuccess = false
+          }
+          break
       }
 
-      if (isSuccess) {
-        this.$emit('dialog-save')
+      // 商品特殊功能更新
+      for (let index = 0; index < this.switchProjectFunctions.length; index++) {
+        await this.$api.basic.productFunctionsUpdate({ form: this.switchProjectFunctions[index] })
       }
+
+      return isSuccess
     },
     // 商品大類變更
     ddlCategory1Change: function () {

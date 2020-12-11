@@ -26,7 +26,7 @@
       :label="$t('__price')"
       width="210px">
       <template slot-scope="scope">
-        <el-input-number v-model="scope.row[scope.column.property]" :min="0" @change="(currentValue, oldValue)=>{priceChange(currentValue, oldValue, scope.row)}"></el-input-number>
+        <el-input-number v-model="scope.row[scope.column.property]" @change="(currentValue, oldValue)=>{priceChange(currentValue, oldValue, scope.row)}"></el-input-number>
       </template>
     </el-table-column>
     <el-table-column
@@ -60,8 +60,7 @@
 export default {
   name: 'ProjectDetail',
   props: {
-    projectID: { type: String },
-    projectDetail: { type: Array }
+    projectID: { type: String }
   },
   data () {
     return {
@@ -79,29 +78,33 @@ export default {
     }
   },
   watch: {
-    projectDetail: function () {
-      this.subList = JSON.parse(JSON.stringify(this.projectDetail))
+    projectID: function () {
+      this.bringProjectDetail()
     }
   },
   mounted () {
     this.preLoading()
+    this.bringProjectDetail()
   },
   methods: {
     // 讀取預設資料
     preLoading: async function () {
       // 取得所有原始資料
-      const response = await this.$api.basic.getDropdownList({ type: 'product' })
+      let response = await this.$api.basic.getDropdownList({ type: 'product' })
       this.ddlSubList = response.data.result
+    },
+    bringProjectDetail: async function () {
+      let response1 = await this.$api.basic.getObject({ type: 'projectDetail', ID: this.projectID })
+      this.subList = response1.data.result
     },
     // 存檔前先過濾
     beforeSave: async function () {
       let isSuccess = false
       // 結合已刪除單據
-      const finalResult = this.subList.concat(this.subListDeleted)
+      let finalResult = this.subList.concat(this.subListDeleted)
       if (finalResult.length === 0) { isSuccess = true }
 
       for (let index = 0; index < finalResult.length; index++) {
-        let uploadResult = 0
         let row = finalResult[index]
         // 錯誤處理
         if (row.ProjectID === '' || row.ProudctID === '') {
@@ -110,24 +113,19 @@ export default {
         // 開始更新
         switch (row.Status) {
           case 'New':
-            uploadResult = await this.save('new', row)
+            isSuccess = await this.save('new', row)
             break
           case 'Modified':
-            uploadResult = await this.save('edit', row)
+            isSuccess = await this.save('edit', row)
             break
           case 'Deleted':
-            uploadResult = await this.save('delete', row)
+            isSuccess = await this.save('delete', row)
             break
           case '':
-            uploadResult = 1
+            isSuccess = true
             break
         }
-        if (uploadResult === 0) {
-          isSuccess = false
-          return
-        } else {
-          isSuccess = true
-        }
+        if (!isSuccess) { return isSuccess }
       }
 
       return isSuccess
@@ -137,30 +135,26 @@ export default {
       let isSuccess = false
       switch (type) {
         case 'new':
-          const responseNew = await this.$api.basic.projectDetailNew({ form: row })
+          let responseNew = await this.$api.basic.projectDetailNew({ form: row })
           if (responseNew.headers['code'] === '200') {
             isSuccess = true
           }
           break
         case 'edit':
-          const responseEdit = await this.$api.basic.projectDetailEdit({ form: row })
+          let responseEdit = await this.$api.basic.projectDetailEdit({ form: row })
           if (responseEdit.headers['code'] === '200') {
             isSuccess = true
           }
           break
         case 'delete':
-          const responseDelete = await this.$api.basic.projectDetailDelete({ form: row })
+          let responseDelete = await this.$api.basic.projectDetailDelete({ form: row })
           if (responseDelete.headers['code'] === '200') {
             isSuccess = true
           }
           break
       }
 
-      if (isSuccess) {
-        return 1
-      } else {
-        return 0
-      }
+      return isSuccess
     },
     // 新增子結構
     handleNew: function () {

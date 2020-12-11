@@ -257,22 +257,22 @@ export default {
       return formatMoney(cellValue)
     },
     preLoading: async function () {
-      const response1 = await this.$api.orders.getDropdownList({ type: 'invoiceKind' })
+      let response1 = await this.$api.orders.getDropdownList({ type: 'invoiceKind' })
       this.ddlInvoiceKind = response1.data.result
-      const response2 = await this.$api.orders.getDropdownList({ type: 'invoiceStatus' })
+      let response2 = await this.$api.orders.getDropdownList({ type: 'invoiceStatus' })
       this.ddlInvoiceStatus = response2.data.result
-      const response3 = await this.$api.orders.getDropdownList({ type: 'tax' })
+      let response3 = await this.$api.orders.getDropdownList({ type: 'tax' })
       this.ddlTax = response3.data.result
-      const response4 = await this.$api.orders.getDropdownList({ type: 'employee' })
+      let response4 = await this.$api.orders.getDropdownList({ type: 'employee' })
       this.ddlCreateID = response4.data.result
 
       switch (this.dialogType) {
         case 'new':
-          const responseRecords = await this.$api.orders.invoiceFunctions({ type: 'recordsNotSelect', OrderID: this.form.OrderID, InvoiceID: this.form.InvoiceID })
+          let responseRecords = await this.$api.orders.invoiceFunctions({ type: 'recordsNotSelect', OrderID: this.form.OrderID, InvoiceID: this.form.InvoiceID })
           this.selectCollectionRecords = responseRecords.data.result
           break
         case 'edit':
-          const responseRecordsSelected = await this.$api.orders.invoiceFunctions({ type: 'recordsSelected', OrderID: this.form.OrderID, InvoiceID: this.form.InvoiceID })
+          let responseRecordsSelected = await this.$api.orders.invoiceFunctions({ type: 'recordsSelected', OrderID: this.form.OrderID, InvoiceID: this.form.InvoiceID })
           this.selectCollectionRecords = responseRecordsSelected.data.result
           // 只選出已關聯的Row, 預設全部選取
           this.$nextTick(() => {
@@ -321,21 +321,21 @@ export default {
       let isSuccess = false
       switch (type) {
         case 'new':
-          const responseNew = await this.$api.orders.invoiceHeadNew({ form: this.form })
+          let responseNew = await this.$api.orders.invoiceHeadNew({ form: this.form })
           if (responseNew.headers['code'] === '200') {
             this.$alert(responseNew.data.result[0].message, responseNew.data.result[0].code)
             isSuccess = true
           }
           break
         case 'edit':
-          const responseEdit = await this.$api.orders.invoiceHeadEdit({ form: this.form })
+          let responseEdit = await this.$api.orders.invoiceHeadEdit({ form: this.form })
           if (responseEdit.headers['code'] === '200') {
             this.$alert(responseEdit.data.result[0].message, responseEdit.data.result[0].code)
             isSuccess = true
           }
           break
         case 'delete':
-          const responseInvalid = await this.$api.orders.invoiceHeadInvalid({ form: this.form })
+          let responseInvalid = await this.$api.orders.invoiceHeadInvalid({ form: this.form })
           if (responseInvalid.headers['code'] === '200') {
             this.$alert(responseInvalid.data.result[0].message, responseInvalid.data.result[0].code)
             isSuccess = true

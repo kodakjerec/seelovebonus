@@ -128,17 +128,17 @@ export default {
     this.getDropDownList()
 
     // 已經有選擇的資料帶入
-    // const rowsToToggle = this.progList.filter(row => row.checked === true)
+    // let rowsToToggle = this.progList.filter(row => row.checked === true)
     // this.$nextTick(() => { this.toggleSelection(rowsToToggle) })
   },
   methods: {
     // 取得群組清單
     getDropDownList: async function () {
-      const response1 = await this.$api.settings.getDropdownList({ type: 'groupsList' })
+      let response1 = await this.$api.settings.getDropdownList({ type: 'groupsList' })
       this.ddlGroup = response1.data.result
-      const response2 = await this.$api.settings.getDropdownList({ type: 'employeesList' })
+      let response2 = await this.$api.settings.getDropdownList({ type: 'employeesList' })
       this.ddlEmployee = response2.data.result
-      const response3 = await this.$api.settings.getDropdownList({ type: 'status' })
+      let response3 = await this.$api.settings.getDropdownList({ type: 'status' })
       this.ddlStatus = response3.data.result
     },
     toggleSelection: function (rows) {
@@ -194,14 +194,14 @@ export default {
       let isSuccess = false
       switch (this.dialogType) {
         case 'new':
-          const responseNew = await this.$api.settings.userNew({ form: data })
+          let responseNew = await this.$api.settings.userNew({ form: data })
           if (responseNew.headers['code'] === '200') {
             this.$alert(responseNew.data.result[0].message, responseNew.data.result[0].code)
             isSuccess = true
           }
           break
         case 'edit':
-          const responseEdit = await this.$api.settings.userEdit({ form: data })
+          let responseEdit = await this.$api.settings.userEdit({ form: data })
           if (responseEdit.headers['code'] === '200') {
             this.$alert(responseEdit.data.result[0].message, responseEdit.data.result[0].code)
             isSuccess = true
