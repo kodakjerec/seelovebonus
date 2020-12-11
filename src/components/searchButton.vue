@@ -66,9 +66,6 @@ export default {
     lockChange: function () {
       this.lock = false
     },
-    mouseChange: function () {
-      this.$emit('search', this.searchValue)
-    },
     optionsChange: function () {
       this.reOder()
     },
