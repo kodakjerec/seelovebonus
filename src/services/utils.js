@@ -5,6 +5,7 @@ import i18n from '@/setup/setupLocale'
 import req from './auth' // 把request包裝
 
 export const seeloveNodeServer = {
+  // ip: '192.168.1.104',
   ip: '192.168.2.210',
   // ipHost: 'localhost',
   port: '3000', // backend server
@@ -18,11 +19,6 @@ export const post = async (url, reqData = {}) => {
   return req('post', combineURL, reqData)
     .then(response => {
       store.dispatch('decreaseLoadingCounter')
-      switch (response.headers['code']) {
-        case '500':
-          errorMessage(response.data, response.headers['code'])
-          break
-      }
       return response
     })
     .catch(error => {

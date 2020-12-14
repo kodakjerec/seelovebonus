@@ -4,6 +4,7 @@
     class="imageBlock"
     :src="require('@/assets/logo.png')"
     :fit="'contain'"
+    :alt="'logo'"
     ></el-image>
     <el-card class="box-card">
       <el-form ref="form" :model="form" :rules="rules" label-width="80px">

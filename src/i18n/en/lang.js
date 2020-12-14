@@ -197,6 +197,7 @@ export default {
   __supplier: 'Supplier',
   __inventory: 'Inventory',
   __putOn: 'Put on',
+  __openEditMode: 'Editable',
   // 請在上方新增字串
   // 以下為錯誤處理專用
   __error400: 'Bad Request',

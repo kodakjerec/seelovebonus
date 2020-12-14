@@ -15,8 +15,10 @@
         </template>
       </el-table-column>
       <el-table-column
-        prop="ProductID"
         :label="$t('__product')">
+        <template slot-scope="scope">
+          {{scope.row.ProductID}}<br/>{{scope.row.ProductName}}
+        </template>
       </el-table-column>
       <el-table-column
         prop="Qty"
@@ -28,11 +30,12 @@
       </el-table-column>
       <el-table-column
         prop="OrderID"
-        :label="$t('__orderID')">
+        :label="'Last'+$t('__orderID')">
       </el-table-column>
       <el-table-column
         prop="ModifyDate"
-        :label="$t('__edit')+$t('__date')">
+        :label="'Last' + $t('__edit')+$t('__date')"
+        :formatter="formatterDateTime">
       </el-table-column>
       <el-table-column
         prop="FromStorageID"
@@ -57,6 +60,7 @@
 
 <script>
 import newForm from './components/stockLog'
+import { formatDateTime } from '@/setup/format.js'
 export default {
   name: 'StockNow',
   components: {
@@ -73,6 +77,9 @@ export default {
     this.preLoading()
   },
   methods: {
+    formatterDateTime: function (row, column, cellValue, index) {
+      return formatDateTime(cellValue)
+    },
     // 讀入使用者清單
     preLoading: async function () {
       this.search('')

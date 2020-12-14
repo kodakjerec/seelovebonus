@@ -27,6 +27,15 @@ export default {
         console.log(`%c <<< Response(/rest/login/getMenu)⤵ `, 'background-color: #E0455D; color: white; font-size: 14px; font-weight: bold;', data)
         return data
       })
+    },
+    checkPwd: ({ UserID, Password }) => {
+      UserID = crypto.encrypt(UserID)
+      Password = crypto.encrypt(Password)
+      let rawData = { UserID, Password }
+      return post('/login/checkPwd', rawData).then(data => {
+        console.log(`%c <<< Response(/rest/login/checkPwd)⤵ `, 'background-color: #E0455D; color: white; font-size: 14px; font-weight: bold;', data)
+        return data
+      })
     }
   }
 }

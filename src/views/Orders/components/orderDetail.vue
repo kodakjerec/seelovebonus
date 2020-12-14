@@ -43,9 +43,22 @@
     </el-table-column>
     <el-table-column
       prop="Price"
-      :label="$t('__price')"
       :formatter="formatterMoney"
-      width="100px">
+      width="200px">
+      <template slot="header">
+        {{$t('__price')}}
+        <el-button v-if="buttonsShowUser.new && !openEditMode" @click="checkOpenEditMode">{{$t('__openEditMode')}}</el-button>
+      </template>
+      <template slot-scope="scope">
+        <el-input-number
+           v-if="openEditMode"
+          :min="0"
+          v-model="scope.row[scope.column.property]"
+          @change="(currentValue, oldValue)=>{priceChange(currentValue, oldValue, scope.row)}"></el-input-number>
+        <span v-else>
+          {{formatterMoney(null,null,scope.row[scope.column.property],null)}}
+        </span>
+      </template>
     </el-table-column>
     <el-table-column
       prop="Qty"
@@ -104,17 +117,23 @@
         </order-detail-functions>
       </template>
     </el-table-column>
+    <open-edit-mode
+      :dialogShow="dialogShowEditMode"
+      @dialog-cancel="dialogShowEditModeCancel"
+      @dialog-save="dialogShowEditModeSave"></open-edit-mode>
   </el-table>
 </template>
 
 <script>
 import { formatMoney } from '@/setup/format.js'
 import orderDetailFunctions from './orderDetailFunctions'
+import openEditMode from '@/components/openEditMode'
 
 export default {
   name: 'OrderDetail',
   components: {
-    orderDetailFunctions
+    orderDetailFunctions,
+    openEditMode
   },
   props: {
     dialogType: { type: String, default: 'new' },
@@ -147,6 +166,9 @@ export default {
       subListDeleted: [],
       subListExpand: [], // 要展開的明細
       productFunctionsList: [], // 特殊功能清單(所有商品)
+      // 修改模式
+      openEditMode: false, // 開啟修改金額模式
+      dialogShowEditMode: false, // 顯示修改模式
       // 下拉是選單
       originDDLSubList: [],
       ddlSubList: [],
@@ -393,6 +415,13 @@ export default {
 
       this.reCalAmount()
     },
+    // 變更商品價格
+    priceChange: function (currentValue, oldValue, row) {
+      if (row.Status === '') {
+        row.Status = 'Modified'
+      }
+      this.reCalAmount()
+    },
     // 重新計算專案總價
     reCalAmount: function () {
       let masterAmount = 0; let subAmount = 0; let tempAmount = 0
@@ -467,6 +496,22 @@ export default {
         let row = this.subList[this.subList.length - 1]
         this.fillSubList(row, rowParent, 0)
       }
+    },
+    // ============== 修改單價 ===============
+    // 開啟修改單價模式
+    checkOpenEditMode: function () {
+      // 不要重複啟動
+      if (this.openEditMode) {
+        return
+      }
+      this.dialogShowEditMode = true
+    },
+    dialogShowEditModeCancel: function () {
+      this.dialogShowEditMode = false
+    },
+    dialogShowEditModeSave: function () {
+      this.dialogShowEditMode = false
+      this.openEditMode = true
     }
   }
 }

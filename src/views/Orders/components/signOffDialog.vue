@@ -58,7 +58,7 @@ export default {
         }
         let responseSignOff = await this.$api.signOff.assign({ form: form })
         if (responseSignOff.headers['code'] === '200') {
-          resultMessage += row.OrderID + ' ' + responseSignOff.data.result[0].message
+          resultMessage += row.OrderID + ' ' + responseSignOff.data.result[0].message + '<br/>'
         }
       }
       if (resultMessage !== '') {
