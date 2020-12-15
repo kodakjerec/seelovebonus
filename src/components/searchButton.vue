@@ -1,19 +1,21 @@
 <template>
   <div class="defineCSS">
-    <el-tooltip effect="light" :content="$t('__orderByValue')" placement="top-start">
-      <el-select class="orderByValue" v-model="orderByValue" filterable :placeholder="$t('__plzChoice')" @change="optionsChange">
-        <el-option v-for="item in options" :key="item.ID" :label="item.ID+' '+item.Value" :value="item.ID">
-          <span style="float: left">{{ item.Value }}</span>
-          <span style="float: right; color: #8492a6; font-size: 13px">{{ item.ID }}</span>
-        </el-option>
-      </el-select>
-    </el-tooltip>
-    <el-tooltip class="orderBy" v-if="orderBy === 'descending'" effect="light" :content="$t('__descending')" placement="top-start">
-      <i class="el-icon-bottom" @click="orderByChange"></i>
-    </el-tooltip>
-    <el-tooltip class="orderBy" v-else effect="light" :content="$t('__ascending')" placement="top-start">
-      <i  class="el-icon-top" @click="orderByChange"></i>
-    </el-tooltip>
+    <template v-if="options.length > 0">
+      <el-tooltip effect="light" :content="$t('__orderByValue')" placement="top-start">
+        <el-select class="orderByValue" v-model="orderByValue" filterable :placeholder="$t('__plzChoice')" @change="optionsChange">
+          <el-option v-for="item in options" :key="item.ID" :label="item.ID+' '+item.Value" :value="item.ID">
+            <span style="float: left">{{ item.Value }}</span>
+            <span style="float: right; color: #8492a6; font-size: 13px">{{ item.ID }}</span>
+          </el-option>
+        </el-select>
+      </el-tooltip>
+      <el-tooltip class="orderBy" v-if="orderBy === 'descending'" effect="light" :content="$t('__descending')" placement="top-start">
+        <i class="el-icon-bottom" @click="orderByChange"></i>
+      </el-tooltip>
+      <el-tooltip class="orderBy" v-else effect="light" :content="$t('__ascending')" placement="top-start">
+        <i  class="el-icon-top" @click="orderByChange"></i>
+      </el-tooltip>
+    </template>
     <el-input
       class="searchButton"
       v-model="searchValue"

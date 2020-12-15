@@ -108,25 +108,6 @@ export default {
     },
     // 開啟表單
     showForm: function (eventType) {
-      this.invoiceHead = {
-        InvoiceID: null,
-        InvoiceDate: new Date(),
-        OrderID: this.orderID,
-        Title: '',
-        UniformNumber: '',
-        Amount: null,
-        ReceivedDate: new Date(),
-        InvoiceKind: '6',
-        Tax: '1',
-        CarrierNumber: null,
-        Memo: null,
-        InvoiceIDFirst: '',
-        RandomCode: null,
-        CreateID: this.$store.state.userID,
-        Status: '2',
-        SalesReturnDate: null
-      }
-
       this.dialogType = eventType
       this.dialogShow = true
     },

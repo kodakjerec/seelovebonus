@@ -2,8 +2,15 @@ import { post } from '@/services/utils'
 
 export default {
   orders: {
-    ordersShow: ({ keyword, StartDate, EndDate, ID }) => {
-      let rawData = { keyword, StartDate, EndDate, ID }
+    ordersShowGroup: () => {
+      let rawData = {}
+      return post('/orders/ordersShowGroup', rawData).then(data => {
+        console.log(`%c <<< Response(/rest/orders/ordersShowGroup)⤵ `, 'background-color: #E0455D; color: white; font-size: 14px; font-weight: bold;', data)
+        return data
+      })
+    },
+    ordersShow: ({ searchContent, ID }) => {
+      let rawData = { searchContent, ID }
       return post('/orders/ordersShow', rawData).then(data => {
         console.log(`%c <<< Response(/rest/orders/ordersShow)⤵ `, 'background-color: #E0455D; color: white; font-size: 14px; font-weight: bold;', data)
         return data

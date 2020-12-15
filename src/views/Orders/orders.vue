@@ -5,27 +5,7 @@
       <el-button v-show="buttonsShowUser.new" type="primary" icon="el-icon-plus" @click.prevent="showForm('new')">{{$t('__new')}}</el-button>
       <search-button :options="sortable.orderByList" :originOrderBy="sortable.orderBy" :originOrderByValue="sortable.orderByValue" @search="search" @reOrder="reOrder">
       <el-tooltip slot="body" effect="light" :content="$t('__filter')" placement="top-start">
-      <el-popover
-        placement="top"
-        v-model="searchContent.searchShowMore">
-        <el-form-item :label="$t('__startDate')">
-          <el-date-picker
-            v-model="searchContent.StartDate"
-            type="date"
-            :placeholder="$t('__plzChoice')+$t('__startDate')"
-            value-format="yyyy-MM-dd">
-          </el-date-picker>
-        </el-form-item>
-        <el-form-item :label="$t('__endDate')">
-          <el-date-picker
-            v-model="searchContent.EndDate"
-            type="date"
-            :placeholder="$t('__plzChoice')+$t('__endDate')"
-            value-format="yyyy-MM-dd">
-          </el-date-picker>
-        </el-form-item>
-        <el-button class="el-icon-s-operation" slot="reference"></el-button>
-      </el-popover>
+        <el-button @click.prevent="dialogShowSearchContent = true">{{$t('__filter')}}</el-button>
       </el-tooltip>
       </search-button>
     </el-button-group>
@@ -133,21 +113,27 @@
       :signOffList="signOffList"
       :signOffChoice="signOffChoice"
       @finish="signOffFinish"
-      @cancel="signOffCancel"
-    ></sign-off-dialog>
+      @cancel="signOffCancel"></sign-off-dialog>
+    <!-- 進階查詢選項 -->
+    <orders-search-content
+      :dialogShow="dialogShowSearchContent"
+      :fromContent="searchContent"
+      @dialog-save="dialogShowSearchContentSave"></orders-search-content>
   </el-form>
 </template>
 
 <script>
 import searchButton from '@/components/searchButton'
 import signOffDialog from './components/signOffDialog'
+import ordersSearchContent from './components/ordersSearchContent'
 import { formatMoney, formatDate } from '@/setup/format.js'
 
 export default {
   name: 'Orders',
   components: {
     searchButton,
-    signOffDialog
+    signOffDialog,
+    ordersSearchContent
   },
   data () {
     return {
@@ -155,7 +141,10 @@ export default {
       order: {},
       searchContent: { // 搜尋
         searchKeyWord: '',
-        searchShowMore: false,
+        OrdersType: [],
+        StatusType: [],
+        selectedOrdersType: [],
+        selectedStatusType: [],
         StartDate: new Date(),
         EndDate: new Date()
       },
@@ -181,7 +170,9 @@ export default {
       // 簽核
       dialogShowSignOff: false,
       signOffList: [],
-      signOffChoice: 0
+      signOffChoice: 0,
+      // 查詢區塊
+      dialogShowSearchContent: false
     }
   },
   computed: {
@@ -247,7 +238,22 @@ export default {
     // 讀入系統清單
     preLoading: async function () {
       // 顯示專用
-      this.search('')
+      let response = await this.$api.orders.ordersShowGroup()
+      let filterSettings = response.data.result
+
+      // 帶入數值
+      this.searchContent.OrdersType = filterSettings.OrdersType
+      this.searchContent.StatusType = filterSettings.StatusType
+
+      // 預設全選
+      this.searchContent.OrdersType.forEach(item => {
+        this.searchContent.selectedOrdersType.push(item.Prefix)
+      })
+      this.searchContent.StatusType.forEach(item => {
+        this.searchContent.selectedStatusType.push(item.Status)
+      })
+
+      this.search()
     },
     // 使用者權限
     userPermission: async function () {
@@ -257,6 +263,7 @@ export default {
       this.buttonsShowUser.save = progPermission.fun2
       this.buttonsShowUser.delete = progPermission.fun3
     },
+    // 點選訂單編號
     handleClick: async function (row, column, event) {
       // 取得可以用的選單
       let responseRow = await this.$api.orders.getObject({ type: 'orderHead', ID: row.ID })
@@ -298,19 +305,42 @@ export default {
         }
       })
     },
+    // 關閉進階搜尋
+    dialogShowSearchContentSave: function (fromContent) {
+      this.dialogShowSearchContent = false
+      this.search()
+    },
     // 搜尋
     search: async function (value) {
-      this.searchContent.searchKeyWord = value
+      if (value !== undefined) {
+        this.searchContent.searchKeyWord = value
+      }
       let response2 = await this.$api.orders.ordersShow({
-        keyword: this.searchContent.searchKeyWord,
-        StartDate: this.searchContent.StartDate,
-        EndDate: this.searchContent.EndDate,
+        searchContent: JSON.stringify(this.searchContent),
         ID: this.$store.state.userID })
       this.originData = response2.data.result
+
+      // reset
+      this.searchContent.ordersType = []
+      this.searchContent.selectedOrdersType = []
+
+      // 重構cer1,cer2清單
       this.originData.forEach(item => {
         if (item.Certificate1List) { item.Certificate1List = JSON.parse(item.Certificate1List) }
         if (item.Certificate2List) { item.Certificate2List = JSON.parse(item.Certificate2List) }
         if (item.InvoiceList) { item.InvoiceList = JSON.parse(item.InvoiceList) }
+
+        // 篩選單據類別
+        let findPrefix = this.searchContent.ordersType.find(ordersType => { return ordersType.Prefix === item.Prefix })
+        if (findPrefix === undefined) {
+          this.searchContent.ordersType.push({
+            Prefix: item.Prefix,
+            Qty: 1
+          })
+          this.searchContent.selectedOrdersType.push(item.Prefix)
+        } else {
+          findPrefix.Qty += 1
+        }
       })
     },
     // 排序相關

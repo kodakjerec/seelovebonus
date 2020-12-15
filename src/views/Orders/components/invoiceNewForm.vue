@@ -37,7 +37,7 @@
         <el-col :span="10">
           <el-input v-model="form.InvoiceID" autocomplete="off" :disabled="disableForm.InvoiceID"></el-input>
         </el-col>
-        <el-col :span="14">
+        <el-col :span="14" v-show="form.InvoiceKind === '6'">
           <el-form-item :label="$t('__randomCode')">
             <el-input v-model="form.RandomCode" autocomplete="off" :disabled="disableForm.RandomCode"></el-input>
           </el-form-item>
@@ -47,10 +47,14 @@
           <el-input v-model="form.Title" autocomplete="off" maxlength="40" show-word-limit></el-input>
       </el-form-item>
       <el-form-item :label="$t('__uniformNumber')">
+        <el-col :span="10">
           <el-input v-model="form.UniformNumber" autocomplete="off" maxlength="8" show-word-limit></el-input>
-      </el-form-item>
-      <el-form-item :label="$t('__carrierNumber')">
-          <el-input v-model="form.CarrierNumber" autocomplete="off" maxlength="64" show-word-limit></el-input>
+        </el-col>
+        <el-col :span="14">
+          <el-form-item :label="$t('__carrierNumber')">
+            <el-input v-model="form.CarrierNumber" autocomplete="off" maxlength="64" show-word-limit></el-input>
+          </el-form-item>
+        </el-col>
       </el-form-item>
       <el-form-item :label="$t('__received')+$t('__operator')" prop="CreateID">
         <el-col :span="6">
@@ -80,11 +84,11 @@
       </el-form-item>
       <el-form-item>
         <el-collapse v-model="activeNames">
-          <el-collapse-item :title="$t('__invoice')+$t('__detail')" name="1">
+          <!-- <el-collapse-item :title="$t('__invoice')+$t('__detail')" name="1">
             <template slot="title">
               <h2>{{$t('__invoice')+$t('__detail')}}<i class="el-icon-circle-plus" v-show="!activeNames.includes('1')"></i></h2>
             </template>
-          </el-collapse-item>
+          </el-collapse-item> -->
           <el-collapse-item :title="$t('__binding')+$t('__collectionRecords')" name="2">
             <template slot="title">
               <h2>{{$t('__binding')+$t('__collectionRecords')}}<i class="el-icon-circle-plus" v-show="!activeNames.includes('2')"></i></h2>
@@ -163,7 +167,7 @@ export default {
         UniformNumber: '',
         Amount: null,
         ReceivedDate: new Date(),
-        InvoiceKind: '6',
+        InvoiceKind: '1',
         Tax: '1',
         CarrierNumber: null,
         Memo: null,
@@ -177,7 +181,7 @@ export default {
       rules: {
         InvoiceKind: [{ required: true, message: this.$t('__pleaseInput'), trigger: 'blur' }],
         InvoiceDate: [{ required: true, message: this.$t('__pleaseInput'), trigger: 'blur' }],
-        InvoiceID: [{ trigger: 'blur', validator: validate.validateInvoiceID }],
+        InvoiceID: [{ required: true, trigger: 'blur', validator: validate.validateInvoiceID }],
         CreateID: [{ required: true, message: this.$t('__pleaseInput'), trigger: 'blur' }]
       },
       // 系統目前狀態權限
