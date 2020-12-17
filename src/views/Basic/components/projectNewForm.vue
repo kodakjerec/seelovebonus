@@ -82,6 +82,22 @@ export default {
     buttonsShowUser: { type: Object }
   },
   data () {
+    let myValidate = async (rule, value, callback) => {
+      // 新增時才檢驗
+      if (this.dialogType !== 'new') {
+        callback()
+        return
+      }
+
+      // 1.驗證可用性
+      let checkValidate = await validate.validateProjectID(rule, value, callback)
+      if (checkValidate !== '') {
+        callback(checkValidate)
+        return
+      }
+
+      callback()
+    }
     return {
       form: {
         ID: '',
@@ -93,7 +109,7 @@ export default {
         Prefix: ''
       },
       rules: {
-        ID: [{ required: true, trigger: 'blur', validator: validate.validateProjectID }],
+        ID: [{ required: true, trigger: 'blur', validator: myValidate }],
         Name: [{ required: true, message: this.$t('__pleaseInput'), trigger: 'blur' }],
         StartDate: [{ required: true, message: this.$t('__pleaseInput'), trigger: 'blur' }],
         EndDate: [{ required: true, message: this.$t('__pleaseInput'), trigger: 'blur' }],

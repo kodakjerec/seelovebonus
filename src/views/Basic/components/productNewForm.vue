@@ -120,6 +120,22 @@ export default {
     buttonsShowUser: { type: Object }
   },
   data () {
+    let myValidate = async (rule, value, callback) => {
+      // 新增時才檢驗
+      if (this.dialogType !== 'new') {
+        callback()
+        return
+      }
+
+      // 1.驗證可用性
+      let checkValidate = await validate.validateProductID(rule, value, callback)
+      if (checkValidate !== '') {
+        callback(checkValidate)
+        return
+      }
+
+      callback()
+    }
     return {
       form: {
         ID: '',
@@ -138,7 +154,7 @@ export default {
         Inventory: 0
       },
       rules: {
-        ID: [{ required: true, trigger: 'blur', validator: validate.validateProductID }],
+        ID: [{ required: true, trigger: 'blur', validator: myValidate }],
         Name: [{ required: true, message: this.$t('__pleaseInput'), trigger: 'blur' }],
         AccountingID: [{ required: true, message: this.$t('__pleaseInput'), trigger: 'blur' }],
         Unit: [{ required: true, message: this.$t('__pleaseInput'), trigger: 'blur' }]
