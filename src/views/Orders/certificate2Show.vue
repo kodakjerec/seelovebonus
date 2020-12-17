@@ -75,6 +75,11 @@ export default {
           width: 10
         },
         {
+          header: this.$t('__chanyun') + this.$t('__landCertificate'),
+          key: 'chanyunCer',
+          width: 10
+        },
+        {
           header: this.$t('__printCount'),
           key: 'PrintCount',
           width: 10

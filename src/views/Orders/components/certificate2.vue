@@ -21,6 +21,10 @@
             :label="$t('__certificate2')">
           </el-table-column>
           <el-table-column
+            prop="chanyunCer"
+            :label="$t('__chanyun') + $t('__landCertificate')">
+          </el-table-column>
+          <el-table-column
             prop="PrintCount"
             :label="$t('__printCount')">
           </el-table-column>
@@ -93,7 +97,7 @@ export default {
       }
     },
     preLoading: async function () {
-      let responseRecords = await this.$api.orders.getObject({ type: 'certificate2Show', ID: this.orderID })
+      let responseRecords = await this.$api.orders.certificate2Show({ keyword: this.orderID })
       this.certificate2Show = responseRecords.data.result
       if (this.certificate2Show && this.certificate2Show.length > 0) {
         this.activeName = '1'

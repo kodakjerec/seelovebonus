@@ -93,7 +93,7 @@ export default {
       }
     },
     preLoading: async function () {
-      let responseRecords = await this.$api.orders.getObject({ type: 'certificate1Show', ID: this.orderID })
+      let responseRecords = await this.$api.orders.certificate1Show({ keyword: this.orderID })
       this.certificate1Show = responseRecords.data.result
       if (this.certificate1Show && this.certificate1Show.length > 0) {
         this.activeName = '1'

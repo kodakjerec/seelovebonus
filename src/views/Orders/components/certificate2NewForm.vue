@@ -5,7 +5,12 @@
           <el-input v-model="form.OrderID" :disabled="disableForm.OrderID"></el-input>
       </el-form-item>
       <el-form-item :label="$t('__certificate2')">
+        <el-col :span="10">
           <el-input v-model="form.Certificate2" :placeholder="$t('__afterSaveWillShow')" :disabled="disableForm.Certificate2"></el-input>
+        </el-col>
+        <el-col :span="14">
+          {{form.chanyunCer}}
+        </el-col>
       </el-form-item>
       <el-form-item :label="$t('__printCount')">
           <el-input-number v-model="form.PrintCount" :disabled="disableForm.PrintCount"></el-input-number>
@@ -129,6 +134,11 @@ export default {
             delete: 1,
             search: 1
           }
+        }
+
+        // 已經換狀禁止操作
+        if (this.form.chanyunCer !== '') {
+          this.buttonsShow.delete = 0
         }
         break
     }
