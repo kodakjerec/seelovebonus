@@ -15,10 +15,10 @@
       <method4 ref="method4" v-if="form.PaymentMethod === '4'" :form="form" :disableForm="disableForm" :ddlBankID="ddlBankID"></method4>
       <method5 ref="method5" v-if="form.PaymentMethod === '5'" :form="form" :disableForm="disableForm" :ddlBankID="ddlBankID"></method5>
       <el-form-item :label="$t('__memo')">
-          <el-input v-model="form.Memo" autocomplete="off" maxlength="200" show-word-limit></el-input>
+          <el-input v-model="form.Memo" maxlength="200" show-word-limit></el-input>
       </el-form-item>
       <el-form-item :label="$t('__invoice')+$t('__number')">
-          <el-input v-model="form.InvoiceID" autocomplete="off" maxlength="200" show-word-limit disabled></el-input>
+          <el-input v-model="form.InvoiceID" maxlength="200" show-word-limit disabled></el-input>
       </el-form-item>
       <el-form-item :label="$t('__received')+$t('__operator')" prop="ReceivedID">
         <el-select v-model="form.ReceivedID" value-key="value" :placeholder="$t('__plzChoice')" :disabled="disableForm.ReceivedID">

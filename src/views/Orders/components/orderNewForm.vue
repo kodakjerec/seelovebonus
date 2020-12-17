@@ -33,7 +33,7 @@
       </el-form-item>
       <!-- 備註 -->
       <el-form-item :label="$t('__memo')">
-          <el-input v-model="form.Memo" type="textarea" rows="2" autocomplete="off" maxlength="100" show-word-limit
+          <el-input v-model="form.Memo" type="textarea" rows="2" maxlength="100" show-word-limit
             :disabled="disableForm.OrderDate"></el-input>
       </el-form-item>
       <!-- 專案特殊功能 -->

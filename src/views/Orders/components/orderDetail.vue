@@ -11,7 +11,7 @@
     <el-table-column
       prop="Seq"
       :label="$t('__seq')"
-      width="60px">
+      width="50px">
     </el-table-column>
     <el-table-column
       prop="ProductID"
@@ -47,11 +47,11 @@
       width="200px">
       <template slot="header">
         {{$t('__price')}}
-        <el-button v-if="buttonsShowUser.new && !openEditMode" @click="checkOpenEditMode">{{$t('__openEditMode')}}</el-button>
+        <el-button size="mini" v-if="buttonsShowUser.new && !openEditMode" @click="checkOpenEditMode">{{$t('__openEditMode')}}</el-button>
       </template>
       <template slot-scope="scope">
         <el-input-number
-           v-if="openEditMode"
+          v-if="openEditMode"
           :min="0"
           v-model="scope.row[scope.column.property]"
           @change="(currentValue, oldValue)=>{priceChange(currentValue, oldValue, scope.row)}"></el-input-number>
@@ -63,9 +63,10 @@
     <el-table-column
       prop="Qty"
       :label="$t('__qty')"
-      width="200px">
+      width="145px">
       <template slot-scope="scope">
         <el-input-number
+          style="width:120px"
           :min="1"
           v-if="buttonsShowUser.new && scope.row.ItemType === 1"
           v-model="scope.row[scope.column.property]"
@@ -78,17 +79,17 @@
     <el-table-column
       prop="UnitName"
       :label="$t('__unit')"
-      width="60px">
+      width="50px">
     </el-table-column>
     <el-table-column
       prop="Amount"
       :label="$t('__amount')"
       :formatter="formatterMoneyUS"
-      width="200px">
+      width="100px">
     </el-table-column>
     <el-table-column
       align="right"
-      width="100px">
+      width="95px">
       <template slot="header">
         <el-button
           v-show="buttonsShowUser.new"

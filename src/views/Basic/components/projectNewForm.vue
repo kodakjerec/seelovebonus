@@ -3,16 +3,16 @@
     <el-form ref="form" :model="form" :rules="rules" label-width="10vw" label-position="right">
       <el-form-item :label="$t('__project')+$t('__id')" prop="ID">
         <el-col :span="10">
-          <el-input v-model="form.ID" autocomplete="off" :disabled="disableForm.ID" maxlength="20" show-word-limit></el-input>
+          <el-input v-model="form.ID" :disabled="disableForm.ID" maxlength="20" show-word-limit></el-input>
         </el-col>
         <el-col :span="14">
           <el-form-item :label="$t('__projectOrderPrefix')" prop="Prefix">
-            <el-input v-model="form.Prefix" autocomplete="off" :disabled="disableForm.ID" maxlength="20" show-word-limit></el-input>
+            <el-input v-model="form.Prefix" :disabled="disableForm.ID" maxlength="20" show-word-limit></el-input>
           </el-form-item>
         </el-col>
       </el-form-item>
       <el-form-item :label="$t('__project')+$t('__name')" prop="Name">
-          <el-input v-model="form.Name" autocomplete="off" maxlength="40" show-word-limit></el-input>
+          <el-input v-model="form.Name" maxlength="40" show-word-limit></el-input>
       </el-form-item>
       <el-form-item :label="$t('__startDate')" prop="StartDate">
         <el-col :span="10">
@@ -66,6 +66,7 @@
 </template>
 
 <script>
+import validate from '@/setup/validate.js'
 import projectDetail from './projectDetail'
 import { messageBoxYesNo } from '@/services/utils'
 
@@ -92,7 +93,7 @@ export default {
         Prefix: ''
       },
       rules: {
-        ID: [{ required: true, message: this.$t('__pleaseInput'), trigger: 'blur' }],
+        ID: [{ required: true, trigger: 'blur', validator: validate.validateProjectID }],
         Name: [{ required: true, message: this.$t('__pleaseInput'), trigger: 'blur' }],
         StartDate: [{ required: true, message: this.$t('__pleaseInput'), trigger: 'blur' }],
         EndDate: [{ required: true, message: this.$t('__pleaseInput'), trigger: 'blur' }],

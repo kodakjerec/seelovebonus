@@ -1,4 +1,6 @@
 import i18n from './setupLocale'
+import api from '@/services/api'
+
 const validate = {
   // 驗證台灣電話
   validatePhone: (rule, value, callback) => {
@@ -115,13 +117,21 @@ const validate = {
 
     callback()
   },
-  // 驗證身分證字號
-  validatePersonalID: (rule, value, callback) => {
+  // 驗證身分證字號(客戶 業務 共用)
+  validatePersonalID: async (rule, value, userType) => {
     value = value.toUpperCase()
     let regex = /^[A-Z]{1}[1-2]{1}[0-9]{8}$/
     if (!regex.test(value)) {
       return new Error(i18n.t('__pleaseInputPersonalID') + '1')
     }
+
+    // 2.驗證是否重複
+    let response = await api.basic.checkValidate({ type: userType, ID: value })
+    let rows = response.data.result
+    if (rows && rows.length > 0) {
+      return new Error(i18n.t('__id') + ' ' + value + i18n.t('__valueUsed'))
+    }
+
     // 驗證正確性
     // 宣告一個陣列放入A~Z相對應數字的順序
     let Esum = null
@@ -155,19 +165,35 @@ const validate = {
     return ''
   },
   // 驗證護照
-  validatePassport: (rule, value, callback) => {
+  validatePassport: async (rule, value, userType) => {
     let regex = /^.{7,}$/
     if (!regex.test(value)) {
       return new Error(i18n.t('__pleaseInputLength') + '7')
     }
+
+    // 2.驗證是否重複
+    let response = await api.basic.checkValidate({ type: userType, ID: value })
+    let rows = response.data.result
+    if (rows && rows.length > 0) {
+      return new Error(i18n.t('__id') + ' ' + value + i18n.t('__valueUsed'))
+    }
+
     return ''
   },
   // 驗證發票號碼
-  validateInvoiceID: (rule, value, callback) => {
-    let regex = /^[a-zA-Z]{2}[-]?[0-9]{8}$/
+  validateInvoiceID: async (rule, value, callback) => {
+    let regex = /^[a-zA-Z]{2}[0-9]{8}$/
     if (!regex.test(value)) {
       callback(new Error(i18n.t('__pleaseInputInvoiceID')))
     }
+
+    // 2.驗證是否重複
+    let response = await api.basic.checkValidate({ type: 'invoice', ID: value })
+    let rows = response.data.result
+    if (rows && rows.length > 0) {
+      callback(new Error(i18n.t('__id') + ' ' + value + i18n.t('__valueUsed')))
+    }
+
     callback()
   },
   // 驗證使用者帳號密碼
@@ -184,6 +210,32 @@ const validate = {
       callback(new Error(i18n.t('__pleaseInputNumber')))
     }
     callback()
+  },
+  // 驗證商品
+  validateProductID: async (rule, value, callback) => {
+    if (!value || value === null) {
+      callback(new Error(i18n.t('__pleaseInput')))
+    }
+
+    // 2.驗證是否重複
+    let response = await api.basic.checkValidate({ type: 'product', ID: value })
+    let rows = response.data.result
+    if (rows && rows.length > 0) {
+      callback(new Error(i18n.t('__id') + ' ' + value + i18n.t('__valueUsed')))
+    }
+  },
+  // 驗證專案
+  validateProjectID: async (rule, value, callback) => {
+    if (!value || value === null) {
+      callback(new Error(i18n.t('__pleaseInput')))
+    }
+
+    // 2.驗證是否重複
+    let response = await api.basic.checkValidate({ type: 'project', ID: value })
+    let rows = response.data.result
+    if (rows && rows.length > 0) {
+      callback(new Error(i18n.t('__id') + ' ' + value + i18n.t('__valueUsed')))
+    }
   }
 }
 

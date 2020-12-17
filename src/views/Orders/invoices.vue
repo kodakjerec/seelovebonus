@@ -15,6 +15,9 @@
       <el-table-column
         prop="InvoiceID"
         :label="$t('__invoice')+$t('__id')">
+        <template slot-scope="scope">
+          {{scope.row[scope.column.property] | VMask('AA-########')}}
+        </template>
       </el-table-column>
       <el-table-column
         prop="OrderID"

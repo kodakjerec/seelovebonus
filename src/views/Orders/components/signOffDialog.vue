@@ -6,7 +6,7 @@
         {{item.OrderID}}
       </el-tag>
       <el-form-item :label="$t('__signOff') + $t('__memo')">
-          <el-input v-model="signOffReason" type="textarea" rows="2" autocomplete="off" maxlength="100" show-word-limit></el-input>
+          <el-input v-model="signOffReason" type="textarea" rows="2" maxlength="100" show-word-limit></el-input>
       </el-form-item>
     </el-form>
     <div slot="footer" class="dialog-footer">

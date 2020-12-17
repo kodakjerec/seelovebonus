@@ -2,10 +2,10 @@
   <el-dialog :title="myTitle" :visible="dialogShow" center width="80vw" @close="cancel">
     <el-form ref="form" :model="form" :rules="rules" label-width="10vw" label-position="right">
       <el-form-item :label="$t('__product')+$t('__id')" prop="ID">
-        <el-input v-model="form.ID" autocomplete="off" :disabled="disableForm.ID" maxlength="20" show-word-limit></el-input>
+        <el-input v-model="form.ID" :disabled="disableForm.ID" maxlength="20" show-word-limit></el-input>
       </el-form-item>
       <el-form-item :label="$t('__product')+$t('__name')" prop="Name">
-          <el-input v-model="form.Name" autocomplete="off" maxlength="40" show-word-limit></el-input>
+          <el-input v-model="form.Name" maxlength="40" show-word-limit></el-input>
       </el-form-item>
       <el-form-item :label="$t('__accounting')+$t('__name')" prop="AccountingID">
         <el-select v-model="form.AccountingID" filterable value-key="value" :placeholder="$t('__plzChoice')" @change="ddlAccountingChange" >
@@ -104,6 +104,7 @@
 </template>
 
 <script>
+import validate from '@/setup/validate.js'
 import bom from './productBOM'
 import { messageBoxYesNo } from '@/services/utils'
 
@@ -137,7 +138,7 @@ export default {
         Inventory: 0
       },
       rules: {
-        ID: [{ required: true, message: this.$t('__pleaseInput'), trigger: 'blur' }],
+        ID: [{ required: true, trigger: 'blur', validator: validate.validateProductID }],
         Name: [{ required: true, message: this.$t('__pleaseInput'), trigger: 'blur' }],
         AccountingID: [{ required: true, message: this.$t('__pleaseInput'), trigger: 'blur' }],
         Unit: [{ required: true, message: this.$t('__pleaseInput'), trigger: 'blur' }]

@@ -12,32 +12,47 @@ export const seeloveNodeServer = {
   portReportingServices: '3002' // reporting services server
 }
 
+// 不要有LoadingMask的url
+const urlNoMask = ['/basic/checkValidate']
+
 // 一般api使用
 export const post = async (url, reqData = {}) => {
-  store.dispatch('increaseLoadingCounter')
+  // 檢查是否需要顯示LoadingMask
+  let showLoadingCounter = true
+  if (urlNoMask.find(item => { return item === url }) !== undefined) {
+    showLoadingCounter = false
+  }
+
+  if (showLoadingCounter) { store.dispatch('increaseLoadingCounter') }
   let combineURL = 'http://' + seeloveNodeServer.ip + ':' + seeloveNodeServer.port + url
   return req('post', combineURL, reqData)
     .then(response => {
-      store.dispatch('decreaseLoadingCounter')
+      if (showLoadingCounter) { store.dispatch('decreaseLoadingCounter') }
       return response
     })
     .catch(error => {
-      store.dispatch('decreaseLoadingCounter')
+      if (showLoadingCounter) { store.dispatch('decreaseLoadingCounter') }
       const { response } = error
       console.log(`%c 💩💩💩 API發生例外錯誤 💩💩💩${((response && response.status) ? `status code [${response.status}]` : '')}`, 'color: #BB2E29; font-size: 14px; font-weight: bold;')
       return Promise.reject(error)
     })
 }
 export const getFile = async (url, reqData = {}) => {
-  store.dispatch('increaseLoadingCounter')
+  // 檢查是否需要顯示LoadingMask
+  let showLoadingCounter = true
+  if (urlNoMask.find(item => { return item === url }) !== undefined) {
+    showLoadingCounter = false
+  }
+
+  if (showLoadingCounter) { store.dispatch('increaseLoadingCounter') }
   let combineURL = 'http://' + seeloveNodeServer.ip + ':' + seeloveNodeServer.port + url
   return req('getFile', combineURL, reqData)
     .then(response => {
-      store.dispatch('decreaseLoadingCounter')
+      if (showLoadingCounter) { store.dispatch('decreaseLoadingCounter') }
       return response
     })
     .catch(error => {
-      store.dispatch('decreaseLoadingCounter')
+      if (showLoadingCounter) { store.dispatch('decreaseLoadingCounter') }
       const { response } = error
       console.log(`%c 💩💩💩 API發生例外錯誤 💩💩💩${((response && response.status) ? `status code [${response.status}]` : '')}`, 'color: #BB2E29; font-size: 14px; font-weight: bold;')
       return Promise.reject(error)

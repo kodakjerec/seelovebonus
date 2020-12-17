@@ -2,10 +2,10 @@
   <el-dialog :title="myTitle" :visible="dialogShow" center @close="cancel" append-to-body>
     <el-form ref="form" :model="form" :rules="rules" label-width="10vw">
       <el-form-item :label="$t('__userId')" prop="UserID">
-        <el-input v-model="form.UserID" autocomplete="off" disabled maxlength="20" show-word-limit></el-input>
+        <el-input v-model="form.UserID" disabled maxlength="20" show-word-limit></el-input>
       </el-form-item>
       <el-form-item :label="$t('__pwd')" prop="Password">
-        <el-input v-model="form.Password" autocomplete="off" maxlength="20" show-word-limit></el-input>
+        <el-input v-model="form.Password" maxlength="20" show-word-limit></el-input>
       </el-form-item>
     </el-form>
     <div slot="footer" class="dialog-footer">

@@ -2,15 +2,15 @@
   <el-dialog :title="myTitle" :visible="dialogShow" center width="80vw" @close="cancel">
     <el-form ref="form" :model="form" :rules="rules" label-width="10vw" label-position="right">
       <el-form-item :label="$t('__company')+$t('__id')" prop="ID">
-        <el-input v-model="form.ID" autocomplete="off" :placeholder="$t('__palceholderCompanyID')" :disabled="disableForm.ID" maxlength="20" show-word-limit></el-input>
+        <el-input v-model="form.ID" :placeholder="$t('__palceholderCompanyID')" :disabled="disableForm.ID" maxlength="20" show-word-limit></el-input>
       </el-form-item>
       <el-form-item :label="$t('__company')+$t('__name')" prop="Name">
         <el-col :span="10">
-          <el-input v-model="form.Name" autocomplete="off" maxlength="40" show-word-limit></el-input>
+          <el-input v-model="form.Name" maxlength="40" show-word-limit></el-input>
         </el-col>
         <el-col :span="14">
           <el-form-item :label="$t('__nickname')">
-            <el-input v-model="form.Nickname" autocomplete="off" maxlength="40" show-word-limit></el-input>
+            <el-input v-model="form.Nickname" maxlength="40" show-word-limit></el-input>
           </el-form-item>
         </el-col>
       </el-form-item>
@@ -44,23 +44,23 @@
       </el-form-item>
       <el-form-item :label="$t('__principal')">
         <el-col :span="10">
-          <el-input v-model="form.Principal" autocomplete="off" maxlength="40" show-word-limit></el-input>
+          <el-input v-model="form.Principal" maxlength="40" show-word-limit></el-input>
         </el-col>
         <el-col :span="14">
           <el-form-item :label="$t('__uniformNumber')">
-            <el-input v-model="form.UniformNumber" autocomplete="off"></el-input>
+            <el-input v-model="form.UniformNumber"></el-input>
           </el-form-item>
         </el-col>
       </el-form-item>
       <el-form-item :label="$t('__tel')+'1'">
         <el-col :span="10">
           <el-form-item prop="Tel1">
-            <el-input v-model="form.Tel1" autocomplete="off"></el-input>
+            <el-input v-model="form.Tel1"></el-input>
           </el-form-item>
         </el-col>
         <el-col :span="14">
           <el-form-item :label="$t('__tel')+'2'" prop="Tel2">
-            <el-input v-model="form.Tel2" autocomplete="off"></el-input>
+            <el-input v-model="form.Tel2"></el-input>
           </el-form-item>
         </el-col>
       </el-form-item>
@@ -117,7 +117,7 @@
         </el-col>
       </el-form-item>
       <el-form-item :label="$t('__address')">
-        <el-input v-model="form.Address" autocomplete="off" maxlength="100" show-word-limit></el-input>
+        <el-input v-model="form.Address" maxlength="100" show-word-limit></el-input>
       </el-form-item>
       <el-form-item :label="$t('__status')">
         <el-select v-model="form.Status" value-key="value" :placeholder="$t('__plzChoice')">

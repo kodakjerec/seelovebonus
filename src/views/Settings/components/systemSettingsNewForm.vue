@@ -26,10 +26,10 @@
         </el-select>
       </el-form-item>
       <el-form-item :label="$t('__systemSettingsID')" prop="ID">
-        <el-input v-model="form.ID" autocomplete="off" :disabled="disableForm.ID" maxlength="20" show-word-limit></el-input>
+        <el-input v-model="form.ID" :disabled="disableForm.ID" maxlength="20" show-word-limit></el-input>
       </el-form-item>
       <el-form-item :label="$t('__systemSettingsValue')" prop="Value">
-        <el-input v-model="form.Value" autocomplete="off" maxlength="20" show-word-limit></el-input>
+        <el-input v-model="form.Value" maxlength="20" show-word-limit></el-input>
       </el-form-item>
       <el-form-item :label="$t('__systemSettingsLanguage')" prop="Language">
         <el-select v-model="form.Language" :disabled="disableForm.Language" :placeholder="$t('__plzChoice')">
@@ -41,7 +41,7 @@
         <br/>{{$t('__allSettingsWillNewTogether')}}
       </el-form-item>
       <el-form-item :label="$t('__memo')">
-          <el-input type="textarea" v-model="form.Memo" autocomplete="off" maxlength="200" show-word-limit></el-input>
+          <el-input type="textarea" v-model="form.Memo" maxlength="200" show-word-limit></el-input>
       </el-form-item>
     </el-form>
     <div slot="footer" class="dialog-footer">

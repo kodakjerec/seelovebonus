@@ -12,12 +12,12 @@
         </el-col>
         <el-col :span="12">
           <el-form-item prop="ID">
-            <el-input v-model="form.ID" autocomplete="off" maxlength="20" show-word-limit :disabled="disableForm.ID"></el-input>
+            <el-input v-model="form.ID" maxlength="20" show-word-limit :disabled="disableForm.ID"></el-input>
           </el-form-item>
         </el-col>
       </el-form-item>
       <el-form-item :label="$t('__employee')+$t('__name')" prop="Name">
-          <el-input v-model="form.Name" autocomplete="off" maxlength="40" show-word-limit></el-input>
+          <el-input v-model="form.Name" maxlength="40" show-word-limit></el-input>
       </el-form-item>
       <el-form-item :label="$t('__grade')" prop="Grade">
         <el-select v-model="form.Grade" value-key="value" :placeholder="$t('__plzChoice')">
@@ -72,12 +72,12 @@
       <el-form-item :label="$t('__home')+$t('__tel')">
         <el-col :span="10">
           <el-form-item prop="TelHome">
-            <el-input v-model="form.TelHome" autocomplete="off"></el-input>
+            <el-input v-model="form.TelHome"></el-input>
           </el-form-item>
         </el-col>
         <el-col :span="14">
           <el-form-item :label="$t('__mobile')+$t('__tel')" prop="TelMobile">
-            <el-input v-model="form.TelMobile" autocomplete="off"></el-input>
+            <el-input v-model="form.TelMobile"></el-input>
           </el-form-item>
         </el-col>
       </el-form-item>
@@ -112,10 +112,10 @@
         </el-col>
       </el-form-item>
       <el-form-item :label="$t('__address')">
-        <el-input v-model="form.Address" autocomplete="off" maxlength="100" show-word-limit></el-input>
+        <el-input v-model="form.Address" maxlength="100" show-word-limit></el-input>
       </el-form-item>
       <el-form-item :label="$t('__eMail')">
-        <el-input v-model="form.EMail" autocomplete="off" maxlength="60" show-word-limit></el-input>
+        <el-input v-model="form.EMail" maxlength="60" show-word-limit></el-input>
       </el-form-item>
       <el-form-item :label="$t('__status')">
         <el-select v-model="form.Status" value-key="value" :placeholder="$t('__plzChoice')">
@@ -160,23 +160,16 @@ export default {
       let checkValidate = null
       switch (idType) {
         case '1':
-          checkValidate = validate.validatePersonalID(rule, value, callback)
+          checkValidate = validate.validatePersonalID(rule, value, 'employee')
           break
         default:
-          checkValidate = validate.validatePassport(rule, value, callback)
+          checkValidate = validate.validatePassport(rule, value, 'employee')
       }
       if (checkValidate !== '') {
         callback(checkValidate)
         return
       }
 
-      // 2.驗證是否重複
-      let response = await this.$api.basic.checkValidate({ type: 'employee', ID: this.form.ID })
-      let rows = response.data.result
-      if (rows && rows.length > 0) {
-        callback(new Error(this.$t('__id') + this.$t('__valueUsed')))
-        return
-      }
       callback()
     }
     return {

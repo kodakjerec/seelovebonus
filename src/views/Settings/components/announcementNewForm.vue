@@ -24,10 +24,10 @@
         </el-col>
       </el-form-item>
       <el-form-item :label="$t('__caption')" prop="Caption">
-        <el-input v-model="form.Caption" autocomplete="off" maxlength="40" show-word-limit></el-input>
+        <el-input v-model="form.Caption" maxlength="40" show-word-limit></el-input>
       </el-form-item>
       <el-form-item :label="$t('__content')" prop="Text">
-        <el-input type="textarea" rows="10" v-model="form.Text" autocomplete="off" maxlength="200" show-word-limit></el-input>
+        <el-input type="textarea" rows="10" v-model="form.Text" maxlength="200" show-word-limit></el-input>
       </el-form-item>
     </el-form>
     <div slot="footer" class="dialog-footer">

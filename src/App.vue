@@ -17,7 +17,7 @@ export default {
     appHeader
   },
   computed: {
-    ...mapState(['isEnableLoadingMask'])
+    ...mapState(['isEnableLoadingMask']) // 監控隨時更新的系統變數,用mapState
   }
 }
 </script>

@@ -35,6 +35,7 @@ export default new Vuex.Store({
     },
     REMOVE_LOADING_COUNTER (state) {
       state.loadingCounter -= 1
+      if (state.loadingCounter < 0) { state.loadingCounter = 0 }
     },
     ENABLE_LOADING_MASK (state, isEnable) {
       state.isEnableLoadingMask = isEnable

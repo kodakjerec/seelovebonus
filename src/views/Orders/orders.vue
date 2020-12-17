@@ -91,7 +91,7 @@
         :label="$t('__invoice')">
         <template slot-scope="scope">
           <div v-for="item in scope.row.InvoiceList" :key="item.InvoiceID">
-            {{item.InvoiceID}}
+            {{item.InvoiceID | VMask('AA-########')}}
           </div>
         </template>
       </el-table-column>

@@ -2,7 +2,7 @@
   <el-dialog :title="myTitle" :visible="dialogShow" center width="80vw" @close="cancel">
     <el-form ref="invoiceForm" :model="form" :rules="rules" label-width="10vw" label-position="right">
       <el-form-item :label="$t('__orderID')">
-          <el-input v-model="form.OrderID" autocomplete="off" disabled></el-input>
+          <el-input v-model="form.OrderID" disabled></el-input>
       </el-form-item>
       <el-form-item :label="$t('__invoice')+$t('__kind')" prop="InvoiceKind">
         <el-col :span="6">
@@ -35,24 +35,24 @@
       </el-form-item>
       <el-form-item :label="$t('__invoice')+$t('__number')" prop="InvoiceID">
         <el-col :span="10">
-          <el-input v-model="form.InvoiceID" autocomplete="off" :disabled="disableForm.InvoiceID"></el-input>
+          <el-input v-mask="'AA########'" v-model="form.InvoiceID" :disabled="disableForm.InvoiceID"></el-input>
         </el-col>
         <el-col :span="14" v-show="form.InvoiceKind === '6'">
           <el-form-item :label="$t('__randomCode')">
-            <el-input v-model="form.RandomCode" autocomplete="off" :disabled="disableForm.RandomCode"></el-input>
+            <el-input v-model="form.RandomCode" :disabled="disableForm.RandomCode"></el-input>
           </el-form-item>
         </el-col>
       </el-form-item>
       <el-form-item :label="$t('__title')">
-          <el-input v-model="form.Title" autocomplete="off" maxlength="40" show-word-limit></el-input>
+          <el-input v-model="form.Title" maxlength="40" show-word-limit></el-input>
       </el-form-item>
       <el-form-item :label="$t('__uniformNumber')">
         <el-col :span="10">
-          <el-input v-model="form.UniformNumber" autocomplete="off" maxlength="8" show-word-limit></el-input>
+          <el-input v-model="form.UniformNumber" maxlength="8" show-word-limit></el-input>
         </el-col>
         <el-col :span="14">
           <el-form-item :label="$t('__carrierNumber')">
-            <el-input v-model="form.CarrierNumber" autocomplete="off" maxlength="64" show-word-limit></el-input>
+            <el-input v-model="form.CarrierNumber" maxlength="64" show-word-limit></el-input>
           </el-form-item>
         </el-col>
       </el-form-item>
@@ -77,10 +77,10 @@
         </el-col>
       </el-form-item>
       <el-form-item :label="$t('__memo')">
-          <el-input v-model="form.Memo" autocomplete="off" maxlength="200" show-word-limit></el-input>
+          <el-input v-model="form.Memo" maxlength="200" show-word-limit></el-input>
       </el-form-item>
       <el-form-item :label="$t('__amount')">
-          <el-input v-model="form.Amount" autocomplete="off" disabled></el-input>
+          <el-input v-model="form.Amount" disabled></el-input>
       </el-form-item>
       <el-form-item>
         <el-collapse v-model="activeNames">
@@ -171,7 +171,6 @@ export default {
         Tax: '1',
         CarrierNumber: null,
         Memo: null,
-        InvoiceIDFirst: '',
         RandomCode: null,
         CreateID: this.$store.state.userID,
         Status: '2',
@@ -322,6 +321,9 @@ export default {
     },
     // 存檔
     save: async function (type) {
+      // 發票代號要移除"-"
+      this.form.InvoiceID = this.form.InvoiceID.replace('-', '')
+
       let isSuccess = false
       switch (type) {
         case 'new':
@@ -364,10 +366,6 @@ export default {
             save: 0,
             delete: 0,
             search: 0
-          }
-          for (let i = 0; i < this.multipleSelection.length; i++) {
-            let row = this.multipleSelection[i]
-            this.$api.orders.invoiceFunctions({ type: 'invoiceBindRecords', OrderID: row.OrderID, InvoiceID: '', Seq: row.Seq })
           }
           this.save('delete')
           break

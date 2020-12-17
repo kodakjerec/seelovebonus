@@ -10,7 +10,7 @@
       </el-form-item>
       <!-- 單一新增 -->
       <el-form-item :label="$t('__storageAddress')+$t('__id')" prop="ID">
-        <el-input v-model="form.ID" autocomplete="off" :disabled="disableForm.ID" maxlength="20" show-word-limit @change="batchInsertChange"></el-input>
+        <el-input v-model="form.ID" :disabled="disableForm.ID" maxlength="20" show-word-limit @change="batchInsertChange"></el-input>
       </el-form-item>
       <!-- 批次新增 -->
       <template v-if="dialogType === 'new' && batchInsert === true">
@@ -133,7 +133,7 @@
         </el-select>
       </el-form-item>
       <el-form-item :label="$t('__memo')">
-          <el-input v-model="form.Memo" autocomplete="off" maxlength="200" show-word-limit></el-input>
+          <el-input v-model="form.Memo" maxlength="200" show-word-limit></el-input>
       </el-form-item>
     </el-form>
     <div slot="footer" class="dialog-footer">

@@ -42,7 +42,7 @@ export default {
     }
   },
   computed: {
-    ...mapState(['isLogin', 'userName', 'menuList'])
+    ...mapState(['isLogin', 'userName', 'menuList']) // 監控隨時更新的系統變數,用mapState
   },
   methods: {
     handleSelect: async function (key, keyPath) {
