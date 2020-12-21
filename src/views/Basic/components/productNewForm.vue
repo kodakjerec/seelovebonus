@@ -131,7 +131,6 @@ export default {
       let checkValidate = await validate.validateProductID(rule, value, callback)
       if (checkValidate !== '') {
         callback(checkValidate)
-        return
       }
 
       callback()
@@ -225,28 +224,21 @@ export default {
     },
     // 檢查輸入
     checkValidate: async function () {
-      let isSuccess = false
-      this.$refs['form'].validate(function (valid) { isSuccess = valid })
-      if (isSuccess) {
+      if (this.dialogType !== 'new') {
+        let isSuccess = false
+        isSuccess = await this.$refs['bom'].beforeSave()
+        if (!isSuccess) { return }
+      }
+      this.$refs['form'].validate((valid) => {
         switch (this.dialogType) {
           case 'new':
             this.save('new')
             break
           case 'edit':
-            let isSuccess = false
-
-            isSuccess = await this.$refs['bom'].beforeSave()
-
-            if (isSuccess) {
-              isSuccess = this.save(this.dialogType)
-            }
+            this.save(this.dialogType)
             break
         }
-      }
-
-      if (isSuccess) {
-        this.$emit('dialog-save')
-      }
+      })
     },
     // 取消
     cancel: function () {
@@ -302,7 +294,6 @@ export default {
             this.$alert(responseDelete.data.result[0].message, responseDelete.data.result[0].code)
             isSuccess = true
           } else {
-            this.$alert(responseDelete.data.result.message, responseDelete.data.result.code)
             isSuccess = false
           }
           break
@@ -313,7 +304,9 @@ export default {
         await this.$api.basic.productFunctionsUpdate({ form: this.switchProjectFunctions[index] })
       }
 
-      return isSuccess
+      if (isSuccess) {
+        this.$emit('dialog-save')
+      }
     },
     // 商品大類變更
     ddlCategory1Change: function () {

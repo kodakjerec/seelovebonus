@@ -320,27 +320,11 @@ export default {
         ID: this.$store.state.userID })
       this.originData = response2.data.result
 
-      // reset
-      this.searchContent.ordersType = []
-      this.searchContent.selectedOrdersType = []
-
       // 重構cer1,cer2清單
       this.originData.forEach(item => {
         if (item.Certificate1List) { item.Certificate1List = JSON.parse(item.Certificate1List) }
         if (item.Certificate2List) { item.Certificate2List = JSON.parse(item.Certificate2List) }
         if (item.InvoiceList) { item.InvoiceList = JSON.parse(item.InvoiceList) }
-
-        // 篩選單據類別
-        let findPrefix = this.searchContent.ordersType.find(ordersType => { return ordersType.Prefix === item.Prefix })
-        if (findPrefix === undefined) {
-          this.searchContent.ordersType.push({
-            Prefix: item.Prefix,
-            Qty: 1
-          })
-          this.searchContent.selectedOrdersType.push(item.Prefix)
-        } else {
-          findPrefix.Qty += 1
-        }
       })
     },
     // 排序相關

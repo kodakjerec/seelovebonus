@@ -222,7 +222,6 @@ export default {
             this.$alert(responseDelete.data.result[0].message, responseDelete.data.result[0].code)
             isSuccess = true
           } else {
-            this.$alert(responseDelete.data.result.message, responseDelete.data.result.code)
             isSuccess = false
           }
           break

@@ -26,9 +26,9 @@
           </el-form-item>
         </el-col>
       </el-form-item>
-      <el-form-item :label="$t('__refKind')" prop="Referrer">
+      <el-form-item :label="$t('__refKind')">
         <el-col :span="10">
-          <el-select v-model="form.refKind" value-key="value" :placeholder="$t('__plzChoice')" @change="ddlRefKindChange">
+          <el-select v-model="form.refKind" value-key="value" :placeholder="$t('__plzChoice')" @change="ddlRefKindChange" :disabled="true">
             <el-option v-for="item in ddlRefKind" :key="item.ID" :label="item.Value" :value="item.ID">
               <span style="float: left">{{ item.Value }}</span>
               <span style="float: right; color: #8492a6; font-size: 13px">{{ item.ID }}</span>
@@ -296,6 +296,9 @@ export default {
       case 'new':
         this.myTitle = this.$t('__new') + this.$t('__customer')
         this.disableForm.ID = false
+
+        // 鎖定為業務
+        this.form.refKind = '2'
         break
       case 'edit':
         this.myTitle = this.$t('__edit') + this.$t('__customer')
@@ -486,7 +489,6 @@ export default {
             this.$alert(responseDelete.data.result[0].message, responseDelete.data.result[0].code)
             isSuccess = true
           } else {
-            this.$alert(responseDelete.data.result.message, responseDelete.data.result.code)
             isSuccess = false
           }
           break

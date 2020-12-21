@@ -287,22 +287,24 @@ export default {
       }
     },
     // 檢查輸入
-    checkValidate: async function () {
-      let isSuccess = false
-      await this.$refs['invoiceForm'].validate((valid) => { isSuccess = valid })
-
+    checkValidate: function () {
       // 檢察收款紀錄, 必定要選取
       if (this.multipleSelection.length <= 0) {
-        isSuccess = false
+        return
       }
 
-      if (isSuccess) {
-        this.save(this.dialogType)
-        for (let i = 0; i < this.multipleSelection.length; i++) {
-          let row = this.multipleSelection[i]
-          this.$api.orders.invoiceFunctions({ type: 'invoiceBindRecords', OrderID: row.OrderID, InvoiceID: this.form.InvoiceID, Seq: row.Seq })
+      // 新增時要一筆筆紀錄綁定資訊
+      this.$refs['invoiceForm'].validate(async (valid) => {
+        if (valid) {
+          await this.save(this.dialogType)
+          for (let i = 0; i < this.multipleSelection.length; i++) {
+            let row = this.multipleSelection[i]
+            await this.$api.orders.invoiceFunctions({ type: 'invoiceBindRecords', OrderID: row.OrderID, InvoiceID: this.form.InvoiceID, Seq: row.Seq })
+          }
+
+          this.$emit('dialog-save')
         }
-      }
+      })
     },
     // 收款紀錄檢查是否能選擇
     checkSelectable: function (row) {
@@ -321,9 +323,6 @@ export default {
     },
     // 存檔
     save: async function (type) {
-      // 發票代號要移除"-"
-      this.form.InvoiceID = this.form.InvoiceID.replace('-', '')
-
       let isSuccess = false
       switch (type) {
         case 'new':
@@ -349,9 +348,7 @@ export default {
           break
       }
 
-      if (isSuccess) {
-        this.$emit('dialog-save')
-      }
+      return isSuccess
     },
     // 作廢發票
     delInvoice: async function () {
@@ -367,7 +364,9 @@ export default {
             delete: 0,
             search: 0
           }
-          this.save('delete')
+          await this.save('delete')
+
+          this.$emit('dialog-save')
           break
         case 'cancel':
           break

@@ -1,6 +1,6 @@
 <template>
   <el-form>
-    <el-collapse v-model="activeName" accordion>
+    <el-collapse v-if="isShow === 1 || this.certificate1Show.length > 0" v-model="activeName" accordion>
       <el-collapse-item name='1'>
         <template slot="title">
           <h2>{{$t('__certificate1')}}<i class="el-icon-circle-plus" v-show="activeName===''"></i></h2>
@@ -60,7 +60,8 @@ export default {
   props: {
     buttonsShow: { type: Object },
     buttonsShowUser: { type: Object },
-    orderID: { type: String }
+    orderID: { type: String },
+    isShow: { type: Number }
   },
   data () {
     return {

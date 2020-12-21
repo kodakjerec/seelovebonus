@@ -108,6 +108,7 @@ export default {
     },
     // 開啟表單
     showForm: function (eventType) {
+      this.invoiceHead = {}
       this.dialogType = eventType
       this.dialogShow = true
     },

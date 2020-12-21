@@ -160,10 +160,10 @@ export default {
       let checkValidate = null
       switch (idType) {
         case '1':
-          checkValidate = validate.validatePersonalID(rule, value, 'employee')
+          checkValidate = await validate.validatePersonalID(rule, value, 'employee')
           break
         default:
-          checkValidate = validate.validatePassport(rule, value, 'employee')
+          checkValidate = await validate.validatePassport(rule, value, 'employee')
       }
       if (checkValidate !== '') {
         callback(checkValidate)
@@ -346,7 +346,6 @@ export default {
             this.$alert(responseDelete.data.result[0].message, responseDelete.data.result[0].code)
             isSuccess = true
           } else {
-            this.$alert(responseDelete.data.result.message, responseDelete.data.result.code)
             isSuccess = false
           }
           break

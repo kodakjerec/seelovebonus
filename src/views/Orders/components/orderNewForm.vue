@@ -124,12 +124,14 @@
       <certificate1
         :buttonsShow="buttonsShow"
         :buttonsShowUser="buttonsShowUser"
-        :orderID="form.ID"></certificate1>
+        :orderID="form.ID"
+        :isShow="form.showCertificate1"></certificate1>
       <!-- 換狀證明 -->
       <certificate2
         :buttonsShow="buttonsShow"
         :buttonsShowUser="buttonsShowUser"
-        :orderID="form.ID"></certificate2>
+        :orderID="form.ID"
+        :isShow="form.showCertificate2"></certificate2>
       <!-- 付款資訊 -->
       <collection-records
         ref="collectionRecords"
