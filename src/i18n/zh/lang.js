@@ -198,6 +198,7 @@ export default {
   __inventory: '存貨',
   __putOn: '上架',
   __openEditMode: '開啟修改',
+  __fKOrder: '信託指示函',
   // 請在上方新增字串
   // 以下為錯誤處理專用
   __error400: '無法理解請求',

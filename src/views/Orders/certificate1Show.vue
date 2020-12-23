@@ -8,6 +8,7 @@
       :data="results"
       stripe
       border
+      :span-method="objectSpanMethod"
       :height="tableHeight"
       @row-click="handleClick"
       :row-class-name="tableRowClassName"
@@ -147,8 +148,16 @@ export default {
           break
       }
 
+      // 結果
+      let result = tempData.slice((this.pagination.currentPage - 1) * this.pagination.pageSize, this.pagination.pageSize * this.pagination.currentPage)
+
       // 切換分頁
-      return tempData.slice((this.pagination.currentPage - 1) * this.pagination.pageSize, this.pagination.pageSize * this.pagination.currentPage)
+      return result
+    }
+  },
+  watch: {
+    results: function () {
+      this.pageChange()
     }
   },
   mounted () {
@@ -181,6 +190,14 @@ export default {
       // 取得可以用的選單
       this.certificate1 = row
 
+      // 簽核管理
+      if (row.StatusSignOff === 0) {
+        this.buttonsShowUser.new = 0
+        this.buttonsShowUser.edit = 0
+        this.buttonsShowUser.save = 0
+        this.buttonsShowUser.delete = 0
+      }
+
       // 權限管理
       this.buttonsShowUser.save = this.buttonsShowUser.edit
 
@@ -200,6 +217,8 @@ export default {
       this.searchContent.searchKeyWord = value
       let response2 = await this.$api.orders.certificate1Show({ keyword: this.searchContent.searchKeyWord })
       this.originData = response2.data.result
+
+      this.pageChange()
     },
     // 排序相關
     reOrder: function (searchButtonResult) {
@@ -209,9 +228,47 @@ export default {
     // 分頁相關
     handleSizeChange: function (val) {
       this.pagination.pageSize = val
+      this.pageChange()
     },
     handleCurrentChange: function (val) {
       this.pagination.currentPage = val
+      this.pageChange()
+    },
+    pageChange: function (refTable) {
+      // table span
+      this.tableSpanList = []
+      this.results.forEach(row => {
+        let findObject = this.tableSpanList.find(row2 => { return row2.SpanID === row.OrderID })
+        if (findObject === undefined) {
+          let firstIndex = this.results.findIndex(row3 => row3.OrderID === row.OrderID)
+          this.tableSpanList.push({
+            SpanID: row.OrderID,
+            rowIndex: firstIndex,
+            Qty: 1
+          })
+        } else {
+          findObject.Qty += 1
+        }
+      })
+    },
+    // table span method
+    objectSpanMethod: function (row, column, rowIndex, columnIndex) {
+      if (row.columnIndex === 0) {
+        let findObject = this.tableSpanList.find(item => { return item.SpanID === row.row.OrderID })
+        // 沒找到
+        if (findObject === undefined) {
+          return [1, 0]
+        } else {
+          // 有找到
+          // 是第一筆, 就要做 colspan
+          if (row.rowIndex === findObject.rowIndex) {
+            return [findObject.Qty, 1]
+          } else {
+            // 其他筆
+            return [1, 0]
+          }
+        }
+      }
     }
   }
 }

@@ -205,8 +205,11 @@ export default {
         return x.Status - y.Status
       })
 
+      // 結果
+      let result = tempData.slice((this.pagination.currentPage - 1) * this.pagination.pageSize, this.pagination.pageSize * this.pagination.currentPage)
+
       // 切換分頁
-      return tempData.slice((this.pagination.currentPage - 1) * this.pagination.pageSize, this.pagination.pageSize * this.pagination.currentPage)
+      return result
     }
   },
   mounted () {

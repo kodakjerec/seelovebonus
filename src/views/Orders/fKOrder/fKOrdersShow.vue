@@ -8,7 +8,6 @@
       :data="results"
       stripe
       border
-      :span-method="objectSpanMethod"
       :height="tableHeight"
       @row-click="handleClick"
       :row-class-name="tableRowClassName"
@@ -41,23 +40,20 @@
     </el-pagination>
     <new-form
       v-if="dialogShow"
-      :dialog-type="dialogType"
       :dialog-show="dialogShow"
-      :certificate2="certificate2"
-      :orderID="orderID"
-      :buttonsShowUser="buttonsShowUser"
+      :fKOrder="fKOrder"
       @dialog-cancel="dialogCancel()"
       @dialog-save="dialogSave()"></new-form>
   </div>
 </template>
 
 <script>
-import newForm from './components/certificate2NewForm'
+import newForm from './components/fKOrderPrint'
 import searchButton from '@/components/searchButton'
 import { formatDate } from '@/setup/format.js'
 
 export default {
-  name: 'Certificate2',
+  name: 'FKOrdersShow',
   components: {
     newForm,
     searchButton
@@ -67,22 +63,17 @@ export default {
       columns: [
         {
           header: this.$t('__orderID'),
-          key: 'OrderID',
+          key: 'ID',
           width: 10
         },
         {
-          header: this.$t('__certificate2'),
-          key: 'Certificate2',
+          header: this.$t('__customer') + this.$t('__name'),
+          key: 'CustomerName',
           width: 10
         },
         {
-          header: this.$t('__chanyun') + this.$t('__landCertificate'),
-          key: 'chanyunCer',
-          width: 10
-        },
-        {
-          header: this.$t('__printCount'),
-          key: 'PrintCount',
+          header: this.$t('__qty'),
+          key: 'Qty',
           width: 10
         },
         {
@@ -91,8 +82,8 @@ export default {
           width: 10
         },
         {
-          header: this.$t('__issuanceDate'),
-          key: 'IssuanceDate',
+          header: this.$t('__order') + this.$t('__date'),
+          key: 'OrderDate',
           width: 30,
           formatter: 'date'
         }
@@ -100,10 +91,15 @@ export default {
       dialogType: 'new',
       dialogShow: false,
       originData: [],
-      certificate2: {},
-      orderID: '', // 顯示修改視窗使用, 避免紅字報錯
-      searchContent: {
-        searchKeyWord: ''
+      fKOrder: {},
+      searchContent: { // 搜尋
+        searchKeyWord: '',
+        OrdersType: [],
+        StatusType: [],
+        selectedOrdersType: [],
+        selectedStatusType: [],
+        StartDate: '1900-01-01',
+        EndDate: new Date()
       },
       tableHeight: (screen.height * 7 / 9), // Table高度
       pagination: { // 分頁
@@ -112,7 +108,7 @@ export default {
         pageSize: 20
       },
       sortable: {
-        orderByList: [{ ID: 'ID', Value: this.$t('__orderID') }, { ID: 'Certificate2', Value: this.$t('__certificate2') }], // 排序
+        orderByList: [{ ID: 'ID', Value: this.$t('__orderID') }, { ID: 'OrderDate', Value: this.$t('__order') + this.$t('__date') }], // 排序
         orderBy: 'descending', // 排序方式
         orderByValue: 'ID' // 預設排序欄位
       },
@@ -123,9 +119,8 @@ export default {
         save: 1,
         delete: 1,
         search: 1
-      },
+      }
       // 以下為下拉式選單專用
-      ddlCompanies: []
     }
   },
   computed: {
@@ -160,14 +155,8 @@ export default {
       return result
     }
   },
-  watch: {
-    results: function () {
-      this.pageChange()
-    }
-  },
   mounted () {
     this.preLoading()
-    this.userPermission()
   },
   methods: {
     formatterDate: function (row, column, cellValue, index) {
@@ -181,7 +170,26 @@ export default {
     },
     // 讀入系統清單
     preLoading: async function () {
-      this.search('')
+      // 顯示專用
+      let response = await this.$api.orders.ordersShowGroup()
+      let filterSettings = response.data.result
+
+      // 帶入數值
+      this.searchContent.OrdersType = filterSettings.OrdersType
+      this.searchContent.StatusType = filterSettings.StatusType
+
+      // 預設全選
+      // 這裡特別指定 FK0
+      this.searchContent.OrdersType.forEach(item => {
+        if (item.Prefix === 'FK0') {
+          this.searchContent.selectedOrdersType.push(item.Prefix)
+        }
+      })
+      this.searchContent.StatusType.forEach(item => {
+        this.searchContent.selectedStatusType.push(item.Status)
+      })
+
+      this.search()
     },
     // 使用者權限
     userPermission: async function () {
@@ -193,15 +201,7 @@ export default {
     },
     handleClick: async function (row, column, event) {
       // 取得可以用的選單
-      this.certificate2 = row
-
-      // 簽核管理
-      if (row.StatusSignOff === 0) {
-        this.buttonsShowUser.new = 0
-        this.buttonsShowUser.edit = 0
-        this.buttonsShowUser.save = 0
-        this.buttonsShowUser.delete = 0
-      }
+      this.fKOrder = row
 
       // 權限管理
       this.buttonsShowUser.save = this.buttonsShowUser.edit
@@ -219,11 +219,13 @@ export default {
     },
     // 搜尋
     search: async function (value) {
-      this.searchContent.searchKeyWord = value
-      let response2 = await this.$api.orders.certificate2Show({ keyword: this.searchContent.searchKeyWord })
+      if (value !== undefined) {
+        this.searchContent.searchKeyWord = value
+      }
+      let response2 = await this.$api.orders.fKOrdersShow({
+        searchContent: JSON.stringify(this.searchContent),
+        ID: this.$store.state.userID })
       this.originData = response2.data.result
-
-      this.pageChange()
     },
     // 排序相關
     reOrder: function (searchButtonResult) {
@@ -233,47 +235,9 @@ export default {
     // 分頁相關
     handleSizeChange: function (val) {
       this.pagination.pageSize = val
-      this.pageChange()
     },
     handleCurrentChange: function (val) {
       this.pagination.currentPage = val
-      this.pageChange()
-    },
-    pageChange: function () {
-      // table span
-      this.tableSpanList = []
-      this.results.forEach(row => {
-        let findObject = this.tableSpanList.find(row2 => { return row2.SpanID === row.OrderID })
-        if (findObject === undefined) {
-          let firstIndex = this.results.findIndex(row3 => row3.OrderID === row.OrderID)
-          this.tableSpanList.push({
-            SpanID: row.OrderID,
-            rowIndex: firstIndex,
-            Qty: 1
-          })
-        } else {
-          findObject.Qty += 1
-        }
-      })
-    },
-    // table span method
-    objectSpanMethod: function (row, column, rowIndex, columnIndex) {
-      if (row.columnIndex === 0) {
-        let findObject = this.tableSpanList.find(item => { return item.SpanID === row.row.OrderID })
-        // 沒找到
-        if (findObject === undefined) {
-          return [1, 0]
-        } else {
-          // 有找到
-          // 是第一筆, 就要做 colspan
-          if (row.rowIndex === findObject.rowIndex) {
-            return [findObject.Qty, 1]
-          } else {
-            // 其他筆
-            return [1, 0]
-          }
-        }
-      }
     }
   }
 }
