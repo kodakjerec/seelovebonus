@@ -43,11 +43,6 @@
             size="mini"
             type="danger"
             @click.native.stop="signOffDeny(scope.$index, scope.row)">{{$t('__signOffDeny')}}</el-button>
-          <el-button
-            v-show="scope.row.Status === '2'"
-            size="mini"
-            type="primary"
-            @click.native.stop="putOn(scope.$index, scope.row)">{{$t('__putOn')}}</el-button>
         </template>
       </el-table-column>
       <el-table-column
@@ -212,11 +207,6 @@ export default {
         keyword: this.searchKeyWord,
         ID: this.$store.state.userID })
       this.inboundOrderShow = response2.data.result
-    },
-    // 上架
-    putOn: async function (index, row) {
-      await this.$api.stock.inboundOrderPutOn({ form: row })
-      this.search()
     },
     // 簽核相關
     // 送簽

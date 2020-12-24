@@ -17,18 +17,21 @@ Router.prototype.replace = function replace (location) {
 }
 
 const routes = [
+  // login
   {
     path: '/',
     name: 'login',
     meta: { title: '登入' },
     component: () => import('@/views/Login/login')
   },
+  // home
   {
     path: '/home',
     name: 'home',
     meta: { title: '首頁' },
     component: () => import('@/views/Home/home')
   },
+  // Basic
   {
     path: '/Basic',
     name: 'Basic'
@@ -63,6 +66,7 @@ const routes = [
     name: 'Stock',
     component: () => import('../views/Basic/storageAddress')
   },
+  // Orders
   {
     path: '/Orders/Orders',
     name: 'Orders',
@@ -107,6 +111,7 @@ const routes = [
     component: () => import('@/views/Orders/components/orderSignOffLog'),
     props: true
   },
+  // Reports
   {
     path: '/Reports',
     name: 'Reports'
@@ -131,6 +136,7 @@ const routes = [
     name: 'FKOrderRpt',
     component: () => import('@/views/Reports/fKOrder/fKOrderRpt')
   },
+  // settings
   {
     path: '/Settings/SystemSettings',
     name: 'SystemSettings',
@@ -151,6 +157,7 @@ const routes = [
     name: 'Announcement',
     component: () => import('@/views/Settings/announcementShow')
   },
+  // Stock
   {
     path: '/Stock/InboundOrder',
     name: 'InboundOrder',

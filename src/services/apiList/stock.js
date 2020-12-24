@@ -37,13 +37,6 @@ export default {
         return data
       })
     },
-    inboundOrderPutOn: ({ form }) => {
-      let rawData = { form }
-      return post('/stock/inboundOrderPutOn', rawData).then(data => {
-        console.log(`%c <<< Response(/rest/stock/inboundOrderPutOn)⤵ `, 'background-color: #E0455D; color: white; font-size: 14px; font-weight: bold;', data)
-        return data
-      })
-    },
     stockNowShow: ({ keyword, ID }) => {
       let rawData = { keyword, ID }
       return post('/stock/stockNowShow', rawData).then(data => {
