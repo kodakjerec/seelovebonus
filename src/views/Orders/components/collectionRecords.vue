@@ -51,7 +51,6 @@
     :dialog-show="dialogShow"
     :collectionRecord="collectionRecord"
     :orderID="orderID"
-    :orderAmount="orderAmount"
     :buttonsShowUser="buttonsShowUser"
     @dialog-cancel="dialogCancel()"
     @dialog-save="dialogSave()"></new-form>
@@ -114,12 +113,6 @@ export default {
     },
     // 開啟表單
     showForm: async function (eventType) {
-      // 預先帶入收款金額
-      let responseRecords = await this.$api.orders.collectionRecordsFunctions({ type: 'collectionRecordsNew', OrderID: this.orderID })
-      let order = responseRecords.data.result[0]
-
-      this.orderAmount = order.Amount
-
       this.dialogType = eventType
       this.dialogShow = true
     },

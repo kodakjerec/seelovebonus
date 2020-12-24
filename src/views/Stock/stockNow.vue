@@ -90,9 +90,7 @@ export default {
     },
     search: async function (value) {
       this.searchKeyWord = value
-      let response2 = await this.$api.stock.stockNowShow({
-        keyword: this.searchKeyWord,
-        ID: this.$store.state.userID })
+      let response2 = await this.$api.stock.stockNowShow({ keyword: this.searchKeyWord })
       this.stockNow = response2.data.result
     },
     openLog: function (index, row) {

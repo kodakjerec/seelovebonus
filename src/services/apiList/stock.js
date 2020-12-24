@@ -2,8 +2,8 @@ import { post } from '@/services/utils'
 
 export default {
   stock: {
-    inboundOrderShow: ({ keyword, ID }) => {
-      let rawData = { keyword, ID }
+    inboundOrderShow: ({ keyword }) => {
+      let rawData = { keyword }
       return post('/stock/inboundOrderShow', rawData).then(data => {
         console.log(`%c <<< Response(/rest/stock/inboundOrderShow)⤵ `, 'background-color: #E0455D; color: white; font-size: 14px; font-weight: bold;', data)
         return data
@@ -37,8 +37,8 @@ export default {
         return data
       })
     },
-    stockNowShow: ({ keyword, ID }) => {
-      let rawData = { keyword, ID }
+    stockNowShow: ({ keyword }) => {
+      let rawData = { keyword }
       return post('/stock/stockNowShow', rawData).then(data => {
         console.log(`%c <<< Response(/rest/stock/stockNowShow)⤵ `, 'background-color: #E0455D; color: white; font-size: 14px; font-weight: bold;', data)
         return data

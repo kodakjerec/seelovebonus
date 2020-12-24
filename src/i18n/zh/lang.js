@@ -194,6 +194,7 @@ export default {
   __chanyun: '展雲',
   __landCertificate: '權狀',
   __inboundOrder: '入庫單',
+  __transportOrder: '調撥單',
   __supplier: '供應商',
   __inventory: '存貨',
   __putOn: '上架',

@@ -5,7 +5,7 @@
       <search-button @search="search"></search-button>
     </el-button-group>
     <el-table
-      :data="inboundOrderShow"
+      :data="transportOrderShow"
       stripe
       border
       @row-click="handleClick"
@@ -51,7 +51,7 @@
       </el-table-column>
       <el-table-column
         prop="ID"
-        :label="$t('__inboundOrder')+$t('__id')">
+        :label="$t('__transportOrder')+$t('__id')">
       </el-table-column>
       <el-table-column
         prop="OrderDate"
@@ -72,7 +72,7 @@
     v-if="dialogShow"
     :dialog-type="dialogType"
     :dialog-show="dialogShow"
-    :inboundOrder="inboundOrder"
+    :transportOrder="transportOrder"
     :buttonsShowUser="buttonsShowUser"
     @dialog-cancel="dialogCancel()"
     @dialog-save="dialogSave()"></new-form>
@@ -90,11 +90,11 @@
 <script>
 import searchButton from '@/components/searchButton'
 import signOffDialog from '@/views/Orders/components/signOffDialog'
-import newForm from './components/inboundOrderNewForm'
+import newForm from './components/transportOrderNewForm'
 import { formatMoney, formatDate } from '@/setup/format.js'
 
 export default {
-  name: 'InboundOrderShow',
+  name: 'TransportOrderShow',
   components: {
     searchButton,
     signOffDialog,
@@ -104,8 +104,8 @@ export default {
     return {
       dialogType: 'new',
       dialogShow: false,
-      inboundOrderShow: [],
-      inboundOrder: {},
+      transportOrderShow: [],
+      transportOrder: {},
       searchKeyWord: '',
       // 使用者能看到的權限
       buttonsShowUser: {
@@ -152,8 +152,8 @@ export default {
     },
     handleClick: async function (row, column, event) {
       // 取得可以用的選單
-      let responseRow = await this.$api.stock.getObject({ type: 'inboundOrder', ID: row.ID })
-      this.inboundOrder = responseRow.data.result[0]
+      let responseRow = await this.$api.stock.getObject({ type: 'transportOrder', ID: row.ID })
+      this.transportOrder = responseRow.data.result[0]
 
       // 簽核管理
       if (row.StatusSignOff === 0) {
@@ -167,11 +167,11 @@ export default {
 
       // 進入修改
       this.$router.push({
-        name: 'InboundOrderNewForm',
+        name: 'TransportOrderNewForm',
         params: {
           dialogType: 'edit',
-          inboundOrder: this.inboundOrder,
-          parent: 'InboundOrder',
+          transportOrder: this.transportOrder,
+          parent: 'TransportOrder',
           buttonsShowUser: this.buttonsShowUser
         }
       })
@@ -182,11 +182,11 @@ export default {
       this.buttonsShowUser.save = this.buttonsShowUser.new
 
       this.$router.push({
-        name: 'InboundOrderNewForm',
+        name: 'TransportOrderNewForm',
         params: {
           dialogType: 'new',
-          inboundOrder: this.inboundOrder,
-          parent: 'InboundOrder',
+          transportOrder: this.transportOrder,
+          parent: 'TransportOrder',
           buttonsShowUser: this.buttonsShowUser
         }
       })
@@ -203,15 +203,15 @@ export default {
       if (value !== undefined) {
         this.searchKeyWord = value
       }
-      let response2 = await this.$api.stock.inboundOrderShow({ keyword: this.searchKeyWord })
-      this.inboundOrderShow = response2.data.result
+      let response2 = await this.$api.stock.transportOrderShow({ keyword: this.searchKeyWord })
+      this.transportOrderShow = response2.data.result
     },
     // 簽核相關
     // 送簽
     signOffAgree: function (index, row) {
       this.signOffList.push({
         OrderID: row.ID,
-        Type: 'inbound',
+        Type: 'transport',
         Prefix: row.Prefix,
         Status: row.Status
       })
@@ -222,7 +222,7 @@ export default {
     signOffDeny: function (index, row) {
       this.signOffList.push({
         OrderID: row.ID,
-        Type: 'inbound',
+        Type: 'transport',
         Prefix: row.Prefix,
         Status: row.Status
       })
@@ -231,12 +231,12 @@ export default {
     },
     // 批次送簽
     batchSignOffAgree: function () {
-      this.inboundOrderShow
+      this.transportOrderShow
         .filter(row => { return row.StatusSignOff === 1 })
         .forEach(row => {
           this.signOffList.push({
             OrderID: row.ID,
-            Type: 'inbound',
+            Type: 'transport',
             Prefix: row.Prefix,
             Status: row.Status
           })
@@ -246,12 +246,12 @@ export default {
     },
     // 批次否決
     batchSignOffDeny: function () {
-      this.inboundOrderShow
+      this.transportOrderShow
         .filter(row => { return row.StatusSignOff === 1 })
         .forEach(row => {
           this.signOffList.push({
             OrderID: row.ID,
-            Type: 'inbound',
+            Type: 'transport',
             Prefix: row.Prefix,
             Status: row.Status
           })
@@ -275,8 +275,8 @@ export default {
       this.$router.push({
         name: 'OrderSignOffManual',
         params: {
-          orderType: 'inbound',
-          parent: 'InboundOrder'
+          orderType: 'transport',
+          parent: 'TransportOrder'
         }
       })
     },
@@ -286,7 +286,7 @@ export default {
         name: 'OrderSignOffLog',
         params: {
           ID: row.ID,
-          parent: 'InboundOrder'
+          parent: 'TransportOrder'
         }
       })
     }

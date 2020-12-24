@@ -10,7 +10,7 @@
       </el-date-picker>
     </el-form-item>
     <el-form-item :label="$t('__received')+$t('__amount')" prop="Amount">
-        <el-input v-model.number="form.Amount" :disabled="disableForm.Amount"></el-input>
+        <el-input-number v-model="form.Amount" :disabled="disableForm.Amount" :min="0" :max="form.MaxAmount"></el-input-number>
     </el-form-item>
   </el-form>
 </template>
@@ -25,7 +25,7 @@ export default {
   data () {
     return {
       rules: {
-        Amount: [{ required: true, message: this.$t('__pleaseInput'), trigger: 'blur' }]
+        Amount: [{ required: true, min: 1, message: this.$t('__pleaseInput'), trigger: 'blur' }]
       }
     }
   },

@@ -170,6 +170,17 @@ const routes = [
     props: true
   },
   {
+    path: '/Stock/TransportOrder',
+    name: 'TransportOrder',
+    component: () => import('@/views/Stock/transportOrder')
+  },
+  {
+    path: '/Stock/TransportOrderNewForm',
+    name: 'TransportOrderNewForm',
+    component: () => import('@/views/Stock/components/transportOrderNewForm'),
+    props: true
+  },
+  {
     path: '/Stock/StockNow',
     name: 'StockNow',
     component: () => import('@/views/Stock/stockNow')

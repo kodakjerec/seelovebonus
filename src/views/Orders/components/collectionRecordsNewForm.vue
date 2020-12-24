@@ -38,11 +38,11 @@
 </template>
 
 <script>
-import method1 from './paymentMethod1'
-import method2 from './paymentMethod2'
-import method3 from './paymentMethod3'
-import method4 from './paymentMethod4'
-import method5 from './paymentMethod5'
+import method1 from './paymentMethods/paymentMethod1'
+import method2 from './paymentMethods/paymentMethod2'
+import method3 from './paymentMethods/paymentMethod3'
+import method4 from './paymentMethods/paymentMethod4'
+import method5 from './paymentMethods/paymentMethod5'
 import { messageBoxYesNo } from '@/services/utils'
 
 export default {
@@ -59,7 +59,6 @@ export default {
     dialogShow: { type: Boolean, default: false },
     collectionRecord: { type: Object },
     orderID: { type: String },
-    orderAmount: { type: Number },
     buttonsShowUser: { type: Object }
   },
   data () {
@@ -69,12 +68,13 @@ export default {
         OrderID: this.orderID,
         PaymentMethod: '1',
         ReceivedDate: new Date(),
-        Amount: this.orderAmount,
+        Amount: 0,
         Account: null,
         BankID: null,
         Memo: null,
         ReceivedID: this.$store.state.userID,
-        ChequeDate: null
+        ChequeDate: null,
+        MaxAmount: 0
       },
       rules: {
         PaymentMethod: [{ required: true, message: this.$t('__pleaseInput'), trigger: 'blur' }],
@@ -152,6 +152,15 @@ export default {
       this.ddlPaymentMethod = response1.data.result
       let response2 = await this.$api.orders.getDropdownList({ type: 'bankID' })
       this.ddlBankID = response2.data.result
+
+      // 預先帶入收款金額
+      if (this.dialogType === 'new') {
+        let responseRecords = await this.$api.orders.collectionRecordsFunctions({ type: 'collectionRecordsNew', OrderID: this.orderID })
+        let order = responseRecords.data.result[0]
+
+        this.form.MaxAmount = order.Amount
+        this.form.Amount = order.Amount
+      }
     },
     // 檢查輸入
     checkValidate: async function () {
@@ -175,10 +184,11 @@ export default {
       }
       if (!isSuccess) { return }
 
-      await this.$refs['form'].validate((valid) => { isSuccess = valid })
-      if (isSuccess) {
-        this.save(this.dialogType)
-      }
+      this.$refs['form'].validate((valid) => {
+        if (valid) {
+          this.save(this.dialogType)
+        }
+      })
     },
     // 取消
     cancel: function () {
