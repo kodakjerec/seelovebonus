@@ -199,7 +199,9 @@ export default {
   __inventory: 'Inventory',
   __putOn: 'Put on',
   __openEditMode: 'Editable',
-  __fKOrder: '信託指示函',
+  __fKOrder: 'FK Order',
+  __notReceived: 'Not Received',
+  __haveReceived: 'Have Received',
   // 請在上方新增字串
   // 以下為錯誤處理專用
   __error400: 'Bad Request',
@@ -221,6 +223,7 @@ export default {
   __pleaseInputInvoiceID: 'Style: AB12345678',
   __pleaseSelectAtLeastOne: 'Select at least one ',
   __pleaseInputSearchValue: 'Please input search content',
+  __mustBiggerThanZero: ' must bigger than zero',
   __valueUsed: ' already used',
   __exceedQtyLimit: 'Value limit exceeded',
   __100PercentInput100: '100% please enter "100"'

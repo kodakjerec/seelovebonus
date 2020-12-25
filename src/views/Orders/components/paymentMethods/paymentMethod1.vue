@@ -16,6 +16,7 @@
 </template>
 
 <script>
+import validator from '@/setup/validate'
 export default {
   name: 'collectionRecordsPaymentMethod1',
   props: {
@@ -25,7 +26,7 @@ export default {
   data () {
     return {
       rules: {
-        Amount: [{ required: true, min: 1, message: this.$t('__pleaseInput'), trigger: 'blur' }]
+        Amount: [{ required: true, validator: validator.validateInputNumber, trigger: 'blur' }]
       }
     }
   },

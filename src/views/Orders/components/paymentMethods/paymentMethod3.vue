@@ -35,6 +35,8 @@
 </template>
 
 <script>
+import validator from '@/setup/validate'
+
 export default {
   name: 'collectionRecordsPaymentMethod3',
   props: {
@@ -46,7 +48,7 @@ export default {
     return {
       rules: {
         Account: [{ required: true, message: this.$t('__pleaseInput'), trigger: 'blur' }],
-        Amount: [{ required: true, message: this.$t('__pleaseInput'), trigger: 'blur' }],
+        Amount: [{ required: true, trigger: 'blur', validator: validator.validateInputNumber }],
         ChequeDate: [{ required: true, message: this.$t('__pleaseInput'), trigger: 'blur' }]
       }
     }

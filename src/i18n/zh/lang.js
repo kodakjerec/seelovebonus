@@ -200,6 +200,8 @@ export default {
   __putOn: '上架',
   __openEditMode: '開啟修改',
   __fKOrder: '信託指示函',
+  __notReceived: '未收款',
+  __haveReceived: '已收款',
   // 請在上方新增字串
   // 以下為錯誤處理專用
   __error400: '無法理解請求',
@@ -221,6 +223,7 @@ export default {
   __pleaseInputInvoiceID: '格式: AB12345678',
   __pleaseSelectAtLeastOne: '請至少選擇一筆 ',
   __pleaseInputSearchValue: '請輸入查詢數值',
+  __mustBiggerThanZero: ' 必須大於零',
   __valueUsed: ' 已被使用',
   __exceedQtyLimit: '超出數值上限',
   __100PercentInput100: '100%請輸入"100"'

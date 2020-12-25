@@ -20,7 +20,7 @@
 </template>
 
 <script>
-import validate from '@/setup/validate'
+import validator from '@/setup/validate'
 
 export default {
   name: 'collectionRecordsPaymentMethod5',
@@ -32,8 +32,8 @@ export default {
   data () {
     return {
       rules: {
-        Account: [{ required: true, trigger: 'blur', validator: validate.validateCard }],
-        Amount: [{ required: true, message: this.$t('__pleaseInput'), trigger: 'blur' }]
+        Account: [{ required: true, trigger: 'blur', validator: validator.validateCard }],
+        Amount: [{ required: true, trigger: 'blur', validator: validator.validateInputNumber }]
       },
       ddlBankIDFilter: []
     }

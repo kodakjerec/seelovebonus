@@ -71,6 +71,14 @@
           {{formatterDate(null,null,scope.row.OrderDate,null)}}<br/>{{scope.row.ProjectName}}<br/>{{formatterMoney(null,null,scope.row.Amount,null)}}
         </template>
       </el-table-column>
+      <el-table-column>
+        <template slot="header">
+          {{$t('__notReceived')}}<br/>{{$t('__haveReceived')}}<br/>{{$t('__invoice')+$t('__amount')}}
+        </template>
+        <template slot-scope="scope">
+          {{formatterMoneyUS(null,null,scope.row.Amount-scope.row.CollectionsAmount,null)}}<br/>{{formatterMoneyUS(null,null,scope.row.CollectionsAmount,null)}}<br/>{{formatterMoneyUS(null,null,scope.row.InvoicesAmount,null)}}
+        </template>
+      </el-table-column>
       <el-table-column
         :label="$t('__certificate1')">
         <template slot-scope="scope">
@@ -231,6 +239,9 @@ export default {
     },
     formatterMoney: function (row, column, cellValue, index) {
       return formatMoney(cellValue)
+    },
+    formatterMoneyUS: function (row, column, cellValue, index) {
+      return formatMoney(cellValue, 'US')
     },
     // table 變更顏色
     tableRowClassName ({ row, rowIndex }) {

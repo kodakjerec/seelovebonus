@@ -146,21 +146,28 @@ export default {
   methods: {
     // 讀取預設資料
     preLoading: async function () {
+      // 預先帶入收款金額
+      if (this.dialogType === 'new') {
+        let responseRecords = await this.$api.orders.collectionRecordsFunctions({ type: 'collectionRecordsNew', OrderID: this.orderID })
+        let order = responseRecords.data.result[0]
+
+        // 數值為0不用再新增收款資訊
+        if (order.Amount === 0) {
+          this.$alert(this.$t('__amount') + this.$t('__mustBiggerThanZero'))
+          this.cancel()
+          return
+        }
+
+        this.form.MaxAmount = order.Amount
+        this.form.Amount = order.Amount
+      }
+
       let response3 = await this.$api.orders.getDropdownList({ type: 'employee' })
       this.ddlCreateID = response3.data.result
       let response1 = await this.$api.orders.getDropdownList({ type: 'paymentMethod' })
       this.ddlPaymentMethod = response1.data.result
       let response2 = await this.$api.orders.getDropdownList({ type: 'bankID' })
       this.ddlBankID = response2.data.result
-
-      // 預先帶入收款金額
-      if (this.dialogType === 'new') {
-        let responseRecords = await this.$api.orders.collectionRecordsFunctions({ type: 'collectionRecordsNew', OrderID: this.orderID })
-        let order = responseRecords.data.result[0]
-
-        this.form.MaxAmount = order.Amount
-        this.form.Amount = order.Amount
-      }
     },
     // 檢查輸入
     checkValidate: async function () {

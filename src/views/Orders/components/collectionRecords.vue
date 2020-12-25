@@ -113,6 +113,8 @@ export default {
     },
     // 開啟表單
     showForm: async function (eventType) {
+      this.collectionRecord = {}
+
       this.dialogType = eventType
       this.dialogShow = true
     },
