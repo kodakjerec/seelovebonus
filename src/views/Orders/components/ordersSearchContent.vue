@@ -47,8 +47,16 @@ export default {
   },
   data () {
     return {
-      searchContent: this.fromContent,
+      searchContent: {},
       myTitle: '條件篩選'
+    }
+  },
+  watch: {
+    fromContent: {
+      handler (newValue) {
+        this.searchContent = newValue
+      },
+      deep: true
     }
   },
   methods: {

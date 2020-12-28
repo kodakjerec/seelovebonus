@@ -18,6 +18,14 @@ export default new Vuex.Store({
     isEnableLoadingMask: false
   },
   mutations: {
+    RESET_ALL (state) {
+      state.token = ''
+      state.isLogin = false
+      state.userID = ''
+      state.userName = ''
+      state.menuList = []
+      state.userProg = []
+    },
     SET_AUTH (state, options) {
       state.token = options.token
       state.isLogin = options.isLogin
@@ -46,6 +54,9 @@ export default new Vuex.Store({
     }
   },
   actions: {
+    resetAll (context) {
+      context.commit('RESET_ALL')
+    },
     setAuth (context, options) {
       context.commit('SET_AUTH', {
         token: options.token,

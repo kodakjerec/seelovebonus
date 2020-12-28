@@ -107,6 +107,7 @@
     <!-- 分頁 -->
     <el-pagination
       background
+      v-if="originData.length>0"
       @size-change="handleSizeChange"
       @current-change="handleCurrentChange"
       :current-page="pagination.currentPage"
@@ -230,8 +231,19 @@ export default {
     this.searchContent.StartDate = start.toISOString().slice(0, 10)
     this.searchContent.EndDate = end.toISOString().slice(0, 10)
 
-    this.preLoading()
+    // 使用者權限
     this.userPermission()
+
+    // 帶入搜尋內容
+    this.preLoading()
+
+    // 帶入舊友分頁內容
+    if (localStorage.getItem('paginationHistory:' + this.$route.name) === null) {
+      // 儲存內容
+      localStorage.setItem('paginationHistory:' + this.$route.name, JSON.stringify(this.pagination))
+    } else {
+      this.pagination = JSON.parse(localStorage.getItem('paginationHistory:' + this.$route.name))
+    }
   },
   methods: {
     formatterDate: function (row, column, cellValue, index) {
@@ -251,21 +263,25 @@ export default {
     },
     // 讀入系統清單
     preLoading: async function () {
-      // 顯示專用
-      let response = await this.$api.orders.ordersShowGroup()
-      let filterSettings = response.data.result
+      if (localStorage.getItem('searchHistory:' + this.$route.name) === null) {
+        // 顯示專用
+        let response = await this.$api.orders.ordersShowGroup()
+        let filterSettings = response.data.result
 
-      // 帶入數值
-      this.searchContent.OrdersType = filterSettings.OrdersType
-      this.searchContent.StatusType = filterSettings.StatusType
+        // 帶入數值
+        this.searchContent.OrdersType = filterSettings.OrdersType
+        this.searchContent.StatusType = filterSettings.StatusType
 
-      // 預設全選
-      this.searchContent.OrdersType.forEach(item => {
-        this.searchContent.selectedOrdersType.push(item.Prefix)
-      })
-      this.searchContent.StatusType.forEach(item => {
-        this.searchContent.selectedStatusType.push(item.Status)
-      })
+        // 預設全選
+        this.searchContent.OrdersType.forEach(item => {
+          this.searchContent.selectedOrdersType.push(item.Prefix)
+        })
+        this.searchContent.StatusType.forEach(item => {
+          this.searchContent.selectedStatusType.push(item.Status)
+        })
+      } else {
+        this.searchContent = JSON.parse(localStorage.getItem('searchHistory:' + this.$route.name))
+      }
 
       this.search()
     },
@@ -340,6 +356,9 @@ export default {
         if (item.Certificate2List) { item.Certificate2List = JSON.parse(item.Certificate2List) }
         if (item.InvoiceList) { item.InvoiceList = JSON.parse(item.InvoiceList) }
       })
+
+      // 儲存內容
+      localStorage.setItem('searchHistory:' + this.$route.name, JSON.stringify(this.searchContent))
     },
     // 排序相關
     reOrder: function (searchButtonResult) {
@@ -349,9 +368,13 @@ export default {
     // 分頁相關
     handleSizeChange: function (val) {
       this.pagination.pageSize = val
+      // 儲存內容
+      localStorage.setItem('paginationHistory:' + this.$route.name, JSON.stringify(this.pagination))
     },
     handleCurrentChange: function (val) {
       this.pagination.currentPage = val
+      // 儲存內容
+      localStorage.setItem('paginationHistory:' + this.$route.name, JSON.stringify(this.pagination))
     },
     // 簽核相關
     // 送簽

@@ -53,19 +53,7 @@ export default {
   },
   mounted () {
     // 刷新到首頁時, 強制清空
-    this.$store.dispatch('setAuth', {
-      'token': '',
-      'isLogin': false,
-      'userID': '',
-      'userName': ''
-    })
-    this.$store.dispatch('setMenuList', {
-      'menuList': []
-    })
-    this.$store.dispatch('setUserProg', {
-      'userProg': []
-    })
-    localStorage.removeItem('vuex')
+    this.$store.dispatch('resetAll')
 
     // 取得語言設定
     if (localStorage.getItem('locale')) {
