@@ -95,11 +95,6 @@ const routes = [
     component: () => import('@/views/Orders/certificate2Show')
   },
   {
-    path: '/Orders/FKOrdersShow',
-    name: 'FKOrdersShow',
-    component: () => import('@/views/Orders/fKOrder/fKOrdersShow')
-  },
-  {
     path: '/Orders/OrderSignOffManual',
     name: 'OrderSignOffManual',
     component: () => import('@/views/Orders/components/orderSignOffManual'),
@@ -130,11 +125,6 @@ const routes = [
     path: '/Reports/Bonus1',
     name: 'ReportsBonus1',
     component: () => import('@/views/Reports/reportsBonus1')
-  },
-  {
-    path: '/Reports/FKOrderRpt',
-    name: 'FKOrderRpt',
-    component: () => import('@/views/Reports/fKOrder/fKOrderRpt')
   },
   // settings
   {

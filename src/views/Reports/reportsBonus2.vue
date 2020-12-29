@@ -64,7 +64,6 @@ export default {
       form: {
         StartDate: null,
         EndDate: null,
-        ProjectID: 'R00001',
         ProjectName: '喜越幸福專案',
         CompanyID: null,
         CompanyName: null

@@ -234,13 +234,6 @@ export default {
         return data
       })
     },
-    fKOrdersShow: ({ searchContent, ID }) => {
-      let rawData = { searchContent, ID }
-      return post('/orders/fKOrdersShow', rawData).then(data => {
-        console.log(`%c <<< Response(/rest/orders/fKOrdersShow)⤵ `, 'background-color: #E0455D; color: white; font-size: 14px; font-weight: bold;', data)
-        return data
-      })
-    },
     getDropdownList: ({ type }) => {
       let rawData = { type }
       console.log(rawData)

@@ -61,7 +61,7 @@ export default {
     return {
       // 子結構
       // Status: '', New, Modified, Deleted
-      projectID: 'R00001',
+      projectID: 'BASE',
       myTitle: this.$t('__edit') + this.$t('__superBonus'),
       subItem: { ProjectID: '', Seq: 0, Price: 0, Percentage: 0, Status: '' },
       subList: [],

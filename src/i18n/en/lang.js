@@ -199,7 +199,6 @@ export default {
   __inventory: 'Inventory',
   __putOn: 'Put on',
   __openEditMode: 'Editable',
-  __fKOrder: 'FK Order',
   __notReceived: 'Not Received',
   __haveReceived: 'Have Received',
   // 請在上方新增字串
