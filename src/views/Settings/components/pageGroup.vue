@@ -25,8 +25,8 @@
     :dialog-show="dialogShow"
     :group="group"
     :progList="checkedProgList"
-    @dialog-cancel="dialogCancel()"
-    @dialog-save="dialogSave()"></new-form>
+    @dialog-cancel="dialogCancel"
+    @dialog-save="dialogSave"></new-form>
   </div>
 </template>
 

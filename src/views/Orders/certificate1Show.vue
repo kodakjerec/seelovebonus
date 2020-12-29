@@ -46,8 +46,8 @@
       :certificate1="certificate1"
       :orderID="orderID"
       :buttonsShowUser="buttonsShowUser"
-      @dialog-cancel="dialogCancel()"
-      @dialog-save="dialogSave()"></new-form>
+      @dialog-cancel="dialogCancel"
+      @dialog-save="dialogSave"></new-form>
   </div>
 </template>
 

@@ -1,5 +1,18 @@
 <template>
   <el-dialog :title="myTitle" :visible="dialogShow" center width="80vw" @close="cancel">
+    <el-form :inline="true">
+      <el-form-item :label="$t('__kind')">
+        <el-select v-model="projectID" :placeholder="$t('__plzChoice')" style="display:block" :disabled="isNewPB" @change="(value)=>{ddlPPBListChange(value)}">
+          <el-option v-for="item in ddlPPBList" :key="item.ID" :label="item.Value" :value="item.ID">
+            <span style="float: left">{{ item.Value }}</span>
+            <span style="float: right; color: #8492a6; font-size: 13px">{{ item.ID }}</span>
+          </el-option>
+        </el-select>
+      </el-form-item>
+      <el-form-item>
+        <el-button v-show="!isNewPB" @click="openNewPB">{{$t('__new')+$t('__performanceBonus')}}</el-button>
+      </el-form-item>
+    </el-form>
     <el-table
     :data="subList"
     stripe
@@ -47,6 +60,10 @@
         </template>
       </el-table-column>
     </el-table>
+    <newForm
+      :dialog-show="dialogShowNewPB"
+      @dialog-cancel="cancelNewPB"
+      @dialog-save="saveNewPB"></newForm>
     <div slot="footer" class="dialog-footer">
       <el-button @click="cancel">{{$t('__cancel')}}</el-button>
       <el-button v-show="buttonsShowUser.save" type="primary" @click="beforeSave">{{$t('__save')}}</el-button>
@@ -55,8 +72,13 @@
 </template>
 
 <script>
+import newForm from './projectBonusNewList'
+
 export default {
   name: 'ProjectPerformanceBonus',
+  components: {
+    newForm
+  },
   props: {
     dialogType: { type: String, default: 'new' },
     dialogShow: { type: Boolean, default: false },
@@ -71,8 +93,12 @@ export default {
       subItem: { ProjectID: '', Seq: 0, Grade: null, Percentage: 0, Status: '' },
       subList: [],
       subListDeleted: [],
+      // 新增PB
+      dialogShowNewPB: false,
+      isNewPB: false, // 進入新增狀態不要切換類別
       // 下拉是選單
-      ddlSubList: []
+      ddlSubList: [],
+      ddlPPBList: []
     }
   },
   mounted () {
@@ -84,9 +110,11 @@ export default {
       // 取得所有原始資料
       let response = await this.$api.basic.getDropdownList({ type: 'grade' })
       this.ddlSubList = response.data.result
+      let response2 = await this.$api.basic.getDropdownList({ type: 'projectPerformanceBonusList' })
+      this.ddlPPBList = response2.data.result
 
-      let response2 = await this.$api.basic.getObject({ type: 'projectPerformanceBonus', ID: this.projectID })
-      this.subList = response2.data.result
+      let response3 = await this.$api.basic.getObject({ type: 'projectPerformanceBonus', ID: this.projectID })
+      this.subList = response3.data.result
     },
     // 取消
     cancel: function () {
@@ -187,10 +215,44 @@ export default {
         row.Status = 'Modified'
       }
     },
+    // 切換大類
+    ddlPPBListChange: async function (selected) {
+      this.projectID = selected
+      let response3 = await this.$api.basic.getObject({ type: 'projectPerformanceBonus', ID: this.projectID })
+      this.subList = response3.data.result
+    },
     percentageChange: function (currentValue, oldValue, row) {
       if (row.Status === '') {
         row.Status = 'Modified'
       }
+    },
+    // New PB
+    openNewPB: function () {
+      this.dialogShowNewPB = true
+    },
+    saveNewPB: async function (newObject) {
+      this.dialogShowNewPB = false
+
+      // 找回BASE設定
+      this.projectID = 'BASE'
+      let response3 = await this.$api.basic.getObject({ type: 'projectPerformanceBonus', ID: this.projectID })
+      this.subList = response3.data.result
+
+      // 填入基本資料
+      this.ddlPPBList.push(newObject)
+      this.projectID = newObject.ID
+      this.myTitle = this.$t('__new') + this.$t('__performanceBonus')
+      this.isNewPB = true
+
+      this.subList.forEach(row => {
+      // 替換所有代號
+        row.ProjectID = newObject.ID
+        // 替換每行狀態=New
+        row.Status = 'New'
+      })
+    },
+    cancelNewPB: function () {
+      this.dialogShowNewPB = false
     }
   }
 }

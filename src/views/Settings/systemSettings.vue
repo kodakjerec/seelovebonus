@@ -69,8 +69,8 @@
       :dialog-show="dialogShow"
       :category="form.category"
       :systemSettings="systemSettings"
-      @dialog-cancel="dialogCancel()"
-      @dialog-save="dialogSave()"></new-form>
+      @dialog-cancel="dialogCancel"
+      @dialog-save="dialogSave"></new-form>
   </el-form>
 </template>
 

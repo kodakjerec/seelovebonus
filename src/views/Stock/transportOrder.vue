@@ -74,8 +74,8 @@
     :dialog-show="dialogShow"
     :transportOrder="transportOrder"
     :buttonsShowUser="buttonsShowUser"
-    @dialog-cancel="dialogCancel()"
-    @dialog-save="dialogSave()"></new-form>
+    @dialog-cancel="dialogCancel"
+    @dialog-save="dialogSave"></new-form>
     <!-- 簽核小視窗 -->
     <sign-off-dialog
       :dialogShow="dialogShowSignOff"

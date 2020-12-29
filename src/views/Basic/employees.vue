@@ -58,8 +58,8 @@
     :dialog-show="dialogShow"
     :employee="employee"
     :buttonsShowUser="buttonsShowUser"
-    @dialog-cancel="dialogCancel()"
-    @dialog-save="dialogSave()"></new-form>
+    @dialog-cancel="dialogCancel"
+    @dialog-save="dialogSave"></new-form>
   </el-form>
 </template>
 

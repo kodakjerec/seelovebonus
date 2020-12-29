@@ -53,22 +53,22 @@
     :dialog-show="dialogShow"
     :project="project"
     :buttonsShowUser="buttonsShowUser"
-    @dialog-cancel="dialogCancel()"
-    @dialog-save="dialogSave()"></new-form>
+    @dialog-cancel="dialogCancel"
+    @dialog-save="dialogSave"></new-form>
     <p-bonus
     v-if="dialogShowPBonus"
     :dialog-type="dialogTypePBonus"
     :dialog-show="dialogShowPBonus"
     :buttonsShowUser="buttonsShowUser"
-    @dialog-cancel="dialogCancel()"
-    @dialog-save="dialogSave()"></p-bonus>
+    @dialog-cancel="dialogCancel"
+    @dialog-save="dialogSave"></p-bonus>
     <s-bonus
     v-if="dialogShowSBonus"
     :dialog-type="dialogTypeSBonus"
     :dialog-show="dialogShowSBonus"
     :buttonsShowUser="buttonsShowUser"
-    @dialog-cancel="dialogCancel()"
-    @dialog-save="dialogSave()"></s-bonus>
+    @dialog-cancel="dialogCancel"
+    @dialog-save="dialogSave"></s-bonus>
   </el-form>
 </template>
 

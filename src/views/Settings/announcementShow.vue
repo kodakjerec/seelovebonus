@@ -40,8 +40,8 @@
       :dialog-type="dialogType"
       :dialog-show="dialogShow"
       :announcement="announcement"
-      @dialog-cancel="dialogCancel()"
-      @dialog-save="dialogSave()"></new-form>
+      @dialog-cancel="dialogCancel"
+      @dialog-save="dialogSave"></new-form>
   </el-form>
 </template>
 

@@ -12,8 +12,8 @@
         :dialog-type="dialogTypeUpdatePassword"
         :dialog-show="dialogShowUpdatePassword"
         :user="user"
-        @dialog-cancel="dialogCancel()"
-        @dialog-save="dialogSave()"></new-form>
+        @dialog-cancel="dialogCancel"
+        @dialog-save="dialogSave"></new-form>
       <el-form-item :label="$t('__groups')" prop="GroupID">
         <el-select v-model="form.GroupID" value-key="value" :placeholder="$t('__plzChoice')">
           <el-option v-for="item in ddlGroup" :key="item.ID" :label="item.Value" :value="item.ID">

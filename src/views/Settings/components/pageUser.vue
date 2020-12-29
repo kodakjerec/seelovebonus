@@ -28,8 +28,8 @@
     :dialog-type="dialogType"
     :dialog-show="dialogShow"
     :user="user"
-    @dialog-cancel="dialogCancel()"
-    @dialog-save="dialogSave()"></new-form>
+    @dialog-cancel="dialogCancel"
+    @dialog-save="dialogSave"></new-form>
   </div>
 </template>
 

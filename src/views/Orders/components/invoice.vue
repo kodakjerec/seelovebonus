@@ -48,8 +48,8 @@
     :invoiceHead="invoiceHead"
     :orderID="orderID"
     :buttonsShowUser="buttonsShowUser"
-    @dialog-cancel="dialogCancel()"
-    @dialog-save="dialogSave()"></new-form>
+    @dialog-cancel="dialogCancel"
+    @dialog-save="dialogSave"></new-form>
   </el-form>
 </template>
 
