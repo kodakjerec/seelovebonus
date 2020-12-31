@@ -263,15 +263,14 @@ export default {
     },
     // 讀入系統清單
     preLoading: async function () {
+      // 顯示專用
+      let response = await this.$api.orders.ordersShowGroup()
+      let filterSettings = response.data.result
+      // 帶入數值
+      this.searchContent.OrdersType = filterSettings.OrdersType
+      this.searchContent.StatusType = filterSettings.StatusType
+
       if (localStorage.getItem('searchHistory:' + this.$route.name) === null) {
-        // 顯示專用
-        let response = await this.$api.orders.ordersShowGroup()
-        let filterSettings = response.data.result
-
-        // 帶入數值
-        this.searchContent.OrdersType = filterSettings.OrdersType
-        this.searchContent.StatusType = filterSettings.StatusType
-
         // 預設全選
         this.searchContent.OrdersType.forEach(item => {
           this.searchContent.selectedOrdersType.push(item.Prefix)
@@ -280,7 +279,9 @@ export default {
           this.searchContent.selectedStatusType.push(item.Status)
         })
       } else {
-        this.searchContent = JSON.parse(localStorage.getItem('searchHistory:' + this.$route.name))
+        let oldSearchContent = JSON.parse(localStorage.getItem('searchHistory:' + this.$route.name))
+        this.searchContent.selectedOrdersType = oldSearchContent.selectedOrdersType
+        this.searchContent.selectedStatusType = oldSearchContent.selectedStatusType
       }
 
       this.search()

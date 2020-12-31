@@ -7,13 +7,20 @@
       <el-form-item :label="$t('__product')+$t('__name')" prop="Name">
           <el-input v-model="form.Name" maxlength="40" show-word-limit></el-input>
       </el-form-item>
-      <el-form-item :label="$t('__accounting')+$t('__name')" prop="AccountingID">
-        <el-select v-model="form.AccountingID" filterable value-key="value" :placeholder="$t('__plzChoice')" @change="ddlAccountingChange" >
-          <el-option v-for="item in ddlAccounting" :key="item.ID" :label="item.ID+' '+item.Value" :value="item.ID">
-            <span style="float: left">{{ item.Value }}</span>
-            <span style="float: right; color: #8492a6; font-size: 13px">{{ item.ID }}</span>
-          </el-option>
-        </el-select>
+      <el-form-item :label="$t('__accounting')+$t('__id')" prop="AccountingID">
+        <el-col :span="10">
+          <el-select v-model="form.AccountingID" filterable value-key="value" :placeholder="$t('__plzChoice')">
+            <el-option v-for="item in ddlAccounting" :key="item.ID" :label="item.ID+' '+item.Value" :value="item.ID">
+              <span style="float: left">{{ item.Value }}</span>
+              <span style="float: right; color: #8492a6; font-size: 13px">{{ item.ID }}</span>
+            </el-option>
+          </el-select>
+        </el-col>
+        <el-col :span="14">
+          <el-form-item :label="$t('__invoice')+$t('__name')" prop="InvoiceName">
+            <el-input v-model="form.InvoiceName" maxlength="10" show-word-limit></el-input>
+          </el-form-item>
+        </el-col>
       </el-form-item>
       <el-form-item :label="$t('__qty')">
         <el-col :span="10">
@@ -140,7 +147,7 @@ export default {
         ID: '',
         Name: '',
         AccountingID: '',
-        AccountingName: '',
+        InvoiceName: '',
         Qty: 1,
         Unit: '1',
         Price: 0,
@@ -156,7 +163,8 @@ export default {
         ID: [{ required: true, trigger: 'blur', validator: myValidate }],
         Name: [{ required: true, message: this.$t('__pleaseInput'), trigger: 'blur' }],
         AccountingID: [{ required: true, message: this.$t('__pleaseInput'), trigger: 'blur' }],
-        Unit: [{ required: true, message: this.$t('__pleaseInput'), trigger: 'blur' }]
+        Unit: [{ required: true, message: this.$t('__pleaseInput'), trigger: 'blur' }],
+        InvoiceName: [{ required: true, message: this.$t('__pleaseInput'), trigger: 'blur' }]
       },
       disableForm: {
         ID: false
@@ -216,11 +224,6 @@ export default {
       // 有用到的商品特殊功能
       let responseAvailableProjectFunctions = await this.$api.basic.getObject({ type: 'productFunctions', ID: this.form.ID })
       this.switchProjectFunctions = responseAvailableProjectFunctions.data.result
-    },
-    // 切換費用代號, 填入名稱
-    ddlAccountingChange: function (selected) {
-      let findObject = this.ddlAccounting.find(item => { return item.ID === selected })
-      this.form.AccountingName = findObject.Value
     },
     // 檢查輸入
     checkValidate: async function () {

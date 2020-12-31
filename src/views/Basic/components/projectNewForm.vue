@@ -53,8 +53,10 @@
       <!-- 專案功能 -->
       <el-divider>{{$t('__project')+$t('__function')}}</el-divider>
       <template v-for="fun in switchProjectFunctions">
-        {{fun.Value}}
-        <el-switch v-model="fun.Available" :key="fun.Function" active-text="ON" inactive-text="OFF" :active-value="1" :inactive-value="0"></el-switch>
+        <el-col :span="4" :key="fun.Function">
+          {{fun.Value}}
+          <el-switch v-model="fun.Available" active-text="ON" inactive-text="OFF" :active-value="1" :inactive-value="0"></el-switch>
+        </el-col>
       </template>
     </el-form>
     <div slot="footer" class="dialog-footer">

@@ -206,13 +206,6 @@ export default {
         return data
       })
     },
-    invoiceDetailEdit: ({ form }) => {
-      let rawData = { form }
-      return post('/orders/invoiceDetailEdit', rawData).then(data => {
-        console.log(`%c <<< Response(/rest/orders/invoiceDetailEdit)⤵ `, 'background-color: #E0455D; color: white; font-size: 14px; font-weight: bold;', data)
-        return data
-      })
-    },
     orderFunctionsUpdate: ({ form }) => {
       let rawData = { form }
       return post('/orders/orderFunctionsUpdate', rawData).then(data => {

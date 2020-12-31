@@ -14,6 +14,14 @@
       <method3 ref="method3" v-if="form.PaymentMethod === '3'" :form="form" :disableForm="disableForm"></method3>
       <method4 ref="method4" v-if="form.PaymentMethod === '4'" :form="form" :disableForm="disableForm" :ddlBankID="ddlBankID"></method4>
       <method5 ref="method5" v-if="form.PaymentMethod === '5'" :form="form" :disableForm="disableForm" :ddlBankID="ddlBankID"></method5>
+      <el-form-item :label="$t('__invoice')+$t('__name')">
+        <el-select v-model="form.InvoiceName" value-key="value" :placeholder="$t('__plzChoice')" :disabled="disableForm.ReceivedID">
+          <el-option v-for="item in ddlInvoiceName" :key="item.ID" :label="item.Value" :value="item.ID">
+            <span style="float: left">{{ item.Value }}</span>
+            <span style="float: right; color: #8492a6; font-size: 13px">{{ item.ID }}</span>
+          </el-option>
+        </el-select>
+      </el-form-item>
       <el-form-item :label="$t('__memo')">
           <el-input v-model="form.Memo" maxlength="200" show-word-limit></el-input>
       </el-form-item>
@@ -74,6 +82,8 @@ export default {
         Memo: null,
         ReceivedID: this.$store.state.userID,
         ChequeDate: null,
+        InvoiceName: '',
+        // 以下為顯示用, 不計入資料庫
         MaxAmount: 0
       },
       rules: {
@@ -102,10 +112,11 @@ export default {
       // 以下為下拉式選單專用
       ddlPaymentMethod: [],
       ddlBankID: [],
-      ddlCreateID: []
+      ddlCreateID: [],
+      ddlInvoiceName: []
     }
   },
-  mounted () {
+  async mounted () {
     if (Object.keys(this.collectionRecord).length > 0) {
       this.form = JSON.parse(JSON.stringify(this.collectionRecord))
     }
@@ -141,7 +152,7 @@ export default {
         }
         break
     }
-    this.preLoading()
+    await this.preLoading()
   },
   methods: {
     // 讀取預設資料
@@ -161,6 +172,11 @@ export default {
         this.form.MaxAmount = order.Amount
         this.form.Amount = order.Amount
       }
+
+      // 預先帶入發票名稱
+      let response4 = await this.$api.orders.collectionRecordsFunctions({ type: 'collectionRecordsNewInvoiceName', OrderID: this.orderID })
+      this.ddlInvoiceName = response4.data.result
+      if (this.dialogType === 'new') { this.form.InvoiceName = this.ddlInvoiceName[0].ID }
 
       let response3 = await this.$api.orders.getDropdownList({ type: 'employee' })
       this.ddlCreateID = response3.data.result

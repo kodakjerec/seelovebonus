@@ -34,13 +34,16 @@
             :formatter="formatterMoney">
           </el-table-column>
           <el-table-column
-            prop="Memo"
-            :label="$t('__memo')"
-            width="100px">
+            prop="InvoiceName"
+            :label="$t('__invoice')+$t('__name')">
           </el-table-column>
           <el-table-column
             prop="InvoiceID"
             :label="$t('__invoice')+$t('__number')">
+          </el-table-column>
+          <el-table-column
+            prop="Memo"
+            :label="$t('__memo')">
           </el-table-column>
         </el-table>
       </el-collapse-item>

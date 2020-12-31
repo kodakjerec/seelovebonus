@@ -82,58 +82,96 @@
       <el-form-item :label="$t('__amount')">
           <el-input v-model="form.Amount" disabled></el-input>
       </el-form-item>
-      <el-form-item>
-        <el-collapse v-model="activeNames">
-          <!-- <el-collapse-item :title="$t('__invoice')+$t('__detail')" name="1">
-            <template slot="title">
-              <h2>{{$t('__invoice')+$t('__detail')}}<i class="el-icon-circle-plus" v-show="!activeNames.includes('1')"></i></h2>
-            </template>
-          </el-collapse-item> -->
-          <el-collapse-item :title="$t('__binding')+$t('__collectionRecords')" name="2">
-            <template slot="title">
-              <h2>{{$t('__binding')+$t('__collectionRecords')}}<i class="el-icon-circle-plus" v-show="!activeNames.includes('2')"></i></h2>
-            </template>
-            <el-table
-            ref="multipleTable"
-            :data="selectCollectionRecords"
-            stripe
-            border
-            @selection-change="handleSelectionChange"
-            style="width: 100%">
-              <el-table-column
-                type="selection"
-                :selectable="checkSelectable"
-                width="55">
-              </el-table-column>
-              <el-table-column
-                prop="Seq"
-                :label="$t('__seq')">
-              </el-table-column>
-              <el-table-column
-                prop="ReceivedDate"
-                :label="$t('__received')+$t('__date')"
-                :formatter="formatterDate">
-              </el-table-column>
-              <el-table-column
-                prop="PaymentMethodName"
-                :label="$t('__paymentMethod')">
-              </el-table-column>
-              <el-table-column
-                prop="Amount"
-                :label="$t('__amount')"
-                :formatter="formatterMoney">
-              </el-table-column>
-              <el-table-column
-                prop="Memo"
-                :label="$t('__memo')"
-                width="100px">
-              </el-table-column>
-            </el-table>
-            <div style="color:red" v-show="multipleSelection.length <= 0">{{$t('__pleaseSelectAtLeastOne')+$t('__collectionRecords')}}</div>
-          </el-collapse-item>
-        </el-collapse>
-      </el-form-item>
     </el-form>
+    <!-- 發票明細 -->
+    <el-collapse v-model="activeNames">
+      <el-collapse-item :title="$t('__invoice')+$t('__detail')" name="1">
+        <template slot="title">
+          <h2>{{$t('__invoice')+$t('__detail')}}<i class="el-icon-circle-plus" v-show="!activeNames.includes('1')"></i></h2>
+        </template>
+        <el-table
+          :data="invoiceDetails"
+          stripe
+          border
+          style="width: 100%">
+          <el-table-column
+            prop="Seq"
+            :label="$t('__seq')">
+          </el-table-column>
+          <el-table-column
+            prop="InvoiceName"
+            :label="$t('__invoice')+$t('__name')">
+          </el-table-column>
+          <el-table-column
+            prop="Price"
+            :label="$t('__price')"
+            :formatter="formatterMoney">
+          </el-table-column>
+          <el-table-column
+            prop="Qty"
+            :label="$t('__qty')">
+          </el-table-column>
+          <el-table-column
+            prop="Amount"
+            :label="$t('__amount')"
+            :formatter="formatterMoney">
+          </el-table-column>
+          <el-table-column
+            prop="Tax"
+            :label="$t('__tax')"
+            :formatter="formatterMoney">
+          </el-table-column>
+        </el-table>
+      </el-collapse-item>
+      <!-- 收款資訊 -->
+      <el-collapse-item :title="$t('__binding')+$t('__collectionRecords')" name="2">
+        <template slot="title">
+          <h2>{{$t('__binding')+$t('__collectionRecords')}}<i class="el-icon-circle-plus" v-show="!activeNames.includes('2')"></i></h2>
+        </template>
+        <el-table
+        ref="multipleTable"
+        :data="selectCollectionRecords"
+        stripe
+        border
+        @selection-change="handleSelectionChange"
+        style="width: 100%">
+          <el-table-column
+            type="selection"
+            :selectable="checkSelectable"
+            width="55">
+          </el-table-column>
+          <el-table-column
+            prop="Seq"
+            :label="$t('__seq')">
+          </el-table-column>
+          <el-table-column
+            prop="InvoiceName"
+            :label="$t('__invoice')+$t('__name')">
+          </el-table-column>
+          <el-table-column
+            prop="ReceivedDate"
+            :label="$t('__received')+$t('__date')"
+            :formatter="formatterDate">
+          </el-table-column>
+          <el-table-column
+            prop="PaymentMethodName"
+            :label="$t('__paymentMethod')">
+          </el-table-column>
+          <el-table-column
+            prop="Amount"
+            :label="$t('__amount')"
+            :formatter="formatterMoney">
+          </el-table-column>
+          <el-table-column
+            prop="Memo"
+            :label="$t('__memo')"
+            width="100px">
+          </el-table-column>
+        </el-table>
+        <div style="color:red" v-show="multipleSelection.length <= 0">{{$t('__pleaseSelectAtLeastOne')+$t('__collectionRecords')}}</div>
+      </el-collapse-item>
+    </el-collapse>
+
     <div slot="footer" class="dialog-footer">
       <br/>
       <el-button v-show="buttonsShow.delete && buttonsShowUser.delete" type="danger" @click="delInvoice">{{$t('__invalid')+$t('__invoice')}}</el-button>
@@ -158,6 +196,21 @@ export default {
     buttonsShowUser: { type: Object }
   },
   data () {
+    let myValidate = async (rule, value, callback) => {
+      // 新增時才檢驗
+      if (this.dialogType !== 'new') {
+        callback()
+        return
+      }
+
+      // 1.驗證可用性
+      let checkValidate = await validate.validateInvoiceID(rule, value, callback)
+      if (checkValidate !== '') {
+        callback(checkValidate)
+      }
+
+      callback()
+    }
     return {
       form: {
         InvoiceID: null,
@@ -175,12 +228,13 @@ export default {
         CreateID: this.$store.state.userID,
         Status: '2',
         SalesReturnDate: null,
+        // 以下為顯示用部紀錄資料庫
         multipleSelection: [{ name: 'q' }]
       },
       rules: {
         InvoiceKind: [{ required: true, message: this.$t('__pleaseInput'), trigger: 'blur' }],
         InvoiceDate: [{ required: true, message: this.$t('__pleaseInput'), trigger: 'blur' }],
-        InvoiceID: [{ required: true, trigger: 'blur', validator: validate.validateInvoiceID }],
+        InvoiceID: [{ required: true, trigger: 'blur', validator: myValidate }],
         CreateID: [{ required: true, message: this.$t('__pleaseInput'), trigger: 'blur' }]
       },
       // 系統目前狀態權限
@@ -203,9 +257,20 @@ export default {
         selectCollectionRecords: false
       },
       myTitle: '',
-      activeNames: ['2'],
+      activeNames: ['1', '2'],
       selectCollectionRecords: [],
       multipleSelection: [],
+      // 發票明細
+      invoiceDetail: {
+        InvoiceID: null,
+        Seq: 0,
+        InvoiceName: '',
+        Price: 0,
+        Qty: 0,
+        Amount: 0,
+        Tax: 0
+      },
+      invoiceDetails: [],
       // 以下為下拉式選單專用
       ddlInvoiceKind: [],
       ddlInvoiceStatus: [],
@@ -283,6 +348,10 @@ export default {
               this.$refs.multipleTable.toggleRowSelection(row)
             })
           })
+
+          // 發票明細
+          let responseInvoiceDetail = await this.$api.orders.getObject({ type: 'invoiceDetail', ID: this.form.InvoiceID })
+          this.invoiceDetails = responseInvoiceDetail.data.result
           break
       }
     },
@@ -297,9 +366,21 @@ export default {
       this.$refs['invoiceForm'].validate(async (valid) => {
         if (valid) {
           await this.save(this.dialogType)
-          for (let i = 0; i < this.multipleSelection.length; i++) {
-            let row = this.multipleSelection[i]
-            await this.$api.orders.invoiceFunctions({ type: 'invoiceBindRecords', OrderID: row.OrderID, InvoiceID: this.form.InvoiceID, Seq: row.Seq })
+
+          // 勾選的收款紀錄
+          let seqList = []
+          let seqString = ''
+          this.multipleSelection.forEach(item => {
+            seqList.push(item.Seq)
+          })
+          seqString = seqList.join(',')
+          await this.$api.orders.invoiceFunctions({ type: 'invoiceBindRecords', OrderID: this.form.OrderID, InvoiceID: this.form.InvoiceID, Seq: seqString })
+
+          // 發票明細
+          for (let i = 0; i < this.invoiceDetails.length; i++) {
+            let item = this.invoiceDetails[i]
+            item.InvoiceID = this.form.InvoiceID
+            await this.$api.orders.invoiceDetailNew({ form: item })
           }
 
           this.$emit('dialog-save')
@@ -313,8 +394,43 @@ export default {
     // 選擇收款紀錄
     handleSelectionChange: function (selection) {
       this.multipleSelection = selection
+
+      // reset
       let totalAmount = 0
-      this.multipleSelection.forEach(item => { totalAmount += item.Amount })
+      this.invoiceDetails = []
+
+      this.multipleSelection.forEach(item => {
+        totalAmount += item.Amount
+
+        if (this.dialogType === 'new') {
+          // 統計發票明細
+          // 有相同發票名稱,單價 就疊加 數量,金額
+          let findResult = this.invoiceDetails.find(item2 => { return item2.InvoiceName === item.InvoiceName && item2.Price === item.Amount })
+          if (findResult === undefined) {
+            let newObj = JSON.parse(JSON.stringify(this.invoiceDetail))
+            // find Maximum Seq
+            let nextSeq = 1
+            if (this.invoiceDetails.length === 0) {
+              nextSeq = 1
+            } else {
+              let amounts = this.invoiceDetails.map(item3 => item3.Seq)
+              let highestSeq = Math.max(...amounts)
+              nextSeq = highestSeq + 1
+            }
+            newObj.Seq = nextSeq
+            newObj.InvoiceID = this.form.InvoiceID
+            newObj.InvoiceName = item.InvoiceName
+            newObj.Price = item.Amount
+            newObj.Qty = 1
+            newObj.Amount = item.Amount
+            newObj.Tax = item.Tax
+            this.invoiceDetails.push(newObj)
+          } else {
+            findResult.Qty += 1
+            findResult.Amount += item.Amount
+          }
+        }
+      })
       this.form.Amount = totalAmount
     },
     // 取消

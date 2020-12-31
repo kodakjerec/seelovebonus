@@ -27,11 +27,11 @@
         :label="$t('__product')+$t('__name')">
       </el-table-column>
       <el-table-column
-        prop="AccountingName"
-        :label="$t('__accounting')+$t('__name')">
+        prop="InvoiceName"
+        :label="$t('__invoice')+$t('__name')">
       </el-table-column>
       <el-table-column
-        :label="$t('__qty') + ' ' + $t('__unit')+$t('__name')">
+        :label="$t('__qty') + ' ' + $t('__unit')">
         <template slot-scope="scope">
           {{scope.row.Qty + ' ' + scope.row.UnitName}}
         </template>
@@ -47,8 +47,13 @@
         :formatter="formatterMoney">
       </el-table-column>
       <el-table-column
+        prop="AccountingID"
+        :label="$t('__accounting')+$t('__id')">
+      </el-table-column>
+      <el-table-column
         prop="BOMName"
-        :label="$t('__bom')">
+        :label="$t('__bom')"
+        width="60px">
       </el-table-column>
     </el-table>
     <new-form
