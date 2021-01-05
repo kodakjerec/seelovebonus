@@ -98,7 +98,7 @@ export default {
       this.ddlSubList = response.data.result
     },
     bringProductBOM: async function () {
-      let responseBOM = await this.$api.basic.getObject({ type: 'productBOM', ID: this.productID })
+      let responseBOM = await this.$api.basic.getObject({ type: 'productBOM', keyword: this.productID })
       this.subList = responseBOM.data.result
     },
     // 存檔前先過濾

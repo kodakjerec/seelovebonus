@@ -50,87 +50,83 @@
         <template slot="label">
           {{$t('__limit')}}{{$t('__itemCategory')}}<br/><span style="color: red">{{$t('__noChoiceNoLimit')}}</span>
         </template>
-        <el-col :span="8">
-          <el-select v-model="form.Category1" filterable :placeholder="$t('__plzChoice')" @change="ddlCategory1Change" >
-            <el-option v-for="item in ddlCategory1" :key="item.ID" :label="item.ID+' '+item.Value" :value="item.ID">
-              <span style="float: left">{{ item.Value }}</span>
-              <span style="float: right; color: #8492a6; font-size: 13px">{{ item.ID }}</span>
-            </el-option>
-          </el-select>
-        </el-col>
-        <el-col :span="8">
-          <el-select v-model="form.Category2" filterable :placeholder="$t('__plzChoice')" @change="ddlCategory2Change" >
-            <el-option v-for="item in ddlCategory2" :key="item.ID" :label="item.ID+' '+item.Value" :value="item.ID">
-              <span style="float: left">{{ item.Value }}</span>
-              <span style="float: right; color: #8492a6; font-size: 13px">{{ item.ID }}</span>
-            </el-option>
-          </el-select>
-        </el-col>
-        <el-col :span="8">
-          <el-select v-model="form.Category3" filterable :placeholder="$t('__plzChoice')">
-            <el-option v-for="item in ddlCategory3" :key="item.ID" :label="item.ID+' '+item.Value" :value="item.ID">
-              <span style="float: left">{{ item.Value }}</span>
-              <span style="float: right; color: #8492a6; font-size: 13px">{{ item.ID }}</span>
-            </el-option>
-          </el-select>
-        </el-col>
+        <el-select v-model="form.Category1" filterable :placeholder="$t('__plzChoice')" @change="ddlCategory1Change" >
+          <el-option v-for="item in ddlCategory1" :key="item.ID" :label="item.ID+' '+item.Value" :value="item.ID">
+            <span style="float: left">{{ item.Value }}</span>
+            <span style="float: right; color: #8492a6; font-size: 13px">{{ item.ID }}</span>
+          </el-option>
+        </el-select>
+        <el-select v-model="form.Category2" filterable :placeholder="$t('__plzChoice')" @change="ddlCategory2Change" >
+          <el-option v-for="item in ddlCategory2" :key="item.ID" :label="item.ID+' '+item.Value" :value="item.ID">
+            <span style="float: left">{{ item.Value }}</span>
+            <span style="float: right; color: #8492a6; font-size: 13px">{{ item.ID }}</span>
+          </el-option>
+        </el-select>
+        <el-select v-model="form.Category3" filterable :placeholder="$t('__plzChoice')">
+          <el-option v-for="item in ddlCategory3" :key="item.ID" :label="item.ID+' '+item.Value" :value="item.ID">
+            <span style="float: left">{{ item.Value }}</span>
+            <span style="float: right; color: #8492a6; font-size: 13px">{{ item.ID }}</span>
+          </el-option>
+        </el-select>
       </el-form-item>
       <el-form-item>
         <template slot="label">
           {{$t('__storageAddress')}}{{'(' + $t('__building') + '-' + $t('__floor') + '-' + $t('__area') + ')'}}
         </template>
-        <el-col :span="8">
-          <el-form-item prop="Building">
-            <el-select v-model="form.Building" value-key="value" :placeholder="$t('__plzChoice')" @change="ddlBuildingChange">
-              <el-option v-for="item in ddlBuilding" :key="item.ID" :label="item.Value" :value="item.ID">
-                <span style="float: left">{{ item.Value }}</span>
-                <span style="float: right; color: #8492a6; font-size: 13px">{{ item.ID }}</span>
-              </el-option>
-            </el-select>
-          </el-form-item>
-        </el-col>
-        <el-col :span="8">
-          <el-form-item>
-            <el-select v-model="form.Floor" value-key="value" :placeholder="$t('__plzChoice')" @change="ddlFloorChange">
-              <el-option v-for="item in ddlFloor" :key="item.ID" :label="item.Value" :value="item.ID">
-                <span style="float: left">{{ item.Value }}</span>
-                <span style="float: right; color: #8492a6; font-size: 13px">{{ item.ID }}</span>
-              </el-option>
-            </el-select>
-          </el-form-item>
-        </el-col>
-        <el-col :span="8">
-          <el-form-item>
-            <el-select v-model="form.Area" value-key="value" :placeholder="$t('__plzChoice')">
-              <el-option v-for="item in ddlArea" :key="item.ID" :label="item.Value" :value="item.ID">
-                <span style="float: left">{{ item.Value }}</span>
-                <span style="float: right; color: #8492a6; font-size: 13px">{{ item.ID }}</span>
-              </el-option>
-            </el-select>
-          </el-form-item>
-        </el-col>
+        <el-form-item prop="Building">
+          <el-select v-model="form.Building" value-key="value" :placeholder="$t('__plzChoice')" @change="ddlBuildingChange">
+            <el-option v-for="item in ddlBuilding" :key="item.ID" :label="item.Value" :value="item.ID">
+              <span style="float: left">{{ item.Value }}</span>
+              <span style="float: right; color: #8492a6; font-size: 13px">{{ item.ID }}</span>
+            </el-option>
+          </el-select>
+          <el-select v-model="form.Floor" value-key="value" :placeholder="$t('__plzChoice')" @change="ddlFloorChange">
+            <el-option v-for="item in ddlFloor" :key="item.ID" :label="item.Value" :value="item.ID">
+              <span style="float: left">{{ item.Value }}</span>
+              <span style="float: right; color: #8492a6; font-size: 13px">{{ item.ID }}</span>
+            </el-option>
+          </el-select>
+          <el-select v-model="form.Area" value-key="value" :placeholder="$t('__plzChoice')">
+            <el-option v-for="item in ddlArea" :key="item.ID" :label="item.Value" :value="item.ID">
+              <span style="float: left">{{ item.Value }}</span>
+              <span style="float: right; color: #8492a6; font-size: 13px">{{ item.ID }}</span>
+            </el-option>
+          </el-select>
+        </el-form-item>
       </el-form-item>
       <el-form-item>
         <template slot="label">
           {{$t('__volume')}}{{'(' + $t('__length') + '-' + $t('__width') + '-' + $t('__height') + ')'}}<br/><span style="color: red">{{$t('__noChoiceNoLimit')}}</span>
         </template>
-        <el-col :span="8">
+        <el-col :span="12">
           <el-input-number v-model="form.Length" :min="0"></el-input-number>
-        </el-col>
-        <el-col :span="8">
+          <span> - </span>
           <el-input-number v-model="form.Width" :min="0"></el-input-number>
-        </el-col>
-        <el-col :span="8">
+          <span> - </span>
           <el-input-number v-model="form.Height" :min="0"></el-input-number>
         </el-col>
       </el-form-item>
       <el-form-item :label="$t('__status')">
-        <el-select v-model="form.Status" value-key="value" :placeholder="$t('__plzChoice')">
-          <el-option v-for="item in ddlStatus" :key="item.ID" :label="item.Value" :value="item.ID">
-            <span style="float: left">{{ item.Value }}</span>
-            <span style="float: right; color: #8492a6; font-size: 13px">{{ item.ID }}</span>
-          </el-option>
-        </el-select>
+        <el-col :span="6">
+          <el-form-item>
+            <el-select v-model="form.Status" value-key="value" :placeholder="$t('__plzChoice')">
+              <el-option v-for="item in ddlStatus" :key="item.ID" :label="item.Value" :value="item.ID">
+                <span style="float: left">{{ item.Value }}</span>
+                <span style="float: right; color: #8492a6; font-size: 13px">{{ item.ID }}</span>
+              </el-option>
+            </el-select>
+          </el-form-item>
+        </el-col>
+        <el-col :span="8">
+          <el-form-item :label="$t('__kind')">
+            <el-select v-model="form.StorageType" value-key="value" :placeholder="$t('__plzChoice')">
+              <el-option v-for="item in ddlStorageType" :key="item.ID" :label="item.Value" :value="item.ID">
+                <span style="float: left">{{ item.Value }}</span>
+                <span style="float: right; color: #8492a6; font-size: 13px">{{ item.ID }}</span>
+              </el-option>
+            </el-select>
+          </el-form-item>
+        </el-col>
       </el-form-item>
       <el-form-item :label="$t('__memo')">
           <el-input v-model="form.Memo" maxlength="200" show-word-limit></el-input>
@@ -172,6 +168,7 @@ export default {
         MaxQty: 1,
         AvgQty: 0,
         Status: '1',
+        StorageType: '1',
         // 批次新增用, 不會記錄進資料庫
         RowStart: 1,
         RowEnd: 15,
@@ -205,7 +202,8 @@ export default {
       ddlFloorOrigin: [],
       ddlFloor: [],
       ddlAreaOrigin: [],
-      ddlArea: []
+      ddlArea: [],
+      ddlStorageType: []
     }
   },
   async mounted () {
@@ -247,6 +245,9 @@ export default {
       this.ddlAreaOrigin = resArea.data.result
       this.ddlBuildingChange()
       this.ddlFloorChange()
+
+      let resStorageType = await this.$api.basic.getDropdownList({ type: 'storageType' })
+      this.ddlStorageType = resStorageType.data.result
     },
     // 檢查輸入
     checkValidate: async function () {

@@ -49,7 +49,7 @@ export default {
     },
     preLoading: async function () {
       // 取得可以用的選單
-      let responseRow = await this.$api.stock.getObject({ type: 'stockLog', ID: this.stock.GUID })
+      let responseRow = await this.$api.stock.getObject({ type: 'stockLog', keyword: this.stock.GUID })
       this.logs = responseRow.data.result
     },
     save: function () {

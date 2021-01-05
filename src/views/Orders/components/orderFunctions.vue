@@ -41,7 +41,7 @@ export default {
   methods: {
     // 修改狀態:取得額外資料
     bringOrderFunctions: async function () {
-      let responseCustomer = await this.$api.orders.getObject({ type: 'orderFunctons', ID: this.orderID })
+      let responseCustomer = await this.$api.orders.getObject({ type: 'orderFunctons', keyword: this.orderID })
       let result = responseCustomer.data.result
       result.forEach(row => {
         if (row.Function === this.form.Function) {

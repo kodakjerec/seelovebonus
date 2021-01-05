@@ -44,16 +44,16 @@ export default {
         return data
       })
     },
-    getDropdownList: ({ type }) => {
-      let rawData = { type }
+    getDropdownList: ({ type, keyword }) => {
+      let rawData = { type, keyword }
       console.log('%c >>> getDropdownList: ', 'background-color: blue; color: white; font-size: 14px; font-weight: bold;', rawData)
       return post('/stock/getDropdownList', rawData).then(data => {
         console.log(`%c <<< Response(/rest/stock/getDropdownList)⤵ `, 'background-color: #E0455D; color: white; font-size: 14px; font-weight: bold;', data)
         return data
       })
     },
-    getObject: ({ type, ID }) => {
-      let rawData = { type, ID }
+    getObject: ({ type, keyword }) => {
+      let rawData = { type, keyword }
       console.log('%c >>> getObject: ', 'background-color: blue; color: white; font-size: 14px; font-weight: bold;', rawData)
       return post('/stock/getObject', rawData).then(data => {
         console.log(`%c <<< Response(/rest/stock/getObject)⤵ `, 'background-color: #E0455D; color: white; font-size: 14px; font-weight: bold;', data)

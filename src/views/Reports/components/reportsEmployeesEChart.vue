@@ -50,7 +50,7 @@ export default {
   },
   methods: {
     preLoading: async function () {
-      let response1 = await this.$api.basic.getObject({ type: 'companiesHierarchy' })
+      let response1 = await this.$api.basic.getObject({ type: 'companiesHierarchy', keyword: '' })
       this.rawData = response1.data.result
       // 找出最深階層
       this.series.initialTreeDepth = Math.max(...this.rawData.map(object => object.Level))

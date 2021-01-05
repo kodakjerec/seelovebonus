@@ -152,7 +152,7 @@ export default {
     },
     handleClick: async function (row, column, event) {
       // 取得可以用的選單
-      let responseRow = await this.$api.stock.getObject({ type: 'inboundOrder', ID: row.ID })
+      let responseRow = await this.$api.stock.getObject({ type: 'inboundOrder', keyword: row.ID })
       this.inboundOrder = responseRow.data.result[0]
 
       // 簽核管理

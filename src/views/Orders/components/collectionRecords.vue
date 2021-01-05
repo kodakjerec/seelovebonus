@@ -100,7 +100,7 @@ export default {
       return formatMoney(cellValue)
     },
     preLoading: async function () {
-      let responseRecords = await this.$api.orders.getObject({ type: 'collectionRecords', ID: this.orderID })
+      let responseRecords = await this.$api.orders.getObject({ type: 'collectionRecords', keyword: this.orderID })
       this.collectionRecordsShow = responseRecords.data.result
       if (this.collectionRecordsShow && this.collectionRecordsShow.length > 0) {
         this.activeName = '1'

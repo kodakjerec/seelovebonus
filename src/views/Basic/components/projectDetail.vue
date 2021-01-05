@@ -94,7 +94,7 @@ export default {
       this.ddlSubList = response.data.result
     },
     bringProjectDetail: async function () {
-      let response1 = await this.$api.basic.getObject({ type: 'projectDetail', ID: this.projectID })
+      let response1 = await this.$api.basic.getObject({ type: 'projectDetail', keyword: this.projectID })
       this.subList = response1.data.result
     },
     // 存檔前先過濾

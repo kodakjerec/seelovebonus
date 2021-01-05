@@ -75,7 +75,7 @@ export default {
   methods: {
     // 讀取預設資料
     preLoading: async function () {
-      let response3 = await this.$api.basic.getObject({ type: 'projectSuperBonus', ID: this.projectID })
+      let response3 = await this.$api.basic.getObject({ type: 'projectSuperBonus', keyword: this.projectID })
       this.subList = response3.data.result
     },
     // 取消

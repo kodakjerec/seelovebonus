@@ -413,7 +413,7 @@ export default {
     },
     // 切換 法定代理人
     ddlAgentIDChange: async function (selectd) {
-      let responseCustomer = await this.$api.basic.getObject({ type: 'customer', ID: selectd })
+      let responseCustomer = await this.$api.basic.getObject({ type: 'customer', keyword: selectd })
       let row = responseCustomer.data.result[0]
       if (row !== undefined) {
         this.form.AgentName = row.Name

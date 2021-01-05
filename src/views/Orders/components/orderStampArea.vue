@@ -62,7 +62,7 @@ export default {
   },
   methods: {
     preLoading: async function () {
-      let responseStampShow = await this.$api.orders.getObject({ type: 'orderStampShow', ID: this.orderID })
+      let responseStampShow = await this.$api.orders.getObject({ type: 'orderStampShow', keyword: this.orderID })
       this.stampShow = responseStampShow.data.result
     }
   }

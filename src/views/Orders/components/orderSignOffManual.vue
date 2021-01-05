@@ -135,10 +135,10 @@ export default {
   },
   methods: {
     preLoading: async function () {
-      let response = await this.$api.signOff.getObject({ type: 'signOffProcedure', ID: this.orderType })
+      let response = await this.$api.signOff.getObject({ type: 'signOffProcedure', keyword: this.orderType })
       this.steps = response.data.result
 
-      let responsePermission = await this.$api.signOff.getObject({ type: 'signOffPermission', ID: this.orderType })
+      let responsePermission = await this.$api.signOff.getObject({ type: 'signOffPermission', keyword: this.orderType })
       this.permissions = responsePermission.data.result
       this.steps.forEach(item => {
         item.Status = ''

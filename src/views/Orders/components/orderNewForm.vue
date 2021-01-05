@@ -368,7 +368,7 @@ export default {
     // 點擊"修改專案", 填入明細
     bringProject: async function () {
       // get Data
-      let responseProjectDetail = await this.$api.orders.getObject({ type: 'projectDetail', ID: this.form.ProjectID })
+      let responseProjectDetail = await this.$api.orders.getObject({ type: 'projectDetail', keyword: this.form.ProjectID })
       let projectDetail = responseProjectDetail.data.result
 
       // 填入 orderHead
@@ -379,9 +379,9 @@ export default {
     // 切換專案, 填入明細
     ddlProjectChange: async function (selected) {
       // get Data
-      let responseProject = await this.$api.orders.getObject({ type: 'project', ID: selected })
+      let responseProject = await this.$api.orders.getObject({ type: 'project', keyword: selected })
       let project = responseProject.data.result[0]
-      let responseProjectDetail = await this.$api.orders.getObject({ type: 'projectDetail', ID: selected })
+      let responseProjectDetail = await this.$api.orders.getObject({ type: 'projectDetail', keyword: selected })
       let projectDetail = responseProjectDetail.data.result
 
       // 填入 orderHead
@@ -399,7 +399,7 @@ export default {
     },
     // 帶入專案功能
     bringFunctions: async function () {
-      let responseProjectFunctions = await this.$api.basic.getObject({ type: 'projectFunctions', ID: this.form.ProjectID })
+      let responseProjectFunctions = await this.$api.basic.getObject({ type: 'projectFunctions', keyword: this.form.ProjectID })
       let projectFunctions = responseProjectFunctions.data.result
 
       // 專案功能顯示

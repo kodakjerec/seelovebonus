@@ -113,7 +113,7 @@ export default {
       let response2 = await this.$api.basic.getDropdownList({ type: 'projectPerformanceBonusList' })
       this.ddlPPBList = response2.data.result
 
-      let response3 = await this.$api.basic.getObject({ type: 'projectPerformanceBonus', ID: this.projectID })
+      let response3 = await this.$api.basic.getObject({ type: 'projectPerformanceBonus', keyword: this.projectID })
       this.subList = response3.data.result
     },
     // 取消
@@ -218,7 +218,7 @@ export default {
     // 切換大類
     ddlPPBListChange: async function (selected) {
       this.projectID = selected
-      let response3 = await this.$api.basic.getObject({ type: 'projectPerformanceBonus', ID: this.projectID })
+      let response3 = await this.$api.basic.getObject({ type: 'projectPerformanceBonus', keyword: this.projectID })
       this.subList = response3.data.result
     },
     percentageChange: function (currentValue, oldValue, row) {
@@ -235,7 +235,7 @@ export default {
 
       // 找回BASE設定
       this.projectID = 'BASE'
-      let response3 = await this.$api.basic.getObject({ type: 'projectPerformanceBonus', ID: this.projectID })
+      let response3 = await this.$api.basic.getObject({ type: 'projectPerformanceBonus', keyword: this.projectID })
       this.subList = response3.data.result
 
       // 填入基本資料

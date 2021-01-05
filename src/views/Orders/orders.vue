@@ -297,7 +297,7 @@ export default {
     // 點選訂單編號
     handleClick: async function (row, column, event) {
       // 取得可以用的選單
-      let responseRow = await this.$api.orders.getObject({ type: 'orderHead', ID: row.ID })
+      let responseRow = await this.$api.orders.getObject({ type: 'orderHead', keyword: row.ID })
       this.order = responseRow.data.result[0]
 
       // 簽核管理

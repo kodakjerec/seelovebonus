@@ -40,7 +40,7 @@ export default {
       return formatDateTime(cellValue)
     },
     preLoading: async function () {
-      let response = await this.$api.signOff.getObject({ type: 'orderSignOffLog', ID: this.ID })
+      let response = await this.$api.signOff.getObject({ type: 'orderSignOffLog', keyword: this.ID })
       this.steps = response.data.result
     },
     goBack: function () {

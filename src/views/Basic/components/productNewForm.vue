@@ -222,7 +222,7 @@ export default {
       this.ddlCategory2Change()
 
       // 有用到的商品特殊功能
-      let responseAvailableProjectFunctions = await this.$api.basic.getObject({ type: 'productFunctions', ID: this.form.ID })
+      let responseAvailableProjectFunctions = await this.$api.basic.getObject({ type: 'productFunctions', keyword: this.form.ID })
       this.switchProjectFunctions = responseAvailableProjectFunctions.data.result
     },
     // 檢查輸入

@@ -217,7 +217,7 @@ export default {
     },
     // 修改狀態:取得客戶資料
     bringCustomer: async function () {
-      let responseCustomer = await this.$api.orders.getObject({ type: 'orderCustomer', ID: this.orderID })
+      let responseCustomer = await this.$api.orders.getObject({ type: 'orderCustomer', keyword: this.orderID })
       let row = responseCustomer.data.result[0]
 
       this.oldCustomerID = row.CustomerID
@@ -255,7 +255,7 @@ export default {
     // 選定客戶取得資料
     ddlCustomerChange: async function () {
       // 取得可以用的選單
-      let responseRow = await this.$api.orders.getObject({ type: 'orderCustomerGetDetail', ID: this.form.CustomerID })
+      let responseRow = await this.$api.orders.getObject({ type: 'orderCustomerGetDetail', keyword: this.form.CustomerID })
       let row = responseRow.data.result[0]
       this.form.TelHome = row.TelHome
       this.form.TelMobile = row.TelMobile

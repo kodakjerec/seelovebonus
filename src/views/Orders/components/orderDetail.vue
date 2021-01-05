@@ -226,7 +226,7 @@ export default {
         item.options = this.originDDLSubList.filter(item2 => item2.Category1Name === item.Category1Name)
       })
 
-      let responseDetail = await this.$api.orders.getObject({ type: 'productFunctons', ID: this.orderID })
+      let responseDetail = await this.$api.orders.getObject({ type: 'productFunctons', keyword: this.orderID })
       this.productFunctionsList = responseDetail.data.result
 
       let response2 = await this.$api.orders.getDropdownList({ type: 'productFunctionsForOrderDetail' })
@@ -234,7 +234,7 @@ export default {
     },
     // 修改狀態, 取得明細
     bringOrderDetail: async function () {
-      let responseDetail = await this.$api.orders.getObject({ type: 'orderDetail', ID: this.orderID })
+      let responseDetail = await this.$api.orders.getObject({ type: 'orderDetail', keyword: this.orderID })
       this.subList = responseDetail.data.result
 
       this.bringFunctions()
@@ -391,7 +391,7 @@ export default {
 
       // TODO: 有BOM表, 另外顯示在小視窗
       // if (itemDetail.BOM === '1') {
-      //   const resBomItemDetail = await this.$api.orders.getObject({ type: 'productBOMForOrderDetail', ID: itemDetail.ProductID })
+      //   const resBomItemDetail = await this.$api.orders.getObject({ type: 'productBOMForOrderDetail', keyword: itemDetail.ProductID })
       //   let bomItemDetail = resBomItemDetail.data.result
       //   for (let index = 0; index < bomItemDetail.length; index++) {
       //     this.handleNew()

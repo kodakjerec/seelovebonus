@@ -48,7 +48,7 @@ export default {
     // 讀取預設資料
     preLoading: async function () {
       // 取得所有原始資料
-      let response = await this.$api.basic.getObject({ type: 'companyExceedingDateLog', ID: this.companyID })
+      let response = await this.$api.basic.getObject({ type: 'companyExceedingDateLog', keyword: this.companyID })
       this.log = response.data.result
     }
   }

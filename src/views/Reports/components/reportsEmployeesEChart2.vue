@@ -69,7 +69,7 @@ export default {
   },
   methods: {
     preLoading: async function () {
-      let response1 = await this.$api.basic.getObject({ type: 'employeesHierarchy', ID: this.companyID })
+      let response1 = await this.$api.basic.getObject({ type: 'employeesHierarchy', keyword: this.companyID })
       this.rawData = response1.data.result
 
       // 找出最深階層

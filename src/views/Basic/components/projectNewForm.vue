@@ -146,7 +146,7 @@ export default {
     // 讀取預設資料
     preLoading: async function () {
       // 有用到的專案功能
-      let responseAvailableProjectFunctions = await this.$api.basic.getObject({ type: 'projectFunctions', ID: this.form.ID })
+      let responseAvailableProjectFunctions = await this.$api.basic.getObject({ type: 'projectFunctions', keyword: this.form.ID })
       this.switchProjectFunctions = responseAvailableProjectFunctions.data.result
     },
     // 檢查輸入

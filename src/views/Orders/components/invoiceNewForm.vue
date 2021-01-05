@@ -354,7 +354,7 @@ export default {
           })
 
           // 發票明細
-          let responseInvoiceDetail = await this.$api.orders.getObject({ type: 'invoiceDetail', ID: this.form.InvoiceID })
+          let responseInvoiceDetail = await this.$api.orders.getObject({ type: 'invoiceDetail', keyword: this.form.InvoiceID })
           this.invoiceDetails = responseInvoiceDetail.data.result
           break
       }

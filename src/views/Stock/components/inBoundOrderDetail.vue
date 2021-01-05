@@ -192,7 +192,7 @@ export default {
     },
     // 修改狀態, 取得明細
     bringOrderDetail: async function () {
-      let responseDetail = await this.$api.stock.getObject({ type: 'inboundOrderDetail', ID: this.orderID })
+      let responseDetail = await this.$api.stock.getObject({ type: 'inboundOrderDetail', keyword: this.orderID })
       this.subList = responseDetail.data.result
 
       this.reCalAmount()

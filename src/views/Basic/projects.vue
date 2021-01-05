@@ -141,7 +141,7 @@ export default {
     },
     handleClick: async function (row, column, event) {
       // 取得可以用的選單
-      let responseRow = await this.$api.basic.getObject({ type: 'project', ID: row.ID })
+      let responseRow = await this.$api.basic.getObject({ type: 'project', keyword: row.ID })
       this.project = responseRow.data.result[0]
 
       // 權限管理
