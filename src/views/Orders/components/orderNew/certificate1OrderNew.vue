@@ -44,7 +44,7 @@ export default {
         Status: '1',
         ReportDuration: '1',
         Prefix: '',
-        IssuanceDate: new Date()
+        IssuanceDate: ''
       },
       certificate1List: [],
       isExceedQtyLimit: false

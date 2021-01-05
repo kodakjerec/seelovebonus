@@ -49,7 +49,7 @@
         <el-divider>{{$t('__project')+$t('__detail')}}</el-divider>
         <project-detail ref="projectDetail" :projectID="form.ID"></project-detail>
       </template>
-      <el-form-item v-else>{{$t('__projectDetailWarrning')}}</el-form-item>
+      <el-form-item v-else>{{$t('__projectDetailWarning')}}</el-form-item>
       <!-- 專案功能 -->
       <el-divider>{{$t('__project')+$t('__function')}}</el-divider>
       <template v-for="fun in switchProjectFunctions">

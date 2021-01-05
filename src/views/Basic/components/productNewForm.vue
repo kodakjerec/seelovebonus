@@ -94,7 +94,7 @@
       </el-form-item>
       <!-- BOM 子結構 -->
       <bom ref="bom" v-if="dialogType!=='new'" :productID="form.ID"></bom>
-      <el-form-item v-else>{{$t('__productBOMWarrning')}}</el-form-item>
+      <el-form-item v-else>{{$t('__productBOMWarning')}}</el-form-item>
       <!-- 專案功能 -->
       <el-divider>{{$t('__product')+$t('__function')}}</el-divider>
       <template v-for="fun in switchProjectFunctions">

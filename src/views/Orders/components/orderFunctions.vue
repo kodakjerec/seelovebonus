@@ -1,6 +1,6 @@
 <template>
   <el-form ref="form" :model="form" :rules="rules" label-width="10vw" label-position="right" class="orderFunctionsCSS">
-    <el-form-item v-if="showChanyunOrderID" :label="'展雲-契約單號'" prop="Value">
+    <el-form-item v-if="chanyunOrderID" :label="'展雲-契約單號'" prop="Value">
       <el-input v-model="form.Value" :placeholder="$t('__pleaseInput')" :disabled="buttonsShowUser.new === 0" @input="inputChange"></el-input>
     </el-form-item>
   </el-form>
@@ -13,7 +13,7 @@ export default {
     dialogType: { type: String, default: 'new' },
     orderID: { type: String },
     buttonsShowUser: { type: Object },
-    showChanyunOrderID: { type: Number }
+    chanyunOrderID: { type: Number }
   },
   data () {
     return {

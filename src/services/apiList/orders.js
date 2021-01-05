@@ -227,9 +227,30 @@ export default {
         return data
       })
     },
+    anzaOrderShow: ({ keyword }) => {
+      let rawData = { keyword }
+      return post('/orders/anzaOrderShow', rawData).then(data => {
+        console.log(`%c <<< Response(/rest/orders/anzaOrderShow)⤵ `, 'background-color: #E0455D; color: white; font-size: 14px; font-weight: bold;', data)
+        return data
+      })
+    },
+    anzaOperate: ({ keyword }) => {
+      let rawData = { keyword }
+      return post('/orders/anzaOperate', rawData).then(data => {
+        console.log(`%c <<< Response(/rest/orders/anzaOperate)⤵ `, 'background-color: #E0455D; color: white; font-size: 14px; font-weight: bold;', data)
+        return data
+      })
+    },
+    orderAnzaOrderNew: ({ form }) => {
+      let rawData = { form }
+      return post('/orders/orderAnzaOrderNew', rawData).then(data => {
+        console.log(`%c <<< Response(/rest/orders/orderAnzaOrderNew)⤵ `, 'background-color: #E0455D; color: white; font-size: 14px; font-weight: bold;', data)
+        return data
+      })
+    },
     getDropdownList: ({ type }) => {
       let rawData = { type }
-      console.log(rawData)
+      console.log('%c >>> getDropdownList: ', 'background-color: blue; color: white; font-size: 14px; font-weight: bold;', rawData)
       return post('/orders/getDropdownList', rawData).then(data => {
         console.log(`%c <<< Response(/rest/orders/getDropdownList)⤵ `, 'background-color: #E0455D; color: white; font-size: 14px; font-weight: bold;', data)
         return data
@@ -237,6 +258,7 @@ export default {
     },
     getObject: ({ type, ID }) => {
       let rawData = { type, ID }
+      console.log('%c >>> getObject: ', 'background-color: blue; color: white; font-size: 14px; font-weight: bold;', rawData)
       return post('/orders/getObject', rawData).then(data => {
         console.log(`%c <<< Response(/rest/orders/getObject)⤵ `, 'background-color: #E0455D; color: white; font-size: 14px; font-weight: bold;', data)
         return data

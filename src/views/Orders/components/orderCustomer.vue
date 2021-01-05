@@ -186,6 +186,12 @@ export default {
       if (this.ddlCustomerBefore) {
         this.ddlCustomer = JSON.parse(JSON.stringify(this.ddlCustomerBefore))
       }
+    },
+    form: {
+      handler: function (newValue, oldValue) {
+        this.customerChange()
+      },
+      deep: true
     }
   },
   mounted () {
@@ -337,6 +343,11 @@ export default {
       }
 
       return isSuccess
+    },
+    // ===== 安座單 =====
+    // 回傳客戶代號給上一層
+    customerChange: function () {
+      this.$emit('customer-change', this.form.CustomerID)
     }
   }
 }

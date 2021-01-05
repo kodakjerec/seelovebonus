@@ -52,6 +52,7 @@ import method3 from './paymentMethods/paymentMethod3'
 import method4 from './paymentMethods/paymentMethod4'
 import method5 from './paymentMethods/paymentMethod5'
 import { messageBoxYesNo } from '@/services/utils'
+import { formatDate } from '@/setup/format.js'
 
 export default {
   name: 'CollectionRecordsNewForm',
@@ -75,7 +76,7 @@ export default {
         InvoiceID: '',
         OrderID: this.orderID,
         PaymentMethod: '1',
-        ReceivedDate: new Date(),
+        ReceivedDate: '',
         Amount: 0,
         Account: null,
         BankID: null,
@@ -119,7 +120,11 @@ export default {
   async mounted () {
     if (Object.keys(this.collectionRecord).length > 0) {
       this.form = JSON.parse(JSON.stringify(this.collectionRecord))
+    } else {
+      let tempDate = new Date()
+      this.form.ReceivedDate = formatDate(tempDate.toISOString().slice(0, 10))
     }
+
     switch (this.dialogType) {
       case 'new':
         this.myTitle = this.$t('__new') + this.$t('__collectionRecords')
@@ -251,7 +256,7 @@ export default {
     // 刪除
     delRecord: async function () {
       if (this.form.InvoiceID !== '') {
-        this.$alert(this.$t('__collectioRecordsDeleteNo') + this.$t('__invoice') + this.$t('__number'), this.$t('__warrning'))
+        this.$alert(this.$t('__collectioRecordsDeleteNo') + this.$t('__invoice') + this.$t('__number'), this.$t('__warning'))
         return
       }
       let answerAction = await messageBoxYesNo(this.$t('__delete') + this.$t('__collectionRecords'), this.$t('__delete'))

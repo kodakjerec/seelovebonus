@@ -161,7 +161,7 @@ export default {
         Amount: 0,
         // 商品特殊功能顯示(不記錄進資料庫)
         showExpandFunctions: 0,
-        showChgChanyunCertificate: 0
+        chglandCertificate: 0
       },
       subList: [],
       subListDeleted: [],
@@ -246,7 +246,7 @@ export default {
 
       // 檢查主表單
       this.subList.slice(0).forEach(row => {
-        if (row.showChgChanyunCertificate === 1) {
+        if (row.chglandCertificate === 1) {
           isSuccess = this.$refs['orderDetailFunctions' + row.Seq].checkValidate()
         } else {
           isSuccess = true
@@ -383,6 +383,7 @@ export default {
       row.Price = itemDetail.Price
       row.UnitName = itemDetail.UnitName
       row.ItemType = ItemType
+      row.Inventory = itemDetail.Inventory
 
       if (row.Status === '') {
         row.Status = 'Modified'
@@ -457,14 +458,12 @@ export default {
 
       // 開啟專案功能
       this.functionsList.forEach(MasterItem => {
-        if (MasterItem.Function === 'chglandCertificate') {
-          this.subList.forEach(item => {
-            if (item.ProductID === MasterItem.ProductID) {
-              item.showExpandFunctions = MasterItem.Available
-              item.showChgChanyunCertificate = MasterItem.Available
-            }
-          })
-        }
+        this.subList.forEach(item => {
+          if (item.ProductID === MasterItem.ProductID) {
+            item.showExpandFunctions = MasterItem.Available
+            item[MasterItem.Function] = MasterItem.Available
+          }
+        })
       })
 
       // 如果有開啟特殊功能, 自動展開明細的特殊功能

@@ -64,7 +64,7 @@
 </template>
 
 <script>
-import { formatMoney } from '@/setup/format.js'
+import { formatMoney, formatDate } from '@/setup/format.js'
 import { messageBoxYesNo } from '@/services/utils'
 import transportOrderDetail from './transportOrderDetail'
 
@@ -119,7 +119,8 @@ export default {
       case 'new':
         this.myTitle = this.$t('__new') + this.$t('__transportOrder')
         this.disableForm.ID = true
-        this.form.OrderDate = new Date()
+        let tempDate = new Date()
+        this.form.OrderDate = formatDate(tempDate.toISOString().slice(0, 10))
         this.buttonsShow = {
           new: 1,
           edit: 0,

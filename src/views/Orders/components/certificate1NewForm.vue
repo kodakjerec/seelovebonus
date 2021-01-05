@@ -84,7 +84,7 @@ export default {
         Status: '1',
         ReportDuration: '1',
         Prefix: '',
-        IssuanceDate: new Date()
+        IssuanceDate: ''
       },
       rules: {
         Certificate1: [{ required: true, message: this.$t('__pleaseInput'), trigger: 'blur' }]

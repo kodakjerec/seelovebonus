@@ -214,12 +214,12 @@ export default {
     return {
       form: {
         InvoiceID: null,
-        InvoiceDate: new Date(),
+        InvoiceDate: '',
         OrderID: this.orderID,
         Title: '',
         UniformNumber: '',
         Amount: null,
-        ReceivedDate: new Date(),
+        ReceivedDate: '',
         InvoiceKind: '1',
         Tax: '1',
         CarrierNumber: null,
@@ -281,6 +281,10 @@ export default {
   mounted () {
     if (Object.keys(this.invoiceHead).length > 0) {
       this.form = JSON.parse(JSON.stringify(this.invoiceHead))
+    } else {
+      let tempDate = new Date()
+      this.form.InvoiceDate = formatDate(tempDate.toISOString().slice(0, 10))
+      this.form.ReceivedDate = formatDate(tempDate.toISOString().slice(0, 10))
     }
 
     switch (this.dialogType) {

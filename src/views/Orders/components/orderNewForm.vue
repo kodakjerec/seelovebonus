@@ -39,11 +39,11 @@
       <!-- 專案特殊功能 -->
       <order-functions
         ref="orderFunctions"
-        v-show="form.showChanyunOrderID === 1"
+        v-show="form.chanyunOrderID === 1"
         :dialogType="dialogType"
         :orderID="form.ID"
         :buttonsShowUser="buttonsShowUser"
-        :showChanyunOrderID="form.showChanyunOrderID"></order-functions>
+        :chanyunOrderID="form.chanyunOrderID"></order-functions>
       <!-- 選擇專案 -->
       <el-table
         :data="projectHead"
@@ -115,23 +115,25 @@
     <!-- 訂購者資料 -->
     <order-customer
       ref="orderCustomer"
+      v-show="form.ProjectID"
       :dialogType="dialogType"
       :buttonsShowUser="buttonsShowUser"
       :orderID="form.ID"
-      :ddlCustomerBefore="ddlCustomer"></order-customer>
+      :ddlCustomerBefore="ddlCustomer"
+      @customer-change="customerChange"></order-customer>
     <template v-if="dialogType !== 'new'">
       <!-- 供奉憑證 -->
       <certificate1
         :buttonsShow="buttonsShow"
         :buttonsShowUser="buttonsShowUser"
         :orderID="form.ID"
-        :isShow="form.showCertificate1"></certificate1>
+        :isShow="form.newCertificate1"></certificate1>
       <!-- 換狀證明 -->
       <certificate2
         :buttonsShow="buttonsShow"
         :buttonsShowUser="buttonsShowUser"
         :orderID="form.ID"
-        :isShow="form.showCertificate2"></certificate2>
+        :isShow="form.newCertificate2"></certificate2>
       <!-- 付款資訊 -->
       <collection-records
         ref="collectionRecords"
@@ -150,14 +152,23 @@
         :orderID="form.ID"></orderStampArea>
       </template>
     <template v-else>
-      <span v-html="$t('__orderDetailWarrning')"></span>
+      <!-- 新增訂單專用 -->
+      <span v-html="$t('__orderDetailWarning')"></span>
+      <anza-order-new
+        v-show="form.newAnzaOrder === 1"
+        ref="anzaOrderNew"
+        :orderID="form.ID"
+        :parentOrderDate="form.OrderDate"
+        :parentCustomerID="form.CustomerID"
+        :parentQty="form.Qty"
+        :ddlCustomerBefore="ddlCustomer"></anza-order-new>
       <certificate1-order-new
-        v-show="form.showCertificate1 === 1"
+        v-show="form.newCertificate1 === 1"
         ref="certificate1OrderNew"
         :orderID="form.ID"
         :parentQty="form.Qty"></certificate1-order-new>
       <certificate2-order-new
-        v-show="form.showCertificate2 === 1"
+        v-show="form.newCertificate2 === 1"
         ref="certificate2OrderNew"
         :orderID="form.ID"
         :parentQty="form.Qty"></certificate2-order-new>
@@ -175,9 +186,10 @@
 
 <script>
 import certificate1 from './certificate1'
-import certificate1OrderNew from './certificate1OrderNew'
 import certificate2 from './certificate2'
-import certificate2OrderNew from './certificate2OrderNew'
+import anzaOrderNew from './orderNew/anzaOrderNew'
+import certificate1OrderNew from './orderNew/certificate1OrderNew'
+import certificate2OrderNew from './orderNew/certificate2OrderNew'
 import collectionRecords from './collectionRecords'
 import invoice from './invoice'
 import orderDetail from './orderDetail'
@@ -185,7 +197,7 @@ import orderCustomer from './orderCustomer'
 import orderStampArea from './orderStampArea'
 import orderFunctions from './orderFunctions'
 
-import { formatMoney } from '@/setup/format.js'
+import { formatMoney, formatDate } from '@/setup/format.js'
 import { messageBoxYesNo } from '@/services/utils'
 import validate from '@/setup/validate'
 
@@ -193,8 +205,9 @@ export default {
   name: 'OrderNewForm',
   components: {
     certificate1,
-    certificate1OrderNew,
     certificate2,
+    anzaOrderNew,
+    certificate1OrderNew,
     certificate2OrderNew,
     orderDetail,
     orderCustomer,
@@ -222,14 +235,17 @@ export default {
         Amount: 0,
         Prefix: '',
         Memo: '',
+        // 專案功能顯示(新增專用)(不記錄進資料庫)
+        chanyunOrderID: 0,
+        newAnzaOrder: 0,
+        newCertificate1: 0,
+        newCertificate2: 0,
         // 以下為前端顯示用, 不會記錄進資料庫
         masterAmount: 0,
         subAmount: 0,
         FirstItemName: '',
-        // 專案功能顯示(新增專用)(不記錄進資料庫)
-        showChanyunOrderID: 0,
-        showCertificate1: 0,
-        showCertificate2: 0
+        // 安座單專用
+        CustomerID: ''
       },
       rules: {
         ID: [{ required: true, message: this.$t('__pleaseInput'), trigger: 'blur' }],
@@ -267,7 +283,8 @@ export default {
         this.myTitle = this.$t('__new') + this.$t('__orderPaper')
         this.disableForm.ID = true
         this.disableForm.CreateID = true
-        this.form.OrderDate = new Date()
+        let tempDate = new Date()
+        this.form.OrderDate = formatDate(tempDate.toISOString().slice(0, 10))
         this.buttonsShow = {
           new: 1,
           edit: 0,
@@ -278,7 +295,16 @@ export default {
         break
       case 'edit':
         this.myTitle = this.$t('__edit') + this.$t('__orderPaper')
-        this.form = JSON.parse(JSON.stringify(this.order))
+        this.form.ID = this.order.ID
+        this.form.OrderDate = this.order.OrderDate
+        this.form.ProjectID = this.order.ProjectID
+        this.form.Status = this.order.Status
+        this.form.CreateID = this.order.CreateID
+        this.form.Price = this.order.Price
+        this.form.Qty = this.order.Qty
+        this.form.Amount = this.order.Amount
+        this.form.Prefix = this.order.Prefix
+        this.form.Memo = this.order.Memo
 
         // 帶入原始單據狀態, 開啟或關閉
         let intStatus = parseInt(this.form.Status)
@@ -378,17 +404,7 @@ export default {
 
       // 專案功能顯示
       projectFunctions.forEach(item => {
-        if (item.Function === 'chanyunOrderID') {
-          this.form.showChanyunOrderID = item.Available
-        } else if (
-          item.Function === 'newCertificate1'
-        ) {
-          this.form.showCertificate1 = item.Available
-        } else if (
-          item.Function === 'newCertificate2'
-        ) {
-          this.form.showCertificate2 = item.Available
-        }
+        this.form[item.Function] = item.Available
       })
     },
     // 檢查輸入
@@ -400,15 +416,21 @@ export default {
       // 新增訂單才會使用到
       switch (this.dialogType) {
         case 'new':
-          // 檢查供奉憑證資訊
-          if (this.form.showCertificate1 === 1) {
+          // 檢查其他附加功能
+          if (this.form.newCertificate1 === 1) {
             isSuccess = await this.$refs['certificate1OrderNew'].checkValidate()
             if (!isSuccess) { return }
           }
-
-          // 檢查其他附加功能
-          if (this.form.showChanyunOrderID === 1) {
+          if (this.form.newCertificate2 === 1) {
+            isSuccess = await this.$refs['certificate2OrderNew'].checkValidate()
+            if (!isSuccess) { return }
+          }
+          if (this.form.chanyunOrderID === 1) {
             isSuccess = await this.$refs['orderFunctions'].checkValidate()
+            if (!isSuccess) { return }
+          }
+          if (this.form.newAnzaOrder === 1) {
+            isSuccess = await this.$refs['anzaOrderNew'].checkValidate()
             if (!isSuccess) { return }
           }
           break
@@ -450,24 +472,32 @@ export default {
             saveStep = 'orderCustomer'
             isSuccess = await this.$refs['orderCustomer'].beforeSave()
           }
-          if (this.form.showCertificate1 === 1) {
+          // 檢查其他附加功能
+          if (this.form.newCertificate1 === 1) {
             if (isSuccess) {
               saveStep = 'certificate1OrderNew'
               isSuccess = await this.$refs['certificate1OrderNew'].beforeSave() // 新增訂單才會出現
             }
           }
-          if (this.form.showCertificate2 === 1) {
+          if (this.form.newCertificate2 === 1) {
             if (isSuccess) {
               saveStep = 'certificate2OrderNew'
               isSuccess = await this.$refs['certificate2OrderNew'].beforeSave() // 新增訂單才會出現
             }
           }
-          if (this.form.showChanyunOrderID === 1) {
+          if (this.form.chanyunOrderID === 1) {
             if (isSuccess) {
               saveStep = 'orderFunctions'
               isSuccess = await this.$refs['orderFunctions'].beforeSave()
             }
           }
+          if (this.form.newAnzaOrder === 1) {
+            if (isSuccess) {
+              saveStep = 'anzaOrderNew'
+              isSuccess = await this.$refs['anzaOrderNew'].beforeSave()
+            }
+          }
+
           if (isSuccess) {
             this.$alert(this.updateMessage, 200, {
               callback: () => {
@@ -497,7 +527,7 @@ export default {
           }
 
           if (isSuccess) {
-            if (this.form.showChanyunOrderID === 1) {
+            if (this.form.chanyunOrderID === 1) {
               saveStep = 'orderFunctions'
               isSuccess = await this.$refs['orderFunctions'].beforeSave()
             }
@@ -630,6 +660,11 @@ export default {
       this.form.masterAmount = masterAmount
       this.form.subAmount = subAmount
       this.form.Amount = masterAmount + subAmount
+    },
+    // ===== 安座單 =====
+    // 客戶變更, 要回傳最終結果
+    customerChange: function (result) {
+      this.form.CustomerID = result
     }
   }
 }

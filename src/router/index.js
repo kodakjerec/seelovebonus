@@ -94,6 +94,7 @@ const routes = [
     name: 'Certificate2Show',
     component: () => import('@/views/Orders/certificate2Show')
   },
+  // Orders -> SignOff
   {
     path: '/Orders/OrderSignOffManual',
     name: 'OrderSignOffManual',
@@ -105,6 +106,12 @@ const routes = [
     name: 'OrderSignOffLog',
     component: () => import('@/views/Orders/components/orderSignOffLog'),
     props: true
+  },
+  // Orders -> AnzaOrder
+  {
+    path: '/Orders/AnzaOrderShow',
+    name: 'AnzaOrderShow',
+    component: () => import('@/views/Orders/anzaOrderShow')
   },
   // Reports
   {

@@ -70,7 +70,7 @@ export default {
         Certificate2: '',
         PrintCount: 0,
         Status: '1',
-        IssuanceDate: new Date()
+        IssuanceDate: ''
       },
       rules: {
         Certificate2: [{ required: true, message: this.$t('__pleaseInput'), trigger: 'blur' }]

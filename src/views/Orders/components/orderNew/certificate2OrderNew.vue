@@ -25,7 +25,7 @@ export default {
       form: {
         OrderID: this.orderID,
         ReportDuration: '',
-        IssuanceDate: new Date()
+        IssuanceDate: ''
       },
       Qty: 0,
       isExceedQtyLimit: false
