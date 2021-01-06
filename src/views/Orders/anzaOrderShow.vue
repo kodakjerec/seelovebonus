@@ -26,17 +26,17 @@
           </template>
           <template slot-scope="scope">
             <el-button
-              v-if="scope.row.Status === '1'"
+              v-if="buttonsShowUser.edit && scope.row.Status === '1'"
               size="mini"
               type="primary"
               @click.native.stop="operateAnza(scope.$index, scope.row)">{{$t('__anza')}}</el-button>
             <el-button
-              v-if="scope.row.Status === '2'"
+              v-if="buttonsShowUser.edit && scope.row.Status === '2'"
               size="mini"
               type="success"
               @click.native.stop="operateComplete(scope.$index, scope.row)">{{$t('__yuanman')}}</el-button>
             <el-button
-              v-if="scope.row.Status === '2' && scope.row.FlagReNew === 1"
+              v-if="buttonsShowUser.edit && scope.row.Status === '2' && scope.row.FlagReNew === 1"
               size="mini"
               @click.native.stop="operateComplete(scope.$index, scope.row)">{{$t('__reNew')}}</el-button>
           </template>
@@ -51,11 +51,11 @@
         </el-table-column>
         <el-table-column
           prop="CustomerName"
-          :label="this.$t('__customer')">
+          :label="this.$t('__anzaCustomer')">
         </el-table-column>
         <el-table-column
           prop="StorageID"
-          :label="this.$t('__storageAddress')">
+          :label="this.$t('__anzaStorageID')">
         </el-table-column>
         <el-table-column
           prop="ExpirationDate"
@@ -86,17 +86,9 @@
       layout="total, sizes, prev, pager, next, jumper"
       :total="originData.length">
     </el-pagination>
-    <new-form
-      v-if="dialogShow"
-      :dialog-type="dialogType"
-      :dialog-show="dialogShow"
-      :anzaOrder="anzaOrder"
-      :orderID="orderID"
-      :buttonsShowUser="buttonsShowUser"
-      @dialog-cancel="dialogCancel"
-      @dialog-save="dialogSave"></new-form>
     <!-- 安座作業 -->
     <operate-anza-mode
+      v-if="dialogShowAnza"
       :dialog-show="dialogShowAnza"
       :operateType="operateType"
       :fromAnzaOrder="anzaOrder"
@@ -107,7 +99,6 @@
 </template>
 
 <script>
-import newForm from './components/certificate1NewForm'
 import operateAnzaMode from './anza/operateAnza'
 import searchButton from '@/components/searchButton'
 import { formatDate } from '@/setup/format.js'
@@ -115,7 +106,6 @@ import { formatDate } from '@/setup/format.js'
 export default {
   name: 'AnzaOrderShow',
   components: {
-    newForm,
     operateAnzaMode,
     searchButton
   },

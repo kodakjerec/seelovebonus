@@ -159,8 +159,8 @@
         ref="anzaOrderNew"
         :orderID="form.ID"
         :parentOrderDate="form.OrderDate"
-        :parentCustomerID="form.CustomerID"
         :parentQty="form.Qty"
+        :parentAnzaData="form.anza"
         :ddlCustomerBefore="ddlCustomer"></anza-order-new>
       <certificate1-order-new
         v-show="form.newCertificate1 === 1"
@@ -245,7 +245,11 @@ export default {
         subAmount: 0,
         FirstItemName: '',
         // 安座單專用
-        CustomerID: ''
+        anza: {
+          ProductID: '',
+          CustomerID: '',
+          Year: 1 // 選擇的專案年限
+        }
       },
       rules: {
         ID: [{ required: true, message: this.$t('__pleaseInput'), trigger: 'blur' }],
@@ -371,8 +375,14 @@ export default {
       let responseProjectDetail = await this.$api.orders.getObject({ type: 'projectDetail', keyword: this.form.ProjectID })
       let projectDetail = responseProjectDetail.data.result
 
-      // 填入 orderHead
+      // 主專案第一個商品名稱
       this.form.FirstItemName = projectDetail[0].ProductName
+
+      // 安座單: 主專案第一個扣庫存商品
+      let firstInventoryProduct = projectDetail.find(item => { return item.Inventory === 1 })
+      if (firstInventoryProduct !== undefined) {
+        this.form.anza.ProductID = firstInventoryProduct.ProductID
+      }
 
       this.bringFunctions()
     },
@@ -391,6 +401,21 @@ export default {
 
       // 主專案第一個商品名稱
       this.form.FirstItemName = projectDetail[0].ProductName
+
+      // 安座單: 主專案第一個扣庫存商品
+      let firstInventoryProduct = projectDetail.find(item => { return item.Inventory === 1 })
+      if (firstInventoryProduct !== undefined) {
+        this.form.anza.ProductID = firstInventoryProduct.ProductID
+      }
+      // 安座單: 主專案名稱的年限
+      let projectYear = this.ddlProject.find(item => { return item.ID === this.form.ProjectID })
+      if (projectYear !== undefined) {
+        if (projectYear.Value.indexOf('12') >= 0 || projectYear.Value.indexOf('十二') >= 0) {
+          this.form.anza.Year = 12
+        } else {
+          this.form.anza.Year = 1
+        }
+      }
 
       // 主專案填入 orderDetail
       this.$refs['orderDetail'].parentResetItems(projectDetail)
@@ -664,7 +689,7 @@ export default {
     // ===== 安座單 =====
     // 客戶變更, 要回傳最終結果
     customerChange: function (result) {
-      this.form.CustomerID = result
+      this.form.anza.CustomerID = result
     }
   }
 }

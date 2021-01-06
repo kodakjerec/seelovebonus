@@ -44,6 +44,20 @@ export default {
         return data
       })
     },
+    findStorageID: ({ ProductID, Purpose, Qty }) => {
+      let rawData = { ProductID, Purpose, Qty }
+      return post('/stock/findStorageID', rawData).then(data => {
+        console.log(`%c <<< Response(/rest/stock/findStorageID)⤵ `, 'background-color: #E0455D; color: white; font-size: 14px; font-weight: bold;', data)
+        return data
+      })
+    },
+    checkValidate: ({ ProductID, Purpose, Qty, StorageID }) => {
+      let rawData = { ProductID, Purpose, Qty, StorageID }
+      return post('/stock/checkValidate', rawData).then(data => {
+        console.log(`%c <<< Response(/rest/stock/checkValidate)⤵ `, 'background-color: #E0455D; color: white; font-size: 14px; font-weight: bold;', data)
+        return data
+      })
+    },
     getDropdownList: ({ type, keyword }) => {
       let rawData = { type, keyword }
       console.log('%c >>> getDropdownList: ', 'background-color: blue; color: white; font-size: 14px; font-weight: bold;', rawData)

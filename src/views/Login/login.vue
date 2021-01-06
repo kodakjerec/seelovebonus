@@ -54,6 +54,7 @@ export default {
   mounted () {
     // 刷新到首頁時, 強制清空
     this.$store.dispatch('resetAll')
+    localStorage.removeItem('vuex')
 
     // 取得語言設定
     if (localStorage.getItem('locale')) {

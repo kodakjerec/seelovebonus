@@ -204,13 +204,16 @@ export default {
   __haveReceived: 'Have Received',
   __anza: 'Anza',
   __anzaOrder: 'Anza Order',
+  __anzaCustomer: 'Anza Customer',
   __anzaOperation: 'Anza Operation',
+  __anzaStorageID: 'Anza StorageID',
   __scheduled: 'Scheduled',
   __real: 'Real',
   __yuanman: 'Complete',
   __reNew: 'ReNew',
   __notAnza: 'Not Anza',
   __shouldReNew: 'Should ReNew',
+  __anzaOperateWarning: '下拉選擇位別，或輸入指定位別編號',
   // 請在上方新增字串
   // 以下為錯誤處理專用
   __error400: 'Bad Request',
@@ -233,6 +236,7 @@ export default {
   __pleaseSelectAtLeastOne: 'Select at least one ',
   __pleaseInputSearchValue: 'Please input search content',
   __mustBiggerThanZero: ' must bigger than zero',
+  __cantUse: 'can`t use',
   __valueUsed: ' already used',
   __exceedQtyLimit: 'Value limit exceeded',
   __100PercentInput100: '100% please enter "100"'

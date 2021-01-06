@@ -5,7 +5,7 @@
   <el-form>
     <h2 class="alignLeft">{{$t('__anzaOrder')}}</h2>
     <p/>
-    <span v-if="parentCustomerID===''" v-html="$t('__anzaOrderNewWarning')"></span>
+    <span v-if="parentAnzaData.CustomerID===''" v-html="$t('__anzaOrderNewWarning')"></span>
     <el-table
       v-else
       :data="subList"
@@ -80,7 +80,7 @@ export default {
   props: {
     orderID: { type: String },
     parentOrderDate: { type: String },
-    parentCustomerID: { type: String },
+    parentAnzaData: { type: Object },
     parentQty: { type: Number },
     ddlCustomerBefore: { tpye: Array }
   },
@@ -93,6 +93,7 @@ export default {
         RealDate: null,
         ExpirationDate: null,
         Status: '1',
+        ProductID: '',
         // 顯示用
         qty: 1
       },
@@ -109,9 +110,13 @@ export default {
         this.form.OrderID = newValue
       }
     },
-    parentCustomerID: function (newValue) {
-      this.parentCustomerChange()
-    },
+    parentAnzaData: {
+      handler: function (newValue) {
+        this.parentCustomerChange()
+        this.parentQtyChange()
+        this.reCalDate(this.subList)
+      },
+      deep: true },
     parentOrderDate: function (newValue) {
       this.parentOrderDateChange()
     },
@@ -151,7 +156,7 @@ export default {
         this.isExceedQtyLimit = false
       }
     },
-    // 父視窗: 變更明細商品數量
+    // 父視窗: 變更明細商品數量, 變更明細商品
     parentQtyChange: function () {
       let index = 0
 
@@ -161,6 +166,7 @@ export default {
         } else {
           row.qty = 0
         }
+        row.ProductID = this.parentAnzaData.ProductID
 
         index++
       })
@@ -177,7 +183,7 @@ export default {
 
       this.subList.forEach(row => {
         if (index === 0) {
-          row.CustomerID = this.parentCustomerID
+          row.CustomerID = this.parentAnzaData.CustomerID
         }
 
         index++
@@ -207,7 +213,7 @@ export default {
       let ScheduledDate = new Date(year, month, day, 12)
 
       // 到期日: 預設一年
-      year = start.getFullYear() + 1
+      year = start.getFullYear() + this.parentAnzaData.Year
       month = start.getMonth()
       let ExpirationDate = new Date(year, month, day, 12)
 
@@ -239,6 +245,7 @@ export default {
 
       // 新增 item
       newObj.OrderID = this.orderID
+      newObj.ProductID = this.parentAnzaData.ProductID
       newObj.CustomerID = ''
 
       this.reCalDate(newObj)

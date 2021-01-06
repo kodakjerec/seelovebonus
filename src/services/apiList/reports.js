@@ -38,6 +38,13 @@ export default {
         return data
       })
     },
+    anzaReportTotal: ({ reportParams }) => {
+      let rawData = { reportParams }
+      return post('/reports/anzaReportTotal', rawData).then(data => {
+        console.log(`%c <<< Response(/rest/reports/anzaReportTotal)⤵ `, 'background-color: #E0455D; color: white; font-size: 14px; font-weight: bold;', data)
+        return data
+      })
+    },
     getDropdownList: ({ type, keyword }) => {
       let rawData = { type, keyword }
       return post('/reports/getDropdownList', rawData).then(data => {

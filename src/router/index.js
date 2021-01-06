@@ -133,6 +133,11 @@ const routes = [
     name: 'ReportsBonus1',
     component: () => import('@/views/Reports/reportsBonus1')
   },
+  {
+    path: '/Reports/AnzaRpts',
+    name: 'AnzaRpts',
+    component: () => import('@/views/Reports/anzaRpts')
+  },
   // settings
   {
     path: '/Settings/SystemSettings',

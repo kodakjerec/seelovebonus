@@ -204,13 +204,16 @@ export default {
   __haveReceived: '已收款',
   __anza: '安座',
   __anzaOrder: '安座單',
+  __anzaCustomer: '安座人',
   __anzaOperation: '安座作業',
+  __anzaStorageID: '安座位別',
   __scheduled: '預定',
   __real: '實際',
   __yuanman: '圓滿',
   __reNew: '續約',
   __notAnza: '未安座',
   __shouldReNew: '應續約',
+  __anzaOperateWarning: '下拉選擇位別，或輸入指定位別編號',
   // 請在上方新增字串
   // 以下為錯誤處理專用
   __error400: '無法理解請求',
@@ -233,6 +236,7 @@ export default {
   __pleaseSelectAtLeastOne: '請至少選擇一筆 ',
   __pleaseInputSearchValue: '請輸入查詢數值',
   __mustBiggerThanZero: ' 必須大於零',
+  __cantUse: '不能使用',
   __valueUsed: ' 已被使用',
   __exceedQtyLimit: '超出數值上限',
   __100PercentInput100: '100%請輸入"100"'
