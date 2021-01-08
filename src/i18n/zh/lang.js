@@ -200,6 +200,7 @@ export default {
   __inventory: '存貨',
   __putOn: '上架',
   __openEditMode: '開啟修改',
+  __fKOrder: '信託指示函',
   __notReceived: '未收款',
   __haveReceived: '已收款',
   __anza: '安座',

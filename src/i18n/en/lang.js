@@ -200,6 +200,7 @@ export default {
   __inventory: 'Inventory',
   __putOn: 'Put on',
   __openEditMode: 'Editable',
+  __fKOrder: 'FK Order',
   __notReceived: 'Not Received',
   __haveReceived: 'Have Received',
   __anza: 'Anza',

@@ -38,6 +38,20 @@ export default {
         return data
       })
     },
+    fKOrderPrint: ({ fKOrder }) => {
+      let rawData = { fKOrder }
+      return post('/reports/fKOrderPrint', rawData).then(data => {
+        console.log(`%c <<< Response(/rest/reports/fKOrderPrint)⤵ `, 'background-color: #E0455D; color: white; font-size: 14px; font-weight: bold;', data)
+        return data
+      })
+    },
+    fKOrderRpt: ({ reportParams }) => {
+      let rawData = { reportParams }
+      return post('/reports/fKOrderRpt', rawData).then(data => {
+        console.log(`%c <<< Response(/rest/reports/fKOrderRpt)⤵ `, 'background-color: #E0455D; color: white; font-size: 14px; font-weight: bold;', data)
+        return data
+      })
+    },
     anzaReportTotal: ({ reportParams }) => {
       let rawData = { reportParams }
       return post('/reports/anzaReportTotal', rawData).then(data => {

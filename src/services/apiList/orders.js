@@ -227,6 +227,13 @@ export default {
         return data
       })
     },
+    fKOrdersShow: ({ searchContent, ID }) => {
+      let rawData = { searchContent, ID }
+      return post('/orders/fKOrdersShow', rawData).then(data => {
+        console.log(`%c <<< Response(/rest/orders/fKOrdersShow)⤵ `, 'background-color: #E0455D; color: white; font-size: 14px; font-weight: bold;', data)
+        return data
+      })
+    },
     anzaOrderShow: ({ keyword }) => {
       let rawData = { keyword }
       return post('/orders/anzaOrderShow', rawData).then(data => {

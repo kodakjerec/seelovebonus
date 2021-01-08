@@ -107,6 +107,12 @@ const routes = [
     component: () => import('@/views/Orders/components/orderSignOffLog'),
     props: true
   },
+  // Orders -> fKOrder
+  {
+    path: '/Orders/FKOrdersShow',
+    name: 'FKOrdersShow',
+    component: () => import('@/views/Orders/fKOrder/fKOrdersShow')
+  },
   // Orders -> AnzaOrder
   {
     path: '/Orders/AnzaOrderShow',
