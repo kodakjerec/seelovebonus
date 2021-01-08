@@ -179,9 +179,9 @@ export default {
       this.searchContent.StatusType = filterSettings.StatusType
 
       // 預設全選
-      // 這裡特別指定 FK0
+      // 這裡特別指定 FG
       this.searchContent.OrdersType.forEach(item => {
-        if (item.Prefix === 'FK0') {
+        if (item.Prefix === 'FG') {
           this.searchContent.selectedOrdersType.push(item.Prefix)
         }
       })
