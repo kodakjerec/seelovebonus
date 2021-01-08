@@ -44,7 +44,7 @@ export default {
         StartDate: null,
         EndDate: null
       },
-      reportPath: 'reports_Bonus1_Total',
+      reportPath: 'reports_anza_Total',
       reportParams: {},
       // 以下為下拉式選單專用
       ddlCompanies: [],

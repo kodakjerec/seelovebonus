@@ -7,19 +7,16 @@
       <el-tab-pane label="簽到本" name="four"></el-tab-pane>
     </el-tabs>
     <total v-if="activeName==='first'"></total>
-    <detail v-if="activeName==='second'"></detail>
   </div>
 </template>
 
 <script>
 import total from './anza/anzaReportTotal'
-import detail from './components/reportsBonus1Detail'
 
 export default {
   name: 'AnzaRpts',
   components: {
-    total,
-    detail
+    total
   },
   data () {
     return {
