@@ -10,7 +10,7 @@
       </search-button>
     </el-button-group>
     <el-table
-      :data="results"
+      :data="originData"
       stripe
       border
       :height="tableHeight"
@@ -114,7 +114,7 @@
       :page-sizes="pagination.pageSizeList"
       :page-size="pagination.pageSize"
       layout="total, sizes, prev, pager, next, jumper"
-      :total="originData.length">
+      :total="pagination.totalCount">
     </el-pagination>
     <!-- 簽核小視窗 -->
     <sign-off-dialog
@@ -160,12 +160,14 @@ export default {
       tableHeight: (screen.height * 7 / 9), // Table高度
       pagination: { // 分頁
         currentPage: 1,
-        pageSizeList: [10, 20, 30],
-        pageSize: 10
+        pageSize: 20,
+        pageSizeList: [20, 30, 50],
+        totalPage: 1,
+        totalCount: 20
       },
       sortable: { // 排序
         orderByList: [{ ID: 'ID', Value: this.$t('__orderID') }, { ID: 'OrderDate', Value: this.$t('__order') + this.$t('__date') }], // 排序
-        orderBy: 'descending', // 排序方式
+        orderBy: 'desc', // 排序方式
         orderByValue: 'ID' // 預設排序欄位
       },
       // 使用者能看到的權限
@@ -184,43 +186,6 @@ export default {
       dialogShowSearchContent: false
     }
   },
-  computed: {
-    results: function () {
-      let tempData = this.originData
-
-      // 排序依據
-      switch (this.sortable.orderByValue) {
-        case 'ID':
-          tempData = tempData.slice().sort(function (x, y) {
-            return x.ID - y.ID
-          })
-          break
-        case 'OrderDate':
-          tempData = tempData.slice().sort(function (x, y) {
-            return new Date(x.OrderDate) - new Date(y.OrderDate)
-          })
-          break
-      }
-
-      // 遞增/遞減
-      switch (this.sortable.orderBy) {
-        case 'descending':
-          tempData = tempData.slice().reverse()
-          break
-      }
-
-      // 狀態小的單據優先往前
-      tempData = tempData.slice().sort(function (x, y) {
-        return x.Status - y.Status
-      })
-
-      // 結果
-      let result = tempData.slice((this.pagination.currentPage - 1) * this.pagination.pageSize, this.pagination.pageSize * this.pagination.currentPage)
-
-      // 切換分頁
-      return result
-    }
-  },
   mounted () {
     // 預設值
     let start = new Date()
@@ -237,12 +202,14 @@ export default {
     // 帶入搜尋內容
     this.preLoading()
 
-    // 帶入舊友分頁內容
+    // 帶入舊有分頁內容
     if (localStorage.getItem('paginationHistory:' + this.$route.name) === null) {
       // 儲存內容
       localStorage.setItem('paginationHistory:' + this.$route.name, JSON.stringify(this.pagination))
     } else {
-      this.pagination = JSON.parse(localStorage.getItem('paginationHistory:' + this.$route.name))
+      let pagination = JSON.parse(localStorage.getItem('paginationHistory:' + this.$route.name))
+      this.pagination.currentPage = pagination.currentPage
+      this.pagination.pageSize = pagination.pageSize
     }
   },
   methods: {
@@ -348,6 +315,8 @@ export default {
       }
       let response2 = await this.$api.orders.ordersShow({
         searchContent: JSON.stringify(this.searchContent),
+        pagination: JSON.stringify(this.pagination),
+        sortable: JSON.stringify(this.sortable),
         ID: this.$store.state.userID })
       this.originData = response2.data.result
 
@@ -360,22 +329,34 @@ export default {
 
       // 儲存內容
       localStorage.setItem('searchHistory:' + this.$route.name, JSON.stringify(this.searchContent))
+
+      // 分頁篩選
+      if (this.originData.length > 0) {
+        this.pagination.totalCount = this.originData[0].totalCount
+        this.pagination.totalPage = Math.ceil(this.pagination.totalCount / this.pagination.pageSize)
+      }
     },
     // 排序相關
     reOrder: function (searchButtonResult) {
       this.sortable.orderBy = searchButtonResult.orderBy
       this.sortable.orderByValue = searchButtonResult.orderByValue
+
+      this.search()
     },
     // 分頁相關
     handleSizeChange: function (val) {
       this.pagination.pageSize = val
       // 儲存內容
       localStorage.setItem('paginationHistory:' + this.$route.name, JSON.stringify(this.pagination))
+
+      this.search()
     },
     handleCurrentChange: function (val) {
       this.pagination.currentPage = val
       // 儲存內容
       localStorage.setItem('paginationHistory:' + this.$route.name, JSON.stringify(this.pagination))
+
+      this.search()
     },
     // 簽核相關
     // 送簽

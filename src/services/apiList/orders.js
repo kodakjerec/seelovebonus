@@ -9,8 +9,8 @@ export default {
         return data
       })
     },
-    ordersShow: ({ searchContent, ID }) => {
-      let rawData = { searchContent, ID }
+    ordersShow: ({ searchContent, pagination, sortable, ID }) => {
+      let rawData = { searchContent, pagination, sortable, ID }
       return post('/orders/ordersShow', rawData).then(data => {
         console.log(`%c <<< Response(/rest/orders/ordersShow)⤵ `, 'background-color: #E0455D; color: white; font-size: 14px; font-weight: bold;', data)
         return data
@@ -227,8 +227,8 @@ export default {
         return data
       })
     },
-    fKOrdersShow: ({ searchContent, ID }) => {
-      let rawData = { searchContent, ID }
+    fKOrdersShow: ({ searchContent, pagination, sortable, ID }) => {
+      let rawData = { searchContent, pagination, sortable, ID }
       return post('/orders/fKOrdersShow', rawData).then(data => {
         console.log(`%c <<< Response(/rest/orders/fKOrdersShow)⤵ `, 'background-color: #E0455D; color: white; font-size: 14px; font-weight: bold;', data)
         return data

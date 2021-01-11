@@ -132,9 +132,9 @@ export default {
           break
       }
       this.reportParams = {
-        locale: strLocale,
         StartDate: this.form.StartDate,
-        EndDate: this.form.EndDate }
+        EndDate: this.form.EndDate,
+        locale: strLocale }
 
       // 紀錄Log
       this.$api.reports.anzaReportTotal({ reportParams: this.reportParams })

@@ -5,7 +5,7 @@
       <search-button :options="sortable.orderByList" :originOrderBy="sortable.orderBy" :originOrderByValue="sortable.orderByValue" @search="search" @reOrder="reOrder"></search-button>
     </el-button-group>
     <el-table
-      :data="results"
+      :data="originData"
       stripe
       border
       :height="tableHeight"
@@ -36,7 +36,7 @@
       :page-sizes="pagination.pageSizeList"
       :page-size="pagination.pageSize"
       layout="total, sizes, prev, pager, next, jumper"
-      :total="originData.length">
+      :total="pagination.totalPage">
     </el-pagination>
     <new-form
       v-if="dialogShow"
@@ -104,12 +104,14 @@ export default {
       tableHeight: (screen.height * 7 / 9), // Table高度
       pagination: { // 分頁
         currentPage: 1,
-        pageSizeList: [10, 20, 30],
-        pageSize: 20
+        pageSize: 20,
+        pageSizeList: [20, 30, 50],
+        totalPage: 1,
+        totalCount: 20
       },
       sortable: {
         orderByList: [{ ID: 'ID', Value: this.$t('__orderID') }, { ID: 'OrderDate', Value: this.$t('__order') + this.$t('__date') }], // 排序
-        orderBy: 'descending', // 排序方式
+        orderBy: 'desc', // 排序方式
         orderByValue: 'ID' // 預設排序欄位
       },
       // 使用者能看到的權限
@@ -121,38 +123,6 @@ export default {
         search: 1
       }
       // 以下為下拉式選單專用
-    }
-  },
-  computed: {
-    results: function () {
-      let tempData = this.originData
-
-      // 排序依據
-      switch (this.sortable.orderByValue) {
-        case 'ID':
-          tempData = tempData.slice().sort(function (x, y) {
-            return x.ID - y.ID
-          })
-          break
-        case 'OrderDate':
-          tempData = tempData.slice().sort(function (x, y) {
-            return new Date(x.OrderDate) - new Date(y.OrderDate)
-          })
-          break
-      }
-
-      // 遞增/遞減
-      switch (this.sortable.orderBy) {
-        case 'descending':
-          tempData = tempData.slice().reverse()
-          break
-      }
-
-      // 結果
-      let result = tempData.slice((this.pagination.currentPage - 1) * this.pagination.pageSize, this.pagination.pageSize * this.pagination.currentPage)
-
-      // 切換分頁
-      return result
     }
   },
   mounted () {
@@ -224,20 +194,35 @@ export default {
       }
       let response2 = await this.$api.orders.fKOrdersShow({
         searchContent: JSON.stringify(this.searchContent),
+        pagination: JSON.stringify(this.pagination),
+        sortable: JSON.stringify(this.sortable),
         ID: this.$store.state.userID })
       this.originData = response2.data.result
+
+      // 分頁篩選
+      if (this.originData.length > 0 && this.originData[0].pagination) {
+        let resultPagination = JSON.parse(this.originData[0].pagination)[0]
+        this.pagination.totalCount = resultPagination.totalCount
+        this.pagination.totalPage = Math.ceil(this.pagination.totalCount / this.pagination.pageSize)
+      }
     },
     // 排序相關
     reOrder: function (searchButtonResult) {
       this.sortable.orderBy = searchButtonResult.orderBy
       this.sortable.orderByValue = searchButtonResult.orderByValue
+
+      this.search()
     },
     // 分頁相關
     handleSizeChange: function (val) {
       this.pagination.pageSize = val
+
+      this.search()
     },
     handleCurrentChange: function (val) {
       this.pagination.currentPage = val
+
+      this.search()
     }
   }
 }

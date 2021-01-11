@@ -108,12 +108,12 @@ export default {
       tableHeight: (screen.height * 7 / 9), // Table高度
       pagination: { // 分頁
         currentPage: 1,
-        pageSizeList: [10, 20, 30],
+        pageSizeList: [20, 30, 50],
         pageSize: 20
       },
       sortable: {
         orderByList: [{ ID: 'ID', Value: this.$t('__orderID') }, { ID: 'Certificate2', Value: this.$t('__certificate2') }], // 排序
-        orderBy: 'descending', // 排序方式
+        orderBy: 'desc', // 排序方式
         orderByValue: 'ID' // 預設排序欄位
       },
       // 使用者能看到的權限
@@ -148,7 +148,7 @@ export default {
 
       // 遞增/遞減
       switch (this.sortable.orderBy) {
-        case 'descending':
+        case 'desc':
           tempData = tempData.slice().reverse()
           break
       }

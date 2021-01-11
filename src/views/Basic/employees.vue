@@ -84,7 +84,7 @@ export default {
       tableSpanList: [],
       pagination: {
         currentPage: 1,
-        pageSizeList: [10, 20, 30],
+        pageSizeList: [20, 30, 50],
         pageSize: 20
       },
       // 使用者能看到的權限

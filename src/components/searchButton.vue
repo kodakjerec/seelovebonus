@@ -9,10 +9,10 @@
           </el-option>
         </el-select>
       </el-tooltip>
-      <el-tooltip class="orderBy" v-if="orderBy === 'descending'" effect="light" :content="$t('__descending')" placement="top-start">
+      <el-tooltip class="orderBy" v-if="orderBy === 'desc'" effect="light" :content="$t('__desc')" placement="top-start">
         <i class="el-icon-bottom" @click="orderByChange"></i>
       </el-tooltip>
-      <el-tooltip class="orderBy" v-else effect="light" :content="$t('__ascending')" placement="top-start">
+      <el-tooltip class="orderBy" v-else effect="light" :content="$t('__asc')" placement="top-start">
         <i  class="el-icon-top" @click="orderByChange"></i>
       </el-tooltip>
     </template>
@@ -46,7 +46,7 @@ export default {
     return {
       searchValue: '',
       lock: false, // 避免按著Enter, 重複發送查詢指令
-      orderBy: 'descending',
+      orderBy: 'desc',
       orderByValue: ''
     }
   },
@@ -72,10 +72,10 @@ export default {
       this.reOder()
     },
     orderByChange: function () {
-      if (this.orderBy === 'descending') {
-        this.orderBy = 'ascending'
+      if (this.orderBy === 'desc') {
+        this.orderBy = 'asc'
       } else {
-        this.orderBy = 'descending'
+        this.orderBy = 'desc'
       }
       this.reOder()
     },
