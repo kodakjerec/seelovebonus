@@ -320,20 +320,28 @@ export default {
         ID: this.$store.state.userID })
       this.originData = response2.data.result
 
-      // 重構cer1,cer2清單
-      this.originData.forEach(item => {
-        if (item.Certificate1List) { item.Certificate1List = JSON.parse(item.Certificate1List) }
-        if (item.Certificate2List) { item.Certificate2List = JSON.parse(item.Certificate2List) }
-        if (item.InvoiceList) { item.InvoiceList = JSON.parse(item.InvoiceList) }
-      })
-
       // 儲存內容
       localStorage.setItem('searchHistory:' + this.$route.name, JSON.stringify(this.searchContent))
 
-      // 分頁篩選
       if (this.originData.length > 0) {
-        this.pagination.totalCount = this.originData[0].totalCount
-        this.pagination.totalPage = Math.ceil(this.pagination.totalCount / this.pagination.pageSize)
+        // 重構cer1,cer2清單
+        this.originData.forEach(item => {
+          if (item.Certificate1List) { item.Certificate1List = JSON.parse(item.Certificate1List) }
+          if (item.Certificate2List) { item.Certificate2List = JSON.parse(item.Certificate2List) }
+          if (item.InvoiceList) { item.InvoiceList = JSON.parse(item.InvoiceList) }
+        })
+
+        // 分頁篩選
+        let fromPagination = JSON.parse(this.originData[0].pagination)[0]
+        this.pagination.totalCount = fromPagination.totalCount
+        this.pagination.totalPage = fromPagination.totalPage
+        this.pagination.currentPage = fromPagination.currentPage
+        this.savePaginationData()
+      } else {
+        this.pagination.totalCount = 0
+        this.pagination.totalPage = 0
+        this.pagination.currentPage = 1
+        this.savePaginationData()
       }
     },
     // 排序相關
@@ -346,17 +354,17 @@ export default {
     // 分頁相關
     handleSizeChange: function (val) {
       this.pagination.pageSize = val
-      // 儲存內容
-      localStorage.setItem('paginationHistory:' + this.$route.name, JSON.stringify(this.pagination))
-
+      this.savePaginationData()
       this.search()
     },
     handleCurrentChange: function (val) {
       this.pagination.currentPage = val
+      this.savePaginationData()
+      this.search()
+    },
+    savePaginationData: function () {
       // 儲存內容
       localStorage.setItem('paginationHistory:' + this.$route.name, JSON.stringify(this.pagination))
-
-      this.search()
     },
     // 簽核相關
     // 送簽
