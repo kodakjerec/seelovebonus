@@ -99,7 +99,7 @@
 </template>
 
 <script>
-import operateAnzaMode from './anza/operateAnza'
+import operateAnzaMode from './components/anza/operateAnza'
 import searchButton from '@/components/searchButton'
 import { formatDate } from '@/setup/format.js'
 

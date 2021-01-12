@@ -52,7 +52,7 @@
 </template>
 
 <script>
-import newForm from './components/certificate2NewForm'
+import newForm from './components/certificate2/certificate2NewForm'
 import searchButton from '@/components/searchButton'
 import { formatDate } from '@/setup/format.js'
 

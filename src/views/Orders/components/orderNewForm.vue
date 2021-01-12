@@ -122,6 +122,11 @@
       :ddlCustomerBefore="ddlCustomer"
       @customer-change="customerChange"></order-customer>
     <template v-if="dialogType !== 'new'">
+      <!-- 安座單 -->
+      <anza-order-show
+        :orderID="form.ID"
+        :isShow="form.newAnzaOrder">
+      </anza-order-show>
       <!-- 供奉憑證 -->
       <certificate1
         :buttonsShow="buttonsShow"
@@ -185,13 +190,13 @@
 </template>
 
 <script>
-import certificate1 from './certificate1'
-import certificate2 from './certificate2'
+import certificate1 from './certificate1/certificate1'
+import certificate2 from './certificate2/certificate2'
 import anzaOrderNew from './orderNew/anzaOrderNew'
 import certificate1OrderNew from './orderNew/certificate1OrderNew'
 import certificate2OrderNew from './orderNew/certificate2OrderNew'
-import collectionRecords from './collectionRecords'
-import invoice from './invoice'
+import collectionRecords from './collectionRecords/collectionRecords'
+import invoice from './invoice/invoice'
 import orderDetail from './orderDetail'
 import orderCustomer from './orderCustomer'
 import orderStampArea from './orderStampArea'

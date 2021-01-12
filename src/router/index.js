@@ -98,13 +98,13 @@ const routes = [
   {
     path: '/Orders/OrderSignOffManual',
     name: 'OrderSignOffManual',
-    component: () => import('@/views/Orders/components/orderSignOffManual'),
+    component: () => import('@/views/Orders/components/signOff/orderSignOffManual'),
     props: true
   },
   {
     path: '/Orders/OrderSignOffLog',
     name: 'OrderSignOffLog',
-    component: () => import('@/views/Orders/components/orderSignOffLog'),
+    component: () => import('@/views/Orders/components/signOff/orderSignOffLog'),
     props: true
   },
   // Orders -> fKOrder

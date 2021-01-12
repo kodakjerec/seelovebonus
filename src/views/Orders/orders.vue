@@ -133,7 +133,7 @@
 
 <script>
 import searchButton from '@/components/searchButton'
-import signOffDialog from './components/signOffDialog'
+import signOffDialog from './components/signOff/signOffDialog'
 import ordersSearchContent from './components/ordersSearchContent'
 import { formatMoney, formatDate } from '@/setup/format.js'
 

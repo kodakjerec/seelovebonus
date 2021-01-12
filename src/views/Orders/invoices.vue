@@ -69,7 +69,7 @@
 </template>
 
 <script>
-import newForm from './components/invoiceNewForm'
+import newForm from './components/invoice/invoiceNewForm'
 import searchButton from '@/components/searchButton'
 import { formatMoney, formatDate } from '@/setup/format.js'
 

@@ -89,7 +89,7 @@
 
 <script>
 import searchButton from '@/components/searchButton'
-import signOffDialog from '@/views/Orders/components/signOffDialog'
+import signOffDialog from '@/views/Orders/components/signOff/signOffDialog'
 import newForm from './components/transportOrderNewForm'
 import { formatMoney, formatDate } from '@/setup/format.js'
 
