@@ -123,10 +123,10 @@
       @customer-change="customerChange"></order-customer>
     <template v-if="dialogType !== 'new'">
       <!-- 安座單 -->
-      <anza-order-show
+      <anza-order-list
         :orderID="form.ID"
         :isShow="form.newAnzaOrder">
-      </anza-order-show>
+      </anza-order-list>
       <!-- 供奉憑證 -->
       <certificate1
         :buttonsShow="buttonsShow"
@@ -190,13 +190,14 @@
 </template>
 
 <script>
-import certificate1 from './certificate1/certificate1'
-import certificate2 from './certificate2/certificate2'
 import anzaOrderNew from './orderNew/anzaOrderNew'
 import certificate1OrderNew from './orderNew/certificate1OrderNew'
 import certificate2OrderNew from './orderNew/certificate2OrderNew'
 import collectionRecords from './collectionRecords/collectionRecords'
+import anzaOrderList from './anza/anzaOrderList'
 import invoice from './invoice/invoice'
+import certificate1 from './certificate1/certificate1'
+import certificate2 from './certificate2/certificate2'
 import orderDetail from './orderDetail'
 import orderCustomer from './orderCustomer'
 import orderStampArea from './orderStampArea'
@@ -209,14 +210,15 @@ import validate from '@/setup/validate'
 export default {
   name: 'OrderNewForm',
   components: {
-    certificate1,
-    certificate2,
     anzaOrderNew,
     certificate1OrderNew,
     certificate2OrderNew,
     orderDetail,
     orderCustomer,
+    certificate1,
+    certificate2,
     collectionRecords,
+    anzaOrderList,
     invoice,
     orderStampArea,
     orderFunctions
