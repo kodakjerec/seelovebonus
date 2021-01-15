@@ -144,8 +144,7 @@
         ref="installment"
         :buttonsShow="buttonsShow"
         :buttonsShowUser="buttonsShowUser"
-        :orderID="form.ID"
-        :parentInstallment="form.installmentForNew"></installment>
+        :orderID="form.ID"></installment>
       <!-- 付款資訊 -->
       <collection-records
         ref="collectionRecords"
@@ -186,11 +185,14 @@
         :orderID="form.ID"
         :parentQty="form.Qty"></certificate2-order-new>
       <installment-order-new
+        v-show="form.ProjectID !== ''"
         ref="installmentOrderNew"
-        :buttonsShow="buttonsShow"
-        :buttonsShowUser="buttonsShowUser"
         :orderID="form.ID"
-        :parentInstallment="form.installmentForNew"></installment-order-new>
+        :projectID="form.ProjectID"
+        :projectName="form.FirstItemName"
+        :parentQty="form.Qty"
+        :parentAmount="form.Amount"
+        :parentDate="form.OrderDate"></installment-order-new>
     </template>
     <!-- 底部操作按鈕 -->
     <div slot="footer" class="dialog-footer">
@@ -280,12 +282,6 @@ export default {
           ProductID: '',
           CustomerID: '',
           Year: 1 // 選擇的專案年限
-        },
-        // 分期付款專用
-        installmentForNew: {
-          InstallmentName: '',
-          ScheduledDate: '',
-          ScheduledAmount: 0
         }
       },
       rules: {
@@ -537,10 +533,6 @@ export default {
           }
           if (isSuccess) {
             saveStep = 'installmentOrderNew'
-            // 分期付款: 主專案名稱 = 分期名稱
-            this.form.installmentForNew.InstallmentName = this.form.FirstItemName + '-躉繳'
-            this.form.installmentForNew.ScheduledAmount = this.form.Amount
-            this.form.installmentForNew.ScheduledDate = this.form.OrderDate
             isSuccess = await this.$refs['installmentOrderNew'].beforeSave()
           }
           // 檢查其他附加功能

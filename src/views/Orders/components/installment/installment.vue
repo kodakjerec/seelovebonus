@@ -88,8 +88,7 @@ export default {
   props: {
     buttonsShow: { type: Object },
     buttonsShowUser: { type: Object },
-    orderID: { type: String },
-    parentInstallment: { type: Object }
+    orderID: { type: String }
   },
   data () {
     return {
@@ -154,28 +153,6 @@ export default {
       this.dialogShowBatchEdit = false
 
       this.preLoading()
-    },
-    // 父 -> 子
-    // 新增一筆躉繳, 只有訂單新增會用到
-    beforeSave: async function () {
-      let isSuccess = false
-
-      let newObject = {
-        OrderID: this.orderID,
-        Seq: 1,
-        InstallmentName: this.parentInstallment.InstallmentName,
-        ScheduledDate: this.parentInstallment.ScheduledDate,
-        ScheduledAmount: this.parentInstallment.ScheduledAmount,
-        ReceivedDate: null,
-        PaidAmount: null,
-        PaymentMethod: 1,
-        PaymentFrequency: 1,
-        Memo: ''
-      }
-
-      isSuccess = await this.$api.orders.installmentDetailUpdate({ form: newObject })
-
-      return isSuccess
     }
   }
 }

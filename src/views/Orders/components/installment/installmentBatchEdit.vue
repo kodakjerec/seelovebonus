@@ -168,6 +168,7 @@ export default {
       myTitle: '',
       subList: [],
       installment: {},
+      freezeCount: 1, // 已經繳款過的筆數, 預設為1, 躉繳
       // 以下為下拉式選單專用
       ddlPaymentMethod: [],
       ddlPaymentFrequency: []
@@ -271,20 +272,10 @@ export default {
       // 開始填入應付金額
       let partAmountList = []
       for (let i = 1; i <= this.form.Seq; i++) {
-        // 檢查已經存在的資料
-        let originRow = this.subList[i - 1]
-        if (originRow !== undefined) {
-          if (originRow.PaidAmount === 0) {
-            partAmountList.push(partAmount)
-          } else {
-            partAmountList.push(originRow.ScheduledAmount)
-          }
+        if (i !== this.form.Seq) {
+          partAmountList.push(partAmount)
         } else {
-          if (i !== this.form.Seq) {
-            partAmountList.push(partAmount)
-          } else {
-            partAmountList.push(finalAmount)
-          }
+          partAmountList.push(finalAmount)
         }
       }
       // 計算每個月金額 - end
@@ -300,30 +291,7 @@ export default {
       // 開始填入日期
       let partAmountList = []
       for (let i = 1; i <= this.form.Seq; i++) {
-        // 檢查已經存在的資料
-        let originRow = this.subList[i - 1]
-        if (originRow !== undefined) {
-          if (originRow.PaidAmount === 0) {
-            switch (frequency) {
-              case '2': // 月繳
-                startDate = new Date(startDate.setMonth(startDate.getMonth() + 1))
-                break
-              case '3': // 季繳
-                startDate = new Date(startDate.setMonth(startDate.getMonth() + 3))
-                break
-              case '4': // 年繳
-                startDate = new Date(startDate.setMonth(startDate.getMonth() + 12))
-                break
-              case '5': // 三年繳
-                startDate = new Date(startDate.setMonth(startDate.getMonth() + 36))
-                break
-            }
-            let tempValue = startDate.toISOString().slice(0, 10)
-            partAmountList.push(tempValue)
-          } else {
-            partAmountList.push(originRow.ScheduledDate)
-          }
-        } else {
+        if (i > 1) {
           switch (frequency) {
             case '2': // 月繳
               startDate = new Date(startDate.setMonth(startDate.getMonth() + 1))
@@ -338,9 +306,9 @@ export default {
               startDate = new Date(startDate.setMonth(startDate.getMonth() + 36))
               break
           }
-          let tempValue = startDate.toISOString().slice(0, 10)
-          partAmountList.push(tempValue)
         }
+        let tempValue = startDate.toISOString().slice(0, 10)
+        partAmountList.push(tempValue)
       }
       // 計算每個月日期 - end
       return partAmountList
