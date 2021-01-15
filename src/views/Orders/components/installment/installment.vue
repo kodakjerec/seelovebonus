@@ -130,6 +130,7 @@ export default {
         this.activeName = '1'
       }
     },
+    // 單筆修改
     handleClick: async function (row, column, event) {
       // 取得可以用的選單
       this.installment = row
@@ -138,6 +139,7 @@ export default {
       this.dialogType = 'edit'
       this.dialogShow = true
     },
+    // 批次修改
     handleBatchEdit: async function () {
       // 進入修改
       this.dialogTypeBatchEdit = 'batch'

@@ -2,7 +2,7 @@
   <el-dialog :title="myTitle" :visible="dialogShow" center width="80vw" @close="cancel">
     <el-form ref="form" :model="form" :rules="rules" label-width="10vw" label-position="right">
       <h4 style="text-align:center;color:red">{{$t('__installmentBatchEditWarning')}}</h4>
-      <el-form-item :label="$t('__installment')+$t('__name')">
+      <el-form-item :label="$t('__installment')+$t('__name')" prop="InstallmentName">
         <el-col :span="8">
           <el-input v-model="form.InstallmentName" maxlength="10" show-word-limit :disabled="disableForm.InstallmentName"></el-input>
         </el-col>
@@ -71,11 +71,26 @@
       <el-table-column
         prop="InstallmentName"
         :label="$t('__installment')+$t('__name')">
+        <template slot-scope="scope">
+          <span v-if="scope.row.PaidAmount!==0">{{scope.row[scope.column.property]}}</span>
+          <el-input v-else v-model="scope.row[scope.column.property]" @change="rowChange(scope.row)"></el-input>
+        </template>
       </el-table-column>
       <el-table-column
         prop="ScheduledDate"
-        :label="$t('__installmentScheduledDate')"
-        :formatter="formatterDate">
+        :label="$t('__installmentScheduledDate')">
+        <template slot-scope="scope">
+          <span v-if="scope.row.PaidAmount!==0">{{formatterDate(null,null,scope.row[scope.column.property],null)}}</span>
+          <el-date-picker
+            v-else
+            v-model="scope.row[scope.column.property]"
+            type="date"
+            value-format="yyyy-MM-dd"
+            :placeholder="$t('__installmentScheduledDate')"
+            :disabled="disableForm.ScheduledDate"
+            @change="rowChange(scope.row)">
+          </el-date-picker>
+        </template>
       </el-table-column>
       <el-table-column
         prop="ScheduledAmount"
@@ -85,9 +100,25 @@
         </template>
       </el-table-column>
       <el-table-column
-        prop="PaymentMethodName"
+        prop="PaidAmount"
+        :label="$t('__paidAmount')">
+        <template slot-scope="scope">
+          {{formatterMoney(scope.row[scope.column.property])}}
+        </template>
+      </el-table-column>
+      <el-table-column
+        prop="PaymentMethod"
         :label="$t('__paymentMethod')"
         width="100px">
+        <template slot-scope="scope">
+          <span v-if="scope.row.PaidAmount!==0">{{scope.row[scope.column.property]}}</span>
+          <el-select v-else v-model="scope.row[scope.column.property]" value-key="value" :placeholder="$t('__plzChoice')" :disabled="disableForm.PaymentMethod" @change="rowChange(scope.row)">
+            <el-option v-for="item in ddlPaymentMethod" :key="item.ID" :label="item.Value" :value="item.ID">
+              <span style="float: left">{{ item.Value }}</span>
+              <span style="float: right; color: #8492a6; font-size: 13px">{{ item.ID }}</span>
+            </el-option>
+          </el-select>
+        </template>
       </el-table-column>
     </el-table>
     <div slot="footer" class="dialog-footer">
@@ -136,7 +167,6 @@ export default {
       },
       myTitle: '',
       subList: [],
-      subListDeleted: [],
       installment: {},
       // 以下為下拉式選單專用
       ddlPaymentMethod: [],
@@ -145,6 +175,7 @@ export default {
   },
   mounted () {
     this.subList = JSON.parse(JSON.stringify(this.fromInstallmentShow))
+    this.subList.forEach(row => { row.Status = '' })
     let row = this.subList[0]
     this.form.OrderID = row.OrderID
     this.form.Seq = this.subList.length
@@ -172,7 +203,9 @@ export default {
     },
     // table 變更顏色
     tableRowClassName ({ row, rowIndex }) {
-      if (row['PaidAmount'] !== 0) {
+      if (row.Status === 'Deleted') {
+        return 'hidden-row'
+      } else if (row.PaidAmount !== 0) {
         return 'disabled-row'
       }
     },
@@ -313,7 +346,9 @@ export default {
     },
     // 變更分期頻率
     installmentReCal: function () {
+      // Initial
       this.subList = JSON.parse(JSON.stringify(this.fromInstallmentShow))
+      this.subList.forEach(row => { row.Status = 'Deleted' })
       let sampleRow = JSON.parse(JSON.stringify(this.subList[0]))
 
       let partAmountList = this.reCalInstallmentAmount()
@@ -327,8 +362,11 @@ export default {
         if (row === undefined) {
           needInsertRow = true
           row = JSON.parse(JSON.stringify(sampleRow))
+          row.Status = 'New'
           row.ReceivedDate = null
           row.PaidAmount = 0
+        } else {
+          row.Status = 'Modified'
         }
         row.Seq = i
         row.ScheduledDate = partDateList[i - 1]
@@ -348,13 +386,45 @@ export default {
         }
       }
     },
+    // 有異動資料
+    rowChange: function (row) {
+      if (row.Status !== 'New') {
+        row.Status = 'Modified'
+      }
+    },
     // 檢查輸入
     checkValidate: async function () {
+      await this.$refs['form'].validate((valid) => {
+        if (valid) {
+          this.beforeSave()
+        }
+      })
+    },
+    // 存檔前先過濾
+    beforeSave: async function () {
       let isSuccess = false
 
-      await this.$refs['form'].validate((valid) => { isSuccess = valid })
+      for (let i = 0; i < this.subList.length; i++) {
+        let row = this.subList[i]
+        switch (row.Status) {
+          case 'New':
+            isSuccess = await this.save('new', row)
+            break
+          case 'Modified':
+            isSuccess = await this.save('edit', row)
+            break
+          case 'Deleted':
+            isSuccess = await this.save('delete', row)
+            break
+          default:
+            isSuccess = true
+            break
+        }
+        if (!isSuccess) { return isSuccess }
+      }
+
       if (isSuccess) {
-        this.save(this.dialogType)
+        this.$emit('dialog-save')
       }
     },
     // 取消
@@ -362,21 +432,24 @@ export default {
       this.$emit('dialog-cancel')
     },
     // 存檔
-    save: async function (type) {
+    save: async function (type, row) {
       let isSuccess = false
       switch (type) {
+        case 'new':
         case 'edit':
-          let responseEdit = await this.$api.orders.installmentDetailUpdate({ form: this.form })
+          let responseEdit = await this.$api.orders.installmentDetailUpdate({ form: row })
           if (responseEdit.headers['code'] === '200') {
-            this.$alert(responseEdit.data.result[0].message, responseEdit.data.result[0].code)
+            isSuccess = true
+          }
+          break
+        case 'delete':
+          let responseDelete = await this.$api.orders.installmentDetailDelete({ form: row })
+          if (responseDelete.headers['code'] === '200') {
             isSuccess = true
           }
           break
       }
-
-      if (isSuccess) {
-        this.$emit('dialog-save')
-      }
+      return isSuccess
     }
   }
 }

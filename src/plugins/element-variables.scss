@@ -67,6 +67,10 @@ $--table-border-color: $--color-black;
 div.el-table__body-wrapper.is-scrolling-none > table > tbody > tr.el-table__row.disabled-row > td {
   background: lightgray;
 }
+// 隱藏單據的row
+div.el-table__body-wrapper.is-scrolling-none > table > tbody > tr.el-table__row.hidden-row {
+  display: none;
+}
 // 標題列特殊顏色
 div.el-table__header-wrapper > table > thead > tr > th {
   background: rgb(253,245,230)
