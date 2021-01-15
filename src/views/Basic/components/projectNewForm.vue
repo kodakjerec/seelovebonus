@@ -91,6 +91,9 @@ export default {
         return
       }
 
+      // 強制轉為大寫
+      this.form.ID = this.form.ID.toUpperCase()
+
       // 1.驗證可用性
       let checkValidate = await validate.validateProjectID(rule, value, callback)
       if (checkValidate !== '') {
@@ -157,6 +160,9 @@ export default {
         isSuccess = await this.$refs['projectDetail'].beforeSave()
         if (!isSuccess) { return }
       }
+
+      // 強制轉為大寫
+      this.form.Prefix = this.form.Prefix.toUpperCase()
 
       // 檢查主表單
       this.$refs['form'].validate((valid) => {

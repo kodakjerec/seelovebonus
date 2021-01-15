@@ -51,9 +51,10 @@
         :label="$t('__accounting')+$t('__id')">
       </el-table-column>
       <el-table-column
-        prop="BOMName"
-        :label="$t('__bom')"
         width="60px">
+        <template slot-scope="scope">
+          <el-tag effect="plain" v-if="scope.row.BOM === '1'">BOM</el-tag>
+        </template>
       </el-table-column>
     </el-table>
     <new-form

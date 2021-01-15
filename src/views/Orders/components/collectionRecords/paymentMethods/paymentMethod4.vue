@@ -11,7 +11,7 @@
       </el-date-picker>
     </el-form-item>
     <el-form-item :label="$t('__received')+$t('__amount')" prop="Amount">
-      <el-input-number v-model="form.Amount" :disabled="disableForm.Amount" :min="0" :max="form.MaxAmount"></el-input-number>
+      {{formatterMoneyUS(form.Amount)}}
     </el-form-item>
     <el-form-item prop="Account" :label="$t('__account')">
       <el-input v-model="form.Account" :placeholder="$t('__plzInputCardNumber')" maxlength="20" show-word-limit :disabled="disableForm.Account"></el-input>
@@ -21,6 +21,7 @@
 
 <script>
 import validator from '@/setup/validate'
+import { formatMoney } from '@/setup/format.js'
 
 export default {
   name: 'collectionRecordsPaymentMethod4',
@@ -49,6 +50,9 @@ export default {
     this.bankIDFilter(null)
   },
   methods: {
+    formatterMoneyUS: function (cellValue) {
+      return formatMoney(cellValue, 'US')
+    },
     // 下拉是選單過濾銀行代號
     bankIDFilter: function (selected) {
       if (selected) {

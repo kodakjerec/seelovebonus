@@ -157,8 +157,8 @@ export default {
         return data
       })
     },
-    collectionRecordsFunctions: ({ type, OrderID }) => {
-      let rawData = { type, OrderID }
+    collectionRecordsFunctions: ({ type, OrderID, Seq, BindSeq }) => {
+      let rawData = { type, OrderID, Seq, BindSeq }
       return post('/orders/collectionRecordsFunctions', rawData).then(data => {
         console.log(`%c <<< Response(/rest/orders/collectionRecordsFunctions)⤵ `, 'background-color: #E0455D; color: white; font-size: 14px; font-weight: bold;', data)
         return data
@@ -252,6 +252,27 @@ export default {
       let rawData = { form }
       return post('/orders/orderAnzaOrderNew', rawData).then(data => {
         console.log(`%c <<< Response(/rest/orders/orderAnzaOrderNew)⤵ `, 'background-color: #E0455D; color: white; font-size: 14px; font-weight: bold;', data)
+        return data
+      })
+    },
+    installmentDetailShow: ({ keyword }) => {
+      let rawData = { keyword }
+      return post('/orders/installmentDetailShow', rawData).then(data => {
+        console.log(`%c <<< Response(/rest/orders/installmentDetailShow)⤵ `, 'background-color: #E0455D; color: white; font-size: 14px; font-weight: bold;', data)
+        return data
+      })
+    },
+    installmentDetailUpdate: ({ form }) => {
+      let rawData = { form }
+      return post('/orders/installmentDetailUpdate', rawData).then(data => {
+        console.log(`%c <<< Response(/rest/orders/installmentDetailUpdate)⤵ `, 'background-color: #E0455D; color: white; font-size: 14px; font-weight: bold;', data)
+        return data
+      })
+    },
+    installmentDetailDelete: ({ form }) => {
+      let rawData = { form }
+      return post('/orders/installmentDetailDelete', rawData).then(data => {
+        console.log(`%c <<< Response(/rest/orders/installmentDetailDelete)⤵ `, 'background-color: #E0455D; color: white; font-size: 14px; font-weight: bold;', data)
         return data
       })
     },

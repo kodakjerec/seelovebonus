@@ -56,6 +56,9 @@ export default {
   data () {
     // 驗證儲位正確性
     let validateStorageID = async (rule, value, callback) => {
+      if (this.fromAnzaOrder.Status !== '1') {
+        callback()
+      }
       // 1.驗證可用性
       let checkValidate = null
       let object = {
@@ -120,7 +123,12 @@ export default {
     },
     // 檢查輸入正確性
     checkStorageID: function (event) {
-      if (event === false) { this.$refs['form'].validate((valid) => {}) }
+      // 強制轉為大寫
+      this.anzaOrder.StorageID = this.anzaOrder.StorageID.toUpperCase()
+
+      if (event === false) {
+        this.$refs['form'].validate((valid) => {})
+      }
     },
     checkValidate: function () {
       // 檢查主表單

@@ -355,6 +355,9 @@ export default {
     },
     // 批次處理
     batchInsertChange: function () {
+      // 強制轉為大寫
+      this.form.ID = this.form.ID.toUpperCase()
+
       let locationB = ''
       let locationE = ''
       let locationTotal = 0

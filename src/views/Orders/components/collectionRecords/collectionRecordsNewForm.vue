@@ -25,18 +25,82 @@
       <el-form-item :label="$t('__memo')">
           <el-input v-model="form.Memo" maxlength="200" show-word-limit></el-input>
       </el-form-item>
-      <el-form-item :label="$t('__invoice')+$t('__number')">
-          <el-input v-model="form.InvoiceID" maxlength="200" show-word-limit disabled></el-input>
-      </el-form-item>
       <el-form-item :label="$t('__received')+$t('__operator')" prop="ReceivedID">
+        <el-col :span="8">
         <el-select v-model="form.ReceivedID" value-key="value" :placeholder="$t('__plzChoice')" :disabled="disableForm.ReceivedID">
           <el-option v-for="item in ddlCreateID" :key="item.ID" :label="item.Value" :value="item.ID">
             <span style="float: left">{{ item.Value }}</span>
             <span style="float: right; color: #8492a6; font-size: 13px">{{ item.ID }}</span>
           </el-option>
         </el-select>
+        </el-col>
+        <el-col :span="8">
+          <el-form-item :label="$t('__invoice')+$t('__number')">
+            <el-input v-model="form.InvoiceID" disabled></el-input>
+      </el-form-item>
+        </el-col>
       </el-form-item>
     </el-form>
+    <!-- 發票明細 -->
+    <el-collapse v-model="activeNames">
+      <!-- 收款資訊 -->
+      <el-collapse-item :title="$t('__binding')+$t('__installment')" name="2">
+        <template slot="title">
+          <h2>{{$t('__binding')+$t('__installment')}}<i class="el-icon-circle-plus" v-show="!activeNames.includes('2')"></i></h2>
+        </template>
+        <el-table
+        ref="multipleTable"
+        :data="selectCollectionRecords"
+        stripe
+        border
+        @selection-change="handleSelectionChange"
+        style="width: 100%">
+          <el-table-column
+            type="selection"
+            :selectable="checkSelectable"
+            width="55">
+          </el-table-column>
+          <el-table-column
+            prop="Seq"
+            :label="$t('__seq')"
+            width="55px">
+          </el-table-column>
+          <el-table-column
+            prop="InstallmentName"
+            :label="$t('__installment')+$t('__name')">
+          </el-table-column>
+          <el-table-column
+            prop="ScheduledDate"
+            :label="$t('__installmentScheduledDate')"
+            :formatter="formatterDate">
+          </el-table-column>
+          <el-table-column
+            prop="ScheduledAmount"
+            :label="$t('__installmentScheduledAmount')"
+            :formatter="formatterMoneyUS">
+          </el-table-column>
+          <el-table-column
+            prop="PaidAmount"
+            :label="$t('__paidAmount')">
+            <template slot-scope="scope">
+              <span v-if="disableForm.selectCollectionRecords">{{formatterMoneyUS(null,null,scope.row[scope.column.property],null)}}</span>
+              <el-input-number v-else v-model="scope.row.PaidAmount" :min="0" :max="scope.row.MaxAmount" @change="maxAmountChange"></el-input-number>
+            </template>
+          </el-table-column>
+          <el-table-column
+            prop="ReceivedDate"
+            :label="$t('__received')+$t('__date')"
+            :formatter="formatterDate">
+          </el-table-column>
+          <el-table-column
+            prop="PaymentMethodName"
+            :label="$t('__paymentMethod')"
+            width="100px">
+          </el-table-column>
+        </el-table>
+        <div style="color:red" v-show="multipleSelection.length <= 0">{{$t('__pleaseSelectAtLeastOne')+$t('__installment')}}</div>
+      </el-collapse-item>
+    </el-collapse>
     <div slot="footer" class="dialog-footer">
       <el-button v-show="buttonsShow.delete && buttonsShowUser.delete" type="danger" @click="delRecord">{{$t('__delete')}}</el-button>
       <el-button @click="cancel">{{$t('__cancel')}}</el-button>
@@ -52,7 +116,7 @@ import method3 from './paymentMethods/paymentMethod3'
 import method4 from './paymentMethods/paymentMethod4'
 import method5 from './paymentMethods/paymentMethod5'
 import { messageBoxYesNo } from '@/services/utils'
-import { formatDate } from '@/setup/format.js'
+import { formatMoney, formatDate } from '@/setup/format.js'
 
 export default {
   name: 'CollectionRecordsNewForm',
@@ -73,8 +137,9 @@ export default {
   data () {
     return {
       form: {
-        InvoiceID: '',
         OrderID: this.orderID,
+        Seq: 0,
+        InvoiceID: '',
         PaymentMethod: '1',
         ReceivedDate: '',
         Amount: 0,
@@ -83,9 +148,7 @@ export default {
         Memo: null,
         ReceivedID: this.$store.state.userID,
         ChequeDate: null,
-        InvoiceName: '',
-        // 以下為顯示用, 不計入資料庫
-        MaxAmount: 0
+        InvoiceName: ''
       },
       rules: {
         PaymentMethod: [{ required: true, message: this.$t('__pleaseInput'), trigger: 'blur' }],
@@ -103,13 +166,16 @@ export default {
       disableForm: {
         PaymentMethod: false,
         ReceivedDate: false,
-        Amount: false,
+        Amount: true,
         Account: false,
         BankID: false,
         ReceivedID: false,
         ChequeDate: false
       },
       myTitle: '',
+      activeNames: ['2'],
+      selectCollectionRecords: [],
+      multipleSelection: [],
       // 以下為下拉式選單專用
       ddlPaymentMethod: [],
       ddlBankID: [],
@@ -127,17 +193,16 @@ export default {
 
     switch (this.dialogType) {
       case 'new':
-        this.myTitle = this.$t('__new') + this.$t('__collectionRecords')
+        this.myTitle = this.$t('__new') + this.$t('__installment')
         break
       case 'edit':
-        this.myTitle = this.$t('__edit') + this.$t('__collectionRecords')
+        this.myTitle = this.$t('__edit') + this.$t('__installment')
         this.disableForm.PaymentMethod = true
-        // this.disableForm.ReceivedDate = true
-        this.disableForm.Amount = true
         this.disableForm.Account = true
         this.disableForm.BankID = true
         this.disableForm.ReceivedID = true
         this.disableForm.ChequeDate = true
+        this.disableForm.selectCollectionRecords = true
         if (this.form.Status === '0') {
           this.buttonsShow = {
             new: 0,
@@ -160,26 +225,16 @@ export default {
     await this.preLoading()
   },
   methods: {
+    formatterDate: function (row, column, cellValue, index) {
+      return formatDate(cellValue)
+    },
+    formatterMoneyUS: function (row, column, cellValue, index) {
+      return formatMoney(cellValue, 'US')
+    },
     // 讀取預設資料
     preLoading: async function () {
-      // 預先帶入收款金額
-      if (this.dialogType === 'new') {
-        let responseRecords = await this.$api.orders.collectionRecordsFunctions({ type: 'collectionRecordsNew', OrderID: this.orderID })
-        let order = responseRecords.data.result[0]
-
-        // 數值為0不用再新增收款資訊
-        if (order.Amount === 0) {
-          this.$alert(this.$t('__amount') + this.$t('__mustBiggerThanZero'))
-          this.cancel()
-          return
-        }
-
-        this.form.MaxAmount = order.Amount
-        this.form.Amount = order.Amount
-      }
-
       // 預先帶入發票名稱
-      let response4 = await this.$api.orders.collectionRecordsFunctions({ type: 'collectionRecordsNewInvoiceName', OrderID: this.orderID })
+      let response4 = await this.$api.orders.collectionRecordsFunctions({ type: 'collectionRecordsNewInvoiceName', OrderID: this.orderID, Seq: this.Seq })
       this.ddlInvoiceName = response4.data.result
       if (this.dialogType === 'new') { this.form.InvoiceName = this.ddlInvoiceName[0].ID }
 
@@ -189,6 +244,45 @@ export default {
       this.ddlPaymentMethod = response1.data.result
       let response2 = await this.$api.orders.getDropdownList({ type: 'bankID' })
       this.ddlBankID = response2.data.result
+
+      switch (this.dialogType) {
+        case 'new':
+          let responseRecords = await this.$api.orders.collectionRecordsFunctions({ type: 'recordsNotSelect', OrderID: this.form.OrderID, Seq: this.form.Seq })
+          this.selectCollectionRecords = responseRecords.data.result
+          break
+        case 'edit':
+          let responseRecordsSelected = await this.$api.orders.collectionRecordsFunctions({ type: 'recordsSelected', OrderID: this.form.OrderID, Seq: this.form.Seq })
+          this.selectCollectionRecords = responseRecordsSelected.data.result
+          // 只選出已關聯的Row, 預設全部選取
+          this.$nextTick(() => {
+            this.$refs.multipleTable.tableData.forEach(row => {
+              this.$refs.multipleTable.toggleRowSelection(row)
+            })
+          })
+          break
+      }
+    },
+    // 收款紀錄檢查是否能選擇
+    checkSelectable: function (row) {
+      return !this.disableForm.selectCollectionRecords
+    },
+    // 選擇收款紀錄
+    handleSelectionChange: function (selection) {
+      this.multipleSelection = selection
+      this.reCalAmount()
+    },
+    // 變更應繳金額
+    maxAmountChange: function () {
+      this.reCalAmount()
+    },
+    // 計算應繳總額
+    reCalAmount: function () {
+      let totalAmount = 0
+
+      this.multipleSelection.forEach(item => {
+        totalAmount += item.PaidAmount
+      })
+      this.form.Amount = totalAmount
     },
     // 檢查輸入
     checkValidate: async function () {
@@ -212,9 +306,20 @@ export default {
       }
       if (!isSuccess) { return }
 
-      this.$refs['form'].validate((valid) => {
+      this.$refs['form'].validate(async (valid) => {
         if (valid) {
-          this.save(this.dialogType)
+          await this.save(this.dialogType)
+
+          // 勾選的分期付款
+          let seqList = []
+          let seqString = ''
+          this.multipleSelection.forEach(item => {
+            seqList.push({
+              IDSeq: item.Seq,
+              PaidAmount: item.PaidAmount })
+          })
+          seqString = JSON.stringify(seqList)
+          await this.$api.orders.collectionRecordsFunctions({ type: 'cRecordsBindInstallments', OrderID: this.form.OrderID, Seq: this.form.Seq, BindSeq: seqString })
         }
       })
     },
@@ -231,6 +336,8 @@ export default {
           if (responseNew.headers['code'] === '200') {
             this.$alert(responseNew.data.result[0].message, responseNew.data.result[0].code)
             isSuccess = true
+            // 取得單號回填後續資料
+            this.form.Seq = responseNew.data.result[0].Seq
           }
           break
         case 'edit':
@@ -259,7 +366,7 @@ export default {
         this.$alert(this.$t('__collectioRecordsDeleteNo') + this.$t('__invoice') + this.$t('__number'), this.$t('__warning'))
         return
       }
-      let answerAction = await messageBoxYesNo(this.$t('__delete') + this.$t('__collectionRecords'), this.$t('__delete'))
+      let answerAction = await messageBoxYesNo(this.$t('__delete') + this.$t('__installment'), this.$t('__delete'))
 
       switch (answerAction) {
         case 'confirm':

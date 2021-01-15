@@ -163,6 +163,29 @@ export default {
     buttonsShowUser: { type: Object }
   },
   data () {
+    // 切換驗證身分證號碼或護照
+    let myValidate = async (rule, value, callback) => {
+      // 新增時才檢驗
+      if (this.dialogType !== 'new') {
+        callback()
+        return
+      }
+
+      // 強制轉為大寫
+      this.form.ID = this.form.ID.toUpperCase()
+
+      // 1.驗證可用性
+      let checkValidate = null
+
+      checkValidate = await validate.validatePassport(rule, value, 'company')
+
+      if (checkValidate !== '') {
+        callback(checkValidate)
+        return
+      }
+
+      callback()
+    }
     return {
       form: {
         ID: '',
@@ -184,7 +207,7 @@ export default {
         Nickname: null
       },
       rules: {
-        ID: [{ required: true, message: this.$t('__pleaseInput'), trigger: 'blur' }],
+        ID: [{ trigger: 'blur', validator: myValidate }],
         Name: [{ required: true, message: this.$t('__pleaseInput'), trigger: 'blur' }],
         StartDate: [{ required: true, message: this.$t('__pleaseInput'), trigger: 'blur' }],
         EndDate: [{ required: true, message: this.$t('__pleaseInput'), trigger: 'blur' }],

@@ -105,7 +105,8 @@ export default {
       },
       myTitle: '',
       editableProgList: [], // 顯示functions使用
-      tempRow: {} // 暫存, 目前指到哪一條row
+      tempRow: {}, // 暫存, 目前指到哪一條row
+      finalResult: [] // 最後選擇的結果
     }
   },
   mounted () {

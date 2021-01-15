@@ -2,7 +2,7 @@
   <el-dialog :title="myTitle" :visible="dialogShow" center width="80vw" @close="cancel">
     <el-form label-width="10vw" label-position="right">
       <h2>{{$t('__signOffWarning')}}</h2>
-      <el-tag v-for="(item, index) in signOffList" :key="index">
+      <el-tag effect="plain" v-for="(item, index) in signOffList" :key="index">
         {{item.OrderID}}
       </el-tag>
       <el-form-item :label="$t('__signOff') + $t('__memo')">

@@ -9,14 +9,16 @@
         :disabled="disableForm.ReceivedDate">
       </el-date-picker>
     </el-form-item>
-    <el-form-item :label="$t('__received')+$t('__amount')" prop="Amount">
-        <el-input-number v-model="form.Amount" :disabled="disableForm.Amount" :min="0" :max="form.MaxAmount"></el-input-number>
+    <el-form-item :label="$t('__received')+$t('__amount')">
+      {{formatterMoneyUS(form.Amount)}}
     </el-form-item>
   </el-form>
 </template>
 
 <script>
 import validator from '@/setup/validate'
+import { formatMoney } from '@/setup/format.js'
+
 export default {
   name: 'collectionRecordsPaymentMethod1',
   props: {
@@ -31,6 +33,9 @@ export default {
     }
   },
   methods: {
+    formatterMoneyUS: function (cellValue) {
+      return formatMoney(cellValue, 'US')
+    },
     // 檢查輸入
     checkValidate: async function () {
       let isSuccess = false

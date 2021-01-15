@@ -139,6 +139,12 @@
         :buttonsShowUser="buttonsShowUser"
         :orderID="form.ID"
         :isShow="form.newCertificate2"></certificate2>
+      <!-- 分期付款 -->
+      <installment
+        :buttonsShow="buttonsShow"
+        :buttonsShowUser="buttonsShowUser"
+        :orderID="form.ID"
+        :parentInstallment="form.installmentForNew"></installment>
       <!-- 付款資訊 -->
       <collection-records
         ref="collectionRecords"
@@ -165,7 +171,7 @@
         :orderID="form.ID"
         :parentOrderDate="form.OrderDate"
         :parentQty="form.Qty"
-        :parentAnzaData="form.anza"
+        :parentAnzaData="form.anzaForNew"
         :ddlCustomerBefore="ddlCustomer"></anza-order-new>
       <certificate1-order-new
         v-show="form.newCertificate1 === 1"
@@ -177,6 +183,13 @@
         ref="certificate2OrderNew"
         :orderID="form.ID"
         :parentQty="form.Qty"></certificate2-order-new>
+            <!-- 分期付款 -->
+      <installment-order-new
+        ref="installment"
+        :buttonsShow="buttonsShow"
+        :buttonsShowUser="buttonsShowUser"
+        :orderID="form.ID"
+        :parentInstallment="form.installmentForNew"></installment-order-new>
     </template>
     <!-- 底部操作按鈕 -->
     <div slot="footer" class="dialog-footer">
@@ -190,19 +203,24 @@
 </template>
 
 <script>
+// 新增訂單才有
 import anzaOrderNew from './orderNew/anzaOrderNew'
 import certificate1OrderNew from './orderNew/certificate1OrderNew'
 import certificate2OrderNew from './orderNew/certificate2OrderNew'
-import collectionRecords from './collectionRecords/collectionRecords'
-import anzaOrderList from './anza/anzaOrderList'
-import invoice from './invoice/invoice'
-import certificate1 from './certificate1/certificate1'
-import certificate2 from './certificate2/certificate2'
+import installmentOrderNew from './orderNew/installmentOrderNew'
+// 訂單固定內容
 import orderDetail from './orderDetail'
 import orderCustomer from './orderCustomer'
+import installment from './installment/installment'
+import collectionRecords from './collectionRecords/collectionRecords'
+import invoice from './invoice/invoice'
 import orderStampArea from './orderStampArea'
+// 訂單變動內容
+import anzaOrderList from './anza/anzaOrderList'
+import certificate1 from './certificate1/certificate1'
+import certificate2 from './certificate2/certificate2'
 import orderFunctions from './orderFunctions'
-
+// 其他
 import { formatMoney, formatDate } from '@/setup/format.js'
 import { messageBoxYesNo } from '@/services/utils'
 import validate from '@/setup/validate'
@@ -210,17 +228,22 @@ import validate from '@/setup/validate'
 export default {
   name: 'OrderNewForm',
   components: {
+    // 新增訂單才有
     anzaOrderNew,
     certificate1OrderNew,
     certificate2OrderNew,
+    installmentOrderNew,
+    // 訂單固定內容
     orderDetail,
     orderCustomer,
-    certificate1,
-    certificate2,
+    installment,
     collectionRecords,
-    anzaOrderList,
     invoice,
     orderStampArea,
+    // 訂單變動內容
+    certificate1,
+    certificate2,
+    anzaOrderList,
     orderFunctions
   },
   props: {
@@ -252,10 +275,16 @@ export default {
         subAmount: 0,
         FirstItemName: '',
         // 安座單專用
-        anza: {
+        anzaForNew: {
           ProductID: '',
           CustomerID: '',
           Year: 1 // 選擇的專案年限
+        },
+        // 分期付款專用
+        installmentForNew: {
+          InstallmentName: '',
+          ScheduledDate: '',
+          ScheduledAmount: 0
         }
       },
       rules: {
@@ -388,7 +417,7 @@ export default {
       // 安座單: 主專案第一個扣庫存商品
       let firstInventoryProduct = projectDetail.find(item => { return item.Inventory === 1 })
       if (firstInventoryProduct !== undefined) {
-        this.form.anza.ProductID = firstInventoryProduct.ProductID
+        this.form.anzaForNew.ProductID = firstInventoryProduct.ProductID
       }
 
       this.bringFunctions()
@@ -412,15 +441,15 @@ export default {
       // 安座單: 主專案第一個扣庫存商品
       let firstInventoryProduct = projectDetail.find(item => { return item.Inventory === 1 })
       if (firstInventoryProduct !== undefined) {
-        this.form.anza.ProductID = firstInventoryProduct.ProductID
+        this.form.anzaForNew.ProductID = firstInventoryProduct.ProductID
       }
       // 安座單: 主專案名稱的年限
       let projectYear = this.ddlProject.find(item => { return item.ID === this.form.ProjectID })
       if (projectYear !== undefined) {
         if (projectYear.Value.indexOf('12') >= 0 || projectYear.Value.indexOf('十二') >= 0) {
-          this.form.anza.Year = 12
+          this.form.anzaForNew.Year = 12
         } else {
-          this.form.anza.Year = 1
+          this.form.anzaForNew.Year = 1
         }
       }
 
@@ -496,6 +525,7 @@ export default {
         case 'new':
           saveStep = 'order'
           isSuccess = await this.save(this.dialogType)
+
           if (isSuccess) {
             saveStep = 'orderDetail'
             isSuccess = await this.$refs['orderDetail'].beforeSave()
@@ -503,6 +533,14 @@ export default {
           if (isSuccess) {
             saveStep = 'orderCustomer'
             isSuccess = await this.$refs['orderCustomer'].beforeSave()
+          }
+          if (isSuccess) {
+            saveStep = 'installment'
+            // 分期付款: 主專案名稱 = 分期名稱
+            this.form.installmentForNew.InstallmentName = this.form.FirstItemName + '-躉繳'
+            this.form.installmentForNew.ScheduledAmount = this.form.Amount
+            this.form.installmentForNew.ScheduledDate = this.form.OrderDate
+            isSuccess = await this.$refs['installment'].beforeSave()
           }
           // 檢查其他附加功能
           if (this.form.newCertificate1 === 1) {
@@ -696,7 +734,7 @@ export default {
     // ===== 安座單 =====
     // 客戶變更, 要回傳最終結果
     customerChange: function (result) {
-      this.form.anza.CustomerID = result
+      this.form.anzaForNew.CustomerID = result
     }
   }
 }

@@ -70,8 +70,8 @@
             {{formatterDate(null,null,scope.row.ScheduledDate,null)}}<br/>
             <span v-if="scope.row.RealDate !== null">{{formatterDate(null,null,scope.row.RealDate,null)}}</span>
             <template v-else>
-              <el-tag type="danger" v-if="scope.row.FlagAnza === 1">{{$t('__notAnza')}}</el-tag>
-              <el-tag type="warning" v-else>{{$t('__notAnza')}}</el-tag>
+              <el-tag type="danger" effect="plain" v-if="scope.row.FlagAnza === 1">{{$t('__notAnza')}}</el-tag>
+              <el-tag type="warning" effect="plain" v-else>{{$t('__notAnza')}}</el-tag>
             </template>
           </template>
         </el-table-column>

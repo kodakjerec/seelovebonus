@@ -155,6 +155,9 @@ export default {
         return
       }
 
+      // 強制轉為大寫
+      this.form.ID = this.form.ID.toUpperCase()
+
       let idType = this.IDType
       // 1.驗證可用性
       let checkValidate = null

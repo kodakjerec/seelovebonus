@@ -15,7 +15,7 @@
       <el-table-column
         :label="$t('__signOffGroups')">
         <template slot-scope="scope">
-          <el-tag v-for="object in scope.row.subList" :key="object.Seq" :type="object.UserType === 0 ? '': 'success'">
+          <el-tag effect="plain" v-for="object in scope.row.subList" :key="object.Seq" :type="object.UserType === 0 ? '': 'success'">
             {{object.ID + ' ' + object.GroupName}}
           </el-tag>
         </template>
