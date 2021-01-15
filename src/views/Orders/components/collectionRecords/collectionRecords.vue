@@ -127,6 +127,7 @@ export default {
     dialogSave: function () {
       this.dialogShow = false
       this.preLoading()
+      this.$emit('refreshInstallment')
     }
   }
 }

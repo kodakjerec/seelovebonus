@@ -320,6 +320,8 @@ export default {
           })
           seqString = JSON.stringify(seqList)
           await this.$api.orders.collectionRecordsFunctions({ type: 'cRecordsBindInstallments', OrderID: this.form.OrderID, Seq: this.form.Seq, BindSeq: seqString })
+
+          this.$emit('dialog-save')
         }
       })
     },
@@ -356,9 +358,7 @@ export default {
           break
       }
 
-      if (isSuccess) {
-        this.$emit('dialog-save')
-      }
+      return isSuccess
     },
     // 刪除
     delRecord: async function () {
@@ -378,7 +378,9 @@ export default {
             delete: 0,
             search: 0
           }
-          this.save('delete')
+          await this.save('delete')
+
+          this.$emit('dialog-save')
           break
         case 'cancel':
           break

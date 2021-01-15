@@ -141,6 +141,7 @@
         :isShow="form.newCertificate2"></certificate2>
       <!-- 分期付款 -->
       <installment
+        ref="installment"
         :buttonsShow="buttonsShow"
         :buttonsShowUser="buttonsShowUser"
         :orderID="form.ID"
@@ -150,14 +151,15 @@
         ref="collectionRecords"
         :buttonsShow="buttonsShow"
         :buttonsShowUser="buttonsShowUser"
-        :orderID="form.ID"></collection-records>
+        :orderID="form.ID"
+        @refreshInstallment="refreshInstallment"></collection-records>
       <!-- 發票資訊 -->
       <invoice
         ref="invoice"
         :buttonsShow="buttonsShow"
         :buttonsShowUser="buttonsShowUser"
         :orderID="form.ID"
-        @refreshCollectionRecords="refreshCollectionRecords()"></invoice>
+        @refreshCollectionRecords="refreshCollectionRecords"></invoice>
       <!-- 蓋章區域 -->
       <orderStampArea
         :orderID="form.ID"></orderStampArea>
@@ -183,9 +185,8 @@
         ref="certificate2OrderNew"
         :orderID="form.ID"
         :parentQty="form.Qty"></certificate2-order-new>
-            <!-- 分期付款 -->
       <installment-order-new
-        ref="installment"
+        ref="installmentOrderNew"
         :buttonsShow="buttonsShow"
         :buttonsShowUser="buttonsShowUser"
         :orderID="form.ID"
@@ -535,12 +536,12 @@ export default {
             isSuccess = await this.$refs['orderCustomer'].beforeSave()
           }
           if (isSuccess) {
-            saveStep = 'installment'
+            saveStep = 'installmentOrderNew'
             // 分期付款: 主專案名稱 = 分期名稱
             this.form.installmentForNew.InstallmentName = this.form.FirstItemName + '-躉繳'
             this.form.installmentForNew.ScheduledAmount = this.form.Amount
             this.form.installmentForNew.ScheduledDate = this.form.OrderDate
-            isSuccess = await this.$refs['installment'].beforeSave()
+            isSuccess = await this.$refs['installmentOrderNew'].beforeSave()
           }
           // 檢查其他附加功能
           if (this.form.newCertificate1 === 1) {
@@ -719,6 +720,10 @@ export default {
         case 'close':
           break
       }
+    },
+    // 儲存收款資訊後更新分期付款
+    refreshInstallment: function () {
+      this.$refs['installment'].preLoading()
     },
     // 儲存發票後更新付款紀錄資訊
     refreshCollectionRecords: function () {

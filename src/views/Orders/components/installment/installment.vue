@@ -119,7 +119,7 @@ export default {
     },
     // table 變更顏色
     tableRowClassName ({ row, rowIndex }) {
-      if (row['Status'] === '0') {
+      if (row.PaidAmount !== 0) {
         return 'disabled-row'
       }
     },

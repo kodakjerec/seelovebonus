@@ -111,7 +111,7 @@
         :label="$t('__paymentMethod')"
         width="100px">
         <template slot-scope="scope">
-          <span v-if="scope.row.PaidAmount!==0">{{scope.row[scope.column.property]}}</span>
+          <span v-if="scope.row.PaidAmount!==0">{{scope.row.PaymentMethodName}}</span>
           <el-select v-else v-model="scope.row[scope.column.property]" value-key="value" :placeholder="$t('__plzChoice')" :disabled="disableForm.PaymentMethod" @change="rowChange(scope.row)">
             <el-option v-for="item in ddlPaymentMethod" :key="item.ID" :label="item.Value" :value="item.ID">
               <span style="float: left">{{ item.Value }}</span>
@@ -179,7 +179,7 @@ export default {
     let row = this.subList[0]
     this.form.OrderID = row.OrderID
     this.form.Seq = this.subList.length
-    this.form.InstallmentName = row.InstallmentName
+    this.form.InstallmentName = row.InstallmentName.substring(0, row.InstallmentName.indexOf('-'))
     this.form.ScheduledDate = row.ScheduledDate
     this.form.ScheduledAmount = row.ScheduledAmount
     this.form.PaymentMethod = row.PaymentMethod
@@ -260,6 +260,7 @@ export default {
       })
       fullAmount -= freezeScheduledAmount
       lastCount = this.form.Seq - freezeCount
+      // 計算一般款以及最後一期款項
       let partAmount = 0 // 未繳款分期款
       let finalAmount = 0 // 最後一期分期款
       if (lastCount > 0) {
@@ -348,7 +349,14 @@ export default {
     installmentReCal: function () {
       // Initial
       this.subList = JSON.parse(JSON.stringify(this.fromInstallmentShow))
-      this.subList.forEach(row => { row.Status = 'Deleted' })
+      this.subList.forEach(row => {
+        // 已付款禁止修改
+        if (row.PaidAmount !== 0) {
+          row.Status = ''
+        } else {
+          row.Status = 'Deleted'
+        }
+      })
       let sampleRow = JSON.parse(JSON.stringify(this.subList[0]))
 
       let partAmountList = this.reCalInstallmentAmount()
@@ -366,6 +374,10 @@ export default {
           row.ReceivedDate = null
           row.PaidAmount = 0
         } else {
+          // 已付款禁止修改
+          if (row.PaidAmount !== 0) {
+            continue
+          }
           row.Status = 'Modified'
         }
         row.Seq = i
@@ -393,8 +405,8 @@ export default {
       }
     },
     // 檢查輸入
-    checkValidate: async function () {
-      await this.$refs['form'].validate((valid) => {
+    checkValidate: function () {
+      this.$refs['form'].validate((valid) => {
         if (valid) {
           this.beforeSave()
         }
