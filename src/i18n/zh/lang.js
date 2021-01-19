@@ -215,6 +215,7 @@ export default {
   __installmentPaymentFrequency: '分期頻率',
   __installmentSeq: '期別',
   __installmentReCal: '重新計算分期付款',
+  __keyword: '關鍵字',
   // 請在上方新增字串
   // 以下為 警告
   __warning: '警告',
@@ -224,7 +225,7 @@ export default {
   __retakeIDWarning: '重新取號會停用目前單據，並新增一張單據',
   __signOffWarning: '以下單據等待簽核',
   __anzaOrderNewWarning: '請選擇專案與客戶編號',
-  __anzaOperateWarning: '下拉選擇位別，或輸入指定位別編號',
+  __anzaOperateWarning: '下拉選擇數值，或輸入指定數值',
   __installmentBatchEditWarning: '變更影響所有分期(不含已收款明細)',
   // 以下為錯誤處理專用
   __error400: '無法理解請求',

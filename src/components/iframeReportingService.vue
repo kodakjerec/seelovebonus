@@ -29,7 +29,9 @@ export default {
       let paramsString = ''
 
       Object.keys(this.params).forEach(key => {
-        paramsString += '&' + key + '=' + this.params[key]
+        if (this.params[key]) {
+          paramsString += '&' + key + '=' + this.params[key]
+        }
       })
 
       this.urlPath = this.rsPath + rsCommands + paramsString

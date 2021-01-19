@@ -15,12 +15,19 @@
       <method4 ref="method4" v-if="form.PaymentMethod === '4'" :form="form" :disableForm="disableForm" :ddlBankID="ddlBankID"></method4>
       <method5 ref="method5" v-if="form.PaymentMethod === '5'" :form="form" :disableForm="disableForm" :ddlBankID="ddlBankID"></method5>
       <el-form-item :label="$t('__invoice')+$t('__name')">
-        <el-select v-model="form.InvoiceName" value-key="value" :placeholder="$t('__plzChoice')" :disabled="disableForm.ReceivedID">
+        <el-select
+          allow-create
+          default-first-option
+          filterable
+          v-model="form.InvoiceName" value-key="value"
+          :placeholder="$t('__plzChoice')"
+          :disabled="disableForm.ReceivedID">
           <el-option v-for="item in ddlInvoiceName" :key="item.ID" :label="item.Value" :value="item.ID">
             <span style="float: left">{{ item.Value }}</span>
             <span style="float: right; color: #8492a6; font-size: 13px">{{ item.ID }}</span>
           </el-option>
         </el-select>
+        {{$t('__anzaOperateWarning')}}
       </el-form-item>
       <el-form-item :label="$t('__memo')">
           <el-input v-model="form.Memo" maxlength="200" show-word-limit></el-input>

@@ -1,6 +1,6 @@
 <template>
   <div>
-    <el-form ref="form" :model="form" label-width="20%">
+    <el-form ref="form" :model="form" label-width="10vw" label-position="right">
       <el-form-item :label="$t('__startDate')">
         <el-col :span="8">
           <el-date-picker

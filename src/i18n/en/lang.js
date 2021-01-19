@@ -211,10 +211,11 @@ export default {
   __installmentScheduledDate: 'Scheduled Pay Date',
   __installmentScheduledAmount: 'Amount',
   __paidAmount: 'Paid Amount',
-  __installmentChange: '變更分期付款方式',
-  __installmentPaymentFrequency: '分期頻率',
-  __installmentSeq: '期別',
-  __installmentReCal: '重新計算分期付款',
+  __installmentChange: 'Change Installments',
+  __installmentPaymentFrequency: 'Frequency',
+  __installmentSeq: 'Seq',
+  __installmentReCal: 'Re-Calculate',
+  __keyword: 'Keyword',
   // 請在上方新增字串
   // 以下為 警告
   __warning: 'Warning',
@@ -224,8 +225,8 @@ export default {
   __retakeIDWarning: 'Retake ID will disable current document and add a new one',
   __signOffWarning: 'The following documents are waiting for approval',
   __anzaOrderNewWarning: 'Please select project-id and customer-id',
-  __anzaOperateWarning: '下拉選擇位別，或輸入指定位別編號',
-  __installmentBatchEditWarning: '變更影響所有分期(不含已收款明細)',
+  __anzaOperateWarning: 'Drop down to select value, or enter the specified value',
+  __installmentBatchEditWarning: 'Change affets all installments(not including received details)',
   // 以下為錯誤處理專用
   __error400: 'Bad Request',
   __error401: 'Unauthorized',

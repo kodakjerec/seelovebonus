@@ -1,6 +1,6 @@
 <template>
   <div>
-    <el-form ref="form" :model="form" label-width="20%">
+    <el-form ref="form" :model="form" label-width="10vw" label-position="right">
       <el-form-item :label="$t('__startDate')">
         <el-col :span="8">
           <el-date-picker
@@ -18,6 +18,24 @@
             :placeholder="$t('__plzChoice')+$t('__endDate')"
             value-format="yyyy-MM-dd">
           </el-date-picker>
+        </el-col>
+      </el-form-item>
+      <el-form-item :label="$t('__anzaOrder')">
+        <el-col :span="8">
+          <el-input v-model="form.StartID" maxlength="20" show-word-limit></el-input>
+        </el-col>
+        <el-col :span="2">
+          <span>~</span>
+        </el-col>
+        <el-col :span="8">
+          <el-form-item>
+            <el-input v-model="form.EndID" maxlength="20" show-word-limit></el-input>
+          </el-form-item>
+        </el-col>
+      </el-form-item>
+      <el-form-item :label="$t('__keyword')">
+        <el-col :span="8">
+          <el-input v-model="form.keyword" maxlength="20" show-word-limit></el-input>
         </el-col>
       </el-form-item>
       <el-form-item>
@@ -42,7 +60,10 @@ export default {
     return {
       form: {
         StartDate: null,
-        EndDate: null
+        EndDate: null,
+        StartID: '',
+        EndID: '',
+        keyword: ''
       },
       reportPath: 'reports_anza_Total',
       reportParams: {},
@@ -134,6 +155,9 @@ export default {
       this.reportParams = {
         StartDate: this.form.StartDate,
         EndDate: this.form.EndDate,
+        StartID: this.form.StartID,
+        EndID: this.form.EndID,
+        keyword: this.form.keyword,
         locale: strLocale }
 
       // 紀錄Log
