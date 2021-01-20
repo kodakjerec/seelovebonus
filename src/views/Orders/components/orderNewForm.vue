@@ -281,7 +281,7 @@ export default {
         anzaForNew: {
           ProductID: '',
           CustomerID: '',
-          Year: 1 // 選擇的專案年限
+          Extend: {}
         }
       },
       rules: {
@@ -440,15 +440,6 @@ export default {
       if (firstInventoryProduct !== undefined) {
         this.form.anzaForNew.ProductID = firstInventoryProduct.ProductID
       }
-      // 安座單: 主專案名稱的年限
-      let projectYear = this.ddlProject.find(item => { return item.ID === this.form.ProjectID })
-      if (projectYear !== undefined) {
-        if (projectYear.Value.indexOf('12') >= 0 || projectYear.Value.indexOf('十二') >= 0) {
-          this.form.anzaForNew.Year = 12
-        } else {
-          this.form.anzaForNew.Year = 1
-        }
-      }
 
       // 主專案填入 orderDetail
       this.$refs['orderDetail'].parentResetItems(projectDetail)
@@ -463,6 +454,11 @@ export default {
       // 專案功能顯示
       projectFunctions.forEach(item => {
         this.form[item.Function] = item.Available
+
+        // 安座單設定
+        if (item.Function === 'newAnzaOrder' && item.Extend) {
+          this.form.anzaForNew.Extend = JSON.parse(item.Extend)
+        }
       })
     },
     // 檢查輸入

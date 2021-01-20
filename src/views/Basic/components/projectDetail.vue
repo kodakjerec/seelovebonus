@@ -34,7 +34,7 @@
       :label="$t('__qty')"
       width="210px">
       <template slot-scope="scope">
-        <el-input-number v-model="scope.row[scope.column.property]" :min="0" @change="(currentValue, oldValue)=>{qtyChange(currentValue, oldValue, scope.row)}"></el-input-number>
+        <el-input-number v-model="scope.row[scope.column.property]" :min="1" @change="(currentValue, oldValue)=>{qtyChange(currentValue, oldValue, scope.row)}"></el-input-number>
       </template>
     </el-table-column>
     <el-table-column
@@ -100,8 +100,8 @@ export default {
     // 存檔前先過濾
     beforeSave: async function () {
       let isSuccess = false
-      // 結合已刪除單據
-      let finalResult = this.subList.concat(this.subListDeleted)
+      // 結合已刪除單據, 先刪除再新增
+      let finalResult = this.subListDeleted.concat(this.subList)
       if (finalResult.length === 0) { isSuccess = true }
 
       for (let index = 0; index < finalResult.length; index++) {
@@ -195,11 +195,25 @@ export default {
       if (row.Status === '') {
         row.Status = 'Modified'
       }
+      this.reCalAmount()
     },
     qtyChange: function (currentValue, oldValue, row) {
       if (row.Status === '') {
         row.Status = 'Modified'
       }
+      this.reCalAmount()
+    },
+    // 重新計算專案總價
+    reCalAmount: function () {
+      let masterAmount = 0
+      let tempAmount = 0
+      this.subList.forEach(row => {
+        tempAmount = row.Price * row.Qty
+        masterAmount += tempAmount
+      })
+      this.$emit('reCalculateDetail', {
+        masterAmount: masterAmount
+      })
     }
   }
 }

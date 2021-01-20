@@ -6,6 +6,7 @@
     <h2 class="alignLeft">{{$t('__anzaOrder')}}</h2>
     <p/>
     <span v-if="parentAnzaData.CustomerID===''" v-html="$t('__anzaOrderNewWarning')"></span>
+    <span v-if="parentAnzaData.Extend.new === 0">免新增安座單</span>
     <el-table
       v-else
       :data="subList"
@@ -208,13 +209,13 @@ export default {
       let month = start.getMonth()
       let day = start.getDate()
 
-      // 預定安座日: 預設三個月
-      month = start.getMonth() + 3
+      // 預定安座日: 預設90天
+      day = start.getDate() + 90
       let ScheduledDate = new Date(year, month, day, 12)
 
-      // 到期日: 預設一年
-      year = start.getFullYear() + this.parentAnzaData.Year
-      month = start.getMonth()
+      // 到期日: 抓取專案設定Extend.Year
+      // 預設最後安座日後, 再過Extend.Year
+      year = start.getFullYear() + parseInt(this.parentAnzaData.Extend.year)
       let ExpirationDate = new Date(year, month, day, 12)
 
       if (Array.isArray(waitForReplaceList)) {

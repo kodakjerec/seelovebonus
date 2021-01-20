@@ -37,8 +37,7 @@
         </el-col>
       </el-form-item>
       <el-form-item :label="$t('__price')">
-          <el-input-number v-model.number="form.Price"></el-input-number>
-          <span>{{$t('__dollar')}}</span>
+          <span>{{formatterMoneyUS(null,null,form.Price,null)+$t('__dollar')}}</span>
       </el-form-item>
       <el-form-item :label="$t('__pv')">
           <el-input-number v-model.number="form.PV" :precision="2" :min="0"></el-input-number>
@@ -47,16 +46,25 @@
       <!-- 專案明細 -->
       <template v-if="dialogType!=='new'">
         <el-divider>{{$t('__project')+$t('__detail')}}</el-divider>
-        <project-detail ref="projectDetail" :projectID="form.ID"></project-detail>
+        <project-detail ref="projectDetail"
+          :projectID="form.ID"
+          @reCalculateDetail="reCalculateDetail"></project-detail>
       </template>
       <el-form-item v-else>{{$t('__projectDetailWarning')}}</el-form-item>
       <!-- 專案功能 -->
       <el-divider>{{$t('__project')+$t('__function')}}</el-divider>
       <template v-for="fun in switchProjectFunctions">
-        <el-col :span="4" :key="fun.Function">
+        <div :key="fun.Function">
           {{fun.Value}}
-          <el-switch v-model="fun.Available" active-text="ON" inactive-text="OFF" :active-value="1" :inactive-value="0"></el-switch>
-        </el-col>
+          <el-switch v-model="fun.Available" active-text="ON" inactive-text="OFF" :active-value="1" :inactive-value="0" @change="(value)=>switchChange(value, fun)"></el-switch>
+          <template v-if="fun.Function==='newAnzaOrder' && fun.Available === 1">
+            <span> 1. {{$t('__new')}}</span><el-switch v-model="fun.Extend.new" active-text="ON" inactive-text="OFF" :active-value="1" :inactive-value="0"></el-switch>
+            <span> 2. {{$t('__installmentTransfer')}}</span><el-switch v-model="fun.Extend.transfer" active-text="ON" inactive-text="OFF" :active-value="1" :inactive-value="0"></el-switch>
+            <span> 3. {{$t('__installmentExtend')}}</span><el-switch v-model="fun.Extend.extend" active-text="ON" inactive-text="OFF" :active-value="1" :inactive-value="0"></el-switch>
+            <span> 4. {{$t('__installmentRenew')}}</span><el-switch v-model="fun.Extend.renew" active-text="ON" inactive-text="OFF" :active-value="1" :inactive-value="0"></el-switch>
+            <span> 5. Year</span><el-input v-model="fun.Extend.year" style="width:50px"></el-input>
+      </template>
+        </div>
       </template>
     </el-form>
     <div slot="footer" class="dialog-footer">
@@ -68,6 +76,7 @@
 </template>
 
 <script>
+import { formatMoney } from '@/setup/format.js'
 import validate from '@/setup/validate.js'
 import projectDetail from './projectDetail'
 import { messageBoxYesNo } from '@/services/utils'
@@ -124,8 +133,8 @@ export default {
         ID: false
       },
       myTitle: '',
-      AvailableFunctions: [],
-      // 下拉是選單
+      anzaExtend: {},
+      // 下拉式選單
       switchProjectFunctions: []
     }
   },
@@ -146,11 +155,29 @@ export default {
     this.preLoading()
   },
   methods: {
+    formatterMoneyUS: function (row, column, cellValue, index) {
+      return formatMoney(cellValue)
+    },
     // 讀取預設資料
     preLoading: async function () {
       // 有用到的專案功能
       let responseAvailableProjectFunctions = await this.$api.basic.getObject({ type: 'projectFunctions', keyword: this.form.ID })
       this.switchProjectFunctions = responseAvailableProjectFunctions.data.result
+
+      this.switchProjectFunctions.forEach(item => {
+        if (item.Extend) { item.Extend = JSON.parse(item.Extend) }
+      })
+    },
+    switchChange: function (value, fun) {
+      if (fun.Function === 'newAnzaOrder' && value === 1) {
+        fun.Extend = {
+          new: 0,
+          transfer: 0,
+          extend: 0,
+          renew: 0,
+          year: 1
+        }
+      }
     },
     // 檢查輸入
     checkValidate: async function () {
@@ -163,6 +190,11 @@ export default {
 
       // 強制轉為大寫
       this.form.Prefix = this.form.Prefix.toUpperCase()
+
+      // 安座單設定寫回
+      this.switchProjectFunctions.forEach(item => {
+        if (item.Extend) { item.Extend = JSON.stringify(item.Extend) }
+      })
 
       // 檢查主表單
       this.$refs['form'].validate((valid) => {
@@ -243,6 +275,11 @@ export default {
       if (isSuccess) {
         this.$emit('dialog-save')
       }
+    },
+    // 子->父: 統計商品明細總價
+    reCalculateDetail: function (object) {
+      const { masterAmount } = object
+      this.form.Price = masterAmount
     }
   }
 }

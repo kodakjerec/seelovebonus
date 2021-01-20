@@ -216,6 +216,9 @@ export default {
   __installmentSeq: 'Seq',
   __installmentReCal: 'Re-Calculate',
   __keyword: 'Keyword',
+  __installmentTransfer: 'Transfer',
+  __installmentExtend: 'Extend',
+  __installmentRenew: 'Renew',
   // 請在上方新增字串
   // 以下為 警告
   __warning: 'Warning',

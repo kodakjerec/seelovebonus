@@ -216,6 +216,9 @@ export default {
   __installmentSeq: '期別',
   __installmentReCal: '重新計算分期付款',
   __keyword: '關鍵字',
+  __installmentTransfer: '轉讓',
+  __installmentExtend: '展延',
+  __installmentRenew: '續約',
   // 請在上方新增字串
   // 以下為 警告
   __warning: '警告',

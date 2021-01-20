@@ -111,7 +111,7 @@ const routes = [
   {
     path: '/Orders/FKOrdersShow',
     name: 'FKOrdersShow',
-    component: () => import('@/views/Orders/fKOrder/fKOrdersShow')
+    component: () => import('@/views/Orders/components/fKOrder/fKOrdersShow')
   },
   // Orders -> AnzaOrder
   {

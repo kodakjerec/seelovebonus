@@ -85,8 +85,8 @@ export default {
     // 存檔前先過濾
     beforeSave: async function () {
       let isSuccess = false
-      // 結合已刪除單據
-      let finalResult = this.subList.concat(this.subListDeleted)
+      // 結合已刪除單據, 先刪除再新增
+      let finalResult = this.subListDeleted.concat(this.subList)
       if (finalResult.length === 0) { isSuccess = true }
 
       for (let index = 0; index < finalResult.length; index++) {

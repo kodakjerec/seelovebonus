@@ -1,6 +1,8 @@
 <template>
   <div>
-    <announcemnet/>
+    <el-col :span="12">
+      <announcemnet/>
+    </el-col>
   </div>
 </template>
 

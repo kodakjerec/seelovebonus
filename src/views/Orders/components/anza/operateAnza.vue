@@ -144,6 +144,7 @@ export default {
         OrderID: this.fromAnzaOrder.OrderID,
         AnzaOrderID: this.fromAnzaOrder.AnzaOrderID,
         StorageID: this.anzaOrder.StorageID,
+        ScheduledDate: this.fromAnzaOrder.ScheduledDate,
         RealDate: this.anzaOrder.RealDate,
         CompleteDate: this.anzaOrder.CompleteDate,
         ProductID: this.fromAnzaOrder.ProductID

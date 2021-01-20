@@ -32,13 +32,12 @@
               @click.native.stop="operateAnza(scope.$index, scope.row)">{{$t('__anza')}}</el-button>
             <el-button
               v-if="buttonsShowUser.edit && scope.row.Status === '2'"
-              size="mini"
-              type="success"
+              size="mini" type="success"
               @click.native.stop="operateComplete(scope.$index, scope.row)">{{$t('__yuanman')}}</el-button>
             <el-button
-              v-if="buttonsShowUser.edit && scope.row.Status === '2' && scope.row.FlagReNew === 1"
-              size="mini"
-              @click.native.stop="operateComplete(scope.$index, scope.row)">{{$t('__reNew')}}</el-button>
+              v-if="buttonsShowUser.edit && scope.row.FlagReNew === 1"
+              size="mini" type="success"
+              @click.native.stop="operateReNew(scope.$index, scope.row)">{{$t('__reNew')}}</el-button>
           </template>
         </el-table-column>
         <el-table-column
@@ -70,7 +69,7 @@
             {{formatterDate(null,null,scope.row.ScheduledDate,null)}}<br/>
             <span v-if="scope.row.RealDate !== null">{{formatterDate(null,null,scope.row.RealDate,null)}}</span>
             <template v-else>
-              <el-tag type="danger" effect="plain" v-if="scope.row.FlagAnza === 1">{{$t('__notAnza')}}</el-tag>
+              <el-tag type="danger" effect="dark" v-if="scope.row.FlagAnza === 1">{{$t('__notAnza')}}</el-tag>
               <el-tag type="warning" effect="plain" v-else>{{$t('__notAnza')}}</el-tag>
             </template>
           </template>
