@@ -91,7 +91,12 @@ export default {
       }
     },
     preLoading: async function () {
-      let responseRecords = await this.$api.orders.anzaOrderShow({ keyword: this.orderID })
+      let responseRecords = await this.$api.orders.anzaOrderShow({
+        keyword: JSON.stringify({
+          keyword: this.orderID,
+          type: 'anzaOrderShow'
+        })
+      })
       this.anzaOrderList = responseRecords.data.result
       if (this.anzaOrderList && this.anzaOrderList.length > 0) {
         this.activeName = '1'
