@@ -329,6 +329,14 @@ export default {
           delete: 0,
           search: 1
         }
+        // 如果有其他來源, 要做不同處理
+        if (this.$attrs) {
+          switch (this.$attrs.fromType) {
+            case 'anzaRenew':
+              this.anzaOperation()
+              break
+          }
+        }
         break
       case 'edit':
         this.myTitle = this.$t('__edit') + this.$t('__orderPaper')

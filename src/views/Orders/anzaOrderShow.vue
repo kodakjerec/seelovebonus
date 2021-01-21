@@ -16,13 +16,32 @@
         <el-table-column
           prop="OrderID"
           :label="this.$t('__orderID')">
+          <template slot-scope="scope">
+            <h3>{{scope.row[scope.column.property]}}</h3>
+            <el-button
+              v-if="buttonsShowUser.edit && scope.row.FlagReNew === 1"
+              size="mini" type="success"
+              @click.native.stop="operateRenew(scope.$index, scope.row)">{{$t('__renew')}}</el-button>
+            <el-button
+              v-if="buttonsShowUser.edit && scope.row.FlagExtend === 1"
+              size="mini" type="success"
+              @click.native.stop="operateExtend(scope.$index, scope.row)">{{$t('__installmentExtend')}}</el-button>
+            <el-button
+              v-if="buttonsShowUser.edit && scope.row.FlagTransfer === 1"
+              size="mini"
+              @click.native.stop="operateTransfer(scope.$index, scope.row)">{{$t('__installmentTransfer')}}</el-button>
+            <el-button
+              v-if="buttonsShowUser.edit"
+              size="mini"
+              @click.native.stop="operateInherit(scope.$index, scope.row)">{{$t('__installmentInherit')}}</el-button>
+          </template>
         </el-table-column>
         <el-table-column
-          :label="this.$t('__anzaOperation')">
+          width="100px">
           <template slot="header">
             <el-button
             type="text"
-            size="mini" @click.prevent="openSignOffManual">{{$t('__signOffSettings')}}</el-button>
+            size="mini" @click.prevent="openSignOffManual">{{$t('__anzaOperation')}}</el-button>
           </template>
           <template slot-scope="scope">
             <el-button
@@ -34,15 +53,12 @@
               v-if="buttonsShowUser.edit && scope.row.Status === '2'"
               size="mini" type="success"
               @click.native.stop="operateComplete(scope.$index, scope.row)">{{$t('__yuanman')}}</el-button>
-            <el-button
-              v-if="buttonsShowUser.edit && scope.row.FlagReNew === 1"
-              size="mini" type="success"
-              @click.native.stop="operateReNew(scope.$index, scope.row)">{{$t('__reNew')}}</el-button>
           </template>
         </el-table-column>
         <el-table-column
           prop="StatusName"
-          :label="this.$t('__status')">
+          :label="this.$t('__status')"
+          width="100px">
         </el-table-column>
         <el-table-column
           prop="AnzaOrderID"
@@ -236,7 +252,12 @@ export default {
     // 搜尋
     search: async function (value) {
       this.searchContent.searchKeyWord = value
-      let response2 = await this.$api.orders.anzaOrderShow({ keyword: this.searchContent.searchKeyWord })
+      let response2 = await this.$api.orders.anzaOrderShow({
+        keyword: JSON.stringify({
+          keyword: this.searchContent.searchKeyWord,
+          type: 'anzaOrderShow'
+        })
+      })
       this.originData = response2.data.result
 
       this.pageChange()
@@ -308,10 +329,83 @@ export default {
       this.operateType = 'anza'
       this.dialogShowAnza = true
     },
+    // 開啟 圓滿作業
     operateComplete: function (index, row) {
       this.anzaOrder = row
       this.operateType = 'complete'
       this.dialogShowAnza = true
+    },
+    // 續約, 移到訂單新增
+    operateRenew: async function (index, row) {
+      this.anzaOrder = row
+      this.operateType = 'anzaRenew'
+      this.$message({
+        message: this.$t('__cantUse'),
+        type: 'error'
+      })
+
+      // // 以下抄襲orders.vue
+      // // 取得可以用的選單
+      // let responseRow = await this.$api.orders.getObject({ type: 'orderHead', keyword: row.OrderID })
+      // let myOrder = responseRow.data.result[0]
+
+      // // 簽核管理
+      // let mybuttonsShowUser = {}
+      // if (row.StatusSignOff === 0) {
+      //   mybuttonsShowUser.new = 0
+      //   mybuttonsShowUser.edit = 0
+      //   mybuttonsShowUser.save = 0
+      //   mybuttonsShowUser.delete = 0
+      // }
+      // // 權限管理
+      // mybuttonsShowUser.save = mybuttonsShowUser.edit
+      // // 以上抄襲orders.vue
+
+      // // 整理待移轉的安座單list
+      // let findAnzaList = this.results.filter(item => { return item.OrderID === row.OrderID })
+
+      // // 進入新增
+      // this.$router.push({
+      //   name: 'OrderNewForm',
+      //   params: {
+      //     dialogType: 'new',
+      //     order: myOrder,
+      //     parent: 'AnzaOrderShow',
+      //     buttonsShowUser: mybuttonsShowUser,
+      //     fromParams: {
+      //       fromType: this.operateType,
+      //       fromOrderID: row.OrderID,
+      //       fromAnzaList: findAnzaList
+      //     }
+      //   }
+      // })
+    },
+    // 展延, 移到訂單新增
+    operateExtend: function (index, row) {
+      this.anzaOrder = row
+      this.operateType = 'anzaExtend'
+      this.$message({
+        message: this.$t('__cantUse'),
+        type: 'error'
+      })
+    },
+    // 轉讓, 移到訂單新增
+    operateTransfer: function (index, row) {
+      this.anzaOrder = row
+      this.operateType = 'anzaTransfer'
+      this.$message({
+        message: this.$t('__cantUse'),
+        type: 'error'
+      })
+    },
+    // 繼承, 移到訂單新增
+    operateInherit: function (index, row) {
+      this.anzaOrder = row
+      this.operateType = 'anzaInherit'
+      this.$message({
+        message: this.$t('__cantUse'),
+        type: 'error'
+      })
     }
   }
 }
