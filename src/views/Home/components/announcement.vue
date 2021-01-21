@@ -57,6 +57,7 @@ export default {
   background-color: lightgray;
   border-radius: 4px;
   border: 1px solid lightgray;
+  margin: 5px 5px 5px 5px;
 
   .header{
     font-size: 2rem;
