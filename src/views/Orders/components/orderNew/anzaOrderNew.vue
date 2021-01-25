@@ -6,7 +6,50 @@
     <h2 class="alignLeft">{{$t('__anzaOrder')}}</h2>
     <p/>
     <span v-if="parentAnzaData.CustomerID===''" v-html="$t('__anzaOrderNewWarning')"></span>
-    <span v-if="parentAnzaData.Extend.new === 0">免新增安座單</span>
+    <div v-if="parentAnzaData.Extend.new === 0">
+      <el-table
+      :data="subList"
+      stripe
+      border
+      style="width: 100%">
+      <el-table-column
+        prop="AnzaOrderID"
+        :label="this.$t('__anzaOrder')">
+      </el-table-column>
+      <el-table-column
+        prop="CustomerID"
+        :label="$t('__customer')">
+      </el-table-column>
+      <el-table-column
+        prop="qty"
+        :label="$t('__qty')">
+      </el-table-column>
+      <el-table-column
+        prop="ScheduledDate"
+        :label="$t('__scheduled')+$t('__anza')+$t('__date')">
+        <template slot-scope="scope">
+          <el-date-picker
+            v-model="scope.row[scope.column.property]"
+            :placeholder="$t('__plzChoice')+$t('__date')"
+            value-format="yyyy-MM-dd"
+            disabled>
+          </el-date-picker>
+        </template>
+      </el-table-column>
+      <el-table-column
+        prop="ExpirationDate"
+        :label="$t('__expire')+$t('__date')">
+        <template slot-scope="scope">
+          <el-date-picker
+            v-model="scope.row[scope.column.property]"
+            :placeholder="$t('__plzChoice')+$t('__date')"
+            value-format="yyyy-MM-dd"
+            disabled>
+          </el-date-picker>
+        </template>
+      </el-table-column>
+      </el-table>
+    </div>
     <el-table
       v-else
       :data="subList"
@@ -76,6 +119,7 @@
 </template>
 
 <script>
+
 export default {
   name: 'AnzaOrderForOrderNew',
   props: {
@@ -101,6 +145,7 @@ export default {
       subList: [],
       subListDeleted: [],
       isExceedQtyLimit: false,
+      fromType: null,
       // 下拉式選單
       ddlCustomer: []
     }

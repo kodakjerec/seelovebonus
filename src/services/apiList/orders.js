@@ -241,6 +241,20 @@ export default {
         return data
       })
     },
+    anzaOrderShow2: ({ searchContent, pagination, sortable, ID }) => {
+      let rawData = { searchContent, pagination, sortable, ID }
+      return post('/orders/anzaOrderShow2', rawData).then(data => {
+        console.log(`%c <<< Response(/rest/orders/anzaOrderShow2)⤵ `, 'background-color: #E0455D; color: white; font-size: 14px; font-weight: bold;', data)
+        return data
+      })
+    },
+    anzaAlarm: ({ searchContent, pagination, sortable, ID }) => {
+      let rawData = { searchContent, pagination, sortable, ID }
+      return post('/orders/anzaAlarm', rawData).then(data => {
+        console.log(`%c <<< Response(/rest/orders/anzaAlarm)⤵ `, 'background-color: #E0455D; color: white; font-size: 14px; font-weight: bold;', data)
+        return data
+      })
+    },
     anzaOperate: ({ keyword }) => {
       let rawData = { keyword }
       return post('/orders/anzaOperate', rawData).then(data => {

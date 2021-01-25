@@ -59,9 +59,9 @@
           <el-switch v-model="fun.Available" active-text="ON" inactive-text="OFF" :active-value="1" :inactive-value="0" @change="(value)=>switchChange(value, fun)"></el-switch>
           <el-form-item v-if="fun.Function==='newAnzaOrder' && fun.Available === 1">
             <el-col :span="4"><span> 1. {{$t('__new')}}</span><el-switch v-model="fun.Extend.new" active-text="ON" inactive-text="OFF" :active-value="1" :inactive-value="0"></el-switch></el-col>
-            <el-col :span="4"><span> 2. {{$t('__installmentTransfer')}}</span><el-switch v-model="fun.Extend.transfer" active-text="ON" inactive-text="OFF" :active-value="1" :inactive-value="0"></el-switch></el-col>
-            <el-col :span="4"><span> 3. {{$t('__installmentExtend')}}</span><el-switch v-model="fun.Extend.extend" active-text="ON" inactive-text="OFF" :active-value="1" :inactive-value="0"></el-switch></el-col>
-            <el-col :span="4"><span> 4. {{$t('__installmentRenew')}}</span><el-switch v-model="fun.Extend.renew" active-text="ON" inactive-text="OFF" :active-value="1" :inactive-value="0"></el-switch></el-col>
+            <el-col :span="4"><span> 2. {{$t('__anzaTransfer')}}</span><el-switch v-model="fun.Extend.transfer" active-text="ON" inactive-text="OFF" :active-value="1" :inactive-value="0"></el-switch></el-col>
+            <el-col :span="4"><span> 3. {{$t('__anzaExtend')}}</span><el-switch v-model="fun.Extend.extend" active-text="ON" inactive-text="OFF" :active-value="1" :inactive-value="0"></el-switch></el-col>
+            <el-col :span="4"><span> 4. {{$t('__anzaRenew')}}</span><el-switch v-model="fun.Extend.renew" active-text="ON" inactive-text="OFF" :active-value="1" :inactive-value="0"></el-switch></el-col>
             <el-col :span="4"><span> 5. Year</span><el-input v-model="fun.Extend.year" style="width:50px"></el-input></el-col>
             <el-col :span="4"><span> 6. {{'Next'+$t('__project')}}</span><el-input v-model="fun.Extend.nextProjectID" style="width:100px"></el-input></el-col>
           </el-form-item>

@@ -12,19 +12,19 @@
         </div>
       </div>
       <div>
-        <el-button type="success" v-if="item.alarmRenew !== ''" class="caption">{{$t('__installmentRenew')}}</el-button>
+        <el-button type="success" v-if="item.alarmRenew !== ''" class="caption">{{$t('__anzaRenew')}}</el-button>
         <div v-for="(row, keyIndex) in item.alarmRenew" :key="keyIndex" class="text">
           {{row.AnzaOrderID}}
         </div>
       </div>
       <div>
-        <el-button type="success" v-if="item.alarmExtend !== ''" class="caption">{{$t('__installmentExtend')}}</el-button>
+        <el-button type="success" v-if="item.alarmExtend !== ''" class="caption">{{$t('__anzaExtend')}}</el-button>
         <div v-for="(row, keyIndex) in item.alarmExtend" :key="keyIndex" class="text">
           {{row.AnzaOrderID}}
         </div>
       </div>
       <div>
-        <el-button v-if="item.alarmTransfer !== ''" class="caption">{{$t('__installmentTransfer')}}</el-button>
+        <el-button v-if="item.alarmTransfer !== ''" class="caption">{{$t('__anzaTransfer')}}</el-button>
         <div v-for="(row, keyIndex) in item.alarmTransfer" :key="keyIndex" class="text">
           {{row.AnzaOrderID}}
         </div>

@@ -204,7 +204,6 @@ export default {
   __scheduled: 'Scheduled',
   __real: 'Real',
   __yuanman: 'Complete',
-  __renew: 'ReNew',
   __notAnza: 'Not Anza',
   __shouldReNew: 'Should ReNew',
   __installment: 'Installment',
@@ -216,10 +215,11 @@ export default {
   __installmentSeq: 'Seq',
   __installmentReCal: 'Re-Calculate',
   __keyword: 'Keyword',
-  __installmentTransfer: 'Transfer',
-  __installmentExtend: 'Extend',
-  __installmentRenew: 'Renew',
-  __installmentInherit: 'Inherit',
+  __anzaRenew: 'Renew',
+  __anzaTransfer: 'Transfer',
+  __anzaExtend: 'Extend',
+  __anzaInherit: 'Inherit',
+  __anzaOldOrderID: '安座舊有契約編號',
   // 請在上方新增字串
   // 以下為 警告
   __warning: 'Warning',

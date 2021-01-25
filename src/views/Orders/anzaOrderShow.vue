@@ -2,15 +2,18 @@
   <div>
     <el-button-group style="padding-bottom: 5px">
       <el-button class="hideButton" icon="el-icon-more"><!-- 排版用,避免沒按鈕跑版 --></el-button>
-      <search-button :options="sortable.orderByList" :originOrderBy="sortable.orderBy" :originOrderByValue="sortable.orderByValue" @search="search" @reOrder="reOrder"></search-button>
+      <search-button :options="sortable.orderByList" :originOrderBy="sortable.orderBy" :originOrderByValue="sortable.orderByValue" @search="search" @reOrder="reOrder">
+      <el-tooltip slot="body" effect="light" :content="$t('__filter')" placement="top-start">
+        <el-button @click.prevent="dialogShowSearchContent = true">{{$t('__filter')}}</el-button>
+      </el-tooltip>
+      </search-button>
     </el-button-group>
     <el-table
-      :data="results"
+      :data="originData"
       stripe
       border
       :span-method="objectSpanMethod"
       :height="tableHeight"
-      @row-click="handleClick"
       :row-class-name="tableRowClassName"
       style="width: 100%">
         <el-table-column
@@ -21,19 +24,19 @@
             <el-button
               v-if="buttonsShowUser.edit && scope.row.FlagReNew === 1"
               size="mini" type="success"
-              @click.native.stop="operateRenew(scope.$index, scope.row)">{{$t('__renew')}}</el-button>
+              @click.native.stop="operateRenew(scope.$index, scope.row, 'anzaRenew')">{{$t('__anzaRenew')}}</el-button>
             <el-button
               v-if="buttonsShowUser.edit && scope.row.FlagExtend === 1"
               size="mini" type="success"
-              @click.native.stop="operateExtend(scope.$index, scope.row)">{{$t('__installmentExtend')}}</el-button>
+              @click.native.stop="operateRenew(scope.$index, scope.row, 'anzaExtend')">{{$t('__anzaExtend')}}</el-button>
             <el-button
               v-if="buttonsShowUser.edit && scope.row.FlagTransfer === 1"
               size="mini"
-              @click.native.stop="operateTransfer(scope.$index, scope.row)">{{$t('__installmentTransfer')}}</el-button>
+              @click.native.stop="operateRenew(scope.$index, scope.row, 'anzaTransfer')">{{$t('__anzaTransfer')}}</el-button>
             <el-button
               v-if="buttonsShowUser.edit"
               size="mini"
-              @click.native.stop="operateInherit(scope.$index, scope.row)">{{$t('__installmentInherit')}}</el-button>
+              @click.native.stop="operateRenew(scope.$index, scope.row, 'anzaInherit')">{{$t('__anzaInherit')}}</el-button>
           </template>
         </el-table-column>
         <el-table-column
@@ -91,15 +94,17 @@
           </template>
         </el-table-column>
     </el-table>
+    <!-- 分頁 -->
     <el-pagination
       background
+      v-if="originData.length>0"
       @size-change="handleSizeChange"
       @current-change="handleCurrentChange"
       :current-page="pagination.currentPage"
       :page-sizes="pagination.pageSizeList"
       :page-size="pagination.pageSize"
       layout="total, sizes, prev, pager, next, jumper"
-      :total="originData.length">
+      :total="pagination.totalCount">
     </el-pagination>
     <!-- 安座作業 -->
     <operate-anza-mode
@@ -110,19 +115,26 @@
       @dialog-cancel="dialogCancel"
       @dialog-save="dialogSave"
       ></operate-anza-mode>
+    <!-- 進階查詢選項 -->
+    <orders-search-content
+      :dialogShow="dialogShowSearchContent"
+      :fromContent="searchContent"
+      @dialog-save="dialogShowSearchContentSave"></orders-search-content>
   </div>
 </template>
 
 <script>
 import operateAnzaMode from './components/anza/operateAnza'
 import searchButton from '@/components/searchButton'
+import ordersSearchContent from './components/ordersSearchContent'
 import { formatDate } from '@/setup/format.js'
 
 export default {
   name: 'AnzaOrderShow',
   components: {
     operateAnzaMode,
-    searchButton
+    searchButton,
+    ordersSearchContent
   },
   data () {
     return {
@@ -132,8 +144,14 @@ export default {
       originData: [],
       anzaOrder: {},
       operateType: '', // 安座單操作類型
-      searchContent: {
-        searchKeyWord: ''
+      searchContent: { // 搜尋
+        searchKeyWord: '',
+        OrdersType: [],
+        StatusType: [],
+        selectedOrdersType: [],
+        selectedStatusType: [],
+        StartDate: new Date(),
+        EndDate: new Date()
       },
       tableHeight: (screen.height * 7 / 9), // Table高度
       pagination: { // 分頁
@@ -141,6 +159,7 @@ export default {
         pageSizeList: [20, 30, 50],
         pageSize: 20
       },
+      tableSpanList: [],
       sortable: {
         orderByList: [{ ID: 'OrderID', Value: this.$t('__orderID') }, { ID: 'AnzaOrderID', Value: this.$t('__anzaOrder') }], // 排序
         orderBy: 'desc', // 排序方式
@@ -154,50 +173,37 @@ export default {
         delete: 1,
         search: 1
       },
+      // 查詢區塊
+      dialogShowSearchContent: false,
       // 以下為下拉式選單專用
       ddlCompanies: []
     }
   },
-  computed: {
-    results: function () {
-      let tempData = this.originData
-
-      // 排序依據
-      switch (this.sortable.orderByValue) {
-        case 'OrderID':
-          tempData = tempData.slice().sort(function (x, y) {
-            return x.OrderID - y.OrderID
-          })
-          break
-        case 'AnzaOrderID':
-          tempData = tempData.slice().sort(function (x, y) {
-            return new Date(x.AnzaOrderID) - new Date(y.AnzaOrderID)
-          })
-          break
-      }
-
-      // 遞增/遞減
-      switch (this.sortable.orderBy) {
-        case 'desc':
-          tempData = tempData.slice().reverse()
-          break
-      }
-
-      // 結果
-      let result = tempData.slice((this.pagination.currentPage - 1) * this.pagination.pageSize, this.pagination.pageSize * this.pagination.currentPage)
-
-      // 切換分頁
-      return result
-    }
-  },
-  watch: {
-    results: function () {
-      this.pageChange()
-    }
-  },
   mounted () {
-    this.preLoading()
+    // 預設值
+    let start = new Date()
+    let end = new Date()
+    let year = start.getFullYear()
+    let month = start.getMonth() - 6
+    start = new Date(year, month, 1, 12)
+    this.searchContent.StartDate = start.toISOString().slice(0, 10)
+    this.searchContent.EndDate = end.toISOString().slice(0, 10)
+
+    // 使用者權限
     this.userPermission()
+
+    // 帶入搜尋內容
+    this.preLoading()
+
+    // 帶入舊有分頁內容
+    if (localStorage.getItem('paginationHistory:' + this.$route.name) === null) {
+      // 儲存內容
+      localStorage.setItem('paginationHistory:' + this.$route.name, JSON.stringify(this.pagination))
+    } else {
+      let pagination = JSON.parse(localStorage.getItem('paginationHistory:' + this.$route.name))
+      this.pagination.currentPage = pagination.currentPage
+      this.pagination.pageSize = pagination.pageSize
+    }
   },
   methods: {
     formatterDate: function (row, column, cellValue, index) {
@@ -211,7 +217,28 @@ export default {
     },
     // 讀入系統清單
     preLoading: async function () {
-      this.search('')
+      // 顯示專用
+      let response = await this.$api.orders.ordersShowGroup()
+      let filterSettings = response.data.result
+      // 帶入數值
+      this.searchContent.OrdersType = filterSettings.OrdersType
+      this.searchContent.StatusType = filterSettings.StatusType
+
+      if (localStorage.getItem('searchHistory:' + this.$route.name) === null) {
+        // 預設全選
+        this.searchContent.OrdersType.forEach(item => {
+          this.searchContent.selectedOrdersType.push(item.Prefix)
+        })
+        this.searchContent.StatusType.forEach(item => {
+          this.searchContent.selectedStatusType.push(item.Status)
+        })
+      } else {
+        let oldSearchContent = JSON.parse(localStorage.getItem('searchHistory:' + this.$route.name))
+        this.searchContent.selectedOrdersType = oldSearchContent.selectedOrdersType
+        this.searchContent.selectedStatusType = oldSearchContent.selectedStatusType
+      }
+
+      this.search()
     },
     // 使用者權限
     userPermission: async function () {
@@ -220,25 +247,6 @@ export default {
       this.buttonsShowUser.edit = progPermission.fun2
       this.buttonsShowUser.save = progPermission.fun2
       this.buttonsShowUser.delete = progPermission.fun3
-    },
-    handleClick: async function (row, column, event) {
-      // 取得可以用的選單
-      this.anzaOrder = row
-
-      // 簽核管理
-      if (row.StatusSignOff === 0) {
-        this.buttonsShowUser.new = 0
-        this.buttonsShowUser.edit = 0
-        this.buttonsShowUser.save = 0
-        this.buttonsShowUser.delete = 0
-      }
-
-      // 權限管理
-      this.buttonsShowUser.save = this.buttonsShowUser.edit
-
-      // 進入修改
-      this.dialogType = 'edit'
-      this.dialogShow = true
     },
     dialogCancel: function () {
       this.dialogShow = false
@@ -249,40 +257,69 @@ export default {
       this.dialogShowAnza = false
       this.preLoading()
     },
+    // 關閉進階搜尋
+    dialogShowSearchContentSave: function (fromContent) {
+      this.dialogShowSearchContent = false
+      this.search()
+    },
     // 搜尋
     search: async function (value) {
-      this.searchContent.searchKeyWord = value
-      let response2 = await this.$api.orders.anzaOrderShow({
-        keyword: JSON.stringify({
-          keyword: this.searchContent.searchKeyWord,
-          type: 'anzaOrderShow'
-        })
-      })
+      if (value !== undefined) {
+        this.searchContent.searchKeyWord = value
+      }
+      let response2 = await this.$api.orders.anzaOrderShow2({
+        searchContent: JSON.stringify(this.searchContent),
+        pagination: JSON.stringify(this.pagination),
+        sortable: JSON.stringify(this.sortable),
+        ID: this.$store.state.userID })
       this.originData = response2.data.result
 
-      this.pageChange()
+      // 儲存內容
+      localStorage.setItem('searchHistory:' + this.$route.name, JSON.stringify(this.searchContent))
+
+      if (this.originData.length > 0) {
+        // 分頁篩選
+        let fromPagination = JSON.parse(this.originData[0].pagination)[0]
+        this.pagination.totalCount = fromPagination.totalCount
+        this.pagination.totalPage = fromPagination.totalPage
+        this.pagination.currentPage = fromPagination.currentPage
+        this.savePaginationData()
+      } else {
+        this.pagination.totalCount = 0
+        this.pagination.totalPage = 0
+        this.pagination.currentPage = 1
+        this.savePaginationData()
+      }
+
+      this.pageChange(this.originData)
     },
     // 排序相關
     reOrder: function (searchButtonResult) {
       this.sortable.orderBy = searchButtonResult.orderBy
       this.sortable.orderByValue = searchButtonResult.orderByValue
     },
-    // 分頁相關
+    // ===== 分頁相關 =====
     handleSizeChange: function (val) {
       this.pagination.pageSize = val
-      this.pageChange()
+      this.savePaginationData()
+      this.search()
     },
     handleCurrentChange: function (val) {
       this.pagination.currentPage = val
-      this.pageChange()
+      this.savePaginationData()
+      this.search()
+    },
+    savePaginationData: function () {
+      // 儲存內容
+      localStorage.setItem('paginationHistory:' + this.$route.name, JSON.stringify(this.pagination))
     },
     pageChange: function (refTable) {
       // table span
       this.tableSpanList = []
-      this.results.forEach(row => {
+      refTable.forEach(row => {
         let findObject = this.tableSpanList.find(row2 => { return row2.SpanID === row.OrderID })
         if (findObject === undefined) {
-          let firstIndex = this.results.findIndex(row3 => row3.OrderID === row.OrderID)
+          let firstIndex = refTable.findIndex(row3 => row3.OrderID === row.OrderID)
           this.tableSpanList.push({
             SpanID: row.OrderID,
             rowIndex: firstIndex,
@@ -336,75 +373,47 @@ export default {
       this.dialogShowAnza = true
     },
     // 續約, 移到訂單新增
-    operateRenew: async function (index, row) {
+    operateRenew: async function (index, row, operateType) {
       this.anzaOrder = row
-      this.operateType = 'anzaRenew'
-      this.$message({
-        message: this.$t('__cantUse'),
-        type: 'error'
-      })
 
-      // // 以下抄襲orders.vue
-      // // 取得可以用的選單
-      // let responseRow = await this.$api.orders.getObject({ type: 'orderHead', keyword: row.OrderID })
-      // let myOrder = responseRow.data.result[0]
+      // 以下抄襲orders.vue
 
-      // // 簽核管理
-      // let mybuttonsShowUser = {}
-      // if (row.StatusSignOff === 0) {
-      //   mybuttonsShowUser.new = 0
-      //   mybuttonsShowUser.edit = 0
-      //   mybuttonsShowUser.save = 0
-      //   mybuttonsShowUser.delete = 0
-      // }
-      // // 權限管理
-      // mybuttonsShowUser.save = mybuttonsShowUser.edit
-      // // 以上抄襲orders.vue
+      // 使用者權限
+      let mybuttonsShowUser = {
+        new: 0,
+        edit: 0,
+        save: 0,
+        delete: 0,
+        search: 0
+      }
+      let progPermission = this.$store.state.userProg.filter(item => { return item.Path === '/Orders/Orders' })[0]
+      mybuttonsShowUser.new = progPermission.fun1
+      mybuttonsShowUser.edit = progPermission.fun2
+      mybuttonsShowUser.save = progPermission.fun2
+      mybuttonsShowUser.delete = progPermission.fun3
 
-      // // 整理待移轉的安座單list
-      // let findAnzaList = this.results.filter(item => { return item.OrderID === row.OrderID })
+      // 取得可以用的選單
+      let responseRow = await this.$api.orders.getObject({ type: 'orderHead', keyword: row.OrderID })
+      let myOrder = responseRow.data.result[0]
+      // 以上抄襲orders.vue
 
-      // // 進入新增
-      // this.$router.push({
-      //   name: 'OrderNewForm',
-      //   params: {
-      //     dialogType: 'new',
-      //     order: myOrder,
-      //     parent: 'AnzaOrderShow',
-      //     buttonsShowUser: mybuttonsShowUser,
-      //     fromParams: {
-      //       fromType: this.operateType,
-      //       fromOrderID: row.OrderID,
-      //       fromAnzaList: findAnzaList
-      //     }
-      //   }
-      // })
-    },
-    // 展延, 移到訂單新增
-    operateExtend: function (index, row) {
-      this.anzaOrder = row
-      this.operateType = 'anzaExtend'
-      this.$message({
-        message: this.$t('__cantUse'),
-        type: 'error'
-      })
-    },
-    // 轉讓, 移到訂單新增
-    operateTransfer: function (index, row) {
-      this.anzaOrder = row
-      this.operateType = 'anzaTransfer'
-      this.$message({
-        message: this.$t('__cantUse'),
-        type: 'error'
-      })
-    },
-    // 繼承, 移到訂單新增
-    operateInherit: function (index, row) {
-      this.anzaOrder = row
-      this.operateType = 'anzaInherit'
-      this.$message({
-        message: this.$t('__cantUse'),
-        type: 'error'
+      // 整理待移轉的安座單list
+      let findAnzaList = this.originData.filter(item => { return item.OrderID === row.OrderID })
+
+      // 進入新增
+      this.$router.push({
+        name: 'AnzaOrderRenew',
+        params: {
+          dialogType: 'new',
+          order: {},
+          parent: 'AnzaOrderShow',
+          buttonsShowUser: mybuttonsShowUser,
+          fromParams: {
+            fromType: operateType,
+            fromOrder: myOrder,
+            fromAnzaList: findAnzaList
+          }
+        }
       })
     }
   }

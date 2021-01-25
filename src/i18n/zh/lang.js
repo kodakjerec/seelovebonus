@@ -204,7 +204,6 @@ export default {
   __scheduled: '預定',
   __real: '實際',
   __yuanman: '圓滿',
-  __renew: '續約',
   __notAnza: '未安座',
   __shouldReNew: '應續約',
   __installment: '分期付款',
@@ -216,10 +215,11 @@ export default {
   __installmentSeq: '期別',
   __installmentReCal: '重新計算分期付款',
   __keyword: '關鍵字',
-  __installmentTransfer: '轉讓',
-  __installmentExtend: '展延',
-  __installmentRenew: '續約',
-  __installmentInherit: '繼承',
+  __anzaRenew: '續約',
+  __anzaTransfer: '轉讓',
+  __anzaExtend: '展延',
+  __anzaInherit: '繼承',
+  __anzaOldOrderID: '安座舊有契約編號',
   // 請在上方新增字串
   // 以下為 警告
   __warning: '警告',
