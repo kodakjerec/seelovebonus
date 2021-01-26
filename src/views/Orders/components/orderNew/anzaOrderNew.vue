@@ -342,7 +342,7 @@ export default {
     },
     // 存檔
     save: async function (item) {
-      await this.$api.orders.orderAnzaOrderNew({ form: item })
+      await this.$api.orders.anzaOrderNew({ form: item })
     }
   }
 }

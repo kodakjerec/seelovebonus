@@ -262,10 +262,10 @@ export default {
         return data
       })
     },
-    orderAnzaOrderNew: ({ form }) => {
+    anzaOrderNew: ({ form }) => {
       let rawData = { form }
-      return post('/orders/orderAnzaOrderNew', rawData).then(data => {
-        console.log(`%c <<< Response(/rest/orders/orderAnzaOrderNew)⤵ `, 'background-color: #E0455D; color: white; font-size: 14px; font-weight: bold;', data)
+      return post('/orders/anzaOrderNew', rawData).then(data => {
+        console.log(`%c <<< Response(/rest/orders/anzaOrderNew)⤵ `, 'background-color: #E0455D; color: white; font-size: 14px; font-weight: bold;', data)
         return data
       })
     },
