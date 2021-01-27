@@ -20,23 +20,34 @@
           prop="OrderID"
           :label="this.$t('__orderID')">
           <template slot-scope="scope">
-            <h3>{{scope.row[scope.column.property]}}</h3>
-            <el-button
-              v-if="buttonsShowUser.edit && scope.row.FlagReNew === 1"
-              size="mini" type="success"
-              @click.native.stop="operateRenew(scope.$index, scope.row, 'anzaRenew')">{{$t('__anzaRenew')}}</el-button>
-            <el-button
-              v-if="buttonsShowUser.edit && scope.row.FlagExtend === 1"
-              size="mini" type="success"
-              @click.native.stop="operateRenew(scope.$index, scope.row, 'anzaExtend')">{{$t('__anzaExtend')}}</el-button>
-            <el-button
-              v-if="buttonsShowUser.edit && scope.row.FlagTransfer === 1"
-              size="mini"
-              @click.native.stop="operateRenew(scope.$index, scope.row, 'anzaTransfer')">{{$t('__anzaTransfer')}}</el-button>
-            <el-button
-              v-if="buttonsShowUser.edit"
-              size="mini"
-              @click.native.stop="operateRenew(scope.$index, scope.row, 'anzaInherit')">{{$t('__anzaInherit')}}</el-button>
+            <div style="font-weight:1000">{{scope.row[scope.column.property]}}</div>
+            <div>{{scope.row.ProjectName}}</div>
+            <el-button-group>
+              <el-button
+                v-if="buttonsShowUser.edit && scope.row.FlagReNew === 1"
+                size="mini" type="success"
+                @click.native.stop="operateRenew(scope.$index, scope.row, 'anzaRenew')">{{$t('__anzaRenew')}}</el-button>
+              <el-button
+                v-if="buttonsShowUser.edit && scope.row.FlagExtend === 1"
+                size="mini" type="success"
+                @click.native.stop="operateRenew(scope.$index, scope.row, 'anzaExtend')">{{$t('__anzaExtend')}}</el-button>
+              <el-button
+                v-if="buttonsShowUser.edit && scope.row.FlagTransfer === 1"
+                size="mini"
+                @click.native.stop="operateRenew(scope.$index, scope.row, 'anzaTransfer')">{{$t('__anzaTransfer')}}</el-button>
+              <el-button
+                v-if="buttonsShowUser.edit"
+                size="mini"
+                @click.native.stop="operateRenew(scope.$index, scope.row, 'anzaInherit')">{{$t('__anzaInherit')}}</el-button>
+            </el-button-group>
+          </template>
+        </el-table-column>
+        <el-table-column
+          width="130px">
+          <template slot-scope="scope">
+          <div v-for="item in scope.row.OrderIDList" :key="item.OrderID">
+              {{item.OrderID}}<template v-if="item.Memo!==''">{{'('+item.Memo+')'}}</template>
+            </div>
           </template>
         </el-table-column>
         <el-table-column
@@ -48,13 +59,12 @@
           </template>
           <template slot-scope="scope">
             <el-button
-              v-if="buttonsShowUser.edit && scope.row.Status === '1'"
-              size="mini"
-              type="primary"
+              v-if="buttonsShowUser.edit && scope.row.canAnza === 1"
+              size="mini" type="primary"
               @click.native.stop="operateAnza(scope.$index, scope.row)">{{$t('__anza')}}</el-button>
             <el-button
               v-if="buttonsShowUser.edit && scope.row.Status === '2'"
-              size="mini" type="success"
+              size="mini"
               @click.native.stop="operateComplete(scope.$index, scope.row)">{{$t('__yuanman')}}</el-button>
           </template>
         </el-table-column>
@@ -62,6 +72,9 @@
           prop="StatusName"
           :label="this.$t('__status')"
           width="100px">
+          <template slot-scope="scope">
+            {{scope.row[scope.column.property]}}
+          </template>
         </el-table-column>
         <el-table-column
           prop="AnzaOrderID"
@@ -74,11 +87,10 @@
         <el-table-column
           prop="StorageID"
           :label="this.$t('__anzaStorageID')">
-        </el-table-column>
-        <el-table-column
-          prop="ExpirationDate"
-          :label="this.$t('__expire') + this.$t('__date')"
-          :formatter="formatterDate">
+          <template slot-scope="scope">
+            <span v-if="scope.row.Status==='2'">{{scope.row[scope.column.property]}}</span>
+            <span v-else style="text-decoration:line-through">{{scope.row[scope.column.property]}}</span>
+          </template>
         </el-table-column>
         <el-table-column>
           <template slot="header">
@@ -92,6 +104,16 @@
               <el-tag type="warning" effect="plain" v-else>{{$t('__notAnza')}}</el-tag>
             </template>
           </template>
+        </el-table-column>
+        <el-table-column
+          prop="ExpirationDate"
+          :label="this.$t('__expire') + this.$t('__date')"
+          :formatter="formatterDate">
+        </el-table-column>
+        <el-table-column
+          prop="CompleteDate"
+          :label="this.$t('__yuanman') + this.$t('__date')"
+          :formatter="formatterDate">
         </el-table-column>
     </el-table>
     <!-- 分頁 -->
@@ -278,6 +300,11 @@ export default {
       localStorage.setItem('searchHistory:' + this.$route.name, JSON.stringify(this.searchContent))
 
       if (this.originData.length > 0) {
+        // 重構清單
+        this.originData.forEach(item => {
+          if (item.OrderIDList) { item.OrderIDList = JSON.parse(item.OrderIDList) }
+        })
+
         // 分頁篩選
         let fromPagination = JSON.parse(this.originData[0].pagination)[0]
         this.pagination.totalCount = fromPagination.totalCount
@@ -392,29 +419,54 @@ export default {
       mybuttonsShowUser.save = progPermission.fun2
       mybuttonsShowUser.delete = progPermission.fun3
 
+      // 等等會用到的OrderID, 都是最新的契約單號
+      let myOrderID = row.OrderIDList[row.OrderIDList.length - 1].OrderID
+
       // 取得可以用的選單
-      let responseRow = await this.$api.orders.getObject({ type: 'orderHead', keyword: row.OrderID })
+      let responseRow = await this.$api.orders.getObject({ type: 'orderHead', keyword: myOrderID })
       let myOrder = responseRow.data.result[0]
       // 以上抄襲orders.vue
 
       // 整理待移轉的安座單list
       let findAnzaList = this.originData.filter(item => { return item.OrderID === row.OrderID })
 
-      // 進入新增
-      this.$router.push({
-        name: 'AnzaOrderRenew',
-        params: {
-          dialogType: 'new',
-          order: {},
-          parent: 'AnzaOrderShow',
-          buttonsShowUser: mybuttonsShowUser,
-          fromParams: {
-            fromType: operateType,
-            fromOrder: myOrder,
-            fromAnzaList: findAnzaList
-          }
-        }
-      })
+      switch (operateType) {
+        case 'anzaRenew':
+        case 'anzaExtend':
+          // 進入新增
+          this.$router.push({
+            name: 'AnzaOrderRenew',
+            params: {
+              dialogType: 'new',
+              order: {},
+              parent: 'AnzaOrderShow',
+              buttonsShowUser: mybuttonsShowUser,
+              fromParams: {
+                fromType: operateType,
+                fromOrder: myOrder,
+                fromAnzaList: findAnzaList
+              }
+            }
+          })
+          break
+        case 'anzaTransfer':
+        case 'anzaInherit':
+          // 進入新增
+          this.$router.push({
+            name: 'AnzaOrderRenew',
+            params: {
+              dialogType: 'edit',
+              order: myOrder,
+              parent: 'AnzaOrderShow',
+              buttonsShowUser: mybuttonsShowUser,
+              fromParams: {
+                fromType: operateType,
+                fromOrder: myOrder,
+                fromAnzaList: findAnzaList
+              }
+            }
+          })
+      }
     }
   }
 }

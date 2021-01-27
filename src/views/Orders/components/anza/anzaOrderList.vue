@@ -14,6 +14,9 @@
         <el-table-column
           prop="StatusName"
           :label="this.$t('__status')">
+          <template slot-scope="scope">
+            {{scope.row[scope.column.property]}}<br/>{{scope.row.Memo}}
+          </template>
         </el-table-column>
         <el-table-column
           prop="AnzaOrderID"
@@ -91,12 +94,7 @@ export default {
       }
     },
     preLoading: async function () {
-      let responseRecords = await this.$api.orders.anzaOrderShow({
-        keyword: JSON.stringify({
-          keyword: this.orderID,
-          type: 'anzaOrderShow'
-        })
-      })
+      let responseRecords = await this.$api.orders.anzaOrderShow({ keyword: this.orderID })
       this.anzaOrderList = responseRecords.data.result
       if (this.anzaOrderList && this.anzaOrderList.length > 0) {
         this.activeName = '1'

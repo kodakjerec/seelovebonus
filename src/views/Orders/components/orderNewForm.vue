@@ -39,11 +39,10 @@
       <!-- 專案特殊功能 -->
       <order-functions
         ref="orderFunctions"
-        v-show="form.chanyunOrderID === 1"
         :dialogType="dialogType"
         :orderID="form.ID"
         :buttonsShowUser="buttonsShowUser"
-        :chanyunOrderID="form.chanyunOrderID"></order-functions>
+        :projectFunctions="projectFunctions"></order-functions>
       <!-- 選擇專案 -->
       <el-table
         :data="projectHead"
@@ -125,20 +124,20 @@
       <!-- 安座單 -->
       <anza-order-list
         :orderID="form.ID"
-        :isShow="form.newAnzaOrder">
+        :isShow="projectFunctions.newAnzaOrder.Available">
       </anza-order-list>
       <!-- 供奉憑證 -->
       <certificate1
         :buttonsShow="buttonsShow"
         :buttonsShowUser="buttonsShowUser"
         :orderID="form.ID"
-        :isShow="form.newCertificate1"></certificate1>
+        :isShow="projectFunctions.newCertificate1.Available"></certificate1>
       <!-- 換狀證明 -->
       <certificate2
         :buttonsShow="buttonsShow"
         :buttonsShowUser="buttonsShowUser"
         :orderID="form.ID"
-        :isShow="form.newCertificate2"></certificate2>
+        :isShow="projectFunctions.newCertificate2.Available"></certificate2>
       <!-- 分期付款 -->
       <installment
         ref="installment"
@@ -165,9 +164,9 @@
       </template>
     <template v-else>
       <!-- 新增訂單專用 -->
-      <span v-html="$t('__orderDetailWarning')"></span>
+      <span v-html="$t('__orderDetailWarning')+'<br/>'+$t('__orderCertificateWarning')"></span>
       <anza-order-new
-        v-show="form.newAnzaOrder === 1"
+        v-show="projectFunctions.newAnzaOrder.Available"
         ref="anzaOrderNew"
         :orderID="form.ID"
         :parentOrderDate="form.OrderDate"
@@ -175,12 +174,12 @@
         :parentAnzaData="form.anzaForNew"
         :ddlCustomerBefore="ddlCustomer"></anza-order-new>
       <certificate1-order-new
-        v-show="form.newCertificate1 === 1"
+        v-show="projectFunctions.newCertificate1.Available"
         ref="certificate1OrderNew"
         :orderID="form.ID"
         :parentQty="form.Qty"></certificate1-order-new>
       <certificate2-order-new
-        v-show="form.newCertificate2 === 1"
+        v-show="projectFunctions.newCertificate2.Available"
         ref="certificate2OrderNew"
         :orderID="form.ID"
         :parentQty="form.Qty"></certificate2-order-new>
@@ -268,11 +267,6 @@ export default {
         Amount: 0,
         Prefix: '',
         Memo: '',
-        // 專案功能顯示(新增專用)(不記錄進資料庫)
-        chanyunOrderID: 0,
-        newAnzaOrder: 0,
-        newCertificate1: 0,
-        newCertificate2: 0,
         // 以下為前端顯示用, 不會記錄進資料庫
         masterAmount: 0,
         subAmount: 0,
@@ -308,6 +302,13 @@ export default {
       myTitle: '',
       projectHead: [],
       updateMessage: '', // 更新資料庫後回傳的訊息
+      // 專案功能顯示(新增專用)(不記錄進資料庫)
+      projectFunctions: {
+        chanyunOrderID: 0,
+        newAnzaOrder: 0,
+        newCertificate1: 0,
+        newCertificate2: 0
+      },
       // 以下為下拉式選單專用
       ddlOrderStatus: [],
       ddlProject: [],
@@ -460,12 +461,22 @@ export default {
       let projectFunctions = responseProjectFunctions.data.result
 
       // 專案功能顯示
+      this.projectFunctions = {}
       projectFunctions.forEach(item => {
-        this.form[item.Function] = item.Available
+        // 轉換Extend成 json
+        let jsonExtend = {}
+        if (item.Extend) {
+          jsonExtend = JSON.parse(item.Extend)
+          // 安座單設定
+          if (item.Function === 'newAnzaOrder') {
+            this.form.anzaForNew.Extend = jsonExtend
+          }
+        }
 
-        // 安座單設定
-        if (item.Function === 'newAnzaOrder' && item.Extend) {
-          this.form.anzaForNew.Extend = JSON.parse(item.Extend)
+        // 代入數值
+        this.projectFunctions[item.Function] = {
+          Available: item.Available,
+          Extend: jsonExtend
         }
       })
     },
@@ -479,19 +490,19 @@ export default {
       switch (this.dialogType) {
         case 'new':
           // 檢查其他附加功能
-          if (this.form.newCertificate1 === 1) {
+          if (this.projectFunctions.newCertificate1.Available) {
             isSuccess = await this.$refs['certificate1OrderNew'].checkValidate()
             if (!isSuccess) { return }
           }
-          if (this.form.newCertificate2 === 1) {
+          if (this.projectFunctions.newCertificate2.Available) {
             isSuccess = await this.$refs['certificate2OrderNew'].checkValidate()
             if (!isSuccess) { return }
           }
-          if (this.form.chanyunOrderID === 1) {
+          if (this.projectFunctions) {
             isSuccess = await this.$refs['orderFunctions'].checkValidate()
             if (!isSuccess) { return }
           }
-          if (this.form.newAnzaOrder === 1) {
+          if (this.projectFunctions.newAnzaOrder.Available) {
             isSuccess = await this.$refs['anzaOrderNew'].checkValidate()
             if (!isSuccess) { return }
           }
@@ -540,25 +551,25 @@ export default {
             isSuccess = await this.$refs['installmentOrderNew'].beforeSave()
           }
           // 檢查其他附加功能
-          if (this.form.newCertificate1 === 1) {
+          if (this.projectFunctions.newCertificate1.Available) {
             if (isSuccess) {
               saveStep = 'certificate1OrderNew'
               isSuccess = await this.$refs['certificate1OrderNew'].beforeSave() // 新增訂單才會出現
             }
           }
-          if (this.form.newCertificate2 === 1) {
+          if (this.projectFunctions.newCertificate2.Available) {
             if (isSuccess) {
               saveStep = 'certificate2OrderNew'
               isSuccess = await this.$refs['certificate2OrderNew'].beforeSave() // 新增訂單才會出現
             }
           }
-          if (this.form.chanyunOrderID === 1) {
+          if (this.projectFunctions) {
             if (isSuccess) {
               saveStep = 'orderFunctions'
               isSuccess = await this.$refs['orderFunctions'].beforeSave()
             }
           }
-          if (this.form.newAnzaOrder === 1) {
+          if (this.projectFunctions.newAnzaOrder.Available) {
             if (isSuccess) {
               saveStep = 'anzaOrderNew'
               isSuccess = await this.$refs['anzaOrderNew'].beforeSave()
@@ -594,7 +605,7 @@ export default {
           }
 
           if (isSuccess) {
-            if (this.form.chanyunOrderID === 1) {
+            if (this.projectFunctions) {
               saveStep = 'orderFunctions'
               isSuccess = await this.$refs['orderFunctions'].beforeSave()
             }

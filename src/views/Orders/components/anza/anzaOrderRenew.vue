@@ -36,16 +36,13 @@
           <el-input v-model="form.Memo" type="textarea" rows="2" maxlength="100" show-word-limit
             :disabled="disableForm.OrderDate"></el-input>
       </el-form-item>
-      <el-form-item :label="$t('__anzaOldOrderID')">
-          <el-input v-model="form.anzaForNew.OldOrderID" maxlength="20" show-word-limit disabled></el-input>
-      </el-form-item>
       <!-- 專案特殊功能 -->
       <order-functions
         ref="orderFunctions"
         :dialogType="dialogType"
         :orderID="form.ID"
         :buttonsShowUser="buttonsShowUser"
-        :chanyunOrderID="form.chanyunOrderID"></order-functions>
+        :projectFunctions="projectFunctions"></order-functions>
       <!-- 選擇專案 -->
       <el-table
         :data="projectHead"
@@ -125,9 +122,7 @@
       @customer-change="customerChange"></order-customer>
     <template>
       <!-- 新增訂單專用 -->
-      <span v-html="$t('__orderDetailWarning')"></span>
       <anza-order-new
-        v-show="form.newAnzaOrder === 1"
         ref="anzaOrderNew"
         :orderID="form.ID"
         :parentOrderDate="form.OrderDate"
@@ -200,11 +195,6 @@ export default {
         Amount: 0,
         Prefix: '',
         Memo: '',
-        // 專案功能顯示(新增專用)(不記錄進資料庫)
-        chanyunOrderID: 0,
-        newAnzaOrder: 0,
-        newCertificate1: 0,
-        newCertificate2: 0,
         // 以下為前端顯示用, 不會記錄進資料庫
         masterAmount: 0,
         subAmount: 0,
@@ -241,6 +231,13 @@ export default {
       myTitle: '',
       projectHead: [],
       updateMessage: '', // 更新資料庫後回傳的訊息
+      // 專案功能顯示(新增專用)(不記錄進資料庫)
+      projectFunctions: {
+        chanyunOrderID: 0,
+        newAnzaOrder: 0,
+        newCertificate1: 0,
+        newCertificate2: 0
+      },
       // 以下為下拉式選單專用
       ddlOrderStatus: [],
       ddlProject: [],
@@ -260,12 +257,6 @@ export default {
           save: 1,
           delete: 0,
           search: 1
-        }
-        // 如果有其他來源, 要做不同處理
-        if (this.$attrs.fromParams) {
-          if (this.$attrs.fromParams.fromType) {
-            this.anzaOperation(this.$attrs.fromParams.fromType)
-          }
         }
         break
       case 'edit':
@@ -319,6 +310,12 @@ export default {
         }
         this.bringProject()
         break
+    }
+    // 如果有其他來源, 要做不同處理
+    if (this.$attrs.fromParams) {
+      if (this.$attrs.fromParams.fromType) {
+        this.anzaOperation(this.$attrs.fromParams.fromType)
+      }
     }
     this.projectHead.push(this.form)
 
@@ -382,7 +379,7 @@ export default {
       // 主專案填入 orderDetail
       this.$refs['orderDetail'].parentResetItems(projectDetail)
 
-      this.bringFunctions()
+      await this.bringFunctions()
     },
     // 帶入專案功能
     bringFunctions: async function () {
@@ -390,12 +387,22 @@ export default {
       let projectFunctions = responseProjectFunctions.data.result
 
       // 專案功能顯示
+      this.projectFunctions = {}
       projectFunctions.forEach(item => {
-        this.form[item.Function] = item.Available
+        // 轉換Extend成 json
+        let jsonExtend = {}
+        if (item.Extend) {
+          jsonExtend = JSON.parse(item.Extend)
+          // 安座單設定
+          if (item.Function === 'newAnzaOrder') {
+            this.form.anzaForNew.Extend = jsonExtend
+          }
+        }
 
-        // 安座單設定
-        if (item.Function === 'newAnzaOrder' && item.Extend) {
-          this.form.anzaForNew.Extend = JSON.parse(item.Extend)
+        // 代入數值
+        this.projectFunctions[item.Function] = {
+          Available: item.Available,
+          Extend: jsonExtend
         }
       })
     },
@@ -409,11 +416,11 @@ export default {
       switch (this.dialogType) {
         case 'new':
           // 檢查其他附加功能
-          if (this.form.chanyunOrderID === 1) {
+          if (this.projectFunctions) {
             isSuccess = await this.$refs['orderFunctions'].checkValidate()
             if (!isSuccess) { return }
           }
-          if (this.form.newAnzaOrder === 1) {
+          if (this.projectFunctions.newAnzaOrder.Available) {
             isSuccess = await this.$refs['anzaOrderNew'].checkValidate()
             if (!isSuccess) { return }
           }
@@ -462,13 +469,13 @@ export default {
             isSuccess = await this.$refs['installmentOrderNew'].beforeSave()
           }
           // 檢查其他附加功能
-          if (this.form.chanyunOrderID === 1) {
+          if (this.projectFunctions) {
             if (isSuccess) {
               saveStep = 'orderFunctions'
               isSuccess = await this.$refs['orderFunctions'].beforeSave()
             }
           }
-          if (this.form.newAnzaOrder === 1) {
+          if (this.projectFunctions.newAnzaOrder.Available) {
             if (isSuccess) {
               saveStep = 'anzaOrderNew'
               isSuccess = await this.$refs['anzaOrderNew'].beforeSave()
@@ -503,12 +510,21 @@ export default {
             isSuccess = await this.$refs['orderCustomer'].beforeSave()
           }
 
+          // 檢查其他附加功能
           if (isSuccess) {
-            if (this.form.chanyunOrderID === 1) {
+            if (this.projectFunctions) {
               saveStep = 'orderFunctions'
               isSuccess = await this.$refs['orderFunctions'].beforeSave()
             }
           }
+          if (isSuccess) {
+            if (this.projectFunctions) {
+              saveStep = 'anzaOrderNew'
+              isSuccess = await this.$refs['anzaOrderNew'].beforeSave()
+            }
+          }
+
+          // 全部完成
           if (isSuccess) {
             this.$alert(this.updateMessage, 200, {
               callback: () => {
@@ -650,27 +666,32 @@ export default {
     // 從 安座作業 傳來的操作
     anzaOperation: async function (fromType) {
       // 決定標題
-      switch (this.$attrs.fromParams.fromType) {
+      switch (fromType) {
         case 'anzaRenew':
           this.myTitle = this.$t('__anzaRenew') + this.$t('__anzaOrder')
+          this.$refs['anzaOrderNew'].parentAssginData('Memo', this.$t('__anzaRenew'))
           break
         case 'anzaExtend':
           this.myTitle = this.$t('__anzaExtend') + this.$t('__anzaOrder')
+          this.$refs['anzaOrderNew'].parentAssginData('Memo', this.$t('__anzaExtend'))
           break
         case 'anzaTransfer':
           this.myTitle = this.$t('__anzaTransfer') + this.$t('__anzaOrder')
+          this.$refs['anzaOrderNew'].parentAssginData('Memo', this.$t('__anzaTransfer'))
           break
         case 'anzaInherit':
           this.myTitle = this.$t('__anzaInherit') + this.$t('__anzaOrder')
+          this.$refs['anzaOrderNew'].parentAssginData('Memo', this.$t('__anzaInherit'))
           break
       }
-      // 代入舊的安座單清單
-      this.$refs['anzaOrderNew'].subList = this.$attrs.fromParams.fromAnzaList
-      this.$refs['anzaOrderNew'].fromType = this.$attrs.fromParams.fromType
+      this.$refs['anzaOrderNew'].parentAssginData('fromType', this.$attrs.fromParams.fromType)
+      this.$refs['orderFunctions'].parentAssginData('fromType', this.$attrs.fromParams.fromType)
 
       // 舊有契約單據資料
       let oldOrderHead = this.$attrs.fromParams.fromOrder
       this.form.anzaForNew.OldOrderID = oldOrderHead.ID
+      // 給數量
+      this.form.Qty = oldOrderHead.Qty
 
       // 取得專案的Extend
       let response1 = await this.$api.orders.getObject({ type: 'orderNewBringAnzaOrder', keyword: oldOrderHead.ID })
@@ -680,31 +701,46 @@ export default {
         let projectExtend = JSON.parse(oldOrderExtend.Extend)
         if (projectExtend) {
           this.form.anzaForNew.Extend = projectExtend
-          // 給專案編號(續約, 展延)
-          switch (this.$attrs.fromParams.fromType) {
-            case 'anzaRenew':
-            case 'anzaExtend':
-              this.form.ProjectID = projectExtend.nextProjectID
-              break
-            default:
-              this.form.ProjectID = projectExtend.ProjectID
-              break
-          }
-          this.ddlProjectChange(this.form.ProjectID)
-          // 給數量
-          this.form.Qty = oldOrderHead.Qty
-          // TODO:如果是繼承, 給予舊有的訂購日期
-
-          // 給客戶代號(續約, 展延)
-          switch (this.$attrs.fromParams.fromType) {
-            case 'anzaRenew':
-            case 'anzaExtend':
-              this.$refs['orderCustomer'].form.CustomerID = oldOrderExtend.CustomerID
-              break
-          }
-
-          this.$refs['orderCustomer'].ddlCustomerChange()
         }
+
+        // 給專案編號(續約, 展延)
+        // 給專案日期(轉讓)
+        switch (fromType) {
+          case 'anzaRenew':
+          case 'anzaExtend':
+            this.form.ProjectID = projectExtend.nextProjectID
+            await this.ddlProjectChange(this.form.ProjectID)
+            // 給予orderFunction額外料
+            this.$refs['orderFunctions'].parentAssginData('newAnzaOrder', oldOrderHead.ID)
+            break
+          case 'anzaTransfer':
+            let tempDate = new Date()
+            this.form.OrderDate = formatDate(tempDate.toISOString().slice(0, 10))
+            break
+          case 'anzaInherit':
+            // 修改狀態, 不用給號碼
+            break
+        }
+
+        // 給客戶代號(續約, 展延)
+        // 清除舊有客戶代號(轉讓, 繼承)
+        switch (fromType) {
+          case 'anzaRenew':
+          case 'anzaExtend':
+            this.$refs['orderCustomer'].parentAssginData('CustomerID', oldOrderExtend.CustomerID)
+            break
+          case 'anzaTransfer':
+            this.$refs['orderCustomer'].parentAssginData('CustomerID', '')
+            this.$refs['orderCustomer'].parentAssginData('Memo', this.$t('__anzaTransfer'))
+            break
+          case 'anzaInherit':
+            this.$refs['orderCustomer'].parentAssginData('CustomerID', '')
+            this.$refs['orderCustomer'].parentAssginData('Memo', this.$t('__anzaInherit'))
+            break
+        }
+
+        // 代入舊的安座單清單
+        this.$refs['anzaOrderNew'].parentAssginData('subList', this.$attrs.fromParams.fromAnzaList)
       }
     }
   }

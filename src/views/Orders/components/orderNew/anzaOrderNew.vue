@@ -6,114 +6,60 @@
     <h2 class="alignLeft">{{$t('__anzaOrder')}}</h2>
     <p/>
     <span v-if="parentAnzaData.CustomerID===''" v-html="$t('__anzaOrderNewWarning')"></span>
-    <div v-if="parentAnzaData.Extend.new === 0">
+    <template v-else>
+      <!-- 純觀賞table -->
       <el-table
+      v-if="fromType !== null"
       :data="subList"
       stripe
       border
       style="width: 100%">
-      <el-table-column
-        prop="AnzaOrderID"
-        :label="this.$t('__anzaOrder')">
-      </el-table-column>
-      <el-table-column
-        prop="CustomerID"
-        :label="$t('__customer')">
-      </el-table-column>
-      <el-table-column
-        prop="qty"
-        :label="$t('__qty')">
-      </el-table-column>
-      <el-table-column
-        prop="ScheduledDate"
-        :label="$t('__scheduled')+$t('__anza')+$t('__date')">
-        <template slot-scope="scope">
-          <el-date-picker
-            v-model="scope.row[scope.column.property]"
-            :placeholder="$t('__plzChoice')+$t('__date')"
-            value-format="yyyy-MM-dd"
-            disabled>
-          </el-date-picker>
-        </template>
-      </el-table-column>
-      <el-table-column
-        prop="ExpirationDate"
-        :label="$t('__expire')+$t('__date')">
-        <template slot-scope="scope">
-          <el-date-picker
-            v-model="scope.row[scope.column.property]"
-            :placeholder="$t('__plzChoice')+$t('__date')"
-            value-format="yyyy-MM-dd"
-            disabled>
-          </el-date-picker>
-        </template>
-      </el-table-column>
+        <el-table-column
+          prop="AnzaOrderID"
+          :label="this.$t('__anzaOrder')">
+        </el-table-column>
+        <el-table-column
+          prop="CustomerID"
+          :label="$t('__customer')">
+          <template slot-scope="scope">
+            <el-select v-model="scope.row[scope.column.property]" filterable value-key="value" :placeholder="$t('__plzChoice')" :disabled="disableForm.CustomerID">
+              <el-option v-for="item in ddlCustomer" :key="item.ID" :label="item.ID+' '+item.Value" :value="item.ID">
+                <span style="float: left">{{ item.Value }}</span>
+                <span style="float: right; color: #8492a6; font-size: 13px">{{ item.ID }}</span>
+              </el-option>
+            </el-select>
+          </template>
+        </el-table-column>
+        <el-table-column
+          prop="ScheduledDate"
+          :label="$t('__scheduled')+$t('__anza')+$t('__date')">
+          <template slot-scope="scope">
+            <el-date-picker
+              v-model="scope.row[scope.column.property]"
+              :placeholder="$t('__plzChoice')+$t('__date')"
+              value-format="yyyy-MM-dd"
+              disabled>
+            </el-date-picker>
+          </template>
+        </el-table-column>
+        <el-table-column
+          prop="ExpirationDate"
+          :label="$t('__expire')+$t('__date')">
+          <template slot-scope="scope">
+            <el-date-picker
+              v-model="scope.row[scope.column.property]"
+              :placeholder="$t('__plzChoice')+$t('__date')"
+              value-format="yyyy-MM-dd"
+              disabled>
+            </el-date-picker>
+          </template>
+        </el-table-column>
+        <el-table-column
+          prop="Memo"
+          :label="$t('__memo')">
+        </el-table-column>
       </el-table>
-    </div>
-    <el-table
-      v-else
-      :data="subList"
-      stripe
-      border
-      style="width: 100%">
-      <el-table-column
-        prop="CustomerID"
-        :label="$t('__customer')">
-        <template slot-scope="scope">
-          <el-select v-model="scope.row[scope.column.property]" filterable value-key="value" :placeholder="$t('__plzChoice')">
-            <el-option v-for="item in ddlCustomer" :key="item.ID" :label="item.ID+' '+item.Value" :value="item.ID">
-              <span style="float: left">{{ item.Value }}</span>
-              <span style="float: right; color: #8492a6; font-size: 13px">{{ item.ID }}</span>
-            </el-option>
-          </el-select>
-        </template>
-      </el-table-column>
-      <el-table-column
-        prop="qty"
-        :label="$t('__qty')">
-        <template slot-scope="scope">
-          <el-input-number v-model="scope.row[scope.column.property]" @change="(currentValue, oldValue)=>{qtyChange(currentValue, oldValue, scope.row)}"></el-input-number>
-        </template>
-      </el-table-column>
-      <el-table-column
-        prop="ScheduledDate"
-        :label="$t('__scheduled')+$t('__anza')+$t('__date')">
-        <template slot-scope="scope">
-          <el-date-picker
-            v-model="scope.row[scope.column.property]"
-            :placeholder="$t('__plzChoice')+$t('__date')"
-            value-format="yyyy-MM-dd">
-          </el-date-picker>
-        </template>
-      </el-table-column>
-      <el-table-column
-        prop="ExpirationDate"
-        :label="$t('__expire')+$t('__date')">
-        <template slot-scope="scope">
-          <el-date-picker
-            v-model="scope.row[scope.column.property]"
-            :placeholder="$t('__plzChoice')+$t('__date')"
-            value-format="yyyy-MM-dd">
-          </el-date-picker>
-        </template>
-      </el-table-column>
-      <el-table-column
-        align="right"
-        width="95px">
-        <template slot="header">
-          <el-button
-            type="primary"
-            size="large"
-            @click="handleNew()">{{$t('__new')}}</el-button>
-        </template>
-        <template slot-scope="scope">
-          <el-button
-            size="mini"
-            type="danger"
-            @click="handleDelete(scope.$index, scope.row)">{{$t('__delete')}}</el-button>
-        </template>
-      </el-table-column>
-    </el-table>
+    </template>
     <div style="color:red" v-show="isExceedQtyLimit">{{$t('__exceedQtyLimit')}}</div>
   </el-form>
 </template>
@@ -133,19 +79,25 @@ export default {
     return {
       form: {
         OrderID: this.orderID,
-        CustomerID: this.customerID,
+        AnzaOrderID: '',
+        CustomerID: '',
         ScheduledDate: '',
         RealDate: null,
         ExpirationDate: null,
         Status: '1',
         ProductID: '',
+        Memo: '',
         // 顯示用
         qty: 1
+      },
+      disableForm: {
+        CustomerID: false
       },
       subList: [],
       subListDeleted: [],
       isExceedQtyLimit: false,
       fromType: null,
+      fromMemo: '',
       // 下拉式選單
       ddlCustomer: []
     }
@@ -189,7 +141,6 @@ export default {
       this.subList.forEach(row => {
         count += row.qty
       })
-
       // 超過了, 彈出警示訊息
       // (回復舊數值發現前端不會跟著更新, 因此不採用)
       if (count > this.parentQty) {
@@ -212,6 +163,7 @@ export default {
         } else {
           row.qty = 0
         }
+
         row.ProductID = this.parentAnzaData.ProductID
 
         index++
@@ -221,6 +173,19 @@ export default {
     },
     // 父視窗: 變更客戶代號
     parentCustomerChange: function () {
+      // 如果是來自安座單的操作, 不更改CustomerID(續約, 展延, 繼承)
+      switch (this.fromType) {
+        case 'anzaRenew':
+        case 'anzaExtend':
+          return
+        case 'anzaTransfer':
+          break
+        case 'anzaInherit':
+          return
+        default:
+          break
+      }
+
       // 如果都沒有資料, 先新增
       if (this.subList.length === 0) {
         this.handleNew()
@@ -247,19 +212,94 @@ export default {
 
       this.refreshList()
     },
+    // 父視窗: 變更任意資料
+    parentAssginData: function (type, fromObject) {
+      switch (type) {
+        case 'subList':
+          this.subList = []
+          fromObject.forEach(row => {
+            this.handleNew(row)
+          })
+          break
+        case 'fromType':
+          this.fromType = fromObject
+          switch (this.fromType) {
+            case 'anzaRenew':
+            case 'anzaExtend':
+              this.disableForm.CustomerID = true
+              break
+            case 'anzaTransfer':
+            case 'anzaInherit':
+              this.disableForm.CustomerID = false
+              break
+            default:
+              this.disableForm.CustomerID = false
+              break
+          }
+          break
+        case 'Memo':
+          this.fromMemo = fromObject
+          this.form.Memo = fromObject
+          break
+      }
+    },
     // 重新計算日期
     reCalDate: function (waitForReplaceList) {
+      // 設定開始日
       let start = new Date(this.parentOrderDate)
+
+      // 安座單
+      // 續約, 展延=>從到期日開始算
+      // 繼承=>不變更日期
+      // 轉讓=>使用者自訂
+      switch (this.fromType) {
+        case 'anzaRenew':
+        case 'anzaExtend':
+          if (Array.isArray(waitForReplaceList)) {
+            start = new Date(waitForReplaceList[0].ExpirationDate)
+          } else {
+            start = new Date(waitForReplaceList.ExpirationDate)
+          }
+          break
+        case 'anzaTransfer':
+          break
+        case 'anzaInherit':
+          return
+        default:
+          break
+      }
       let year = start.getFullYear()
       let month = start.getMonth()
       let day = start.getDate()
 
       // 預定安座日: 預設90天
-      day = start.getDate() + 90
       let ScheduledDate = new Date(year, month, day, 12)
+      // 安座單
+      // 續約, 展延=>不變更安座日
+      // 繼承=>不變更日期
+      // 轉讓=>使用者自訂
+      switch (this.fromType) {
+        case 'anzaRenew':
+        case 'anzaExtend':
+          if (Array.isArray(waitForReplaceList)) {
+            ScheduledDate = waitForReplaceList[0].ScheduledDate
+          } else {
+            ScheduledDate = waitForReplaceList.ScheduledDate
+          }
+          break
+        case 'anzaTransfer':
+          day = start.getDate() + 90
+          ScheduledDate = new Date(year, month, day, 12)
+          break
+        case 'anzaInherit':
+          return
+        default:
+          day = start.getDate() + 90
+          ScheduledDate = new Date(year, month, day, 12)
+          break
+      }
 
       // 到期日: 抓取專案設定Extend.Year
-      // 預設最後安座日後, 再過Extend.Year
       year = start.getFullYear() + parseInt(this.parentAnzaData.Extend.year)
       let ExpirationDate = new Date(year, month, day, 12)
 
@@ -286,15 +326,28 @@ export default {
     },
     // ============== 子結構 ===============
     // 新增子結構
-    handleNew: function () {
+    handleNew: function (specialRow) {
       let newObj = JSON.parse(JSON.stringify(this.form))
 
       // 新增 item
-      newObj.OrderID = this.orderID
-      newObj.ProductID = this.parentAnzaData.ProductID
-      newObj.CustomerID = ''
-
-      this.reCalDate(newObj)
+      if (specialRow) {
+        newObj.OrderID = specialRow.OrderID
+        newObj.AnzaOrderID = specialRow.AnzaOrderID
+        newObj.CustomerID = specialRow.CustomerID
+        newObj.ScheduledDate = specialRow.ScheduledDate
+        newObj.RealDate = specialRow.RealDate
+        newObj.ExpirationDate = specialRow.ExpirationDate
+        newObj.Status = specialRow.Status
+        newObj.ProductID = specialRow.ProductID
+        newObj.Memo = this.form.Memo
+        newObj.qty = 1
+      } else {
+        newObj.OrderID = this.orderID
+        newObj.ProductID = this.parentAnzaData.ProductID
+        newObj.CustomerID = ''
+        newObj.qty = 0
+        this.reCalDate(newObj)
+      }
 
       this.subList.push(newObj)
       this.qtyChange()
@@ -342,7 +395,7 @@ export default {
     },
     // 存檔
     save: async function (item) {
-      await this.$api.orders.anzaOrderNew({ form: item })
+      await this.$api.orders.anzaOrderUpdate({ form: item })
     }
   }
 }

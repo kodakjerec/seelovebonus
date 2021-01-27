@@ -48,12 +48,7 @@ export default {
   },
   methods: {
     preLoading: async function () {
-      let responseRecords = await this.$api.orders.anzaOrderShow({
-        keyword: JSON.stringify({
-          keyword: '',
-          type: 'anzaAlarm'
-        })
-      })
+      let responseRecords = await this.$api.orders.anzaAlarm({})
       this.item = responseRecords.data.result[0]
 
       if (this.item.alarmAnza) {

@@ -57,10 +57,10 @@
       </el-table-column>
       <el-table-column>
         <template slot="header">
-          {{$t('__orderID')}}<br/>{{$t('__customer')+$t('__name')}}<br/>{{$t('__referrer')}}
+          {{$t('__orderID')}}<br/>{{$t('__customer')+$t('__name')}}<br/>{{$t('__referrer')+'/'+$t('__company')}}
         </template>
         <template slot-scope="scope">
-          {{scope.row.ID}}<br/>{{scope.row.CustomerName}}<br/>{{scope.row.ReferrerName}}
+          {{scope.row.ID}}<br/>{{scope.row.CustomerName}}<br/>{{scope.row.ReferrerName+'/'+scope.row.CompanyName}}
         </template>
       </el-table-column>
       <el-table-column>

@@ -1,6 +1,6 @@
 <template>
   <el-form ref="form" :model="form" :rules="rules" label-width="10vw" label-position="right">
-    <h2 style="text-align:left">{{$t('__orderCustomer')+$t('__data')}}</h2>
+    <h2 style="text-align:left">{{$t('__orderCustomer')+$t('__data')}}<span v-if="form.Memo">{{'('+form.Memo+')'}}</span></h2>
     <!-- 有法定代理人資料, 要顯示 -->
     <template v-if="showAgentData">
       <el-form-item :label="$t('__orderCustomer')+$t('__name')" prop="CustomerID">
@@ -143,6 +143,9 @@ export default {
         refKind: null,
         Referrer: null,
         EmployeeID: null,
+        Memo: '',
+        CompanyID: null,
+        // 顯示用, 不存入資料庫
         Status: ''
       },
       rules: {
@@ -151,8 +154,8 @@ export default {
       disableForm: {
         CustomerID: false
       },
-      showAgentData: true,
-      oldCustomerID: '', // 修改狀態專用, 沒有變更客戶代號就不用更新
+      showAgentData: true, // 顯示代理人資訊
+      fromMemo: '',
       // 以下為下拉式選單專用
       postData: [],
       ddlCountry: [],
@@ -217,10 +220,13 @@ export default {
     },
     // 修改狀態:取得客戶資料
     bringCustomer: async function () {
-      let responseCustomer = await this.$api.orders.getObject({ type: 'orderCustomer', keyword: this.orderID })
-      let row = responseCustomer.data.result[0]
+      let responseRow = await this.$api.orders.getObject({ type: 'orderCustomer', keyword: this.orderID })
 
-      this.oldCustomerID = row.CustomerID
+      if (responseRow.data.result.length <= 0) {
+        return
+      }
+      let row = responseRow.data.result[0]
+
       this.form.CustomerID = row.CustomerID
 
       this.form.TelHome = row.TelHome
@@ -239,6 +245,7 @@ export default {
       this.form.refKind = row.refKind
       this.form.Referrer = row.Referrer
       this.form.EmployeeID = row.EmployeeID
+      this.form.Memo = row.Memo
       this.form.Status = ''
 
       // 是否顯示代理人區域
@@ -256,6 +263,33 @@ export default {
     ddlCustomerChange: async function () {
       // 取得可以用的選單
       let responseRow = await this.$api.orders.getObject({ type: 'orderCustomerGetDetail', keyword: this.form.CustomerID })
+      if (responseRow.data.result.length <= 0) {
+        this.form = {
+          OrderID: '',
+          CustomerID: '',
+          TelHome: '',
+          TelMobile: '',
+          EMail: '',
+          Country: null,
+          City: null,
+          Post: null,
+          Address: '',
+          AgentID: '',
+          AgentName: '',
+          AgentCountry: null,
+          AgentCity: null,
+          AgentPost: null,
+          AgentAddress: '',
+          refKind: null,
+          Referrer: null,
+          EmployeeID: null,
+          Memo: '',
+          CompanyID: null,
+          // 顯示用, 不存入資料庫
+          Status: ''
+        }
+        return
+      }
       let row = responseRow.data.result[0]
       this.form.TelHome = row.TelHome
       this.form.TelMobile = row.TelMobile
@@ -273,6 +307,8 @@ export default {
       this.form.refKind = row.refKind
       this.form.Referrer = row.Referrer
       this.form.EmployeeID = row.EmployeeID
+      this.form.CompanyID = row.CompanyID
+      this.form.Memo = this.fromMemo
 
       if (this.dialogType === 'new') {
         this.form.Status = 'New'
@@ -304,9 +340,10 @@ export default {
     // 存檔前檢查
     beforeSave: async function () {
       let isSuccess = false
-      if (this.form.OrderID === '') {
+      if (this.orderID === '') {
         return false
       }
+      this.form.OrderID = this.orderID
 
       // 開始更新
       switch (this.form.Status) {
@@ -343,6 +380,19 @@ export default {
       }
 
       return isSuccess
+    },
+    // 父視窗: 變更任意資料
+    parentAssginData: function (type, fromObject) {
+      switch (type) {
+        case 'CustomerID':
+          this.form.CustomerID = fromObject
+          this.ddlCustomerChange()
+          break
+        case 'Memo':
+          this.fromMemo = fromObject
+          this.form.Memo = fromObject
+          break
+      }
     },
     // ===== 安座單 =====
     // 回傳客戶代號給上一層

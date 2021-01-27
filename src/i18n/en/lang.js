@@ -220,12 +220,14 @@ export default {
   __anzaExtend: 'Extend',
   __anzaInherit: 'Inherit',
   __anzaOldOrderID: '安座舊有契約編號',
+  __chanyunOrderID: '展雲-契約單號',
   // 請在上方新增字串
   // 以下為 警告
   __warning: 'Warning',
   __productBOMWarning: 'Please complete new-status before modifying the BOM architecture',
   __projectDetailWarning: 'Please complete new-status before modifying the project items',
-  __orderDetailWarning: 'Please complete new-status before modifying the collection-records and invoices<br/>certificates and proofs will be added according to your quantity',
+  __orderDetailWarning: 'Please complete new-status before modifying the collection-records and invoices',
+  __orderCertificateWarning: 'Certificates and proofs will be added according to your quantity',
   __retakeIDWarning: 'Retake ID will disable current document and add a new one',
   __signOffWarning: 'The following documents are waiting for approval',
   __anzaOrderNewWarning: 'Please select project-id and customer-id',

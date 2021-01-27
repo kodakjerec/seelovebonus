@@ -220,12 +220,14 @@ export default {
   __anzaExtend: '展延',
   __anzaInherit: '繼承',
   __anzaOldOrderID: '安座舊有契約編號',
+  __chanyunOrderID: '展雲-契約單號',
   // 請在上方新增字串
   // 以下為 警告
   __warning: '警告',
   __productBOMWarning: '請完成新增，再修改BOM架構',
   __projectDetailWarning: '請完成新增，再修改專案商品',
-  __orderDetailWarning: '請完成新增，再修改收款紀錄和發票<br/>供奉憑證與換狀證明，會依購買數量自動新增',
+  __orderDetailWarning: '請完成新增，再修改收款紀錄和發票',
+  __orderCertificateWarning: '供奉憑證與換狀證明，會依購買數量自動新增',
   __retakeIDWarning: '重新取號會停用目前單據，並新增一張單據',
   __signOffWarning: '以下單據等待簽核',
   __anzaOrderNewWarning: '請選擇專案與客戶編號',

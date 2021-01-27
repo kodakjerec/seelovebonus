@@ -248,8 +248,8 @@ export default {
         return data
       })
     },
-    anzaAlarm: ({ searchContent, pagination, sortable, ID }) => {
-      let rawData = { searchContent, pagination, sortable, ID }
+    anzaAlarm: () => {
+      let rawData = { }
       return post('/orders/anzaAlarm', rawData).then(data => {
         console.log(`%c <<< Response(/rest/orders/anzaAlarm)⤵ `, 'background-color: #E0455D; color: white; font-size: 14px; font-weight: bold;', data)
         return data
@@ -262,10 +262,10 @@ export default {
         return data
       })
     },
-    anzaOrderNew: ({ form }) => {
+    anzaOrderUpdate: ({ form }) => {
       let rawData = { form }
-      return post('/orders/anzaOrderNew', rawData).then(data => {
-        console.log(`%c <<< Response(/rest/orders/anzaOrderNew)⤵ `, 'background-color: #E0455D; color: white; font-size: 14px; font-weight: bold;', data)
+      return post('/orders/anzaOrderUpdate', rawData).then(data => {
+        console.log(`%c <<< Response(/rest/orders/anzaOrderUpdate)⤵ `, 'background-color: #E0455D; color: white; font-size: 14px; font-weight: bold;', data)
         return data
       })
     },

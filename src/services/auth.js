@@ -43,7 +43,7 @@ axios.interceptors.response.use((response) => {
   } else {
     // 成功發出請求但是沒收到 response
     if (!window.navigator.onLine) {
-      console.log('網路問題或刷新網頁')
+      errorMessage('網路問題或刷新網頁', 'Offline')
     } else {
       return Promise.reject(error)
     }
