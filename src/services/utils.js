@@ -40,7 +40,6 @@ export const post = async (url, reqData = {}) => {
         }
       }
       console.log(`%c 💩💩💩 API發生例外錯誤 💩💩💩${((response && response.status) ? `status code [${response.status}]` : '')}`, 'color: #BB2E29; font-size: 14px; font-weight: bold;')
-      errorMessage(response.data, response.status)
       return Promise.reject(error)
     })
 }
