@@ -59,6 +59,70 @@
           :label="$t('__memo')">
         </el-table-column>
       </el-table>
+      <el-table
+      v-else
+      :data="subList"
+      stripe
+      border
+      style="width: 100%">
+      <el-table-column
+        prop="CustomerID"
+        :label="$t('__customer')">
+        <template slot-scope="scope">
+          <el-select v-model="scope.row[scope.column.property]" filterable value-key="value" :placeholder="$t('__plzChoice')">
+            <el-option v-for="item in ddlCustomer" :key="item.ID" :label="item.ID+' '+item.Value" :value="item.ID">
+              <span style="float: left">{{ item.Value }}</span>
+              <span style="float: right; color: #8492a6; font-size: 13px">{{ item.ID }}</span>
+            </el-option>
+          </el-select>
+        </template>
+      </el-table-column>
+      <el-table-column
+        prop="qty"
+        :label="$t('__qty')">
+        <template slot-scope="scope">
+          <el-input-number v-model="scope.row[scope.column.property]" @change="(currentValue, oldValue)=>{qtyChange(currentValue, oldValue, scope.row)}"></el-input-number>
+        </template>
+      </el-table-column>
+      <el-table-column
+        prop="ScheduledDate"
+        :label="$t('__scheduled')+$t('__anza')+$t('__date')">
+        <template slot-scope="scope">
+          <el-date-picker
+            v-model="scope.row[scope.column.property]"
+            :placeholder="$t('__plzChoice')+$t('__date')"
+            value-format="yyyy-MM-dd">
+          </el-date-picker>
+        </template>
+      </el-table-column>
+      <el-table-column
+        prop="ExpirationDate"
+        :label="$t('__expire')+$t('__date')">
+        <template slot-scope="scope">
+          <el-date-picker
+            v-model="scope.row[scope.column.property]"
+            :placeholder="$t('__plzChoice')+$t('__date')"
+            value-format="yyyy-MM-dd">
+          </el-date-picker>
+        </template>
+      </el-table-column>
+      <el-table-column
+        align="right"
+        width="95px">
+        <template slot="header">
+          <el-button
+            type="primary"
+            size="large"
+            @click="handleNew()">{{$t('__new')}}</el-button>
+        </template>
+        <template slot-scope="scope">
+          <el-button
+            size="mini"
+            type="danger"
+            @click="handleDelete(scope.$index, scope.row)">{{$t('__delete')}}</el-button>
+        </template>
+      </el-table-column>
+    </el-table>
     </template>
     <div style="color:red" v-show="isExceedQtyLimit">{{$t('__exceedQtyLimit')}}</div>
   </el-form>

@@ -13,7 +13,7 @@ export const seeloveNodeServer = {
 }
 
 // 不要有LoadingMask的url
-const urlNoMask = ['/basic/checkValidate', '/stock/checkValidate']
+const urlNoMask = ['/basic/checkValidate', '/stock/checkValidate', '/login/version']
 
 // 一般api使用
 export const post = async (url, reqData = {}) => {

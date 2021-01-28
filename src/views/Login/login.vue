@@ -35,6 +35,7 @@
 import router from '@/router'
 import i18n from '@/setup/setupLocale'
 import validate from '@/setup/validate.js'
+import { errorMessage } from '@/services/utils'
 
 export default {
   name: 'Login',
@@ -71,6 +72,8 @@ export default {
       i18n.locale = 'zh'
       localStorage.setItem('locale', 'zh')
     }
+
+    this.checkVersion()
   },
   methods: {
     // 變更語言設定
@@ -127,6 +130,14 @@ export default {
         this.$store.dispatch('setUserProg', response3.data.userProg)
 
         router.push('home')
+      }
+    },
+    // 檢查版本
+    checkVersion: async function () {
+      let response = await this.$api.login.version()
+      let dbVersion = response.data.result[0].Value
+      if (dbVersion !== this.$store.state.version) {
+        errorMessage(this.$t('__versionError'), this.$t('__warning'))
       }
     }
   }

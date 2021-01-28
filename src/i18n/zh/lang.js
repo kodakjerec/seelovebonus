@@ -239,6 +239,7 @@ export default {
   __error404: '伺服器找不到請求的資源。',
   __error500: '伺服器端發生未知或無法處理的錯誤。',
   __uploadFail: '更新失敗，請再嘗試一次',
+  __versionError: '版本更新，請重新整理網頁<br/>Windows: F5<br/>Mac: ⌘+R',
   // 以下為驗證專用
   __plzChoice: '請選擇',
   __pleaseInputUserID: '請輸入帳號',

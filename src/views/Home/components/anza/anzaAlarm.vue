@@ -6,25 +6,31 @@
     <el-collapse v-model="activeNames">
       <el-collapse-item name="1">
       <div>
-        <el-button type="danger" v-if="item.alarmAnza !== ''" class="caption">{{$t('__notAnza')}}</el-button>
+        <el-button type="danger" v-if="item.alarmAnza" class="caption">{{$t('__notAnza')}}</el-button>
         <div v-for="(row, keyIndex) in item.alarmAnza" :key="keyIndex" class="text">
           {{row.AnzaOrderID}}
         </div>
       </div>
       <div>
-        <el-button type="success" v-if="item.alarmRenew !== ''" class="caption">{{$t('__anzaRenew')}}</el-button>
+        <el-button v-if="item.alarmYuanman" class="caption">{{$t('__yuanman')}}</el-button>
+        <div v-for="(row, keyIndex) in item.alarmYuanman" :key="keyIndex" class="text">
+          {{row.AnzaOrderID}}
+        </div>
+      </div>
+      <div>
+        <el-button type="success" v-if="item.alarmRenew" class="caption">{{$t('__anzaRenew')}}</el-button>
         <div v-for="(row, keyIndex) in item.alarmRenew" :key="keyIndex" class="text">
           {{row.AnzaOrderID}}
         </div>
       </div>
       <div>
-        <el-button type="success" v-if="item.alarmExtend !== ''" class="caption">{{$t('__anzaExtend')}}</el-button>
+        <el-button type="success" v-if="item.alarmExtend" class="caption">{{$t('__anzaExtend')}}</el-button>
         <div v-for="(row, keyIndex) in item.alarmExtend" :key="keyIndex" class="text">
           {{row.AnzaOrderID}}
         </div>
       </div>
       <div>
-        <el-button v-if="item.alarmTransfer !== ''" class="caption">{{$t('__anzaTransfer')}}</el-button>
+        <el-button v-if="item.alarmTransfer" class="caption">{{$t('__anzaTransfer')}}</el-button>
         <div v-for="(row, keyIndex) in item.alarmTransfer" :key="keyIndex" class="text">
           {{row.AnzaOrderID}}
         </div>
@@ -53,6 +59,9 @@ export default {
 
       if (this.item.alarmAnza) {
         this.item.alarmAnza = JSON.parse(this.item.alarmAnza)
+      }
+      if (this.item.alarmYuanman) {
+        this.item.alarmYuanman = JSON.parse(this.item.alarmYuanman)
       }
       if (this.item.alarmRenew) {
         this.item.alarmRenew = JSON.parse(this.item.alarmRenew)

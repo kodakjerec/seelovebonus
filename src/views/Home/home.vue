@@ -55,9 +55,9 @@ export default {
     calculateWidth: function () {
       if (this.showAnza) {
         // 公告
-        this.announcemnetWidthList.push(24 - 2)
+        this.announcemnetWidthList.push(24 - 3)
         // 安座
-        this.announcemnetWidthList.push(2)
+        this.announcemnetWidthList.push(3)
       }
     }
   }

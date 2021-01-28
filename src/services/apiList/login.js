@@ -36,6 +36,13 @@ export default {
         console.log(`%c <<< Response(/rest/login/checkPwd)⤵ `, 'background-color: #E0455D; color: white; font-size: 14px; font-weight: bold;', data)
         return data
       })
+    },
+    version: () => {
+      let rawData = {}
+      return post('/login/version', rawData).then(data => {
+        console.log(`%c <<< Response(/rest/login/version)⤵ `, 'background-color: #E0455D; color: white; font-size: 14px; font-weight: bold;', data)
+        return data
+      })
     }
   }
 }

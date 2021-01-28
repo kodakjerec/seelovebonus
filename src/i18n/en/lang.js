@@ -239,6 +239,7 @@ export default {
   __error404: 'Page Not Found',
   __error500: 'Internal Server Error',
   __uploadFail: 'Upload Fail, please try again.',
+  __versionError: 'Version Update, Please refresh web<br/>Windows: F5<br/>Mac: ⌘+R',
   // 以下為驗證專用
   __plzChoice: 'Please Choice',
   __pleaseInputUserID: 'Please Input UserID',
