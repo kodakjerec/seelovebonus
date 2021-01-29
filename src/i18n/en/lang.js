@@ -240,6 +240,9 @@ export default {
   // 以下為錯誤處理專用
   __error400: 'Bad Request',
   __error401: 'Unauthorized',
+  __error401TokenExpiredError: 'Authorization Expirated, please login',
+  __error401JsonWebTokenError: 'Authorization Fail, please login',
+  __error401NotBeforeError: 'No Authorization, please login',
   __error404: 'Page Not Found',
   __error500: 'Internal Server Error',
   __uploadFail: 'Upload Fail, please try again.',

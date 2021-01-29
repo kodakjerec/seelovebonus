@@ -240,6 +240,9 @@ export default {
   // 以下為錯誤處理專用
   __error400: '無法理解請求',
   __error401: '授權失敗，請重新登入',
+  __error401TokenExpiredError: '授權過期，請重新登入',
+  __error401JsonWebTokenError: '授權驗證失敗，請重新登入',
+  __error401NotBeforeError: '沒有授權，請重新登入',
   __error404: '伺服器找不到請求的資源。',
   __error500: '伺服器端發生未知或無法處理的錯誤。',
   __uploadFail: '更新失敗，請再嘗試一次',

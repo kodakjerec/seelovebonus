@@ -57,7 +57,21 @@ const errorHandle = (status, response) => {
       errorMessage(i18n.t('__error400') + '<br/>' + requestURL, status)
       break
     case 401:
-      errorMessage(i18n.t('__error401') + '<br/>' + requestURL, status)
+      let { name } = response.data
+      let i18nID = ''
+      switch (name) {
+        case 'TokenExpiredError':
+          i18nID = '__error401TokenExpiredError'
+          break
+        case 'JsonWebTokenError':
+          i18nID = '__error401JsonWebTokenError'
+          break
+        case 'NotBeforeError':
+          i18nID = '__error401NotBeforeError'
+          break
+      }
+      console.log(response)
+      errorMessage(i18n.t(i18nID) + '<br/>' + requestURL, status)
       // 清除token
       store.dispatch('setAuth', {
         'token': '',
