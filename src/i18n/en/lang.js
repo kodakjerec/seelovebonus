@@ -243,6 +243,7 @@ export default {
   __error401TokenExpiredError: 'Authorization Expirated, please login',
   __error401JsonWebTokenError: 'Authorization Fail, please login',
   __error401NotBeforeError: 'No Authorization, please login',
+  __error401MultipleLogin: '您已在其他地方登入過，請重新登入',
   __error404: 'Page Not Found',
   __error500: 'Internal Server Error',
   __uploadFail: 'Upload Fail, please try again.',
