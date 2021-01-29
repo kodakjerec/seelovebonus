@@ -237,15 +237,7 @@ export default {
       this.searchContent.OrdersType = filterSettings.OrdersType
       this.searchContent.StatusType = filterSettings.StatusType
 
-      if (localStorage.getItem('searchHistory:' + this.$route.name) === null) {
-        // 預設全選
-        this.searchContent.OrdersType.forEach(item => {
-          this.searchContent.selectedOrdersType.push(item.Prefix)
-        })
-        this.searchContent.StatusType.forEach(item => {
-          this.searchContent.selectedStatusType.push(item.Status)
-        })
-      } else {
+      if (localStorage.getItem('searchHistory:' + this.$route.name) !== null) {
         let oldSearchContent = JSON.parse(localStorage.getItem('searchHistory:' + this.$route.name))
         this.searchContent.selectedOrdersType = oldSearchContent.selectedOrdersType
         this.searchContent.selectedStatusType = oldSearchContent.selectedStatusType

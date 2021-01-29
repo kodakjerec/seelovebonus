@@ -2,6 +2,7 @@
   <div>
     <el-button-group>
       <el-button @click="showForm">{{$t('__edit')+$t('__pwd')}}</el-button>
+      <el-button @click="clearSearchSettings">{{$t('__clearSearchSettings')}}</el-button>
     </el-button-group>
     <new-form
         v-if="dialogShowUpdatePassword"
@@ -46,6 +47,15 @@ export default {
     },
     dialogSave: function () {
       this.dialogShowUpdatePassword = false
+    },
+    // 清除搜尋相關的localstorage
+    clearSearchSettings: function () {
+      for (let key in localStorage) {
+        if (key.indexOf('searchHistory:') >= 0) {
+          localStorage.removeItem(key)
+        }
+      }
+      this.$alert(this.$t('__clearSearchSettings') + '： OK')
     }
   }
 }

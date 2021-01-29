@@ -224,6 +224,7 @@ export default {
   __before: '之前',
   __now: '現在',
   __after: '之後',
+  __clearSearchSettings: '清除搜尋設定',
   // 請在上方新增字串
   // 以下為 警告
   __warning: '警告',
