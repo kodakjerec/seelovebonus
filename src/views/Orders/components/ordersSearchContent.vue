@@ -34,6 +34,7 @@
           </el-form-item>
         </el-col>
       </el-form-item>
+      <slot name="body"></slot>
     </el-form>
   </el-dialog>
 </template>

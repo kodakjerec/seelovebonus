@@ -221,6 +221,9 @@ export default {
   __anzaInherit: 'Inherit',
   __anzaOldOrderID: '安座舊有契約編號',
   __chanyunOrderID: '展雲-契約單號',
+  __before: 'Before',
+  __now: 'Now',
+  __after: 'After',
   // 請在上方新增字串
   // 以下為 警告
   __warning: 'Warning',

@@ -7,7 +7,7 @@
         :status="item.SignResult===1?'success':'error'">
         <h4 slot="title">
           {{item.SignResult===1?$t('__signOffAgree'):$t('__signOffDeny')}}<br/>
-          {{ $t('__status') + ': ' + item.Value}}
+          {{ $t('__before')+$t('__status') + ': ' + item.Value}}<br/>{{$t('__memo') + ': ' + item.Memo}}
         </h4>
         <h2 slot="description">
           {{ $t('__operator') + ': ' + item.ID +' '+ item.Name}}<br/>

@@ -18,13 +18,13 @@
         </div>
       </div>
       <div>
-        <el-button type="success" v-if="item.alarmRenew" class="caption">{{$t('__anzaRenew')}}</el-button>
+        <el-button type="info" v-if="item.alarmRenew" class="caption">{{$t('__anzaRenew')}}</el-button>
         <div v-for="(row, keyIndex) in item.alarmRenew" :key="keyIndex" class="text">
           {{row.AnzaOrderID}}
         </div>
       </div>
       <div>
-        <el-button type="success" v-if="item.alarmExtend" class="caption">{{$t('__anzaExtend')}}</el-button>
+        <el-button type="info" v-if="item.alarmExtend" class="caption">{{$t('__anzaExtend')}}</el-button>
         <div v-for="(row, keyIndex) in item.alarmExtend" :key="keyIndex" class="text">
           {{row.AnzaOrderID}}
         </div>

@@ -24,12 +24,12 @@
             <div>{{scope.row.ProjectName}}</div>
             <el-button-group>
               <el-button
-                v-if="buttonsShowUser.edit && scope.row.FlagReNew === 1"
-                size="mini" type="success"
+                v-if="buttonsShowUser.edit && scope.row.FlagRenew === 1"
+                size="mini" type="info"
                 @click.native.stop="operateRenew(scope.$index, scope.row, 'anzaRenew')">{{$t('__anzaRenew')}}</el-button>
               <el-button
                 v-if="buttonsShowUser.edit && scope.row.FlagExtend === 1"
-                size="mini" type="success"
+                size="mini" type="info"
                 @click.native.stop="operateRenew(scope.$index, scope.row, 'anzaExtend')">{{$t('__anzaExtend')}}</el-button>
               <el-button
                 v-if="buttonsShowUser.edit && scope.row.FlagTransfer === 1"
@@ -141,7 +141,16 @@
     <orders-search-content
       :dialogShow="dialogShowSearchContent"
       :fromContent="searchContent"
-      @dialog-save="dialogShowSearchContentSave"></orders-search-content>
+      @dialog-save="dialogShowSearchContentSave">
+      <template slot="body">
+        <el-divider>{{$t('__orderID')+$t('__function')}}</el-divider>
+        <el-checkbox-group v-model="searchContent.selectedButton">
+          <el-checkbox key="FlagRenew" label="FlagRenew">{{$t('__anzaRenew')}}</el-checkbox>
+          <el-checkbox key="FlagExtend" label="FlagExtend">{{$t('__anzaExtend')}}</el-checkbox>
+          <el-checkbox key="FlagTransfer" label="FlagTransfer">{{$t('__anzaTransfer')}}</el-checkbox>
+        </el-checkbox-group>
+      </template>
+    </orders-search-content>
   </div>
 </template>
 
@@ -173,7 +182,9 @@ export default {
         selectedOrdersType: [],
         selectedStatusType: [],
         StartDate: new Date(),
-        EndDate: new Date()
+        EndDate: new Date(),
+        // 安座單特製
+        selectedButton: []
       },
       tableHeight: (screen.height * 7 / 9), // Table高度
       pagination: { // 分頁
@@ -240,24 +251,17 @@ export default {
     // 讀入系統清單
     preLoading: async function () {
       // 顯示專用
-      let response = await this.$api.orders.ordersShowGroup()
+      let response = await this.$api.orders.anzaShowGroup()
       let filterSettings = response.data.result
       // 帶入數值
       this.searchContent.OrdersType = filterSettings.OrdersType
       this.searchContent.StatusType = filterSettings.StatusType
 
-      if (localStorage.getItem('searchHistory:' + this.$route.name) === null) {
-        // 預設全選
-        this.searchContent.OrdersType.forEach(item => {
-          this.searchContent.selectedOrdersType.push(item.Prefix)
-        })
-        this.searchContent.StatusType.forEach(item => {
-          this.searchContent.selectedStatusType.push(item.Status)
-        })
-      } else {
+      if (localStorage.getItem('searchHistory:' + this.$route.name) !== null) {
         let oldSearchContent = JSON.parse(localStorage.getItem('searchHistory:' + this.$route.name))
         this.searchContent.selectedOrdersType = oldSearchContent.selectedOrdersType
         this.searchContent.selectedStatusType = oldSearchContent.selectedStatusType
+        this.searchContent.selectedButton = oldSearchContent.selectedButton
       }
 
       this.search()
@@ -289,10 +293,17 @@ export default {
       if (value !== undefined) {
         this.searchContent.searchKeyWord = value
       }
+      // 精簡查詢內容
+      let passSearchContent = JSON.parse(JSON.stringify(this.searchContent))
+      delete passSearchContent.OrdersType
+      delete passSearchContent.StatusType
+      let passSortable = JSON.parse(JSON.stringify(this.sortable))
+      delete passSortable.orderByList
+
       let response2 = await this.$api.orders.anzaOrderShow2({
-        searchContent: JSON.stringify(this.searchContent),
+        searchContent: JSON.stringify(passSearchContent),
         pagination: JSON.stringify(this.pagination),
-        sortable: JSON.stringify(this.sortable),
+        sortable: JSON.stringify(passSortable),
         ID: this.$store.state.userID })
       this.originData = response2.data.result
 
@@ -324,6 +335,7 @@ export default {
     reOrder: function (searchButtonResult) {
       this.sortable.orderBy = searchButtonResult.orderBy
       this.sortable.orderByValue = searchButtonResult.orderByValue
+      this.search()
     },
     // ===== 分頁相關 =====
     handleSizeChange: function (val) {

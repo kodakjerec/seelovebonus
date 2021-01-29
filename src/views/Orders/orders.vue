@@ -313,10 +313,17 @@ export default {
       if (value !== undefined) {
         this.searchContent.searchKeyWord = value
       }
+      // 精簡查詢內容
+      let passSearchContent = JSON.parse(JSON.stringify(this.searchContent))
+      delete passSearchContent.OrdersType
+      delete passSearchContent.StatusType
+      let passSortable = JSON.parse(JSON.stringify(this.sortable))
+      delete passSortable.orderByList
+
       let response2 = await this.$api.orders.ordersShow({
-        searchContent: JSON.stringify(this.searchContent),
+        searchContent: JSON.stringify(passSearchContent),
         pagination: JSON.stringify(this.pagination),
-        sortable: JSON.stringify(this.sortable),
+        sortable: JSON.stringify(passSortable),
         ID: this.$store.state.userID })
       this.originData = response2.data.result
 

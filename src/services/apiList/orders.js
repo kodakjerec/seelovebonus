@@ -2,6 +2,7 @@ import { post } from '@/services/utils'
 
 export default {
   orders: {
+    // Order
     ordersShowGroup: () => {
       let rawData = {}
       return post('/orders/ordersShowGroup', rawData).then(data => {
@@ -44,6 +45,7 @@ export default {
         return data
       })
     },
+    // Order Customer
     orderCustomerNew: ({ form }) => {
       let rawData = { form }
       return post('/orders/orderCustomerNew', rawData).then(data => {
@@ -58,6 +60,7 @@ export default {
         return data
       })
     },
+    // Order Detail
     orderDetailNew: ({ form }) => {
       let rawData = { form }
       return post('/orders/orderDetailNew', rawData).then(data => {
@@ -79,6 +82,8 @@ export default {
         return data
       })
     },
+    // Certificate1
+    // Certificate2
     certificate1Show: ({ keyword }) => {
       let rawData = { keyword }
       return post('/orders/certificate1Show', rawData).then(data => {
@@ -136,6 +141,7 @@ export default {
         return data
       })
     },
+    // Collection Records
     collectionRecordsNew: ({ form }) => {
       let rawData = { form }
       return post('/orders/collectionRecordsNew', rawData).then(data => {
@@ -164,6 +170,7 @@ export default {
         return data
       })
     },
+    // Invoice
     invoiceShow: ({ keyword }) => {
       let rawData = { keyword }
       return post('/orders/invoiceShow', rawData).then(data => {
@@ -199,6 +206,7 @@ export default {
         return data
       })
     },
+    // Invoice Detail
     invoiceDetailNew: ({ form }) => {
       let rawData = { form }
       return post('/orders/invoiceDetailNew', rawData).then(data => {
@@ -206,6 +214,7 @@ export default {
         return data
       })
     },
+    // Order Functions
     orderFunctionsUpdate: ({ form }) => {
       let rawData = { form }
       return post('/orders/orderFunctionsUpdate', rawData).then(data => {
@@ -213,6 +222,7 @@ export default {
         return data
       })
     },
+    // Order Detail Functions
     orderDetailFunctionsUpdate: ({ form }) => {
       let rawData = { form }
       return post('/orders/orderDetailFunctionsUpdate', rawData).then(data => {
@@ -227,10 +237,19 @@ export default {
         return data
       })
     },
+    // fK Order
     fKOrdersShow: ({ searchContent, pagination, sortable, ID }) => {
       let rawData = { searchContent, pagination, sortable, ID }
       return post('/orders/fKOrdersShow', rawData).then(data => {
         console.log(`%c <<< Response(/rest/orders/fKOrdersShow)⤵ `, 'background-color: #E0455D; color: white; font-size: 14px; font-weight: bold;', data)
+        return data
+      })
+    },
+    // Anza Order
+    anzaShowGroup: () => {
+      let rawData = {}
+      return post('/orders/anzaShowGroup', rawData).then(data => {
+        console.log(`%c <<< Response(/rest/orders/anzaShowGroup)⤵ `, 'background-color: #E0455D; color: white; font-size: 14px; font-weight: bold;', data)
         return data
       })
     },
@@ -269,6 +288,7 @@ export default {
         return data
       })
     },
+    // Order Installment
     installmentDetailShow: ({ keyword }) => {
       let rawData = { keyword }
       return post('/orders/installmentDetailShow', rawData).then(data => {
@@ -290,6 +310,7 @@ export default {
         return data
       })
     },
+    // Others
     getDropdownList: ({ type, keyword }) => {
       let rawData = { type, keyword }
       console.log('%c >>> getDropdownList: ', 'background-color: blue; color: white; font-size: 14px; font-weight: bold;', rawData)

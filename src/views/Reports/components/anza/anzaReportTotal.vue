@@ -63,7 +63,8 @@ export default {
         EndDate: null,
         StartID: '',
         EndID: '',
-        keyword: ''
+        keyword: '',
+        selectedButton: []
       },
       reportPath: 'reports_anza_Total',
       reportParams: {},
