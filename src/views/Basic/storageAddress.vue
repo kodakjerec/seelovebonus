@@ -1,15 +1,46 @@
 <template>
   <el-form>
+    <el-button-group class="defineCSS_ButtonGroup">
+      <el-form-item :label="$t('__building') + '-' + $t('__floor') + '-' + $t('__area')">
+        <!-- Building -->
+        <el-col :span="6">
+          <el-select v-model="searchContent.Building" value-key="value" :placeholder="$t('__plzChoice')" @change="ddlBuildingChange">
+            <el-option v-for="item in ddlBuilding" :key="item.ID" :label="item.Value" :value="item.ID">
+              <span style="float: left">{{ item.Value }}</span>
+              <span style="float: right; color: #8492a6; font-size: 13px">{{ item.ID }}</span>
+            </el-option>
+          </el-select>
+        </el-col>
+        <!-- Floor -->
+        <el-col :span="6">
+          <el-select v-model="searchContent.Floor" value-key="value" :placeholder="$t('__plzChoice')" @change="ddlFloorChange">
+            <el-option v-for="item in ddlFloor" :key="item.ID" :label="item.Value" :value="item.ID">
+              <span style="float: left">{{ item.Value }}</span>
+              <span style="float: right; color: #8492a6; font-size: 13px">{{ item.ID }}</span>
+            </el-option>
+          </el-select>
+        </el-col>
+        <!-- Area -->
+        <el-col :span="6">
+          <el-select v-model="searchContent.Area" value-key="value" :placeholder="$t('__plzChoice')" @change="ddlAreaChange">
+            <el-option v-for="item in ddlArea" :key="item.ID" :label="item.Value" :value="item.ID">
+              <span style="float: left">{{ item.Value }}</span>
+              <span style="float: right; color: #8492a6; font-size: 13px">{{ item.ID }}</span>
+            </el-option>
+          </el-select>
+        </el-col>
+      </el-form-item>
+    </el-button-group>
     <el-button-group style="padding-bottom: 5px">
       <el-button v-show="buttonsShowUser.new" type="primary" icon="el-icon-plus" @click.prevent="showForm('new')">{{$t('__new')}}</el-button>
       <search-button @search="search"></search-button>
     </el-button-group>
     <el-table
-      :data="storageAddressShow"
+      :data="originData"
       stripe
       border
+      :height="tableHeight"
       @row-click="handleClick"
-      :row-class-name="tableRowClassName"
       style="width: 100%">
       <el-table-column
         prop="ID"
@@ -49,6 +80,19 @@
         :label="$t('__memo')">
       </el-table-column>
     </el-table>
+    <!-- 分頁 -->
+    <el-pagination
+      background
+      v-if="originData.length>0"
+      @size-change="handleSizeChange"
+      @current-change="handleCurrentChange"
+      :current-page="pagination.currentPage"
+      :page-sizes="pagination.pageSizeList"
+      :page-size="pagination.pageSize"
+      layout="total, sizes, prev, pager, next, jumper"
+      :total="pagination.totalCount">
+    </el-pagination>
+    <!-- 小視窗 -->
     <new-form
     v-if="dialogShow"
     :dialog-type="dialogType"
@@ -74,9 +118,22 @@ export default {
     return {
       dialogType: 'new',
       dialogShow: false,
-      storageAddressShow: [],
+      originData: [],
       storageAddress: {},
-      searchKeyWord: '',
+      searchContent: {
+        searchKeyWord: '',
+        Building: '',
+        Floor: '',
+        Area: ''
+      },
+      tableHeight: (screen.height * 7 / 9), // Table高度
+      pagination: { // 分頁
+        currentPage: 1,
+        pageSize: 50,
+        pageSizeList: [20, 30, 50],
+        totalPage: 1,
+        totalCount: 20
+      },
       // 使用者能看到的權限
       buttonsShowUser: {
         new: 1,
@@ -84,7 +141,13 @@ export default {
         save: 1,
         delete: 1,
         search: 1
-      }
+      },
+      // 下拉式選單
+      ddlBuilding: [],
+      ddlFloorOrigin: [],
+      ddlFloor: [],
+      ddlAreaOrigin: [],
+      ddlArea: []
     }
   },
   mounted () {
@@ -94,7 +157,21 @@ export default {
   methods: {
     // 讀入系統清單
     preLoading: async function () {
-      this.search('')
+      let response = null
+      response = await this.$api.basic.getDropdownList({ type: 'building' })
+      this.ddlBuilding = response.data.result
+      response = await this.$api.basic.getDropdownList({ type: 'floor' })
+      this.ddlFloorOrigin = response.data.result
+      response = await this.$api.basic.getDropdownList({ type: 'area' })
+      this.ddlAreaOrigin = response.data.result
+
+      // 帶入預設數值
+      if (this.ddlBuilding.length > 0) {
+        this.searchContent.Building = this.ddlBuilding[0].ID
+        this.ddlBuildingChange()
+      } else {
+        this.search()
+      }
     },
     // 使用者權限
     userPermission: async function () {
@@ -103,12 +180,6 @@ export default {
       this.buttonsShowUser.edit = progPermission.fun2
       this.buttonsShowUser.save = progPermission.fun2
       this.buttonsShowUser.delete = progPermission.fun3
-    },
-    // table 變更顏色
-    tableRowClassName ({ row, rowIndex }) {
-      if (row['Status'] === '0') {
-        return 'disabled-row'
-      }
     },
     handleClick: async function (row, column, event) {
       // 取得可以用的選單
@@ -139,10 +210,73 @@ export default {
     },
     // 搜尋
     search: async function (value) {
-      this.searchKeyWord = value
-      let response2 = await this.$api.basic.storageAddressShow({ keyword: this.searchKeyWord })
-      this.storageAddressShow = response2.data.result
+      if (value !== undefined) {
+        this.searchContent.searchKeyWord = value
+      }
+      let response2 = await this.$api.basic.storageAddressShow({
+        searchContent: JSON.stringify(this.searchContent),
+        pagination: JSON.stringify(this.pagination)
+      })
+      this.originData = response2.data.result
+
+      // 儲存內容
+      localStorage.setItem('searchHistory:' + this.$route.name, JSON.stringify(this.searchContent))
+
+      if (this.originData.length > 0) {
+        // 分頁篩選
+        let fromPagination = JSON.parse(this.originData[0].pagination)[0]
+        this.pagination.totalCount = fromPagination.totalCount
+        this.pagination.totalPage = fromPagination.totalPage
+        this.pagination.currentPage = fromPagination.currentPage
+        this.savePaginationData()
+      } else {
+        this.pagination.totalCount = 0
+        this.pagination.totalPage = 0
+        this.pagination.currentPage = 1
+        this.savePaginationData()
+      }
+    },
+    // ===== 分頁相關 =====
+    handleSizeChange: function (val) {
+      this.pagination.pageSize = val
+      this.savePaginationData()
+      this.search()
+    },
+    handleCurrentChange: function (val) {
+      this.pagination.currentPage = val
+      this.savePaginationData()
+      this.search()
+    },
+    savePaginationData: function () {
+      // 儲存內容
+      localStorage.setItem('paginationHistory:' + this.$route.name, JSON.stringify(this.pagination))
+    },
+    // ===== 下拉是選單 =====
+    ddlBuildingChange: function () {
+      this.ddlFloor = this.ddlFloorOrigin.filter(item => { return item.ParentID === this.searchContent.Building })
+      this.searchContent.Floor = ''
+      if (this.ddlFloor.length > 0) {
+        this.searchContent.Floor = this.ddlFloor[0].ID
+      }
+      this.ddlFloorChange()
+    },
+    ddlFloorChange: function () {
+      this.ddlArea = this.ddlAreaOrigin.filter(item => { return item.ParentID === this.searchContent.Floor })
+      this.searchContent.Area = ''
+      if (this.ddlArea.length > 0) {
+        this.searchContent.Area = this.ddlArea[0].ID
+      }
+      this.ddlAreaChange()
+    },
+    ddlAreaChange: function () {
+      this.search()
     }
   }
 }
 </script>
+<style lang="scss" scoped>
+.defineCSS_ButtonGroup {
+  position: absolute;
+  left:10px;
+}
+</style>

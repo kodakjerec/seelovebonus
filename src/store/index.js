@@ -108,5 +108,17 @@ export default new Vuex.Store({
   },
   modules: {
   },
-  plugins: [createPersistedState()]
+  plugins: [createPersistedState({
+    reducer: state => {
+      return {
+        token: state.token,
+        isLogin: state.isLogin,
+        userID: state.userID,
+        userName: state.userName,
+        menuList: state.menuList,
+        userProg: state.userProg,
+        version: state.version
+      }
+    }
+  })]
 })

@@ -37,8 +37,8 @@ export default {
         return data
       })
     },
-    stockNowShow: ({ keyword }) => {
-      let rawData = { keyword }
+    stockNowShow: ({ searchContent, pagination }) => {
+      let rawData = { searchContent, pagination }
       return post('/stock/stockNowShow', rawData).then(data => {
         console.log(`%c <<< Response(/rest/stock/stockNowShow)⤵ `, 'background-color: #E0455D; color: white; font-size: 14px; font-weight: bold;', data)
         return data

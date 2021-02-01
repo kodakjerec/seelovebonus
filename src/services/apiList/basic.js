@@ -247,8 +247,8 @@ export default {
         return data
       })
     },
-    storageAddressShow: ({ keyword }) => {
-      let rawData = { keyword }
+    storageAddressShow: ({ searchContent, pagination }) => {
+      let rawData = { searchContent, pagination }
       return post('/basic/storageAddressShow', rawData).then(data => {
         console.log(`%c <<< Response(/rest/basic/storageAddressShow)⤵ `, 'background-color: #E0455D; color: white; font-size: 14px; font-weight: bold;', data)
         return data
