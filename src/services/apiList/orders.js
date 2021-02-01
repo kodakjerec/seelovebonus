@@ -274,8 +274,8 @@ export default {
         return data
       })
     },
-    anzaOperate: ({ keyword }) => {
-      let rawData = { keyword }
+    anzaOperate: ({ form }) => {
+      let rawData = { form }
       return post('/orders/anzaOperate', rawData).then(data => {
         console.log(`%c <<< Response(/rest/orders/anzaOperate)⤵ `, 'background-color: #E0455D; color: white; font-size: 14px; font-weight: bold;', data)
         return data

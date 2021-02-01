@@ -50,14 +50,19 @@
             </div>
           </template>
         </el-table-column>
+        <!-- 安座作業 -->
         <el-table-column
-          width="100px">
+          width="150px">
           <template slot="header">
             <el-button
             type="text"
             size="mini" @click.prevent="openSignOffManual">{{$t('__anzaOperation')}}</el-button>
           </template>
           <template slot-scope="scope">
+            <el-button
+              v-if="buttonsShowUser.edit && scope.row.canAnza === 1"
+              size="mini"
+              @click.native.stop="operateModify(scope.$index, scope.row)">{{$t('__edit')}}</el-button>
             <el-button
               v-if="buttonsShowUser.edit && scope.row.canAnza === 1"
               size="mini" type="primary"
@@ -399,6 +404,12 @@ export default {
       })
     },
     // ===== 安座單 =====
+    // 開啟 修改作業
+    operateModify: function (index, row) {
+      this.anzaOrder = row
+      this.operateType = 'modify'
+      this.dialogShowAnza = true
+    },
     // 開啟 安座作業
     operateAnza: function (index, row) {
       this.anzaOrder = row

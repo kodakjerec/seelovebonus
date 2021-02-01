@@ -2,7 +2,17 @@
   <el-dialog :title="myTitle" :visible="dialogShow" center width="80vw" @close="cancel">
     <el-form ref="form" :model="anzaOrder" :rules="rules" label-width="10vw" label-position="right">
     <h2>{{$t('__anzaOrder')+'：'}}{{fromAnzaOrder.AnzaOrderID}}</h2>
-      <el-form-item :label="$t('__anzaStorageID')" prop="StorageID">
+      <!-- 安座人 -->
+      <el-form-item :label="$t('__anzaCustomer')" prop="CustomerID">
+        <el-select v-model="anzaOrder.CustomerID" filterable value-key="value" :placeholder="$t('__plzChoice')" :disabled="disableForm.CustomerID">
+          <el-option v-for="item in ddlCustomer" :key="item.ID" :label="item.ID+' '+item.Value" :value="item.ID">
+            <span style="float: left">{{ item.Value }}</span>
+            <span style="float: right; color: #8492a6; font-size: 13px">{{ item.ID }}</span>
+          </el-option>
+        </el-select>
+      </el-form-item>
+      <!-- 儲位 -->
+      <el-form-item :label="$t('__anzaStorageID')" prop="StorageID" v-if="!disableForm.StorageID">
         <el-col :span="8">
           <el-select
             allow-create
@@ -21,6 +31,7 @@
         </el-col>
         {{$t('__anzaOperateWarning')}}
       </el-form-item>
+      <!-- 安座日期 -->
       <el-form-item :label="$t('__real') + $t('__anza') + $t('__date')" prop="RealDate" v-if="operateType==='anza'">
         <el-date-picker
           v-model="anzaOrder.RealDate"
@@ -28,6 +39,7 @@
           value-format="yyyy-MM-dd">
         </el-date-picker>
       </el-form-item>
+      <!-- 圓滿日期 -->
       <el-form-item :label="$t('__yuanman') + $t('__date')" prop="CompleteDate" v-if="operateType==='complete'">
         <el-date-picker
           v-model="anzaOrder.CompleteDate"
@@ -78,11 +90,15 @@ export default {
     }
     return {
       anzaOrder: {
+        type: '',
+        AnzaOrderID: '',
+        CustomerID: '',
         StorageID: '',
         RealDate: '',
         CompleteDate: ''
       },
       disableForm: {
+        CustomerID: false,
         StorageID: false
       },
       rules: {
@@ -92,22 +108,35 @@ export default {
       },
       myTitle: '',
       // 下拉是選單
+      ddlCustomer: [],
       ddlStorageID: []
     }
   },
   mounted () {
+    this.anzaOrder.type = this.operateType
+    this.anzaOrder.AnzaOrderID = this.fromAnzaOrder.AnzaOrderID
+    this.anzaOrder.CustomerID = this.fromAnzaOrder.CustomerID
+    this.anzaOrder.StorageID = this.fromAnzaOrder.StorageID
+    this.anzaOrder.RealDate = this.fromAnzaOrder.RealDate
+    this.anzaOrder.CompleteDate = this.fromAnzaOrder.CompleteDate
+
     switch (this.operateType) {
+      case 'modify':
+        this.myTitle = this.$t('__edit') + this.$t('__anza')
+        this.disableForm.StorageID = true
+        break
       case 'anza':
         this.myTitle = this.$t('__anzaOperation')
+        this.disableForm.CustomerID = true
+        this.anzaOrder.RealDate = new Date()
         break
       case 'complete':
-        this.disableForm.StorageID = true
         this.myTitle = this.$t('__yuanman')
+        this.disableForm.CustomerID = true
+        this.disableForm.StorageID = true
+        this.anzaOrder.CompleteDate = new Date()
         break
     }
-    this.anzaOrder.StorageID = this.fromAnzaOrder.StorageID
-    this.anzaOrder.RealDate = new Date()
-    this.anzaOrder.CompleteDate = new Date()
     this.preLoading()
   },
   methods: {
@@ -120,6 +149,9 @@ export default {
         Qty: 1
       })
       this.ddlStorageID = response2.data.result
+
+      let response4 = await this.$api.orders.getDropdownList({ type: 'customer' })
+      this.ddlCustomer = response4.data.result
     },
     // 檢查輸入正確性
     checkStorageID: function (event) {
@@ -139,17 +171,7 @@ export default {
       })
     },
     save: async function () {
-      let form = {
-        type: this.operateType,
-        OrderID: this.fromAnzaOrder.OrderID,
-        AnzaOrderID: this.fromAnzaOrder.AnzaOrderID,
-        StorageID: this.anzaOrder.StorageID,
-        ScheduledDate: this.fromAnzaOrder.ScheduledDate,
-        RealDate: this.anzaOrder.RealDate,
-        CompleteDate: this.anzaOrder.CompleteDate,
-        ProductID: this.fromAnzaOrder.ProductID
-      }
-      let response2 = await this.$api.orders.anzaOperate({ keyword: JSON.stringify(form) })
+      let response2 = await this.$api.orders.anzaOperate({ form: this.anzaOrder })
       if (response2.headers['code'] === '200') {
         this.$message({
           message: response2.data.result[0].message,
