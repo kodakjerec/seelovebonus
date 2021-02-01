@@ -48,6 +48,7 @@ export default {
   __version: '版本',
   __operate: '操作',
   __groupName: '群組名稱',
+  __systemSettingsVIP: '系統選項!危險',
   __systemSettingsCategory: '分類',
   __systemSettingsParentCategory: '父階層分類',
   __systemSettingsParentID: '父階層代號',

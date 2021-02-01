@@ -2,9 +2,10 @@
   <el-form>
     <el-form-item>
       <el-button-group class="defineCSS_ButtonGroup">
-        <el-button icon="el-icon-setting" @click.prevent="showFormSettingsType('new')">{{$t('__systemSettingsSettingsType')}}</el-button>
+        <el-checkbox v-model="form.Danger" :true-label="1" :false-label="0" @change="preLoading" border>{{$t('__systemSettingsVIP')}}</el-checkbox>
+        <el-button v-if="form.Danger" icon="el-icon-setting" @click.prevent="showFormSettingsType('new')">{{$t('__systemSettingsSettingsType')}}</el-button>
       </el-button-group>
-      <el-button-group>
+      <el-button-group style="padding-bottom: 5px">
         <el-button type="primary" icon="el-icon-plus" @click.prevent="showForm('new')">{{$t('__new')}}</el-button>
       </el-button-group>
     </el-form-item>
@@ -86,7 +87,8 @@ export default {
     return {
       form: {
         category: 'Country',
-        language: 2
+        language: 2,
+        Danger: 0
       },
       dialogType: 'new',
       dialogShow: false,
@@ -102,10 +104,6 @@ export default {
   },
   async mounted () {
     await this.preLoading()
-
-    this.form.category = this.ddlCategory[0].ID
-    this.form.language = this.ddlLanguages[1].ID
-
     this.selectChange()
   },
   methods: {
@@ -114,8 +112,11 @@ export default {
       let response = await this.$api.settings.getDropdownList({ type: 'systemSettings' })
       this.settingsOrigin = response.data.result
 
-      let response2 = await this.$api.settings.getDropdownList({ type: 'settingsType' })
+      let response2 = await this.$api.settings.getDropdownList({ type: 'settingsType', keyword: this.form.Danger })
       this.ddlCategory = response2.data.result
+
+      this.form.category = this.ddlCategory[0].ID
+      this.form.language = this.ddlLanguages[1].ID
     },
     // 篩選
     selectChange: function () {

@@ -48,6 +48,7 @@ export default {
   __refEmployeeID: 'Employee ID',
   __operate: 'Operate',
   __groupName: 'Group Name',
+  __systemSettingsVIP: 'System Options!Danger!',
   __systemSettingsCategory: 'Category',
   __systemSettingsParentCategory: 'ParentCategory',
   __systemSettingsParentID: 'ParentID',
