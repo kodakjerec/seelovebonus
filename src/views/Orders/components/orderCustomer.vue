@@ -1,6 +1,6 @@
 <template>
   <el-form ref="form" :model="form" :rules="rules" label-width="10vw" label-position="right">
-    <h2 style="text-align:left">{{$t('__orderCustomer')+$t('__data')}}<span v-if="form.Memo">{{'('+form.Memo+')'}}</span></h2>
+    <h2 style="text-align:left">{{$t('__orderCustomer')+$t('__data')}}<span v-if="form.ModifyType">{{'('+form.ModifyType+')'}}</span></h2>
     <!-- 有法定代理人資料, 要顯示 -->
     <template v-if="showAgentData">
       <el-form-item :label="$t('__orderCustomer')+$t('__name')" prop="CustomerID">
@@ -143,7 +143,7 @@ export default {
         refKind: null,
         Referrer: null,
         EmployeeID: null,
-        Memo: '',
+        ModifyType: '',
         CompanyID: null,
         // 顯示用, 不存入資料庫
         Status: ''
@@ -155,7 +155,7 @@ export default {
         CustomerID: false
       },
       showAgentData: true, // 顯示代理人資訊
-      fromMemo: '',
+      fromModifyType: '',
       // 以下為下拉式選單專用
       postData: [],
       ddlCountry: [],
@@ -245,7 +245,7 @@ export default {
       this.form.refKind = row.refKind
       this.form.Referrer = row.Referrer
       this.form.EmployeeID = row.EmployeeID
-      this.form.Memo = row.Memo
+      this.form.ModifyType = row.ModifyType
       this.form.Status = ''
 
       // 是否顯示代理人區域
@@ -283,7 +283,7 @@ export default {
           refKind: null,
           Referrer: null,
           EmployeeID: null,
-          Memo: '',
+          ModifyType: '',
           CompanyID: null,
           // 顯示用, 不存入資料庫
           Status: ''
@@ -308,7 +308,7 @@ export default {
       this.form.Referrer = row.Referrer
       this.form.EmployeeID = row.EmployeeID
       this.form.CompanyID = row.CompanyID
-      this.form.Memo = this.fromMemo
+      this.form.ModifyType = this.fromModifyType
 
       if (this.dialogType === 'new') {
         this.form.Status = 'New'
@@ -388,9 +388,9 @@ export default {
           this.form.CustomerID = fromObject
           this.ddlCustomerChange()
           break
-        case 'Memo':
-          this.fromMemo = fromObject
-          this.form.Memo = fromObject
+        case 'ModifyType':
+          this.fromModifyType = fromObject
+          this.form.ModifyType = fromObject
           break
       }
     },

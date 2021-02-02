@@ -55,7 +55,7 @@
           </template>
         </el-table-column>
         <el-table-column
-          prop="Memo"
+          prop="ModifyType"
           :label="$t('__memo')">
         </el-table-column>
       </el-table>
@@ -150,7 +150,7 @@ export default {
         ExpirationDate: null,
         Status: '1',
         ProductID: '',
-        Memo: '',
+        ModifyType: '',
         // 顯示用
         qty: 1
       },
@@ -161,7 +161,7 @@ export default {
       subListDeleted: [],
       isExceedQtyLimit: false,
       fromType: null,
-      fromMemo: '',
+      fromModifyType: '',
       // 下拉式選單
       ddlCustomer: []
     }
@@ -301,14 +301,23 @@ export default {
               break
           }
           break
-        case 'Memo':
-          this.fromMemo = fromObject
-          this.form.Memo = fromObject
+        case 'ModifyType':
+          this.fromModifyType = fromObject
+          this.form.ModifyType = fromObject
           break
       }
     },
     // 重新計算日期
     reCalDate: function (waitForReplaceList) {
+      // 檢查錯誤
+      if (!waitForReplaceList) {
+        return
+      } else {
+        if (Array.isArray(waitForReplaceList) && waitForReplaceList.length === 0) {
+          return
+        }
+      }
+
       // 設定開始日
       let start = new Date(this.parentOrderDate)
 
@@ -403,7 +412,7 @@ export default {
         newObj.ExpirationDate = specialRow.ExpirationDate
         newObj.Status = specialRow.Status
         newObj.ProductID = specialRow.ProductID
-        newObj.Memo = this.form.Memo
+        newObj.ModifyType = this.form.ModifyType
         newObj.qty = 1
       } else {
         newObj.OrderID = this.orderID

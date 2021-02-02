@@ -15,7 +15,7 @@
         <el-table-column prop="CompleteDate" :label="$t('__yuanman')+$t('__anza')+$t('__date')" :formatter="formatterDate"></el-table-column>
         <el-table-column prop="Status" :label="$t('__status')"></el-table-column>
         <el-table-column prop="ModifyDate" :label="'Modify'+$t('__date')" :formatter="formatterDate"></el-table-column>
-        <el-table-column prop="Memo" :label="$t('__memo')"></el-table-column>
+        <el-table-column prop="ModifyType" :label="$t('__modifyType')"></el-table-column>
 
       </el-table>
     </el-form>

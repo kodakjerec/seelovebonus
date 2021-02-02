@@ -46,7 +46,7 @@
           width="130px">
           <template slot-scope="scope">
           <div v-for="item in scope.row.OrderIDList" :key="item.OrderID">
-              {{item.OrderID}}<template v-if="item.Memo!==''">{{'('+item.Memo+')'}}</template>
+              {{item.OrderID}}<template v-if="item.ModifyType!==''">{{'('+item.ModifyType+')'}}</template>
             </div>
           </template>
         </el-table-column>

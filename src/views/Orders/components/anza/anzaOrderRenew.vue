@@ -669,19 +669,19 @@ export default {
       switch (fromType) {
         case 'anzaRenew':
           this.myTitle = this.$t('__anzaRenew') + this.$t('__anzaOrder')
-          this.$refs['anzaOrderNew'].parentAssginData('Memo', this.$t('__anzaRenew'))
+          this.$refs['anzaOrderNew'].parentAssginData('ModifyType', this.$t('__anzaRenew'))
           break
         case 'anzaExtend':
           this.myTitle = this.$t('__anzaExtend') + this.$t('__anzaOrder')
-          this.$refs['anzaOrderNew'].parentAssginData('Memo', this.$t('__anzaExtend'))
+          this.$refs['anzaOrderNew'].parentAssginData('ModifyType', this.$t('__anzaExtend'))
           break
         case 'anzaTransfer':
           this.myTitle = this.$t('__anzaTransfer') + this.$t('__anzaOrder')
-          this.$refs['anzaOrderNew'].parentAssginData('Memo', this.$t('__anzaTransfer'))
+          this.$refs['anzaOrderNew'].parentAssginData('ModifyType', this.$t('__anzaTransfer'))
           break
         case 'anzaInherit':
           this.myTitle = this.$t('__anzaInherit') + this.$t('__anzaOrder')
-          this.$refs['anzaOrderNew'].parentAssginData('Memo', this.$t('__anzaInherit'))
+          this.$refs['anzaOrderNew'].parentAssginData('ModifyType', this.$t('__anzaInherit'))
           break
       }
       this.$refs['anzaOrderNew'].parentAssginData('fromType', this.$attrs.fromParams.fromType)
@@ -731,11 +731,11 @@ export default {
             break
           case 'anzaTransfer':
             this.$refs['orderCustomer'].parentAssginData('CustomerID', '')
-            this.$refs['orderCustomer'].parentAssginData('Memo', this.$t('__anzaTransfer'))
+            this.$refs['orderCustomer'].parentAssginData('ModifyType', this.$t('__anzaTransfer'))
             break
           case 'anzaInherit':
             this.$refs['orderCustomer'].parentAssginData('CustomerID', '')
-            this.$refs['orderCustomer'].parentAssginData('Memo', this.$t('__anzaInherit'))
+            this.$refs['orderCustomer'].parentAssginData('ModifyType', this.$t('__anzaInherit'))
             break
         }
 

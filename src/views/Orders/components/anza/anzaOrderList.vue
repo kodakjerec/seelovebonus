@@ -15,7 +15,7 @@
           prop="StatusName"
           :label="this.$t('__status')">
           <template slot-scope="scope">
-            {{scope.row[scope.column.property]}}<br/>{{scope.row.Memo}}
+            {{scope.row[scope.column.property]}}<br/>{{scope.row.ModifyType}}
           </template>
         </el-table-column>
         <el-table-column
