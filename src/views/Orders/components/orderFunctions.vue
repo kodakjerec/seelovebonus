@@ -1,8 +1,8 @@
 <template>
   <el-form ref="form" :model="form" label-width="10vw" label-position="right" class="orderFunctionsCSS">
     <template v-for="item in subList">
-      <el-form-item :key="item.Function" v-if="item.Function==='chanyunOrderID'" :label="$t('__chanyunOrderID')">
-        <el-input v-model="item.Value" :placeholder="$t('__pleaseInput')" :disabled="buttonsShowUser.new === 0" @input="inputChange('chanyunOrderID', scope.row)"></el-input>
+      <el-form-item v-if="item.Function==='chanyunOrderID'" :key="item.Function" :label="$t('__chanyunOrderID')">
+        <el-input v-model="item.Value" :placeholder="$t('__pleaseInput')" :disabled="buttonsShowUser.new === 0" @input="inputChange('chanyunOrderID', item)"></el-input>
       </el-form-item>
       <el-form-item v-if="item.Function==='newAnzaOrder'" :key="item.Function" :label="$t('__anzaOldOrderID')">
         <el-input v-model="item.Value" maxlength="20" show-word-limit disabled></el-input>

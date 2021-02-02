@@ -95,7 +95,7 @@ export default {
   methods: {
     preLoading: async function () {
       if (this.buttonsShowUser.new === 1) {
-        if (this.orderDetail.showChgChanyunCertificate === 1) {
+        if (this.orderDetail.chglandCertificate === 1) {
         // 取得所有原始資料
           let response = await this.$api.orders.getDropdownList({ type: 'certificate2ChgLandCertificate' })
           this.ddlCertificate2 = response.data.result
@@ -128,7 +128,7 @@ export default {
         展雲換狀
       */
       // 新資料
-      if (this.orderDetail.showChgChanyunCertificate === 1) {
+      if (this.orderDetail.chglandCertificate === 1) {
         let index = 0
         let loopMax = (this.orderDetail.Qty - this.subList.length)
         while (index < loopMax) {
@@ -174,7 +174,7 @@ export default {
       /*
         展雲換狀
       */
-      if (this.orderDetail.showChgChanyunCertificate === 1) {
+      if (this.orderDetail.chglandCertificate === 1) {
         isSuccess = true
 
         this.subList.forEach(row => {

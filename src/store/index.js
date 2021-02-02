@@ -13,7 +13,7 @@ export default new Vuex.Store({
     userName: '',
     menuList: [],
     userProg: [],
-    version: '2021.01.29.1',
+    version: '2021.02.02.1',
     loadingCounter: 0,
     isEnableLoadingMask: false
   },

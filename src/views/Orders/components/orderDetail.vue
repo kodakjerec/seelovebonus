@@ -165,7 +165,7 @@ export default {
       },
       subList: [],
       subListDeleted: [],
-      subListExpand: [], // 要展開的明細
+      subListExpand: [], // 要展開的明細(給el-table展開用)
       productFunctionsList: [], // 特殊功能清單(所有商品)
       // 修改模式
       openEditMode: false, // 開啟修改金額模式
@@ -457,6 +457,8 @@ export default {
       this.subListExpand = []
 
       // 開啟專案功能
+      // functionsList 商品有開啟的特殊功能
+      // 比對該商品是否應該開啟特殊功能
       this.functionsList.forEach(MasterItem => {
         this.subList.forEach(item => {
           if (item.ProductID === MasterItem.ProductID) {
