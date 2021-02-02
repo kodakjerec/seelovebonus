@@ -104,7 +104,6 @@ export default {
   },
   async mounted () {
     await this.preLoading()
-    this.selectChange()
   },
   methods: {
     // 讀入系統清單
@@ -117,6 +116,8 @@ export default {
 
       this.form.category = this.ddlCategory[0].ID
       this.form.language = this.ddlLanguages[1].ID
+
+      this.selectChange()
     },
     // 篩選
     selectChange: function () {

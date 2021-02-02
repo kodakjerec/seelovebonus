@@ -43,6 +43,9 @@
       <el-form-item :label="$t('__memo')">
           <el-input type="textarea" v-model="form.Memo" maxlength="200" show-word-limit></el-input>
       </el-form-item>
+      <el-form-item>
+        <el-checkbox v-model="form.Danger" :true-label="1" :false-label="0" @change="preLoading" border disabled>{{$t('__systemSettingsVIP')}}</el-checkbox>
+      </el-form-item>
     </el-form>
     <div slot="footer" class="dialog-footer">
       <el-button v-show="buttonsShow.delete && buttonsShowUser.delete" type="danger" @click="delRecord">{{$t('__delete')}}</el-button>
@@ -72,7 +75,8 @@ export default {
         ID: null,
         Value: null,
         Language: 2,
-        Memo: null
+        Memo: null,
+        Danger: 0
       },
       rules: {
         Category: [{ required: true, message: this.$t('__pleaseInput'), trigger: 'blur' }],
