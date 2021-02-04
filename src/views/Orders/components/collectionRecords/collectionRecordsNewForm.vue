@@ -200,10 +200,10 @@ export default {
 
     switch (this.dialogType) {
       case 'new':
-        this.myTitle = this.$t('__new') + this.$t('__installment')
+        this.myTitle = this.$t('__new') + this.$t('__collectionRecords')
         break
       case 'edit':
-        this.myTitle = this.$t('__edit') + this.$t('__installment')
+        this.myTitle = this.$t('__edit') + this.$t('__collectionRecords')
         this.disableForm.PaymentMethod = true
         this.disableForm.Account = true
         this.disableForm.BankID = true
@@ -373,7 +373,7 @@ export default {
         this.$alert(this.$t('__collectioRecordsDeleteNo') + this.$t('__invoice') + this.$t('__number'), this.$t('__warning'))
         return
       }
-      let answerAction = await messageBoxYesNo(this.$t('__delete') + this.$t('__installment'), this.$t('__delete'))
+      let answerAction = await messageBoxYesNo(this.$t('__delete') + this.$t('__collectionRecords'), this.$t('__delete'))
 
       switch (answerAction) {
         case 'confirm':
