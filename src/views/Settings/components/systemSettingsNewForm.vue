@@ -64,7 +64,8 @@ export default {
     dialogType: { type: String, default: 'new' },
     dialogShow: { type: Boolean, default: false },
     category: { type: String },
-    systemSettings: { type: Object }
+    systemSettings: { type: Object },
+    fromDanger: { type: Number }
   },
   data () {
     return {
@@ -143,7 +144,7 @@ export default {
   methods: {
     // 取得群組清單
     preLoading: async function () {
-      let response2 = await this.$api.settings.getDropdownList({ type: 'settingsType' })
+      let response2 = await this.$api.settings.getDropdownList({ type: 'settingsType', keyword: this.fromDanger })
       this.ddlCategory = JSON.parse(JSON.stringify(response2.data.result))
       this.ddlParentCategory = JSON.parse(JSON.stringify(response2.data.result))
       this.form.Category = this.category

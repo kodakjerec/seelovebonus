@@ -70,6 +70,7 @@
       :dialog-show="dialogShow"
       :category="form.category"
       :systemSettings="systemSettings"
+      :fromDanger="form.Danger"
       @dialog-cancel="dialogCancel"
       @dialog-save="dialogSave"></new-form>
   </el-form>
@@ -86,8 +87,8 @@ export default {
   data () {
     return {
       form: {
-        category: 'Country',
-        language: 2,
+        category: null,
+        language: null,
         Danger: 0
       },
       dialogType: 'new',
@@ -114,9 +115,10 @@ export default {
       let response2 = await this.$api.settings.getDropdownList({ type: 'settingsType', keyword: this.form.Danger })
       this.ddlCategory = response2.data.result
 
-      this.form.category = this.ddlCategory[0].ID
-      this.form.language = this.ddlLanguages[1].ID
-
+      if (this.form.category === null) {
+        this.form.category = this.ddlCategory[0].ID
+        this.form.language = this.ddlLanguages[1].ID
+      }
       this.selectChange()
     },
     // 篩選
@@ -143,8 +145,6 @@ export default {
     dialogSave: async function () {
       this.dialogShow = false
       await this.preLoading()
-
-      this.selectChange()
     },
     showFormSettingsType: function (eventType) {
       // 切換成 settingsType
