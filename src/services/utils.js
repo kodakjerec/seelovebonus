@@ -5,8 +5,8 @@ import i18n from '@/setup/setupLocale'
 import req from './auth' // 把request包裝
 
 export const seeloveNodeServer = {
-  // ip: '192.168.1.104',
-  ip: '192.168.2.210',
+  ip: '192.168.1.104',
+  // ip: '192.168.2.210',
   // ipHost: 'localhost',
   port: '3000', // backend server
   portReportingServices: '3002' // reporting services server
@@ -43,6 +43,7 @@ export const post = async (url, reqData = {}) => {
       return Promise.reject(error)
     })
 }
+// 下載檔案
 export const getFile = async (url, reqData = {}) => {
   // 檢查是否需要顯示LoadingMask
   let showLoadingCounter = true
@@ -53,6 +54,29 @@ export const getFile = async (url, reqData = {}) => {
   if (showLoadingCounter) { store.dispatch('increaseLoadingCounter') }
   let combineURL = 'http://' + seeloveNodeServer.ip + ':' + seeloveNodeServer.port + url
   return req('getFile', combineURL, reqData)
+    .then(response => {
+      if (showLoadingCounter) { store.dispatch('decreaseLoadingCounter') }
+      return response
+    })
+    .catch(error => {
+      if (showLoadingCounter) { store.dispatch('decreaseLoadingCounter') }
+      const { response } = error
+      console.log(`%c 💩💩💩 API發生例外錯誤 💩💩💩${((response && response.status) ? `status code [${response.status}]` : '')}`, 'color: #BB2E29; font-size: 14px; font-weight: bold;')
+      console.log(error)
+      return Promise.reject(error)
+    })
+}
+// 上傳檔案
+export const uploadFile = async (url, reqData) => {
+  // 檢查是否需要顯示LoadingMask
+  let showLoadingCounter = true
+  if (urlNoMask.find(item => { return item === url }) !== undefined) {
+    showLoadingCounter = false
+  }
+
+  if (showLoadingCounter) { store.dispatch('increaseLoadingCounter') }
+  let combineURL = 'http://' + seeloveNodeServer.ip + ':' + seeloveNodeServer.port + url
+  return req('uploadFile', combineURL, reqData)
     .then(response => {
       if (showLoadingCounter) { store.dispatch('decreaseLoadingCounter') }
       return response

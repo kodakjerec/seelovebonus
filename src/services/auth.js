@@ -106,6 +106,12 @@ export default function (method, url, data = null) {
     return axios.get(url, { params: data })
   } else if (method === 'getfile') {
     return axios.get(url, { params: data, responseType: 'blob' })
+  } else if (method === 'uploadfile') {
+    return axios.post(url, data, {
+      headers: {
+        'Content-Type': 'multipart/form-data'
+      }
+    })
   } else if (method === 'delete') {
     return axios.delete(url, { params: data })
   } else if (method === 'put') {

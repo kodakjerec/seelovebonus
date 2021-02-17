@@ -1,4 +1,4 @@
-import { post } from '@/services/utils'
+import { getFile, post, uploadFile } from '@/services/utils'
 
 export default {
   basic: {
@@ -247,13 +247,6 @@ export default {
         return data
       })
     },
-    storageAddressShow: ({ searchContent, pagination }) => {
-      let rawData = { searchContent, pagination }
-      return post('/basic/storageAddressShow', rawData).then(data => {
-        console.log(`%c <<< Response(/rest/basic/storageAddressShow)⤵ `, 'background-color: #E0455D; color: white; font-size: 14px; font-weight: bold;', data)
-        return data
-      })
-    },
     storageAddressUpdate: ({ form }) => {
       let rawData = { form }
       return post('/basic/storageAddressUpdate', rawData).then(data => {
@@ -272,6 +265,27 @@ export default {
       let rawData = { form }
       return post('/basic/storageAddressDelete', rawData).then(data => {
         console.log(`%c <<< Response(/rest/basic/storageAddressDelete)⤵ `, 'background-color: #E0455D; color: white; font-size: 14px; font-weight: bold;', data)
+        return data
+      })
+    },
+    storageAddressShow: ({ searchContent, pagination }) => {
+      let rawData = { searchContent, pagination }
+      return post('/basic/storageAddressShow', rawData).then(data => {
+        console.log(`%c <<< Response(/rest/basic/storageAddressShow)⤵ `, 'background-color: #E0455D; color: white; font-size: 14px; font-weight: bold;', data)
+        return data
+      })
+    },
+    storageAddressExportExcel: () => {
+      let rawData = { }
+      return getFile('/basic/storageAddressExportExcel', rawData).then(data => {
+        console.log(`%c <<< Response(/rest/basic/storageAddressExportExcel)⤵ `, 'background-color: #E0455D; color: white; font-size: 14px; font-weight: bold;', data)
+        return data
+      })
+    },
+    // 轉交給el-upload處理上傳
+    storageAddressUpload: (file) => {
+      return uploadFile('/basic/storageAddressUpload', file).then(data => {
+        console.log(`%c <<< Response(/rest/basic/storageAddressUpload)⤵ `, 'background-color: #E0455D; color: white; font-size: 14px; font-weight: bold;', data)
         return data
       })
     },

@@ -26,6 +26,7 @@ export default {
   __export: 'Export',
   __inport: 'Inport',
   __download: 'Download',
+  __upload: 'Upload',
   __users: 'Users',
   __groups: 'Groups',
   __company: 'Company',

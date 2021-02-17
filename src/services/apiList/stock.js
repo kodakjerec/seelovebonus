@@ -58,6 +58,20 @@ export default {
         return data
       })
     },
+    mapGet: ({ Building, Floor, Area }) => {
+      let rawData = { Building, Floor, Area }
+      return post('/stock/mapGet', rawData).then(data => {
+        console.log(`%c <<< Response(/rest/stock/mapGet)⤵ `, 'background-color: #E0455D; color: white; font-size: 14px; font-weight: bold;', data)
+        return data
+      })
+    },
+    mapUpdate: ({ form }) => {
+      let rawData = { form }
+      return post('/stock/mapUpdate', rawData).then(data => {
+        console.log(`%c <<< Response(/rest/stock/mapUpdate)⤵ `, 'background-color: #E0455D; color: white; font-size: 14px; font-weight: bold;', data)
+        return data
+      })
+    },
     getDropdownList: ({ type, keyword }) => {
       let rawData = { type, keyword }
       console.log('%c >>> getDropdownList: ', 'background-color: blue; color: white; font-size: 14px; font-weight: bold;', rawData)

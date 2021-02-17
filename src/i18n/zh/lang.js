@@ -26,6 +26,7 @@ export default {
   __export: '匯出',
   __inport: '匯入',
   __download: '下載',
+  __upload: '上傳',
   __users: '使用者',
   __groups: '群組',
   __company: '經銷商',

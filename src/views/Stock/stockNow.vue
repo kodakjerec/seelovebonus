@@ -6,7 +6,7 @@
         <el-col :span="6">
           <el-select v-model="searchContent.Building" value-key="value" :placeholder="$t('__plzChoice')" @change="ddlBuildingChange">
             <el-option v-for="item in ddlBuilding" :key="item.ID" :label="item.Value" :value="item.ID">
-              <span style="float: left">{{ item.Value }}</span>
+              <span style="float: left">{{ item.Value+'('+item.Counts+')' }}</span>
               <span style="float: right; color: #8492a6; font-size: 13px">{{ item.ID }}</span>
             </el-option>
           </el-select>
@@ -15,7 +15,7 @@
         <el-col :span="6">
           <el-select v-model="searchContent.Floor" value-key="value" :placeholder="$t('__plzChoice')" @change="ddlFloorChange">
             <el-option v-for="item in ddlFloor" :key="item.ID" :label="item.Value" :value="item.ID">
-              <span style="float: left">{{ item.Value }}</span>
+              <span style="float: left">{{ item.Value+'('+item.Counts+')' }}</span>
               <span style="float: right; color: #8492a6; font-size: 13px">{{ item.ID }}</span>
             </el-option>
           </el-select>
@@ -24,7 +24,7 @@
         <el-col :span="6">
           <el-select v-model="searchContent.Area" value-key="value" :placeholder="$t('__plzChoice')" @change="ddlAreaChange">
             <el-option v-for="item in ddlArea" :key="item.ID" :label="item.Value" :value="item.ID">
-              <span style="float: left">{{ item.Value }}</span>
+              <span style="float: left">{{ item.Value+'('+item.Counts+')' }}</span>
               <span style="float: right; color: #8492a6; font-size: 13px">{{ item.ID }}</span>
             </el-option>
           </el-select>

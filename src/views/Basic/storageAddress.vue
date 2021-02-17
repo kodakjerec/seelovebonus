@@ -6,7 +6,7 @@
         <el-col :span="6">
           <el-select v-model="searchContent.Building" value-key="value" :placeholder="$t('__plzChoice')" @change="ddlBuildingChange">
             <el-option v-for="item in ddlBuilding" :key="item.ID" :label="item.Value" :value="item.ID">
-              <span style="float: left">{{ item.Value }}</span>
+              <span style="float: left">{{ item.Value+'('+item.Counts+')' }}</span>
               <span style="float: right; color: #8492a6; font-size: 13px">{{ item.ID }}</span>
             </el-option>
           </el-select>
@@ -15,7 +15,7 @@
         <el-col :span="6">
           <el-select v-model="searchContent.Floor" value-key="value" :placeholder="$t('__plzChoice')" @change="ddlFloorChange">
             <el-option v-for="item in ddlFloor" :key="item.ID" :label="item.Value" :value="item.ID">
-              <span style="float: left">{{ item.Value }}</span>
+              <span style="float: left">{{ item.Value+'('+item.Counts+')' }}</span>
               <span style="float: right; color: #8492a6; font-size: 13px">{{ item.ID }}</span>
             </el-option>
           </el-select>
@@ -24,7 +24,7 @@
         <el-col :span="6">
           <el-select v-model="searchContent.Area" value-key="value" :placeholder="$t('__plzChoice')" @change="ddlAreaChange">
             <el-option v-for="item in ddlArea" :key="item.ID" :label="item.Value" :value="item.ID">
-              <span style="float: left">{{ item.Value }}</span>
+              <span style="float: left">{{ item.Value+'('+item.Counts+')' }}</span>
               <span style="float: right; color: #8492a6; font-size: 13px">{{ item.ID }}</span>
             </el-option>
           </el-select>
@@ -33,6 +33,7 @@
     </el-button-group>
     <el-button-group style="padding-bottom: 5px">
       <el-button v-show="buttonsShowUser.new" type="primary" icon="el-icon-plus" @click.prevent="showForm('new')">{{$t('__new')}}</el-button>
+      <el-button v-show="buttonsShowUser.new" @click.prevent="dialogShowUpload=true">{{$t('__upload')+$t('__download')}}</el-button>
       <search-button @search="search"></search-button>
     </el-button-group>
     <el-table
@@ -101,23 +102,30 @@
     :buttonsShowUser="buttonsShowUser"
     @dialog-cancel="dialogCancel"
     @dialog-save="dialogSave"></new-form>
+    <!-- 上下傳 -->
+    <uploadDownload
+    :dialog-show="dialogShowUpload"
+    @dialog-cancel="dialogShowUpload=false"></uploadDownload>
   </el-form>
 </template>
 
 <script>
 import searchButton from '@/components/searchButton'
 import newForm from './components/storageAddressNewForm'
+import uploadDownload from './components/storageAddressUploadDownload'
 
 export default {
   name: 'StorageAddressShow',
   components: {
     searchButton,
-    newForm
+    newForm,
+    uploadDownload
   },
   data () {
     return {
       dialogType: 'new',
       dialogShow: false,
+      dialogShowUpload: false,
       originData: [],
       storageAddress: {},
       searchContent: {

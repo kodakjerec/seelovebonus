@@ -203,6 +203,12 @@ const routes = [
     path: '/Stock/StockNow',
     name: 'StockNow',
     component: () => import('@/views/Stock/stockNow')
+  },
+  // Stock -> Map
+  {
+    path: '/Stock/StockMap',
+    name: 'StockMap',
+    component: () => import('@/views/Stock/stockMap')
   }
 ]
 
