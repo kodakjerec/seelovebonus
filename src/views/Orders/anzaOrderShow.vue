@@ -74,27 +74,22 @@
           </template>
         </el-table-column>
         <el-table-column
-          prop="StatusName"
-          :label="this.$t('__status')"
           width="100px">
+          <template slot="header">
+            {{$t('__anzaOrder')}}<br/>{{$t('__status')}}
+          </template>
           <template slot-scope="scope">
-            {{scope.row[scope.column.property]}}
+            {{scope.row.AnzaOrderID}}<br/>{{scope.row.StatusName}}
           </template>
         </el-table-column>
-        <el-table-column
-          prop="AnzaOrderID"
-          :label="this.$t('__anzaOrder')">
-        </el-table-column>
-        <el-table-column
-          prop="CustomerName"
-          :label="this.$t('__anzaCustomer')">
-        </el-table-column>
-        <el-table-column
-          prop="StorageID"
-          :label="this.$t('__anzaStorageID')">
+        <el-table-column>
+          <template slot="header">
+            {{$t('__anzaCustomer')}}<br/>{{$t('__anzaStorageID')}}
+          </template>
           <template slot-scope="scope">
-            <span v-if="scope.row.Status==='2'">{{scope.row[scope.column.property]}}</span>
-            <span v-else style="text-decoration:line-through">{{scope.row[scope.column.property]}}</span>
+            {{scope.row.CustomerName}}<br/>
+            <span v-if="scope.row.Status==='2'">{{scope.row.StorageID}}</span>
+            <span v-else style="text-decoration:line-through">{{scope.row.StorageID}}</span>
           </template>
         </el-table-column>
         <el-table-column>

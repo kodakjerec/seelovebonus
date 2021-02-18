@@ -51,24 +51,29 @@
             @click.native.stop="signOffDeny(scope.$index, scope.row)">{{$t('__signOffDeny')}}</el-button>
         </template>
       </el-table-column>
-      <el-table-column
-        prop="StatusName"
-        :label="$t('__status')">
+      <el-table-column>
+        <template slot="header">
+          {{$t('__orderID')}}<br/>{{$t('__project')+$t('__name')}}<br/>{{$t('__status')}}
+        </template>
+        <template slot-scope="scope">
+          <div style="font-weight:1000">{{scope.row.ID}}</div>
+          {{scope.row.ProjectName}}<br/>{{scope.row.StatusName}}
+        </template>
       </el-table-column>
       <el-table-column>
         <template slot="header">
-          {{$t('__orderID')}}<br/>{{$t('__customer')+$t('__name')}}<br/>{{$t('__referrer')+'/'+$t('__company')}}
+          {{$t('__customer')+$t('__name')}}<br/>{{$t('__referrer')+'/'+$t('__company')}}
         </template>
         <template slot-scope="scope">
-          {{scope.row.ID}}<br/>{{scope.row.CustomerName}}<br/>{{scope.row.ReferrerName+'/'+scope.row.CompanyName}}
+          {{scope.row.CustomerName}}<br/>{{scope.row.ReferrerName+'/'+scope.row.CompanyName}}
         </template>
       </el-table-column>
       <el-table-column>
         <template slot="header">
-          {{$t('__order')+$t('__date')}}<br/>{{$t('__project')+$t('__name')}}<br/>{{$t('__amount')}}
+          {{$t('__order')+$t('__date')}}<br/>{{$t('__amount')}}
         </template>
         <template slot-scope="scope">
-          {{formatterDate(null,null,scope.row.OrderDate,null)}}<br/>{{scope.row.ProjectName}}<br/>{{formatterMoney(null,null,scope.row.Amount,null)}}
+          {{formatterDate(null,null,scope.row.OrderDate,null)}}<br/>{{formatterMoney(null,null,scope.row.Amount,null)}}
         </template>
       </el-table-column>
       <el-table-column>
