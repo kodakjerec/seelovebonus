@@ -19,7 +19,7 @@
       style="width: 100%">
       <el-table-column
         align="left"
-        width="150px">
+        width="160px">
         <template slot="header">
           <el-button
             type="text"

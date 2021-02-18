@@ -1,9 +1,11 @@
 <template>
   <div>
+    <div id="eChart" :style="cssProps"></div>
     <el-button-group>
       <el-button type="info" @click="goback">{{$t('__goback')}}</el-button>
+      <span>{{'x:'+mouseLocation.x+' y:'+mouseLocation.y}}</span>
+      <span>{{rectangleSize}}</span>
     </el-button-group>
-    <div id="eChart" :style="{width: '1000px', height: '600px'}"></div>
   </div>
 </template>
 
@@ -26,7 +28,7 @@ export default {
           transitionDuration: 0.2,
           formatter: function (params) {
             let property = params.data
-            return property.id + ' ' + property.nameChinese + '<br/>' + property.UsedQty + '/' + property.TotalQty
+            return property.StorageID + ' ' + property.StorageName + '<br/>' + property.UsedQty + '/' + property.TotalQty
           }
         },
         visualMap: {
@@ -51,8 +53,17 @@ export default {
         series: [
           {
             type: 'map',
-            roam: true,
+            zoom: 1, // 當前視角的縮放比例
+            roam: false, // 是否開啟縮放
             map: 'USA',
+            left: 0,
+            top: 0,
+            right: 0,
+            bottom: 0,
+            boundingCoords: [
+              [0, 0],
+              [1440, 900]
+            ],
             label: {
               show: true,
               textBorderColor: 'yellow',
@@ -60,7 +71,7 @@ export default {
               fontSize: 24,
               formatter: function (params) {
                 let property = params.data
-                return property.id + ' ' + property.nameChinese
+                return property.StorageID + ' ' + property.StorageName
               }
             },
             emphasis: {
@@ -72,17 +83,49 @@ export default {
           }
         ]
       },
+      searchStack: [], // 搜尋階層
       searchContent: { // 搜尋
         Layer: '',
         Building: '',
         Floor: '',
-        Area: ''
+        Area: '',
+        imageUrl: '' // 背景URL
+      },
+      mouseLocation: {
+        x: 0,
+        y: 0
+      }, // 滑鼠位置
+      rectangleSize: {
+        lock: false,
+        xAxis: 0,
+        yAxis: 0,
+        Length: 0,
+        Width: 0
+      } // 圖形尺寸
+    }
+  },
+  computed: {
+    cssProps: function () {
+      let cssprop = {
+        width: '1440px',
+        height: '900px',
+        border: '1px solid',
+        'background-size': 'contain',
+        'background-repeat': 'no-repeat'
       }
+      if (this.searchContent.imageUrl) {
+        cssprop['background-image'] = `url(${require('./' + this.searchContent.imageUrl)})`
+      }
+      return cssprop
     }
   },
   async mounted () {
     this.eChart = echarts.init(document.getElementById('eChart'))
-    this.eChart.on('click', this.clickChildren)
+    // 滑鼠事件
+    this.eChart.on('click', this.mouseClick)
+    this.eChart.getZr().on('mousemove', this.mouseMove)
+    this.eChart.getZr().on('mousedown', this.mouseDown)
+    this.eChart.getZr().on('mouseup', this.mouseDown)
 
     // data
     await this.preLoading()
@@ -103,14 +146,10 @@ export default {
       let index = 0
       mapData.forEach(row => {
         index++
-        let property = {
-          id: row.StorageID,
-          name: row.StorageID,
-          nameChinese: row.StorageName,
-          UsedQty: row.UsedQty,
-          TotalQty: row.TotalQty,
-          value: row.UsedQty
-        }
+        let property = row
+        property.name = row.StorageID // eCharts辨識元素使用
+        property.value = row.UsedQty // echarts顯示容量顏色使用
+
         let item = {
           type: 'Feature',
           id: index,
@@ -118,10 +157,10 @@ export default {
             type: 'Polygon',
             'coordinates': [
               [
-                [row.xAxis, row.yAxis], // 起點(左上)
-                [row.xAxis + row.Length, row.yAxis], // 右上
-                [row.xAxis + row.Length, row.yAxis + row.Width], // 右下
-                [row.xAxis, row.yAxis + row.Width], // 左下
+                [row.xAxis, row.yAxis], // 起點(左下)
+                [row.xAxis + row.Length, row.yAxis], // 右下
+                [row.xAxis + row.Length, row.yAxis + row.Width], // 右上
+                [row.xAxis, row.yAxis + row.Width], // 左上
                 [row.xAxis, row.yAxis] // 回到原點
               ]
             ]
@@ -150,19 +189,29 @@ export default {
       this.eChart.setOption(this.option)
     },
     // 子結點 click
-    clickChildren: async function (params) {
+    mouseClick: async function (params) {
+      // 儲存目前的搜尋
+      this.searchStack.push(JSON.parse(JSON.stringify(this.searchContent)))
+
+      // 準備下一階搜尋
       let property = params.data
+      if (property.ImageUrl) {
+        this.searchContent.imageUrl = property.ImageUrl
+      } else {
+        this.searchContent.imageUrl = ''
+      }
+
       switch (this.searchContent.Layer) {
         case '':
-          this.searchContent.Building = property.id
+          this.searchContent.Building = property.StorageID
           this.searchContent.Layer = 'Building'
           break
         case 'Building':
-          this.searchContent.Floor = property.id
+          this.searchContent.Floor = property.StorageID
           this.searchContent.Layer = 'Floor'
           break
         case 'Floor':
-          this.searchContent.Area = property.id
+          this.searchContent.Area = property.StorageID
           this.searchContent.Layer = 'Area'
           break
         case 'Area':
@@ -170,24 +219,31 @@ export default {
       }
       await this.preLoading()
     },
+    // 滑鼠移動
+    mouseMove: function (params) {
+      this.mouseLocation.x = params.offsetX
+      this.mouseLocation.y = params.offsetY
+    },
+    // 按下滑鼠
+    // 按下滑鼠起來
+    mouseDown: function (params) {
+      if (this.rectangleSize.lock === false) {
+        this.rectangleSize.lock = true
+        this.rectangleSize.xAxis = params.offsetX
+        this.rectangleSize.yAxis = params.offsetY
+      } else {
+        this.rectangleSize.lock = false
+        this.rectangleSize.Length = Math.abs(params.offsetX - this.rectangleSize.xAxis)
+        this.rectangleSize.Width = Math.abs(params.offsetY - this.rectangleSize.yAxis)
+      }
+    },
     // 返回上一層
     goback: async function () {
-      switch (this.searchContent.Layer) {
-        case '':
-          return
-        case 'Building':
-          this.searchContent.Building = ''
-          this.searchContent.Layer = ''
-          break
-        case 'Floor':
-          this.searchContent.Floor = ''
-          this.searchContent.Layer = 'Building'
-          break
-        case 'Area':
-          this.searchContent.Area = ''
-          this.searchContent.Layer = 'Floor'
-          break
+      if (this.searchStack.length === 0) {
+        return
       }
+      let item = this.searchStack.pop()
+      this.searchContent = item
       await this.preLoading()
     }
   }

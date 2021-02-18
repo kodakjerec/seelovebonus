@@ -1,8 +1,7 @@
 <template>
-  <el-header>
+  <el-header height="30px" class="floatingMenu">
     <el-menu
       :default-active="activeIndex2"
-      class="floatingMenu"
       mode="horizontal"
       @select="handleSelect"
       background-color="#545c64"
@@ -61,19 +60,45 @@ export default {
 </script>
 <style lang="scss" scoped>
 .floatingMenu {
-  position:fixed; /* fixing the position takes it out of html flow - knows
-                   nothing about where to locate itself except by browser
-                   coordinates */
-  left:0;           /* top left corner should start at leftmost spot */
-  top:0;            /* top left corner should start at topmost spot */
-  width:100vw;      /* take up the full browser width */
-  z-index:200;  /* high z index so other content scrolls underneath */
+  padding: 0px;
+  .el-menu {
+    position:absolute; /* fixing the position takes it out of html flow - knows
+                    nothing about where to locate itself except by browser
+                    coordinates */
+    width:100vw;      /* take up the full browser width */
+    z-index:200;  /* high z index so other content scrolls underneath */
+  }
 }
 .defineCSS {
   position: absolute;
   right:0px;
   i {
     color: yellow
+  }
+}
+</style>
+<style lang="scss">
+/* 水平菜单顶层菜单样式 */
+/* >符号表示直接孩子，.el-menu--horizontal>.el-submenu .el-submenu_title表示的
+是类.el-menu--horizontal元素（这个是顶层菜单el-menu）下的第一层元素（sub-menu）下的标题，
+这个标题是放在<i>元素的slot属性中的，从而找到了<i>元素，修改它的样式就可以了 */
+.el-menu--horizontal {
+    li.el-menu-item {
+      height: 30px;
+      line-height: 30px;
+      border-bottom: 2px solid transparent;
+    }
+
+    > li.el-submenu {
+      height: 30px;
+      line-height: 30px;
+      border-bottom: 2px solid transparent;
+
+      div.el-submenu__title {
+        height: 30px;
+        line-height: 30px;
+        border-bottom: 2px solid transparent;
+      }
   }
 }
 </style>

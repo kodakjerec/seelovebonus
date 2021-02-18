@@ -52,7 +52,7 @@
         </el-table-column>
         <!-- 安座作業 -->
         <el-table-column
-          width="150px">
+          width="160px">
           <template slot="header">
             <el-button
             type="text"
