@@ -119,20 +119,7 @@ export default {
           finalAmount += row.ScheduledAmount * this.parentQty
 
           if (index > 0) {
-            switch (row.PaymentFrequency) {
-              case '2': // 月繳
-                startDate = new Date(startDate.setMonth(startDate.getMonth() + 1))
-                break
-              case '3': // 季繳
-                startDate = new Date(startDate.setMonth(startDate.getMonth() + 3))
-                break
-              case '4': // 年繳
-                startDate = new Date(startDate.setMonth(startDate.getMonth() + 12))
-                break
-              case '5': // 三年繳
-                startDate = new Date(startDate.setMonth(startDate.getMonth() + 36))
-                break
-            }
+            startDate = new Date(startDate.setMonth(startDate.getMonth() + row.IncreaseMonth))
           }
           let tempValue = startDate.toISOString().slice(0, 10)
 

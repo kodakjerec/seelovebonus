@@ -229,10 +229,6 @@ export default {
           this.form.Seq = 1
           this.disableForm.Seq = true
           break
-        case '5': // 三年繳
-          this.form.Seq = 4
-          this.disableForm.Seq = false
-          break
         default:
           if (this.form.Seq === 1) {
             this.form.Seq = 2
@@ -294,16 +290,13 @@ export default {
         if (i > 1) {
           switch (frequency) {
             case '2': // 月繳
-              startDate = new Date(startDate.setMonth(startDate.getMonth() + 1))
+              startDate = new Date(startDate.setMonth(startDate.getD() + 1))
               break
             case '3': // 季繳
               startDate = new Date(startDate.setMonth(startDate.getMonth() + 3))
               break
             case '4': // 年繳
               startDate = new Date(startDate.setMonth(startDate.getMonth() + 12))
-              break
-            case '5': // 三年繳
-              startDate = new Date(startDate.setMonth(startDate.getMonth() + 36))
               break
           }
         }
