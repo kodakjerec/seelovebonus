@@ -195,14 +195,6 @@ export default {
       // 取得可以用的選單
       this.certificate2 = row
 
-      // 簽核管理
-      if (row.StatusSignOff === 0) {
-        this.buttonsShowUser.new = 0
-        this.buttonsShowUser.edit = 0
-        this.buttonsShowUser.save = 0
-        this.buttonsShowUser.delete = 0
-      }
-
       // 權限管理
       this.buttonsShowUser.save = this.buttonsShowUser.edit
 

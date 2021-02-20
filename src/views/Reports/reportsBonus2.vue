@@ -1,21 +1,17 @@
 <template>
   <div>
-    <el-form ref="form" :model="form" label-width="10vw" label-position="right">
-      <el-form-item :label="$t('__date')">
-        <el-col :span="8">
-          <el-date-picker
-            v-model="form.StartDate"
-            type="month"
-            :placeholder="$t('__plzChoice')+$t('__startDate')"
-            value-format="yyyy-MM-dd"
-            @change="startDateChange">
-          </el-date-picker>
-        </el-col>
-      </el-form-item>
+    <el-divider>{{$t('__orderID')+$t('__prefix')}}</el-divider>
+    <el-checkbox-group v-model="searchContent.selectedOrdersType">
+      <el-checkbox v-for="item in searchContent.OrdersType"
+        :key="item.Prefix"
+        :label="item.Prefix">{{item.Prefix+'('+item.Qty+')'}}</el-checkbox>
+    </el-checkbox-group>
+    <el-divider>{{$t('__date')}}</el-divider>
+    <el-form label-width="10vw" label-position="right">
       <el-form-item :label="$t('__startDate')">
         <el-col :span="8">
           <el-date-picker
-            v-model="form.StartDate"
+            v-model="searchContent.StartDate"
             :placeholder="$t('__plzChoice')+$t('__startDate')"
             value-format="yyyy-MM-dd">
           </el-date-picker>
@@ -25,7 +21,7 @@
         </el-col>
         <el-col :span="8">
           <el-date-picker
-            v-model="form.EndDate"
+            v-model="searchContent.EndDate"
             :placeholder="$t('__plzChoice')+$t('__endDate')"
             value-format="yyyy-MM-dd">
           </el-date-picker>
@@ -33,7 +29,7 @@
       </el-form-item>
       <el-form-item :label="$t('__companies')+$t('__id')">
         <el-col :span="8">
-          <el-select v-model="form.CompanyID" filterable :placeholder="$t('__plzChoice')" @change="ddlCompaniesChange">
+          <el-select v-model="searchContent.CompanyID" filterable :placeholder="$t('__plzChoice')" @change="ddlCompaniesChange">
             <el-option v-for="item in ddlCompanies" :key="item.ID" :label="item.ID+' '+item.Value" :value="item.ID">
               <span style="float: left">{{ item.Value }}</span>
               <span style="float: right; color: #8492a6; font-size: 13px">{{ item.ID }}</span>
@@ -61,9 +57,11 @@ export default {
   },
   data () {
     return {
-      form: {
-        StartDate: null,
-        EndDate: null,
+      searchContent: { // 搜尋
+        OrdersType: [],
+        selectedOrdersType: [],
+        StartDate: new Date(),
+        EndDate: new Date(),
         ProjectName: '喜越幸福專案',
         CompanyID: null,
         CompanyName: null
@@ -89,14 +87,14 @@ export default {
     // 預設值
     let start = new Date()
     let year = start.getFullYear()
-    let month = start.getMonth() - 1
+    let month = start.getMonth()
     start = new Date(year, month, 1, 12)
     this.startDateChange(start)
 
     let defaultCompany = this.ddlCompanies.find(item => { return item.ID === '83799375' })
     if (defaultCompany) {
-      this.form.CompanyID = defaultCompany.ID
-      this.ddlCompaniesChange(this.form.CompanyID)
+      this.searchContent.CompanyID = defaultCompany.ID
+      this.ddlCompaniesChange(this.searchContent.CompanyID)
     }
   },
   methods: {
@@ -104,6 +102,17 @@ export default {
     preLoading: async function () {
       let response = await this.$api.reports.getDropdownList({ type: 'companies' })
       this.ddlCompanies = response.data.result
+
+      // 顯示專用
+      response = await this.$api.orders.ordersShowGroup()
+      let filterSettings = response.data.result
+      // 帶入數值
+      this.searchContent.OrdersType = filterSettings.OrdersType
+
+      if (localStorage.getItem('searchHistory:' + this.$route.name) !== null) {
+        let oldSearchContent = JSON.parse(localStorage.getItem('searchHistory:' + this.$route.name))
+        this.searchContent.selectedOrdersType = oldSearchContent.selectedOrdersType
+      }
     },
     // 使用者權限
     userPermission: async function () {
@@ -114,20 +123,44 @@ export default {
       this.buttonsShowUser.delete = progPermission.fun3
     },
     // 給予預設日期
+    // 抓一季, 三個月
     startDateChange: function (value) {
       let start = new Date(value)
       let end = new Date()
       let year = start.getFullYear()
       let month = start.getMonth()
+      switch (month) {
+        case 11:
+        case 12:
+        case 1:
+          month = 11
+          year = year - 1
+          break
+        case 2:
+        case 3:
+        case 4:
+          month = 2
+          break
+        case 5:
+        case 6:
+        case 7:
+          month = 5
+          break
+        case 8:
+        case 9:
+        case 10:
+          month = 8
+          break
+      }
       start = new Date(year, month, 1, 12)
-      end = new Date(year, month + 1, 0, 12)
+      end = new Date(year, month + 3, 0, 12)
 
-      this.form.StartDate = start.toISOString().slice(0, 10)
-      this.form.EndDate = end.toISOString().slice(0, 10)
+      this.searchContent.StartDate = start.toISOString().slice(0, 10)
+      this.searchContent.EndDate = end.toISOString().slice(0, 10)
     },
     ddlCompaniesChange: function (value) {
       let item = this.ddlCompanies.find(item => { return item.ID === value })
-      this.form.CompanyName = item.Nickname
+      this.searchContent.CompanyName = item.Nickname
     },
     // SSRS列印
     print: function () {
@@ -140,16 +173,18 @@ export default {
           strLocale = '2'
           break
       }
+      // 精簡查詢內容
+      let passSearchContent = JSON.parse(JSON.stringify(this.searchContent))
+      delete passSearchContent.OrdersType
       this.reportParams = {
         locale: strLocale,
-        StartDate: this.form.StartDate,
-        EndDate: this.form.EndDate,
-        CompanyID: this.form.CompanyID,
-        MasterName: this.form.CompanyName,
-        ProjectName: this.form.ProjectName }
+        searchContent: JSON.stringify(passSearchContent) }
 
       // 紀錄Log
       this.$api.reports.bonus2ToExcel({ reportParams: this.reportParams })
+
+      // 儲存內容
+      localStorage.setItem('searchHistory:' + this.$route.name, JSON.stringify(this.searchContent))
     }
   }
 }

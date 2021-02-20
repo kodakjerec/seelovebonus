@@ -113,6 +113,7 @@ export default {
         case 12:
         case 1:
           month = 11
+          year = year - 1
           break
         case 2:
         case 3:

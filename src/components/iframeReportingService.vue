@@ -1,5 +1,16 @@
 <template>
-  <iframe width="1123px" height="796px" :src="urlPath"></iframe>
+  <div>
+    <form ref="form" id='frmRender' method="post" :action="urlPath" target="myIframe">
+      <input type="hidden" name="rs:Embed" value="true"/>
+      <input type="hidden" name="rc:Parameters" value="false" />
+      <input type="hidden" name="rs:Format" value="HTML4.0"/>
+      <template v-for="(item, keyIndex) in paramList">
+        <input type="hidden" :key="keyIndex" :name="item.key" :value="item.value" />
+      </template>
+      <iframe name="myIframe" :style="{ width:'70vw', height:'70vh'}">
+      </iframe>
+    </form>
+  </div>
 </template>
 
 <script>
@@ -14,7 +25,8 @@ export default {
   data () {
     return {
       rsPath: '',
-      urlPath: ''
+      urlPath: '',
+      paramList: []
     }
   },
   watch: {
@@ -24,18 +36,27 @@ export default {
   },
   methods: {
     refresh: function () {
+      // 設定網址
       this.rsPath = 'http://' + seeloveNodeServer.ip + ':' + seeloveNodeServer.portReportingServices + '/ReportServer/Pages/ReportViewer.aspx?/Reports/' + this.reportPath
-      let rsCommands = '&rs:Embed=true&rc:Parameters=false'
-      let paramsString = ''
 
+      // 將傳入參數 => array
       Object.keys(this.params).forEach(key => {
         if (this.params[key]) {
-          paramsString += '&' + key + '=' + this.params[key]
+          this.paramList.push({
+            key: key,
+            value: this.params[key]
+          })
         }
       })
 
-      this.urlPath = this.rsPath + rsCommands + paramsString
+      // 組合網址
+      this.urlPath = this.rsPath
       console.log(this.urlPath)
+
+      // 送出submit
+      this.$nextTick(() => {
+        this.$refs['form'].submit()
+      })
     }
   }
 }

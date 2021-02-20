@@ -1,5 +1,14 @@
 <template>
- <div id="eChart" :style="{width: '90vw', height: '80vh'}"></div>
+  <div>
+    <div id="eChart" :style="{width: '90vw', height: '80vh'}">
+    </div>
+    <div class="divider" style="top:21vh">Level1</div>
+    <div class="divider" style="top:32vh">Level2</div>
+    <div class="divider" style="top:42vh">Level3</div>
+    <div class="divider" style="top:52vh">Level4</div>
+    <div class="divider" style="top:62vh">Level5</div>
+    <div class="divider" style="top:72vh">Level6</div>
+  </div>
 </template>
 
 <script>
@@ -86,3 +95,10 @@ export default {
   }
 }
 </script>
+<style lang="scss" scoped>
+.divider {
+  position: absolute;
+  left: 10px;
+  color: gray;
+}
+</style>
