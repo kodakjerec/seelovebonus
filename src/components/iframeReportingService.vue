@@ -36,6 +36,9 @@ export default {
   },
   methods: {
     refresh: function () {
+      // reset
+      this.paramList = []
+
       // 設定網址
       this.rsPath = 'http://' + seeloveNodeServer.ip + ':' + seeloveNodeServer.portReportingServices + '/ReportServer/Pages/ReportViewer.aspx?/Reports/' + this.reportPath
 

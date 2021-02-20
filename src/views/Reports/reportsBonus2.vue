@@ -176,9 +176,15 @@ export default {
       // 精簡查詢內容
       let passSearchContent = JSON.parse(JSON.stringify(this.searchContent))
       delete passSearchContent.OrdersType
+      delete passSearchContent.ProjectName
+      delete passSearchContent.CompanyName
       this.reportParams = {
         locale: strLocale,
-        searchContent: JSON.stringify(passSearchContent) }
+        searchContent: JSON.stringify(passSearchContent),
+        MasterName: this.searchContent.CompanyName,
+        ProjectName: this.searchContent.ProjectName,
+        StartDate: this.searchContent.StartDate,
+        EndDate: this.searchContent.EndDate }
 
       // 紀錄Log
       this.$api.reports.bonus2ToExcel({ reportParams: this.reportParams })
