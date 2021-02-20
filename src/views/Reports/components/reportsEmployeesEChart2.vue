@@ -13,22 +13,39 @@ export default {
   data () {
     return {
       eChart: null,
-      series: {
-        type: 'tree',
-        data: null,
-        orient: 'vertical', // 垂直
-        symbol: 'roundRect', // 圓角矩形
-        symbolSize: [30, 70], // 矩形大小
-        edgeShape: 'polyline', // 線條是直角線
-        expandAndCollapse: true, // 點一下展開或摺疊
-        label: { // 標籤
-          fontSize: 20 // 文字大小
+      option: {
+        tooltip: {
+          trigger: 'item',
+          triggerOn: 'mousemove'
         },
-        itemStyle: { // 節點的背景方塊
-          color: '#FFFFFF',
-          borderWidth: 0
+        toolbox: {
+          show: true,
+          left: 'left',
+          top: 'top',
+          feature: {
+            saveAsImage: { // 保存为图片。
+              show: true, // 是否显示该工具。
+              type: 'png'
+            }
+          }
         },
-        initialTreeDepth: 10 // 初始深度
+        series: [
+          {
+            type: 'tree',
+            data: null,
+            orient: 'vertical', // 垂直
+            edgeShape: 'polyline', // 線條是直角線
+            expandAndCollapse: true, // 點一下展開或摺疊
+            label: { // 標籤
+              fontSize: 20 // 文字大小
+            },
+            itemStyle: { // 節點的背景方塊
+              color: '#FFFFFF',
+              borderWidth: 0
+            },
+            initialTreeDepth: 10 // 初始深度
+          }
+        ]
       },
       rawData: [],
       treeData: {
@@ -43,28 +60,14 @@ export default {
       this.treeData.name = value + '\n' + this.companyNickname
       await this.preLoading()
 
-      let option = {
-        tooltip: {
-          trigger: 'item',
-          triggerOn: 'mousemove'
-        },
-        series: [this.series]
-      }
-      this.eChart.setOption(option)
+      this.eChart.setOption(this.option)
     }
   },
   async mounted () {
     this.eChart = echarts.init(document.getElementById('eChart2'))
     await this.preLoading()
 
-    let option = {
-      tooltip: {
-        trigger: 'item',
-        triggerOn: 'mousemove'
-      },
-      series: [this.series]
-    }
-    this.eChart.setOption(option)
+    this.eChart.setOption(this.option)
     this.eChart.on('click', this.clickChildren)
   },
   methods: {
@@ -73,11 +76,11 @@ export default {
       this.rawData = response1.data.result
 
       // 找出最深階層
-      this.series.initialTreeDepth = Math.max(...this.rawData.map(object => object.Level))
+      this.option.series[0].initialTreeDepth = Math.max(...this.rawData.map(object => object.Level))
 
       // insert
       this.treeData.children = this.findChildrens('0', 1)
-      this.series.data = [this.treeData]
+      this.option.series[0].data = [this.treeData]
     },
     // 尋找子結點
     findChildrens: function (parentID, myLevel) {
