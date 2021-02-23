@@ -14,8 +14,8 @@
         <el-table-column prop="OrderType" :label="$t('__kind')"></el-table-column>
         <el-table-column prop="OrderID" :label="$t('__orderID')"></el-table-column>
         <el-table-column prop="CreateDate" :label="$t('__createDate')" :formatter="formatterDate"></el-table-column>
-        <el-table-column prop="FromStorageID" :label="'From'+$t('__storageAddress')"></el-table-column>
-        <el-table-column prop="ToStorageID" :label="'To'+$t('__storageAddress')"></el-table-column>
+        <el-table-column prop="FromStorageID" :label="$t('__fromStorageID')"></el-table-column>
+        <el-table-column prop="ToStorageID" :label="$t('__toStorageID')"></el-table-column>
         <el-table-column prop="Purpose" label="Purpose"></el-table-column>
       </el-table>
     </el-form>

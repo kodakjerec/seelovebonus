@@ -151,6 +151,10 @@ export default {
   __allSettingsWillNewTogether: '新增時, 所有語系設定會相同. 後續不同語言設定請自行修改',
   __itemCategory: '商品類別(大-中-小)',
   __storageAddress: '儲位',
+  __fromStorageID: '移出儲位',
+  __toStorageID: '移入儲位',
+  __storagePurpose: '特殊原因',
+  __autofill: '自動代入',
   __building: '棟別',
   __floor: '樓層',
   __area: '區域',
@@ -240,6 +244,7 @@ export default {
   __anzaOrderNewWarning: '請選擇專案與客戶編號',
   __anzaOperateWarning: '下拉選擇數值，或輸入指定數值',
   __installmentBatchEditWarning: '變更影響所有分期(不含已收款明細)',
+  __storageAddressNewFormWarning: '(粗估數量，實際存檔時會略過名稱含"4")',
   // 以下為錯誤處理專用
   __error400: '無法理解請求',
   __error401: '授權失敗，請重新登入',

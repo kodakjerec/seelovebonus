@@ -275,6 +275,7 @@ export default {
         anzaForNew: {
           ProductID: '',
           CustomerID: '',
+          FromStorageID: '',
           Extend: {}
         }
       },
@@ -424,6 +425,7 @@ export default {
       let firstInventoryProduct = projectDetail.find(item => { return item.Inventory === 1 })
       if (firstInventoryProduct !== undefined) {
         this.form.anzaForNew.ProductID = firstInventoryProduct.ProductID
+        this.form.anzaForNew.FromStorageID = firstInventoryProduct.ToStorageID
       }
 
       this.bringFunctions()

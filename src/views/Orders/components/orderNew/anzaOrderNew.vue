@@ -151,6 +151,7 @@ export default {
         Status: '1',
         ProductID: '',
         ModifyType: '',
+        FromStorageID: '',
         // 顯示用
         qty: 1
       },
@@ -174,6 +175,7 @@ export default {
     },
     parentAnzaData: {
       handler: function (newValue) {
+        this.form.FromStorageID = newValue.FromStorageID
         this.parentCustomerChange()
         this.parentQtyChange()
         this.reCalDate(this.subList)
@@ -458,6 +460,7 @@ export default {
 
         // 填入資訊
         row.OrderID = this.form.OrderID
+        row.FromStorageID = this.form.FromStorageID
 
         for (let i = 0; i < row.qty; i++) {
           await this.save(row)

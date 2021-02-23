@@ -16,8 +16,7 @@
       <template v-if="dialogType === 'new' && batchInsert === true">
         <el-form-item :label="$t('__row')">
           <el-col :span="6">
-            <el-input-number v-model="form.RowStart" :min="1" :max="99" @change="batchInsertChange"></el-input-number>
-            <el-input-number v-model="form.RowEnd" :min="1" :max="99" @change="batchInsertChange"></el-input-number>
+            <el-input v-model="form.RowStart" @change="batchInsertChange"></el-input>
           </el-col>
           <el-col :span="6">
             <el-form-item :label="$t('__column')">
@@ -33,7 +32,7 @@
           </el-col>
         </el-form-item>
         <el-form-item>
-          {{form.GuessResult}}
+          {{form.GuessResult}}<br/>{{$t('__storageAddressNewFormWarning')}}
         </el-form-item>
       </template>
       <el-form-item :label="$t('__max')+$t('__inventory')">
@@ -170,8 +169,7 @@ export default {
         Status: '1',
         StorageType: '1',
         // 批次新增用, 不會記錄進資料庫
-        RowStart: 1,
-        RowEnd: 15,
+        RowStart: '01A',
         ColumnStart: 1,
         ColumnEnd: 15,
         LocationStart: 1,
@@ -275,12 +273,7 @@ export default {
           if (isSuccessEdit) {
             this.$alert(this.updateMessage, 200, {
               callback: () => {
-                this.$router.push({
-                  name: this.parent,
-                  params: {
-                    returnType: 'save'
-                  }
-                })
+                this.$emit('dialog-save')
               }
             })
           }
@@ -363,15 +356,15 @@ export default {
       let locationTotal = 0
 
       locationB = this.form.ID
-      locationB += this.form.RowStart < 10 ? '0' + this.form.RowStart : this.form.RowStart
+      locationB += this.form.RowStart
       locationB += this.form.ColumnStart < 10 ? '0' + this.form.ColumnStart : this.form.ColumnStart
       locationB += this.form.LocationStart < 10 ? '0' + this.form.LocationStart : this.form.LocationStart
       locationE = this.form.ID
-      locationE += this.form.RowEnd < 10 ? '0' + this.form.RowEnd : this.form.RowEnd
+      locationE += this.form.RowStart
       locationE += this.form.ColumnEnd < 10 ? '0' + this.form.ColumnEnd : this.form.ColumnEnd
       locationE += this.form.LocationEnd < 10 ? '0' + this.form.LocationEnd : this.form.LocationEnd
 
-      locationTotal = (this.form.RowEnd - this.form.RowStart + 1) * (this.form.ColumnEnd - this.form.ColumnStart + 1) * (this.form.LocationEnd - this.form.LocationStart + 1)
+      locationTotal = 1 * (this.form.ColumnEnd - this.form.ColumnStart + 1) * (this.form.LocationEnd - this.form.LocationStart + 1)
 
       this.form.GuessResult = this.$t('__storageAddress') + 'Start: ' + locationB + ' ~ ' + locationE + ', ' + this.$t('__total') + this.$t('__qty') + ': ' + locationTotal
     }

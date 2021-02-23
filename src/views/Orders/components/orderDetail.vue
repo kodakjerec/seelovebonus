@@ -14,32 +14,32 @@
       width="50px">
     </el-table-column>
     <el-table-column
-      prop="ProductID"
-      :label="$t('__product')+$t('__id')">
+      prop="ProductID">
+      <template slot="header">
+        {{$t('__product')+$t('__id')}}<br/>{{$t('__product')+$t('__name')}}
+      </template>
       <template slot-scope="scope">
-        <el-select
-          v-if="buttonsShowUser.new && scope.row.ItemType === 1"
-          filterable
-          v-model="scope.row[scope.column.property]"
-          :placeholder="$t('__plzChoice')"
-          @change="(value)=>{ddlSubListChange(value, scope.row, 1)}"
-          style="display:block">
-          <el-option-group v-for="group in ddlSubList" :key="group.Category1Name" :label="group.Category1Name">
-            <el-option v-for="item in group.options" :key="item.ProductID" :value="item.ProductID">
-              <!-- 商品明細特別加上價格 -->
-              <span style="float: left">{{ item.ProductName + ' ['+ formatterMoneyUS(null,null,item.Price,null) + ']' }}</span>
-              <span style="float: right; color: #8492a6; font-size: 13px">{{ item.ProductID }}</span>
-            </el-option>
-          </el-option-group>
-        </el-select>
+        <div v-if="buttonsShowUser.new && scope.row.ItemType === 1">
+          <el-select
+            filterable
+            v-model="scope.row[scope.column.property]"
+            :placeholder="$t('__plzChoice')"
+            @change="(value)=>{ddlSubListChange(value, scope.row, 1)}"
+            style="display:block">
+            <el-option-group v-for="group in ddlSubList" :key="group.Category1Name" :label="group.Category1Name">
+              <el-option v-for="item in group.options" :key="item.ProductID" :value="item.ProductID">
+                <!-- 商品明細特別加上價格 -->
+                <span style="float: left">{{ item.ProductName + ' ['+ formatterMoneyUS(null,null,item.Price,null) + ']' }}</span>
+                <span style="float: right; color: #8492a6; font-size: 13px">{{ item.ProductID }}</span>
+              </el-option>
+            </el-option-group>
+          </el-select>
+          <br/>{{scope.row.Name}}
+        </div>
         <div v-else>
-          {{scope.row[scope.column.property]}}
+          {{scope.row[scope.column.property]}}<br/>{{scope.row.Name}}
         </div>
       </template>
-    </el-table-column>
-    <el-table-column
-      prop="Name"
-      :label="$t('__product')+$t('__name')">
     </el-table-column>
     <el-table-column
       prop="Price"
@@ -86,6 +86,32 @@
       :label="$t('__amount')"
       :formatter="formatterMoneyUS"
       width="100px">
+    </el-table-column>
+    <el-table-column
+      prop="FromStorageID"
+      :label="$t('__fromStorageID')"
+      width="200px">
+      <template slot-scope="scope">
+        <el-select v-if="scope.row.Inventory" v-model="scope.row[scope.column.property]" allow-create default-first-option filterable clearable :placeholder="$t('__plzChoice')" :disabled="scope.row.disableFromStorageID">
+          <el-option v-for="item in ddlFromStorageIDList[scope.row.Seq]" :key="item.ID" :label="item.ID+' '+item.Value" :value="item.ID">
+            <span style="float: left">{{ item.Value }}</span>
+            <span style="float: right; color: #8492a6; font-size: 13px">{{ item.ID }}</span>
+          </el-option>
+        </el-select>
+      </template>
+    </el-table-column>
+    <el-table-column
+      prop="ToStorageID"
+      :label="$t('__toStorageID')"
+      width="200px">
+      <template slot-scope="scope">
+        <el-select v-if="scope.row.Inventory" v-model="scope.row[scope.column.property]" allow-create default-first-option filterable clearable :placeholder="$t('__plzChoice')" :disabled="scope.row.disableToStorageID">
+          <el-option v-for="item in ddlToStorageIDList[scope.row.Seq]" :key="item.ID" :label="item.ID+' '+item.Value" :value="item.ID">
+            <span style="float: left">{{ item.Value }}</span>
+            <span style="float: right; color: #8492a6; font-size: 13px">{{ item.ID }}</span>
+          </el-option>
+        </el-select>
+      </template>
     </el-table-column>
     <el-table-column
       align="right"
@@ -156,9 +182,15 @@ export default {
         Price: 0,
         UnitName: '',
         ItemType: 0,
+        FromStorageID: '',
+        ToStorageID: '',
+        Purpose: '',
         // 以下為前端顯示用, 不會記錄進資料庫
         Status: 'New',
         Amount: 0,
+        disableFromStorageID: false,
+        disableToStorageID: false,
+        Inventory: false,
         // 商品特殊功能顯示(不記錄進資料庫)
         showExpandFunctions: 0,
         chglandCertificate: 0
@@ -173,6 +205,8 @@ export default {
       // 下拉是選單
       originDDLSubList: [],
       ddlSubList: [],
+      ddlFromStorageIDList: [],
+      ddlToStorageIDList: [], // 商品可以選擇的儲位清單
       functionsList: [] // 商品+特殊功能
     }
   },
@@ -213,6 +247,7 @@ export default {
       // 取得所有原始資料
       let response = await this.$api.orders.getDropdownList({ type: 'productsForOrderDetail' })
       this.originDDLSubList = response.data.result
+
       // 做select group 處理
       // 找出主key
       this.originDDLSubList.forEach(item => {
@@ -226,9 +261,11 @@ export default {
         item.options = this.originDDLSubList.filter(item2 => item2.Category1Name === item.Category1Name)
       })
 
+      // (既有)商品明細-額外功能
       let responseDetail = await this.$api.orders.getObject({ type: 'productFunctons', keyword: this.orderID })
       this.productFunctionsList = responseDetail.data.result
 
+      // (設定)商品明細-額外功能
       let response2 = await this.$api.orders.getDropdownList({ type: 'productFunctionsForOrderDetail' })
       this.functionsList = response2.data.result
     },
@@ -241,6 +278,7 @@ export default {
 
       this.reCalAmount()
     },
+    // 檢查正確性
     checkValidate: async function () {
       let isSuccess = false
 
@@ -258,6 +296,19 @@ export default {
             message: this.$t('__pleaseInput') + ' ' + this.$t('__project') + this.$t('__detail'),
             type: 'error'
           })
+          isSuccess = false
+          return isSuccess
+        }
+
+        if (row.Inventory === 1) {
+          if (row.FromStorageID === '' || row.ToStorageID === '') {
+            this.$message({
+              message: this.$t('__pleaseInput') + ' ' + this.$t('__project') + this.$t('__detail') + this.$t('__storageAddress'),
+              type: 'error'
+            })
+            isSuccess = false
+            return isSuccess
+          }
         }
       })
 
@@ -369,9 +420,14 @@ export default {
       this.reCalAmount()
     },
     // 下拉式選擇商品
-    ddlSubListChange: function (selected, row, ItemType) {
+    ddlSubListChange: async function (selected, row, ItemType) {
       let findSubList = this.originDDLSubList.find(item => item.ProductID === selected)
+
+      // 填入明細
       this.fillSubList(row, findSubList, ItemType)
+
+      // 建議儲位
+      this.bringDefaultStorageAddress(row)
     },
     // 填入選擇商品: 一般商品
     // ItemType: 0-主約 1-附約主品項 2-附約明細商品(不計價)
@@ -384,9 +440,23 @@ export default {
       row.UnitName = itemDetail.UnitName
       row.ItemType = ItemType
       row.Inventory = itemDetail.Inventory
+      row.FromStorageID = itemDetail.FromStorageID
+      row.ToStorageID = itemDetail.ToStorageID
+      row.Purpose = itemDetail.Purpose
+      row.Inventory = itemDetail.Inventory
 
       if (row.Status === '') {
         row.Status = 'Modified'
+      }
+
+      // (主約)儲位有預設帶入, 禁止修改
+      if (ItemType === 0) {
+        if (itemDetail.FromStorageID !== '') {
+          row.disableFromStorageID = true
+        }
+        if (itemDetail.ToStorageID !== '') {
+          row.disableToStorageID = true
+        }
       }
 
       // TODO: 有BOM表, 另外顯示在小視窗
@@ -444,6 +514,33 @@ export default {
         subAmount: subAmount
       })
     },
+    // 帶入預設儲位
+    bringDefaultStorageAddress: async function (row) {
+      // 取得建議儲位
+      // reset
+      this.ddlFromStorageIDList[row.Seq] = []
+
+      // get
+      // fromStorageID
+      if (row.FromStorageID === '') {
+        let response = await this.$api.stock.findStorageID({ ProductID: row.ProductID, Purpose: row.Purpose, Qty: 0 - row.Qty })
+        let result = response.data.result
+        if (result.length > 0) {
+          this.ddlFromStorageIDList[row.Seq] = result
+          row.FromStorageID = this.ddlFromStorageIDList[row.Seq][0].ID
+        }
+      }
+      // ToStorageID
+
+      if (row.ToStorageID === '') {
+        let response = await this.$api.stock.findStorageID({ ProductID: row.ProductID, Purpose: row.Purpose, Qty: row.Qty })
+        let result = response.data.result
+        if (result.length > 0) {
+          this.ddlToStorageIDList[row.Seq] = result
+          row.ToStorageID = this.ddlToStorageIDList[row.Seq][0].ID
+        }
+      }
+    },
     // ============== 明細特殊功能 ===============
     // expand
     expandChange: function (row, expandedRows) {
@@ -496,7 +593,12 @@ export default {
         this.handleNew()
         let rowParent = projectDetail[index]
         let row = this.subList[this.subList.length - 1]
+
+        // 填入明細
         this.fillSubList(row, rowParent, 0)
+
+        // 建議儲位
+        this.bringDefaultStorageAddress(row)
       }
     },
     // ============== 修改單價 ===============

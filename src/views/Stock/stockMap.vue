@@ -67,11 +67,13 @@ export default {
             label: {
               show: true,
               textBorderColor: 'yellow',
-              textBorderWidth: 5,
-              fontSize: 24,
+              textBorderWidth: 3,
+              fontSize: 20,
+              width: 20,
+              overflow: 'breakAll',
               formatter: function (params) {
                 let property = params.data
-                return property.StorageID + ' ' + property.StorageName
+                return property.StorageID + '\n' + property.StorageName
               }
             },
             emphasis: {
@@ -137,6 +139,9 @@ export default {
       this.option.series[0].data = []
       this.option.visualMap.max = 0
 
+      // 取得該層背景地圖
+
+      // 取得該層地圖數據
       let response1 = await this.$api.stock.mapGet({
         Building: this.searchContent.Building,
         Floor: this.searchContent.Floor,
@@ -195,11 +200,6 @@ export default {
 
       // 準備下一階搜尋
       let property = params.data
-      if (property.ImageUrl) {
-        this.searchContent.imageUrl = property.ImageUrl
-      } else {
-        this.searchContent.imageUrl = ''
-      }
 
       switch (this.searchContent.Layer) {
         case '':

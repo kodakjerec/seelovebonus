@@ -162,9 +162,14 @@ export default {
       this.ddlAreaOrigin = response.data.result
 
       // 帶入預設數值
-      if (this.ddlBuilding.length > 0) {
-        this.searchContent.Building = this.ddlBuilding[0].ID
-        this.ddlBuildingChange()
+      if (localStorage.getItem('searchHistory:' + this.$route.name) !== null) {
+        let oldSearchContent = JSON.parse(localStorage.getItem('searchHistory:' + this.$route.name))
+        this.searchContent.Building = oldSearchContent.Building
+        this.ddlBuildingChange(false)
+        this.searchContent.Floor = oldSearchContent.Floor
+        this.ddlFloorChange(false)
+        this.searchContent.Area = oldSearchContent.Area
+        this.ddlAreaChange(false)
       } else {
         this.search()
       }
@@ -262,23 +267,27 @@ export default {
       this.dialogShow = false
     },
     // ===== 下拉是選單 =====
-    ddlBuildingChange: function () {
+    ddlBuildingChange: function (isRefresh = true) {
       this.ddlFloor = this.ddlFloorOrigin.filter(item => { return item.ParentID === this.searchContent.Building })
-      this.searchContent.Floor = ''
-      if (this.ddlFloor.length > 0) {
-        this.searchContent.Floor = this.ddlFloor[0].ID
+      if (isRefresh) {
+        this.searchContent.Floor = ''
+        if (this.ddlFloor.length > 0) {
+          this.searchContent.Floor = this.ddlFloor[0].ID
+        }
+        this.ddlFloorChange()
       }
-      this.ddlFloorChange()
     },
-    ddlFloorChange: function () {
+    ddlFloorChange: function (isRefresh = true) {
       this.ddlArea = this.ddlAreaOrigin.filter(item => { return item.ParentID === this.searchContent.Floor })
-      this.searchContent.Area = ''
-      if (this.ddlArea.length > 0) {
-        this.searchContent.Area = this.ddlArea[0].ID
+      if (isRefresh) {
+        this.searchContent.Area = ''
+        if (this.ddlArea.length > 0) {
+          this.searchContent.Area = this.ddlArea[0].ID
+        }
+        this.ddlAreaChange()
       }
-      this.ddlAreaChange()
     },
-    ddlAreaChange: function () {
+    ddlAreaChange: function (isRefresh = true) {
       this.search()
     }
   }
