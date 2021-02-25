@@ -65,6 +65,13 @@ export default {
         return data
       })
     },
+    mapGetImage: ({ Building, Floor, Area }) => {
+      let rawData = { Building, Floor, Area }
+      return post('/stock/mapGetImage', rawData).then(data => {
+        console.log(`%c <<< Response(/rest/stock/mapGetImage)⤵ `, 'background-color: #E0455D; color: white; font-size: 14px; font-weight: bold;', data)
+        return data
+      })
+    },
     mapUpdate: ({ form }) => {
       let rawData = { form }
       return post('/stock/mapUpdate', rawData).then(data => {

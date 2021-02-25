@@ -1,7 +1,7 @@
 <template>
   <div>
     <div id="eChart" :style="cssProps"></div>
-    <el-button-group>
+    <el-button-group class="stockMapOption">
       <el-button type="info" @click="goback">{{$t('__goback')}}</el-button>
       <span>{{'x:'+mouseLocation.x+' y:'+mouseLocation.y}}</span>
       <span>{{rectangleSize}}</span>
@@ -10,12 +10,17 @@
 </template>
 
 <script>
+import { seeloveNodeServer } from '@/services/utils'
 // 來源: https://echarts.apache.org/examples/zh/editor.html?c=map-usa
 import echarts from 'echarts'
 export default {
   name: 'StockMap',
   data () {
     return {
+      baseWidth: 1440,
+      baseHeight: 900,
+      othersHeight: 30, // 頂部操作列
+      resizePer: { x: 1, y: 1 },
       eChart: null,
       usaJson: {
         type: 'FeatureCollection',
@@ -36,20 +41,33 @@ export default {
           min: 0,
           max: 100,
           inRange: {
-            color: ['#313695', '#4575b4', '#74add1', '#abd9e9', '#e0f3f8', '#ffffbf', '#fee090', '#fdae61', '#f46d43', '#d73027', '#a50026']
+            color: ['#313695', '#4575b4', '#74add1', '#abd9e9', '#e0f3f8', '#ffffbf', '#fee090', '#fdae61', '#f46d43', '#d73027', '#a50026'],
+            colorAlpha: 0.7
           },
           text: ['High', 'Low'], // 文本，默认为数值文本
           calculable: true
         },
-        toolbox: {
-          show: true,
-          // orient: 'vertical',
-          left: 'left',
-          top: 'top',
-          feature: {
-            restore: {}
-          }
-        },
+        // toolbox: {
+        //   show: true,
+        //   itemSize: 24,
+        //   iconStyle: {
+        //     borderColor: '#ffffff',
+        //     borderWidth: 2
+        //   },
+        //   emphasis: {
+        //     iconStyle: {
+        //       borderColor: '#ffffff',
+        //       borderWidth: 2
+        //     }
+        //   },
+        //   left: 'left',
+        //   top: 'top',
+        //   feature: {
+        //     restore: {
+        //       title: '還原'
+        //     }
+        //   }
+        // },
         series: [
           {
             type: 'map',
@@ -60,10 +78,7 @@ export default {
             top: 0,
             right: 0,
             bottom: 0,
-            boundingCoords: [
-              [0, 0],
-              [1440, 900]
-            ],
+            boundingCoords: [],
             label: {
               show: true,
               textBorderColor: 'yellow',
@@ -109,19 +124,26 @@ export default {
   computed: {
     cssProps: function () {
       let cssprop = {
-        width: '1440px',
-        height: '900px',
+        width: '100vw',
+        height: 'calc(100vh - 50px)',
         border: '1px solid',
         'background-size': 'contain',
-        'background-repeat': 'no-repeat'
-      }
-      if (this.searchContent.imageUrl) {
-        cssprop['background-image'] = `url(${require('./' + this.searchContent.imageUrl)})`
+        'background-repeat': 'no-repeat',
+        'background-image': `url('${this.searchContent.imageUrl}')`
       }
       return cssprop
     }
   },
   async mounted () {
+    // 根據螢幕尺寸, 重新調整地圖大小
+    this.resizePer.x = document.body.clientWidth / this.baseWidth
+    this.resizePer.y = document.body.clientHeight / this.baseHeight
+    this.option.series[0].boundingCoords = [
+      [0, 0],
+      [document.body.clientWidth, document.body.clientHeight - this.othersHeight]
+    ]
+
+    // eChart
     this.eChart = echarts.init(document.getElementById('eChart'))
     // 滑鼠事件
     this.eChart.on('click', this.mouseClick)
@@ -140,6 +162,15 @@ export default {
       this.option.visualMap.max = 0
 
       // 取得該層背景地圖
+      let responseUrl = await this.$api.stock.mapGetImage({
+        Building: this.searchContent.Building,
+        Floor: this.searchContent.Floor,
+        Area: this.searchContent.Area })
+      if (responseUrl.data.result[0].URL) {
+        this.searchContent.imageUrl = 'http://' + seeloveNodeServer.ip + ':' + seeloveNodeServer.port + '/' + responseUrl.data.result[0].URL
+      } else {
+        this.searchContent.imageUrl = ''
+      }
 
       // 取得該層地圖數據
       let response1 = await this.$api.stock.mapGet({
@@ -162,11 +193,11 @@ export default {
             type: 'Polygon',
             'coordinates': [
               [
-                [row.xAxis, row.yAxis], // 起點(左下)
-                [row.xAxis + row.Length, row.yAxis], // 右下
-                [row.xAxis + row.Length, row.yAxis + row.Width], // 右上
-                [row.xAxis, row.yAxis + row.Width], // 左上
-                [row.xAxis, row.yAxis] // 回到原點
+                [row.xAxis * this.resizePer.x, row.yAxis * this.resizePer.y], // 起點(左下)
+                [(row.xAxis + row.Length) * this.resizePer.x, row.yAxis * this.resizePer.y], // 右下
+                [(row.xAxis + row.Length) * this.resizePer.x, (row.yAxis + row.Width) * this.resizePer.y], // 右上
+                [row.xAxis * this.resizePer.x, (row.yAxis + row.Width) * this.resizePer.y], // 左上
+                [row.xAxis * this.resizePer.x, row.yAxis * this.resizePer.y] // 回到原點
               ]
             ]
           },
@@ -221,20 +252,20 @@ export default {
     },
     // 滑鼠移動
     mouseMove: function (params) {
-      this.mouseLocation.x = params.offsetX
-      this.mouseLocation.y = params.offsetY
+      this.mouseLocation.x = Math.round(params.offsetX)
+      this.mouseLocation.y = Math.round(params.offsetY)
     },
     // 按下滑鼠
     // 按下滑鼠起來
     mouseDown: function (params) {
       if (this.rectangleSize.lock === false) {
         this.rectangleSize.lock = true
-        this.rectangleSize.xAxis = params.offsetX
-        this.rectangleSize.yAxis = params.offsetY
+        this.rectangleSize.xAxis = Math.round(params.offsetX)
+        this.rectangleSize.yAxis = Math.round(params.offsetY)
       } else {
         this.rectangleSize.lock = false
-        this.rectangleSize.Length = Math.abs(params.offsetX - this.rectangleSize.xAxis)
-        this.rectangleSize.Width = Math.abs(params.offsetY - this.rectangleSize.yAxis)
+        this.rectangleSize.Length = Math.round((params.offsetX - this.rectangleSize.xAxis) * 100) / 100
+        this.rectangleSize.Width = Math.round((params.offsetY - this.rectangleSize.yAxis) * 100) / 100
       }
     },
     // 返回上一層
@@ -249,3 +280,13 @@ export default {
   }
 }
 </script>
+<style lang='scss' scoped>
+.stockMapOption{
+  position: absolute;
+  left: 0px;
+  bottom:0px;
+  color: yellow;
+  font-size: 20px;
+  -webkit-text-stroke: 1px black; /* width and color */
+}
+</style>
