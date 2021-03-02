@@ -8,7 +8,7 @@
 </template>
 
 <script>
-import total from './components/anza/anzaReportTotal'
+import total from './components/anza/glReportAnzaTotal'
 
 export default {
   name: 'AnzaRpts',

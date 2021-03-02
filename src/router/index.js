@@ -150,6 +150,11 @@ const routes = [
     name: 'AnzaRpts',
     component: () => import('@/views/Reports/anzaRpts')
   },
+  {
+    path: '/Reports/GlReportBonus2',
+    name: 'GlReportBonus2',
+    component: () => import('@/views/Reports/components/anza/glReportBonus2')
+  },
   // settings
   {
     path: '/Settings/SystemSettings',

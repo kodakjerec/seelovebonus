@@ -34,6 +34,8 @@ export default {
             type: 'tree',
             data: null,
             orient: 'vertical', // 垂直
+            symbol: 'roundRect', // 圓角矩形
+            symbolSize: 36, // 矩形大小
             edgeShape: 'polyline', // 線條是直角線
             expandAndCollapse: true, // 點一下展開或摺疊
             label: { // 標籤
