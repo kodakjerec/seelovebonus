@@ -343,12 +343,9 @@ export default {
         default:
           break
       }
-      let year = start.getFullYear()
-      let month = start.getMonth()
-      let day = start.getDate()
 
       // 預定安座日: 預設90天
-      let ScheduledDate = new Date(year, month, day, 12)
+      let ScheduledDate = start
       // 安座單
       // 續約, 展延=>不變更安座日
       // 繼承=>不變更日期
@@ -363,20 +360,18 @@ export default {
           }
           break
         case 'anzaTransfer':
-          day = start.getDate() + 90
-          ScheduledDate = new Date(year, month, day, 12)
+          ScheduledDate = new Date(start.setDate(start.getDate() + 90))
           break
         case 'anzaInherit':
           return
         default:
-          day = start.getDate() + 90
-          ScheduledDate = new Date(year, month, day, 12)
+          ScheduledDate = new Date(start.setDate(start.getDate() + 90))
           break
       }
 
-      // 到期日: 抓取專案設定Extend.Year
-      year = start.getFullYear() + parseInt(this.parentAnzaData.Extend.year)
-      let ExpirationDate = new Date(year, month, day, 12)
+      // 到期日: 安座準備其滿***第91天*** + 抓取專案設定Extend.Year
+      let ExpirationDate = new Date(start.setDate(start.getDate() + 1))
+      ExpirationDate = new Date(ExpirationDate.setFullYear(ExpirationDate.getFullYear() + parseInt(this.parentAnzaData.Extend.year)))
 
       if (Array.isArray(waitForReplaceList)) {
         waitForReplaceList.forEach(row => {

@@ -111,6 +111,7 @@ export default {
           PaymentFrequency: '1'
         })
       } else {
+        // 有給予預設值
         // Amount 與 qty 有誤差的金額, 全部灌在最後一筆
         let startDate = new Date(this.parentDate)
         let finalAmount = 0
@@ -120,6 +121,7 @@ export default {
 
           if (index > 0) {
             startDate = new Date(startDate.setMonth(startDate.getMonth() + row.IncreaseMonth))
+            startDate = new Date(startDate.getFullYear(), startDate.getMonth(), row.fixedDay, 12)
           }
           let tempValue = startDate.toISOString().slice(0, 10)
 

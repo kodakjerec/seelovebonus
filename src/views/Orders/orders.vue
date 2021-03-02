@@ -246,6 +246,19 @@ export default {
         let oldSearchContent = JSON.parse(localStorage.getItem('searchHistory:' + this.$route.name))
         this.searchContent.selectedOrdersType = oldSearchContent.selectedOrdersType
         this.searchContent.selectedStatusType = oldSearchContent.selectedStatusType
+        // 如果之前選項不在預設選項內, 移除
+        this.searchContent.selectedOrdersType.forEach((item, index) => {
+          let isItemExist = this.searchContent.OrdersType.find(item2 => { return item2.Prefix === item })
+          if (isItemExist === undefined) {
+            this.searchContent.selectedOrdersType.splice(index, 1)
+          }
+        })
+        this.searchContent.selectedStatusType.forEach((item, index) => {
+          let isItemExist = this.searchContent.StatusType.find(item2 => { return item2.Status === item })
+          if (isItemExist === undefined) {
+            this.searchContent.selectedStatusType.splice(index, 1)
+          }
+        })
       }
 
       this.search()

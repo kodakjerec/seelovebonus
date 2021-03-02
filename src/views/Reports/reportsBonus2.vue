@@ -90,12 +90,6 @@ export default {
     let month = start.getMonth()
     start = new Date(year, month, 1, 12)
     this.startDateChange(start)
-
-    let defaultCompany = this.ddlCompanies.find(item => { return item.ID === '83799375' })
-    if (defaultCompany) {
-      this.searchContent.CompanyID = defaultCompany.ID
-      this.ddlCompaniesChange(this.searchContent.CompanyID)
-    }
   },
   methods: {
     // 讀入系統清單
@@ -112,6 +106,22 @@ export default {
       if (localStorage.getItem('searchHistory:' + this.$route.name) !== null) {
         let oldSearchContent = JSON.parse(localStorage.getItem('searchHistory:' + this.$route.name))
         this.searchContent.selectedOrdersType = oldSearchContent.selectedOrdersType
+        // 如果之前選項不在預設選項內, 移除
+        this.searchContent.selectedOrdersType.forEach((item, index) => {
+          let isItemExist = this.searchContent.OrdersType.find(item2 => { return item2.Prefix === item })
+          if (isItemExist === undefined) {
+            this.searchContent.selectedOrdersType.splice(index, 1)
+          }
+        })
+      }
+
+      // 抓取預設廠商
+      response = await this.$api.reports.getDropdownList({ type: 'defCompanyID' })
+      let defaultCompany = response.data.result[0]
+
+      if (defaultCompany) {
+        this.searchContent.CompanyID = defaultCompany.Value
+        this.ddlCompaniesChange(this.searchContent.CompanyID)
       }
     },
     // 使用者權限
