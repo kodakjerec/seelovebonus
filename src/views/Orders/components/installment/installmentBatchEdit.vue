@@ -290,7 +290,7 @@ export default {
         if (i > 1) {
           switch (frequency) {
             case '2': // 月繳
-              startDate = new Date(startDate.setMonth(startDate.getD() + 1))
+              startDate = new Date(startDate.setMonth(startDate.getMonth() + 1))
               break
             case '3': // 季繳
               startDate = new Date(startDate.setMonth(startDate.getMonth() + 3))
