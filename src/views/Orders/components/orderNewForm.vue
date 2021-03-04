@@ -1,5 +1,26 @@
 <template>
-  <div>
+  <div id="orderHead">
+    <el-tabs class="tabOrderNewForm" v-model="tabActiveName" @tab-click="tabClick" type="card">
+      <el-tab-pane :label="$t('__orderID')" name="orderHead"></el-tab-pane>
+      <template v-if="dialogType !== 'new'">
+        <el-tab-pane :label="$t('__orderCustomer')" name="orderCustomer"></el-tab-pane>
+        <el-tab-pane v-if="projectFunctions.newAnzaOrder.Available" :label="$t('__anzaOrder')" name="anzaOrderList"></el-tab-pane>
+        <el-tab-pane v-if="projectFunctions.newCertificate1.Available" :label="$t('__certificate1')" name="certificate1"></el-tab-pane>
+        <el-tab-pane v-if="projectFunctions.newCertificate2.Available" :label="$t('__certificate2')" name="certificate2"></el-tab-pane>
+        <el-tab-pane :label="$t('__installment')" name="installment"></el-tab-pane>
+        <el-tab-pane :label="$t('__collectionRecords')" name="collectionRecords"></el-tab-pane>
+        <el-tab-pane :label="$t('__invoice')" name="invoice"></el-tab-pane>
+      </template>
+      <template v-else>
+        <el-tab-pane v-if="form.ProjectID" :label="$t('__orderCustomer')" name="orderCustomer"></el-tab-pane>
+        <el-tab-pane v-if="projectFunctions.newAnzaOrder.Available" :label="$t('__anzaOrder')" name="anzaOrderNew"></el-tab-pane>
+        <el-tab-pane v-if="projectFunctions.newCertificate1.Available" :label="$t('__certificate1')" name="certificate1OrderNew"></el-tab-pane>
+        <el-tab-pane v-if="projectFunctions.newCertificate2.Available" :label="$t('__certificate2')" name="certificate2OrderNew"></el-tab-pane>
+        <el-tab-pane v-if="form.ProjectID" :label="$t('__installment')" name="installmentOrderNew"></el-tab-pane>
+      </template>
+      <el-tab-pane :label="$t('__orderNewFormTabsBottom')" name="dialog-footer"></el-tab-pane>
+    </el-tabs>
+    <div class="tabOrderNewForm_ThenDiv"></div>
     <h1>{{myTitle}}</h1>
     <el-form ref="form" :model="form" :rules="rules" label-width="10vw" label-position="right">
       <el-form-item :label="$t('__orderID')">
@@ -113,6 +134,7 @@
       @reCalculateDetail="reCalculateDetail"></order-detail>
     <!-- 訂購者資料 -->
     <order-customer
+      id="orderCustomer"
       ref="orderCustomer"
       v-show="form.ProjectID"
       :dialogType="dialogType"
@@ -123,29 +145,34 @@
     <template v-if="dialogType !== 'new'">
       <!-- 安座單 -->
       <anza-order-list
+        id="anzaOrderList"
         :orderID="form.ID"
         :isShow="projectFunctions.newAnzaOrder.Available">
       </anza-order-list>
       <!-- 供奉憑證 -->
       <certificate1
+        id="certificate1"
         :buttonsShow="buttonsShow"
         :buttonsShowUser="buttonsShowUser"
         :orderID="form.ID"
         :isShow="projectFunctions.newCertificate1.Available"></certificate1>
       <!-- 換狀證明 -->
       <certificate2
+        id="certificate2"
         :buttonsShow="buttonsShow"
         :buttonsShowUser="buttonsShowUser"
         :orderID="form.ID"
         :isShow="projectFunctions.newCertificate2.Available"></certificate2>
       <!-- 分期付款 -->
       <installment
+        id="installment"
         ref="installment"
         :buttonsShow="buttonsShow"
         :buttonsShowUser="buttonsShowUser"
         :orderID="form.ID"></installment>
       <!-- 付款資訊 -->
       <collection-records
+        id="collectionRecords"
         ref="collectionRecords"
         :buttonsShow="buttonsShow"
         :buttonsShowUser="buttonsShowUser"
@@ -153,6 +180,7 @@
         @refreshInstallment="refreshInstallment"></collection-records>
       <!-- 發票資訊 -->
       <invoice
+        id="invoice"
         ref="invoice"
         :buttonsShow="buttonsShow"
         :buttonsShowUser="buttonsShowUser"
@@ -167,6 +195,7 @@
       <span v-html="$t('__orderDetailWarning')+'<br/>'+$t('__orderCertificateWarning')"></span>
       <anza-order-new
         v-show="projectFunctions.newAnzaOrder.Available"
+        id="anzaOrderNew"
         ref="anzaOrderNew"
         :orderID="form.ID"
         :parentOrderDate="form.OrderDate"
@@ -175,16 +204,19 @@
         :ddlCustomerBefore="ddlCustomer"></anza-order-new>
       <certificate1-order-new
         v-show="projectFunctions.newCertificate1.Available"
+        id="certificate1OrderNew"
         ref="certificate1OrderNew"
         :orderID="form.ID"
         :parentQty="form.Qty"></certificate1-order-new>
       <certificate2-order-new
         v-show="projectFunctions.newCertificate2.Available"
+        id="certificate2OrderNew"
         ref="certificate2OrderNew"
         :orderID="form.ID"
         :parentQty="form.Qty"></certificate2-order-new>
       <installment-order-new
-        v-show="form.ProjectID !== ''"
+        v-show="form.ProjectID"
+        id="installmentOrderNew"
         ref="installmentOrderNew"
         :orderID="form.ID"
         :projectID="form.ProjectID"
@@ -194,7 +226,7 @@
         :parentDate="form.OrderDate"></installment-order-new>
     </template>
     <!-- 底部操作按鈕 -->
-    <div slot="footer" class="dialog-footer">
+    <div slot="footer" id="dialog-footer" class="dialog-footer">
       <br/>
       <el-button v-show="buttonsShow.delete && buttonsShowUser.delete && form.Status < '2'" type="danger" @click="deleteOrder">{{$t('__delete')}}</el-button>
       <el-button v-show="buttonsShow.delete && buttonsShowUser.delete" type="danger" @click="invalidOrder">{{$t('__invalid')}}</el-button>
@@ -313,7 +345,9 @@ export default {
       // 以下為下拉式選單專用
       ddlOrderStatus: [],
       ddlProject: [],
-      ddlCustomer: []
+      ddlCustomer: [],
+      // 頂部導覽
+      tabActiveName: 'orderHead'
     }
   },
   mounted () {
@@ -749,7 +783,31 @@ export default {
     // 客戶變更, 要回傳最終結果
     customerChange: function (result) {
       this.form.anzaForNew.CustomerID = result
+    },
+    // ===== 頂部導覽 =====
+    tabClick: function (tab, event) {
+      this.tabActiveName = tab.name
+      let item = document.querySelector('#' + this.tabActiveName)
+      // item.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'start' })
+
+      window.scrollTo({
+        top: item.offsetTop - 80,
+        left: 0,
+        behavior: 'smooth'
+      })
     }
   }
 }
 </script>
+<style lang="scss" scoped>
+.tabOrderNewForm {
+  position: fixed;
+  top: 30px;
+  left: 0px;
+  background-color: white;
+  z-index: 1;
+}
+.tabOrderNewForm_ThenDiv {
+  height: 30px;
+}
+</style>

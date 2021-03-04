@@ -62,7 +62,7 @@ export default {
 .floatingMenu {
   padding: 0px;
   .el-menu {
-    position:absolute; /* fixing the position takes it out of html flow - knows
+    position:fixed; /* fixing the position takes it out of html flow - knows
                     nothing about where to locate itself except by browser
                     coordinates */
     width:100vw;      /* take up the full browser width */
