@@ -2,7 +2,7 @@
   <div>
     <el-button-group style="padding-bottom: 5px">
       <el-button class="hideButton" icon="el-icon-more"><!-- 排版用,避免沒按鈕跑版 --></el-button>
-      <search-button :options="sortable.orderByList" :originOrderBy="sortable.orderBy" :originOrderByValue="sortable.orderByValue" @search="search" @reOrder="reOrder"></search-button>
+      <search-button @search="search"></search-button>
     </el-button-group>
     <el-table
       :data="originData"
@@ -110,7 +110,6 @@ export default {
         totalCount: 20
       },
       sortable: {
-        orderByList: [{ ID: 'ID', Value: this.$t('__orderID') }, { ID: 'OrderDate', Value: this.$t('__order') + this.$t('__date') }], // 排序
         orderBy: 'desc', // 排序方式
         orderByValue: 'ID' // 預設排序欄位
       },

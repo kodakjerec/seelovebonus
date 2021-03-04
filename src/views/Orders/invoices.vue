@@ -2,7 +2,7 @@
   <el-form>
     <el-button-group style="padding-bottom: 5px">
       <el-button class="hideButton" icon="el-icon-more"><!-- 排版用,避免沒按鈕跑版 --></el-button>
-      <search-button :options="sortable.orderByList" :originOrderBy="sortable.orderBy" :originOrderByValue="sortable.orderByValue" @search="search" @reOrder="reOrder"></search-button>
+      <search-button @search="search"></search-button>
     </el-button-group>
     <el-table
       :data="results"
@@ -95,7 +95,6 @@ export default {
         pageSize: 20
       },
       sortable: {
-        orderByList: [{ ID: 'InvoiceID', Value: this.$t('__invoice') + this.$t('__id') }, { ID: 'OrderID', Value: this.$t('__orderID') }], // 排序
         orderBy: 'desc', // 排序方式
         orderByValue: 'InvoiceID' // 預設排序欄位
       },

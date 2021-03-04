@@ -3,10 +3,10 @@
     <el-button-group style="padding-bottom: 5px">
       <el-button class="hideButton" icon="el-icon-more"><!-- 排版用,避免沒按鈕跑版 --></el-button>
       <el-button v-show="buttonsShowUser.new" type="primary" icon="el-icon-plus" @click.prevent="showForm('new')">{{$t('__new')}}</el-button>
-      <search-button :options="sortable.orderByList" :originOrderBy="sortable.orderBy" :originOrderByValue="sortable.orderByValue" @search="search" @reOrder="reOrder">
-      <el-tooltip slot="body" effect="light" :content="$t('__filter')" placement="top-start">
-        <el-button @click.prevent="dialogShowSearchContent = true">{{$t('__filter')}}</el-button>
-      </el-tooltip>
+      <search-button @search="search">
+        <el-tooltip slot="body" effect="light" :content="$t('__filter')" placement="top-start">
+          <el-button @click.prevent="dialogShowSearchContent = true">{{$t('__filter')}}</el-button>
+        </el-tooltip>
       </search-button>
     </el-button-group>
     <el-table
@@ -16,61 +16,54 @@
       :height="tableHeight"
       @row-click="handleClick"
       :row-class-name="tableRowClassName"
+      @header-click="tableHeaderClick"
       style="width: 100%">
       <el-table-column
         align="left"
         width="160px">
         <template slot="header">
-          <el-button
-            type="text"
-            size="mini" @click.prevent="openSignOffManual">{{$t('__signOffSettings')}}</el-button>
+          <el-button type="text" size="mini" @click.prevent="openSignOffManual">{{$t('__signOffSettings')}}</el-button>
+          <br/>{{$t('__batch')+$t('__signOff')}}
           <br/>
-          {{$t('__batch')+$t('__signOff')}}
-          <br/>
-          <el-button
-            size="mini"
-            @click="batchSignOffAgree()">{{$t('__signOffAgree')}}</el-button>
-          <el-button
-            size="mini"
-            @click="batchSignOffDeny()">{{$t('__signOffDeny')}}</el-button>
+          <el-button size="mini" @click="batchSignOffAgree()">{{$t('__signOffAgree')}}</el-button>
+          <el-button size="mini" @click="batchSignOffDeny()">{{$t('__signOffDeny')}}</el-button>
         </template>
         <template slot-scope="scope">
-          <el-button
-            type="text"
-            size="mini" @click.native.stop="openSignOffLog(scope.row)">{{$t('__signOffLog')}}</el-button>
+          <el-button type="text" size="mini" @click.native.stop="openSignOffLog(scope.row)">{{$t('__signOffLog')}}</el-button>
           <br/>
-          <el-button
-            v-show="scope.row.StatusSignOff === 1"
-            size="mini"
-            type="primary"
-            @click.native.stop="signOffAgree(scope.$index, scope.row)">{{$t('__signOffAgree')}}</el-button>
-          <el-button
-            v-show="scope.row.StatusSignOff === 1"
-            size="mini"
-            type="danger"
-            @click.native.stop="signOffDeny(scope.$index, scope.row)">{{$t('__signOffDeny')}}</el-button>
+          <el-button v-show="scope.row.StatusSignOff === 1" size="mini" type="primary" @click.native.stop="signOffAgree(scope.$index, scope.row)">{{$t('__signOffAgree')}}</el-button>
+          <el-button v-show="scope.row.StatusSignOff === 1" size="mini" type="danger" @click.native.stop="signOffDeny(scope.$index, scope.row)">{{$t('__signOffDeny')}}</el-button>
         </template>
       </el-table-column>
-      <el-table-column>
+      <el-table-column
+        prop="ID">
         <template slot="header">
-          {{$t('__orderID')}}<br/>{{$t('__project')+$t('__name')}}<br/>{{$t('__status')}}
+          {{$t('__orderID')}}
+          <table-sort-arrow :prop="'ID'" :sortable="sortable"></table-sort-arrow>
+          <br/>{{$t('__project')+$t('__name')}}<br/>{{$t('__status')}}
         </template>
         <template slot-scope="scope">
           <div style="font-weight:1000">{{scope.row.ID}}</div>
           {{scope.row.ProjectName}}<br/>{{scope.row.StatusName}}
         </template>
       </el-table-column>
-      <el-table-column>
+      <el-table-column
+        prop="CustomerName">
         <template slot="header">
-          {{$t('__customer')+$t('__name')}}<br/>{{$t('__referrer')+'/'+$t('__company')}}
+          {{$t('__customer')+$t('__name')}}
+          <table-sort-arrow :prop="'CustomerName'" :sortable="sortable"></table-sort-arrow>
+          <br/>{{$t('__referrer')+'/'+$t('__company')}}
         </template>
         <template slot-scope="scope">
           {{scope.row.CustomerName}}<br/>{{scope.row.ReferrerName+'/'+scope.row.CompanyName}}
         </template>
       </el-table-column>
-      <el-table-column>
+      <el-table-column
+        prop="OrderDate">
         <template slot="header">
-          {{$t('__order')+$t('__date')}}<br/>{{$t('__amount')}}
+          {{$t('__order')+$t('__date')}}
+          <table-sort-arrow :prop="'OrderDate'" :sortable="sortable"></table-sort-arrow>
+          <br/>{{$t('__amount')}}
         </template>
         <template slot-scope="scope">
           {{formatterDate(null,null,scope.row.OrderDate,null)}}<br/>{{formatterMoney(null,null,scope.row.Amount,null)}}
@@ -141,13 +134,15 @@ import searchButton from '@/components/searchButton'
 import signOffDialog from './components/signOff/signOffDialog'
 import ordersSearchContent from './components/ordersSearchContent'
 import { formatMoney, formatDate } from '@/setup/format.js'
+import tableSortArrow from './components/tableSortArrow'
 
 export default {
   name: 'Orders',
   components: {
     searchButton,
     signOffDialog,
-    ordersSearchContent
+    ordersSearchContent,
+    tableSortArrow
   },
   data () {
     return {
@@ -171,7 +166,6 @@ export default {
         totalCount: 20
       },
       sortable: { // 排序
-        orderByList: [{ ID: 'ID', Value: this.$t('__orderID') }, { ID: 'OrderDate', Value: this.$t('__order') + this.$t('__date') }], // 排序
         orderBy: 'desc', // 排序方式
         orderByValue: 'ID' // 預設排序欄位
       },
@@ -328,7 +322,6 @@ export default {
       delete passSearchContent.OrdersType
       delete passSearchContent.StatusType
       let passSortable = JSON.parse(JSON.stringify(this.sortable))
-      delete passSortable.orderByList
 
       let response2 = await this.$api.orders.ordersShow({
         searchContent: JSON.stringify(passSearchContent),
@@ -361,11 +354,18 @@ export default {
         this.savePaginationData()
       }
     },
-    // 排序相關
-    reOrder: function (searchButtonResult) {
-      this.sortable.orderBy = searchButtonResult.orderBy
-      this.sortable.orderByValue = searchButtonResult.orderByValue
-
+    // 變更排序
+    tableHeaderClick: function (column, event) {
+      if (this.sortable.orderByValue !== column.property) {
+        this.sortable.orderByValue = column.property
+        this.sortable.orderBy = 'desc'
+      } else {
+        if (this.sortable.orderBy === 'asc') {
+          this.sortable.orderBy = 'desc'
+        } else {
+          this.sortable.orderBy = 'asc'
+        }
+      }
       this.search()
     },
     // ===== 分頁相關 =====
