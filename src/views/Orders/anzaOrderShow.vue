@@ -2,10 +2,10 @@
   <div>
     <el-button-group style="padding-bottom: 5px">
       <el-button class="hideButton" icon="el-icon-more"><!-- 排版用,避免沒按鈕跑版 --></el-button>
-      <search-button :options="sortable.orderByList" :originOrderBy="sortable.orderBy" :originOrderByValue="sortable.orderByValue" @search="search" @reOrder="reOrder">
-      <el-tooltip slot="body" effect="light" :content="$t('__filter')" placement="top-start">
-        <el-button @click.prevent="dialogShowSearchContent = true">{{$t('__filter')}}</el-button>
-      </el-tooltip>
+      <search-button @search="search">
+        <el-tooltip slot="body" effect="light" :content="$t('__filter')" placement="top-start">
+          <el-button @click.prevent="dialogShowSearchContent = true">{{$t('__filter')}}</el-button>
+        </el-tooltip>
       </search-button>
     </el-button-group>
     <el-table
@@ -15,10 +15,14 @@
       :span-method="objectSpanMethod"
       :height="tableHeight"
       :row-class-name="tableRowClassName"
+      @header-click="tableHeaderClick"
       style="width: 100%">
         <el-table-column
-          prop="OrderID"
-          :label="this.$t('__orderID')">
+          prop="OrderID">
+          <template slot="header">
+            {{$t('__orderID')}}
+            <table-sort-arrow :prop="'OrderID'" :sortable="sortable"></table-sort-arrow>
+          </template>
           <template slot-scope="scope">
             <div style="font-weight:1000">{{scope.row[scope.column.property]}}</div>
             <div>{{scope.row.ProjectName}}</div>
@@ -74,17 +78,23 @@
           </template>
         </el-table-column>
         <el-table-column
+          prop="AnzaOrderID"
           width="100px">
           <template slot="header">
-            {{$t('__anzaOrder')}}<br/>{{$t('__status')}}
+            {{$t('__anzaOrder')}}
+            <table-sort-arrow :prop="'AnzaOrderID'" :sortable="sortable"></table-sort-arrow>
+            <br/>{{$t('__status')}}
           </template>
           <template slot-scope="scope">
             {{scope.row.AnzaOrderID}}<br/>{{scope.row.StatusName}}
           </template>
         </el-table-column>
-        <el-table-column>
+        <el-table-column
+          prop="CustomerName">
           <template slot="header">
-            {{$t('__anzaCustomer')}}<br/>{{$t('__anzaStorageID')}}
+            {{$t('__anzaCustomer')}}
+            <table-sort-arrow :prop="'CustomerName'" :sortable="sortable"></table-sort-arrow>
+            <br/>{{$t('__anzaStorageID')}}
           </template>
           <template slot-scope="scope">
             {{scope.row.CustomerName}}<br/>
@@ -92,9 +102,12 @@
             <span v-else style="text-decoration:line-through">{{scope.row.StorageID}}</span>
           </template>
         </el-table-column>
-        <el-table-column>
+        <el-table-column
+          prop="ScheduledDate">
           <template slot="header">
-            {{$t('__scheduled')+$t('__anza')+$t('__date')}}<br/>{{$t('__real')+$t('__anza')+$t('__date')}}
+            {{$t('__scheduled')+$t('__anza')+$t('__date')}}
+            <table-sort-arrow :prop="'ScheduledDate'" :sortable="sortable"></table-sort-arrow>
+            <br/>{{$t('__real')+$t('__anza')+$t('__date')}}
           </template>
           <template slot-scope="scope">
             {{formatterDate(null,null,scope.row.ScheduledDate,null)}}<br/>
@@ -107,13 +120,19 @@
         </el-table-column>
         <el-table-column
           prop="ExpirationDate"
-          :label="this.$t('__expire') + this.$t('__date')"
           :formatter="formatterDate">
+          <template slot="header">
+            {{$t('__expire') + this.$t('__date')}}
+            <table-sort-arrow :prop="'ExpirationDate'" :sortable="sortable"></table-sort-arrow>
+          </template>
         </el-table-column>
         <el-table-column
           prop="CompleteDate"
-          :label="this.$t('__yuanman') + this.$t('__date')"
           :formatter="formatterDate">
+          <template slot="header">
+            {{$t('__yuanman') + this.$t('__date')}}
+            <table-sort-arrow :prop="'CompleteDate'" :sortable="sortable"></table-sort-arrow>
+          </template>
         </el-table-column>
     </el-table>
     <!-- 分頁 -->
@@ -159,13 +178,15 @@ import operateAnzaMode from './components/anza/operateAnza'
 import searchButton from '@/components/searchButton'
 import ordersSearchContent from './components/ordersSearchContent'
 import { formatDate } from '@/setup/format.js'
+import tableSortArrow from './components/tableSortArrow'
 
 export default {
   name: 'AnzaOrderShow',
   components: {
     operateAnzaMode,
     searchButton,
-    ordersSearchContent
+    ordersSearchContent,
+    tableSortArrow
   },
   data () {
     return {
@@ -194,7 +215,6 @@ export default {
       },
       tableSpanList: [],
       sortable: {
-        orderByList: [{ ID: 'OrderID', Value: this.$t('__orderID') }, { ID: 'AnzaOrderID', Value: this.$t('__anzaOrder') }], // 排序
         orderBy: 'desc', // 排序方式
         orderByValue: 'OrderID' // 預設排序欄位
       },
@@ -311,7 +331,6 @@ export default {
       delete passSearchContent.OrdersType
       delete passSearchContent.StatusType
       let passSortable = JSON.parse(JSON.stringify(this.sortable))
-      delete passSortable.orderByList
 
       let response2 = await this.$api.orders.anzaOrderShow2({
         searchContent: JSON.stringify(passSearchContent),
@@ -344,10 +363,18 @@ export default {
 
       this.pageChange(this.originData)
     },
-    // 排序相關
-    reOrder: function (searchButtonResult) {
-      this.sortable.orderBy = searchButtonResult.orderBy
-      this.sortable.orderByValue = searchButtonResult.orderByValue
+    // 變更排序
+    tableHeaderClick: function (column, event) {
+      if (this.sortable.orderByValue !== column.property) {
+        this.sortable.orderByValue = column.property
+        this.sortable.orderBy = 'desc'
+      } else {
+        if (this.sortable.orderBy === 'asc') {
+          this.sortable.orderBy = 'desc'
+        } else {
+          this.sortable.orderBy = 'asc'
+        }
+      }
       this.search()
     },
     // ===== 分頁相關 =====
