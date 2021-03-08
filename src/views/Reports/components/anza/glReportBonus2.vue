@@ -66,7 +66,7 @@ export default {
         CompanyID: null,
         CompanyName: null
       },
-      reportPath: 'gl_Report_Bonus2',
+      reportPath: 'reports_gl_Bonus2',
       reportParams: {},
       // 以下為下拉式選單專用
       ddlCompanies: [],

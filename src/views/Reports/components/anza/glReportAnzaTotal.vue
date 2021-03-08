@@ -66,7 +66,7 @@ export default {
         keyword: '',
         selectedButton: []
       },
-      reportPath: 'gl_Report_anza_Total',
+      reportPath: 'reports_gl_anza_Total',
       reportParams: {},
       // 以下為下拉式選單專用
       ddlCompanies: [],

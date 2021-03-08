@@ -67,7 +67,7 @@
       style="width: 100%">
       <el-table-column
         prop="CustomerID"
-        :label="$t('__customer')">
+        :label="$t('__anzaCustomer')">
         <template slot-scope="scope">
           <el-select v-model="scope.row[scope.column.property]" filterable value-key="value" :placeholder="$t('__plzChoice')">
             <el-option v-for="item in ddlCustomer" :key="item.ID" :label="item.ID+' '+item.Value" :value="item.ID">
