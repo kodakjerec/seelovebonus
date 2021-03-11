@@ -253,10 +253,10 @@ export default {
     // 讀取預設資料
     preLoading: async function () {
       // 取得所有原始資料
-      let response = await this.$api.basic.getDropdownList({ type: 'lunarTime' })
-      this.ddlLunarTime = response.data.result
-      response = await this.$api.basic.getDropdownList({ type: 'gender' })
-      this.ddlGender = response.data.result
+      let response = this.$api.local.getDropdownList({ type: 'LunarTime' })
+      this.ddlLunarTime = response
+      response = this.$api.local.getDropdownList({ type: 'Gender' })
+      this.ddlGender = response
       if (!this.disableForm.StorageID) {
         let response2 = await this.$api.stock.findStorageID({
           ProductID: this.fromAnzaOrder.ProductID,

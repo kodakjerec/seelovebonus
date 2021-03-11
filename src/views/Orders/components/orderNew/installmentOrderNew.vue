@@ -86,9 +86,9 @@ export default {
     formatterMoney: function (cellValue) {
       return formatMoney(cellValue)
     },
-    preLoading: async function () {
-      let response1 = await this.$api.orders.getDropdownList({ type: 'paymentMethod' })
-      this.ddlPaymentMethod = response1.data.result
+    preLoading: function () {
+      let response = this.$api.local.getDropdownList({ type: 'PaymentMethod' })
+      this.ddlPaymentMethod = response
       this.reLoading()
     },
     reLoading: async function () {

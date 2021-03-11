@@ -223,15 +223,15 @@ export default {
   methods: {
     // 讀取預設資料
     preLoading: async function () {
-      let response4 = await this.$api.basic.getDropdownList({ type: 'status' })
-      this.ddlStatus = response4.data.result
+      let response = this.$api.local.getDropdownList({ type: 'Status' })
+      this.ddlStatus = response
 
-      let resItemCategory1 = await this.$api.basic.getDropdownList({ type: 'itemCategory1' })
-      this.ddlCategory1 = resItemCategory1.data.result
-      let resItemCategory2 = await this.$api.basic.getDropdownList({ type: 'itemCategory2' })
-      this.ddlCategory2Origin = resItemCategory2.data.result
-      let resItemCategory3 = await this.$api.basic.getDropdownList({ type: 'itemCategory3' })
-      this.ddlCategory3Origin = resItemCategory3.data.result
+      response = this.$api.local.getDropdownList({ type: 'ItemCategory1' })
+      this.ddlCategory1 = response
+      response = this.$api.local.getDropdownList({ type: 'ItemCategory2' })
+      this.ddlCategory2Origin = response
+      response = this.$api.local.getDropdownList({ type: 'ItemCategory3' })
+      this.ddlCategory3Origin = response
       this.ddlCategory1Change()
       this.ddlCategory2Change()
 
@@ -244,8 +244,8 @@ export default {
       this.ddlBuildingChange()
       this.ddlFloorChange()
 
-      let resStorageType = await this.$api.basic.getDropdownList({ type: 'storageType' })
-      this.ddlStorageType = resStorageType.data.result
+      response = this.$api.local.getDropdownList({ type: 'StorageType' })
+      this.ddlStorageType = response
     },
     // 檢查輸入
     checkValidate: async function () {

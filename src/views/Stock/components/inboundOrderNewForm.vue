@@ -178,8 +178,8 @@ export default {
     preLoading: async function () {
       let response3 = await this.$api.basic.getDropdownList({ type: 'companies' })
       this.ddlCompanies = response3.data.result
-      let response4 = await this.$api.orders.getDropdownList({ type: 'orderStatus' })
-      this.ddlOrderStatus = response4.data.result
+      let response = this.$api.local.getDropdownList({ type: 'OrderStatus' })
+      this.ddlOrderStatus = response
     },
     // 檢查輸入
     checkValidate: async function () {

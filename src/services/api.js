@@ -5,6 +5,7 @@ import reportsApi from './apiList/reports'
 import settingsApi from './apiList/settings'
 import signOffApi from './apiList/signOff'
 import stockApi from './apiList/stock'
+import localApi from './apiList/local'
 
 const { ...loginItems } = loginApi
 const { ...basicItems } = basicApi
@@ -13,6 +14,7 @@ const { ...reportsItems } = reportsApi
 const { ...settingsItems } = settingsApi
 const { ...signOffItems } = signOffApi
 const { ...stockItems } = stockApi
+const { ...localItems } = localApi
 
 export default {
   ...loginItems,
@@ -21,5 +23,6 @@ export default {
   ...reportsItems,
   ...settingsItems,
   ...signOffItems,
-  ...stockItems
+  ...stockItems,
+  ...localItems
 }

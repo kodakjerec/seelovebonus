@@ -211,10 +211,10 @@ export default {
     },
     // 讀取預設資料
     preLoading: async function () {
-      let response1 = await this.$api.orders.getDropdownList({ type: 'paymentMethod' })
-      this.ddlPaymentMethod = response1.data.result
-      let response2 = await this.$api.orders.getDropdownList({ type: 'paymentFrequency' })
-      this.ddlPaymentFrequency = response2.data.result
+      let response = this.$api.local.getDropdownList({ type: 'PaymentMethod' })
+      this.ddlPaymentMethod = response
+      response = this.$api.local.getDropdownList({ type: 'PaymentFrequency' })
+      this.ddlPaymentFrequency = response
 
       // 帶入訂單最大金額
       let responseRecords = await this.$api.orders.collectionRecordsFunctions({ type: 'installmentBatchEditNew', OrderID: this.orderID, Seq: null })

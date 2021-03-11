@@ -425,8 +425,8 @@ export default {
     // 讀取預設資料
     preLoading: async function () {
       // 取得所有原始資料
-      let response = await this.$api.basic.getDropdownList({ type: 'post' })
-      this.postData = response.data.result
+      let response = this.$api.local.getDropdownList({ type: 'District' })
+      this.postData = response
 
       let responseCustomers = await this.$api.basic.getDropdownList({ type: 'customers' })
       this.customersData = responseCustomers.data.result
@@ -434,23 +434,23 @@ export default {
       this.employeesData = responseEmployees.data.result
       let responseCompanies = await this.$api.basic.getDropdownList({ type: 'companies' })
       this.companiesData = responseCompanies.data.result
-      response = await this.$api.basic.getDropdownList({ type: 'lunarTime' })
-      this.ddlLunarTime = response.data.result
+      response = this.$api.local.getDropdownList({ type: 'LunarTime' })
+      this.ddlLunarTime = response
 
-      let response1 = await this.$api.basic.getDropdownList({ type: 'country' })
-      this.ddlCountry = response1.data.result
-      let response2 = await this.$api.basic.getDropdownList({ type: 'city' })
-      this.ddlCity = response2.data.result
+      response = this.$api.local.getDropdownList({ type: 'Country' })
+      this.ddlCountry = response
+      response = this.$api.local.getDropdownList({ type: 'City' })
+      this.ddlCity = response
       this.ddlCityChange()
-      let response3 = await this.$api.basic.getDropdownList({ type: 'status' })
-      this.ddlStatus = response3.data.result
-      let response4 = await this.$api.basic.getDropdownList({ type: 'gender' })
-      this.ddlGender = response4.data.result
-      let response5 = await this.$api.basic.getDropdownList({ type: 'refKind' })
-      this.ddlRefKind = response5.data.result
+      response = this.$api.local.getDropdownList({ type: 'Status' })
+      this.ddlStatus = response
+      response = this.$api.local.getDropdownList({ type: 'Gender' })
+      this.ddlGender = response
+      response = this.$api.local.getDropdownList({ type: 'RefKind' })
+      this.ddlRefKind = response
       this.ddlRefKindChange()
-      let response6 = await this.$api.basic.getDropdownList({ type: 'idType' })
-      this.ddlIDType = response6.data.result
+      response = this.$api.local.getDropdownList({ type: 'IdType' })
+      this.ddlIDType = response
       let response7 = await this.$api.basic.getDropdownList({ type: 'employeesList' })
       this.ddlEmployeeID = response7.data.result
       // 幫忙帶入虛構欄位: EmployeeID
@@ -462,8 +462,10 @@ export default {
 
       // 法定代理人
       this.ddlAgentID = this.customersData
-      this.ddlAgentCountry = response1.data.result
-      this.ddlAgentCity = response2.data.result
+      response = this.$api.local.getDropdownList({ type: 'Country' })
+      this.ddlAgentCountry = response
+      response = this.$api.local.getDropdownList({ type: 'City' })
+      this.ddlAgentCity = response
       this.ddlAgentCityChange()
     },
     // 身份證字號提示

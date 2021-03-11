@@ -129,6 +129,11 @@ export default {
         })
         this.$store.dispatch('setUserProg', response3.data.userProg)
 
+        // 讀入 settings
+        let response4 = await this.$api.settings.getDropdownList({ type: 'systemSettingsForLogin' })
+        let settingsOrigin = response4.data.result
+        this.$store.dispatch('setGlobalSettings', settingsOrigin)
+
         router.push('home')
       }
     },
