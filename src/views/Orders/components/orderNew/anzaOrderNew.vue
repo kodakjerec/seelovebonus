@@ -59,6 +59,7 @@
           :label="$t('__memo')">
         </el-table-column>
       </el-table>
+      <!-- 可修改table -->
       <el-table
       v-else
       :data="subList"
@@ -77,6 +78,10 @@
           </el-select>
         </template>
       </el-table-column>
+      <!-- 個資 -->
+      <el-table-column>
+      </el-table-column>
+      <!-- 數量 -->
       <el-table-column
         prop="qty"
         :label="$t('__qty')">
@@ -84,6 +89,7 @@
           <el-input-number v-model="scope.row[scope.column.property]" @change="(currentValue, oldValue)=>{qtyChange(currentValue, oldValue, scope.row)}"></el-input-number>
         </template>
       </el-table-column>
+      <!-- 預定安座日 -->
       <el-table-column
         prop="ScheduledDate"
         :label="$t('__scheduled')+$t('__anza')+$t('__date')">
@@ -95,6 +101,7 @@
           </el-date-picker>
         </template>
       </el-table-column>
+      <!-- 實際安座日 -->
       <el-table-column
         prop="ExpirationDate"
         :label="$t('__expire')+$t('__date')">
@@ -106,6 +113,7 @@
           </el-date-picker>
         </template>
       </el-table-column>
+      <!-- 操作 -->
       <el-table-column
         align="right"
         width="95px">
@@ -153,7 +161,12 @@ export default {
         ModifyType: '',
         FromStorageID: '',
         // 顯示用
-        qty: 1
+        qty: 1,
+        BirthLunarDate: '',
+        BirthLunarTime: '',
+        Gender: '',
+        TelHome: '',
+        Address: ''
       },
       disableForm: {
         CustomerID: false

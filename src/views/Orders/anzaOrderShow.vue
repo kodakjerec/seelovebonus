@@ -89,6 +89,7 @@
             {{scope.row.AnzaOrderID}}<br/>{{scope.row.StatusName}}
           </template>
         </el-table-column>
+        <!-- 安座位別 -->
         <el-table-column
           prop="CustomerName">
           <template slot="header">
@@ -102,6 +103,30 @@
             <span v-else style="text-decoration:line-through">{{scope.row.StorageID}}</span>
           </template>
         </el-table-column>
+        <!-- 個資 -->
+        <el-table-column>
+          <template slot="header">
+            {{$t('__gender')}}<br/>
+            {{$t('__birth')+'('+$t('__solarCalendar')+')'}}<br/>
+            {{$t('__lunarDate')+'('+$t('__lunarCalendar')+')'+' '+$t('__lunarTime')}}
+          </template>
+          <template slot-scope="scope">
+            {{scope.row.GenderName}}<br/>
+            {{scope.row.Birth}}<br/>
+            {{scope.row.BirthLunarDate+' '+scope.row.BirthLunarTimeName}}
+          </template>
+        </el-table-column>
+        <el-table-column>
+          <template slot="header">
+            {{$t('__tel')}}<br/>
+            {{$t('__address')}}
+          </template>
+          <template slot-scope="scope">
+            {{scope.row.Tel}}<br/>
+            {{scope.row.Address}}
+          </template>
+        </el-table-column>
+        <!-- 預定安座日 -->
         <el-table-column
           prop="ScheduledDate">
           <template slot="header">
@@ -118,6 +143,7 @@
             </template>
           </template>
         </el-table-column>
+        <!-- 到期日期 -->
         <el-table-column
           prop="ExpirationDate"
           :formatter="formatterDate">
@@ -344,8 +370,16 @@ export default {
 
       if (this.originData.length > 0) {
         // 重構清單
-        this.originData.forEach(item => {
-          if (item.OrderIDList) { item.OrderIDList = JSON.parse(item.OrderIDList) }
+        this.originData.forEach(row => {
+          if (row.OrderIDList) {
+            row.OrderIDList = JSON.parse(row.OrderIDList)
+          }
+          if (row.Birth) {
+            row.Birth = row.Birth.slice(0, 10)
+          }
+          if (row.BirthLunarDate) {
+            row.BirthLunarDate = row.BirthLunarDate.slice(0, 10)
+          }
         })
 
         // 分頁篩選

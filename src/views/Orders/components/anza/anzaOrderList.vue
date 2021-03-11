@@ -11,43 +11,77 @@
           border
           :row-class-name="tableRowClassName"
           style="width: 100%">
-        <el-table-column
-          prop="StatusName"
-          :label="this.$t('__status')">
-          <template slot-scope="scope">
-            {{scope.row[scope.column.property]}}<br/>{{scope.row.ModifyType}}
-          </template>
-        </el-table-column>
-        <el-table-column
-          prop="AnzaOrderID"
-          :label="this.$t('__anzaOrder')">
-        </el-table-column>
-        <el-table-column
-          prop="CustomerName"
-          :label="this.$t('__anzaCustomer')">
-        </el-table-column>
-        <el-table-column
-          prop="StorageID"
-          :label="this.$t('__anzaStorageID')">
-        </el-table-column>
-        <el-table-column
-          prop="ExpirationDate"
-          :label="this.$t('__expire') + this.$t('__date')"
-          :formatter="formatterDate">
-        </el-table-column>
-        <el-table-column>
-          <template slot="header">
-            {{$t('__scheduled')+$t('__anza')+$t('__date')}}<br/>{{$t('__real')+$t('__anza')+$t('__date')}}
-          </template>
-          <template slot-scope="scope">
-            {{formatterDate(null,null,scope.row.ScheduledDate,null)}}<br/>
-            <span v-if="scope.row.RealDate !== null">{{formatterDate(null,null,scope.row.RealDate,null)}}</span>
-            <template v-else>
-              <el-tag type="danger" effect="plain" v-if="scope.row.FlagAnza === 1">{{$t('__notAnza')}}</el-tag>
-              <el-tag type="warning" effect="plain" v-else>{{$t('__notAnza')}}</el-tag>
+          <el-table-column
+            prop="AnzaOrderID"
+            width="100px">
+            <template slot="header">
+              {{$t('__anzaOrder')}}
+              <br/>{{$t('__status')}}
             </template>
-          </template>
-        </el-table-column>
+            <template slot-scope="scope">
+              {{scope.row.AnzaOrderID}}<br/>{{scope.row.StatusName}}
+            </template>
+          </el-table-column>
+          <!-- 安座位別 -->
+          <el-table-column>
+            <template slot="header">
+              {{$t('__anzaCustomer')}}<br/>{{$t('__anzaStorageID')}}
+            </template>
+            <template slot-scope="scope">
+              {{scope.row.CustomerName}}
+              <span v-if="scope.row.Status==='2'">{{scope.row.StorageID}}</span>
+              <span v-else style="text-decoration:line-through">{{scope.row.StorageID}}</span>
+            </template>
+          </el-table-column>
+          <!-- 個資 -->
+          <el-table-column>
+            <template slot="header">
+              {{$t('__gender')}}<br/>
+              {{$t('__birth')+'('+$t('__solarCalendar')+')'}}<br/>
+              {{$t('__lunarDate')+'('+$t('__lunarCalendar')+')'+' '+$t('__lunarTime')}}
+            </template>
+            <template slot-scope="scope">
+              {{scope.row.GenderName}}<br/>
+              {{scope.row.Birth}}<br/>
+              {{scope.row.BirthLunarDate+' '+scope.row.BirthLunarTimeName}}
+            </template>
+          </el-table-column>
+          <el-table-column>
+            <template slot="header">
+              {{$t('__tel')}}<br/>
+              {{$t('__address')}}
+            </template>
+            <template slot-scope="scope">
+              {{scope.row.Tel}}<br/>
+              {{scope.row.Address}}
+            </template>
+          </el-table-column>
+          <!-- 預定安座日期 -->
+          <el-table-column>
+            <template slot="header">
+              {{$t('__scheduled')+$t('__anza')+$t('__date')}}<br/>{{$t('__real')+$t('__anza')+$t('__date')}}
+            </template>
+            <template slot-scope="scope">
+              {{formatterDate(null,null,scope.row.ScheduledDate,null)}}<br/>
+              <span v-if="scope.row.RealDate !== null">{{formatterDate(null,null,scope.row.RealDate,null)}}</span>
+              <template v-else>
+                <el-tag type="danger" effect="plain" v-if="scope.row.FlagAnza === 1">{{$t('__notAnza')}}</el-tag>
+                <el-tag type="warning" effect="plain" v-else>{{$t('__notAnza')}}</el-tag>
+              </template>
+            </template>
+          </el-table-column>
+          <el-table-column
+            prop="ExpirationDate"
+            :label="this.$t('__expire') + this.$t('__date')"
+            :formatter="formatterDate">
+          </el-table-column>
+          <el-table-column
+            prop="CompleteDate"
+            :formatter="formatterDate">
+            <template slot="header">
+              {{$t('__yuanman') + this.$t('__date')}}
+            </template>
+          </el-table-column>
         </el-table>
       </el-collapse-item>
     </el-collapse>
@@ -98,6 +132,15 @@ export default {
       this.anzaOrderList = responseRecords.data.result
       if (this.anzaOrderList && this.anzaOrderList.length > 0) {
         this.activeName = '1'
+        // 日期替換
+        this.anzaOrderList.forEach(row => {
+          if (row.Birth) {
+            row.Birth = row.Birth.slice(0, 10)
+          }
+          if (row.BirthLunarDate) {
+            row.BirthLunarDate = row.BirthLunarDate.slice(0, 10)
+          }
+        })
       }
     }
   }

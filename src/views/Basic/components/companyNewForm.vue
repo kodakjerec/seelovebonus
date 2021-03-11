@@ -2,7 +2,7 @@
   <el-dialog :title="myTitle" :visible="dialogShow" center width="80vw" @close="cancel">
     <el-form ref="form" :model="form" :rules="rules" label-width="10vw" label-position="right">
       <el-form-item :label="$t('__company')+$t('__id')" prop="ID">
-        <el-input v-model="form.ID" :placeholder="$t('__palceholderCompanyID')" :disabled="disableForm.ID" maxlength="20" show-word-limit></el-input>
+        <el-input v-model="form.ID" :placeholder="$t('__placeholderCompanyID')" :disabled="disableForm.ID" maxlength="20" show-word-limit></el-input>
       </el-form-item>
       <el-form-item :label="$t('__company')+$t('__name')" prop="Name">
         <el-col :span="10">

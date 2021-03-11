@@ -105,7 +105,7 @@ export default {
         this.subList.push({
           Seq: 1,
           ScheduledDate: this.parentDate,
-          InstallmentName: this.projectName + '-躉繳',
+          InstallmentName: '躉繳',
           ScheduledAmount: this.parentAmount,
           PaymentMethod: '1',
           PaymentFrequency: '1'
