@@ -70,10 +70,10 @@ export default {
     formatterDate: function (row, column, cellValue, index) {
       return formatDate(cellValue)
     },
-    preLoading: async function () {
+    preLoading: function () {
       // 新增時憑證編號清單
-      let responseCer1List = await this.$api.orders.getDropdownList({ type: 'certificate1Prefix' })
-      responseCer1List.data.result.forEach(row => {
+      let responseCer1List = this.$api.local.getDropdownList({ type: 'Certificate1Prefix' })
+      responseCer1List.forEach(row => {
         this.certificate1List.push(row)
       })
 

@@ -2,7 +2,7 @@
   <el-dialog :title="myTitle" :visible="dialogShow" center width="80vw" @close="cancel">
     <el-form ref="form" :model="form" :rules="rules" label-width="10vw" label-position="right">
       <el-form-item :label="$t('__company')+$t('__id')" prop="ID">
-        <el-input v-model="form.ID" :placeholder="$t('__palceholderCompanyID')" :disabled="disableForm.ID" maxlength="20" show-word-limit></el-input>
+        <el-input v-model="form.ID" :placeholder="$t('__placeholderCompanyID')" :disabled="disableForm.ID" maxlength="20" show-word-limit></el-input>
       </el-form-item>
       <el-form-item :label="$t('__company')+$t('__name')" prop="Name">
         <el-col :span="10">
@@ -254,17 +254,16 @@ export default {
     // 讀取預設資料
     preLoading: async function () {
       // 取得所有原始資料
-      let response = await this.$api.basic.getDropdownList({ type: 'post' })
-      this.postData = response.data.result
-
-      let response1 = await this.$api.basic.getDropdownList({ type: 'country' })
-      this.ddlCountry = response1.data.result
-      let response2 = await this.$api.basic.getDropdownList({ type: 'city' })
-      this.ddlCity = response2.data.result
+      let response = this.$api.local.getDropdownList({ type: 'District' })
+      this.postData = response
+      response = this.$api.local.getDropdownList({ type: 'Country' })
+      this.ddlCountry = response
+      response = this.$api.local.getDropdownList({ type: 'City' })
+      this.ddlCity = response
       this.ddlCityChange()
 
-      let response3 = await this.$api.basic.getDropdownList({ type: 'status' })
-      this.ddlStatus = response3.data.result
+      response = this.$api.local.getDropdownList({ type: 'Status' })
+      this.ddlStatus = response
 
       let responseCustomers = await this.$api.basic.getDropdownList({ type: 'customers' })
       this.customersData = responseCustomers.data.result
@@ -272,8 +271,8 @@ export default {
       this.employeesData = responseEmployees.data.result
       let responseCompanies = await this.$api.basic.getDropdownList({ type: 'companyParent' })
       this.companiesData = responseCompanies.data.result
-      let response5 = await this.$api.basic.getDropdownList({ type: 'refKind' })
-      this.ddlRefKind = response5.data.result
+      response = this.$api.local.getDropdownList({ type: 'RefKind' })
+      this.ddlRefKind = response
       this.ddlRefKindChange()
       let response7 = await this.$api.basic.getDropdownList({ type: 'employeesList' })
       this.ddlEmployeeID = response7.data.result

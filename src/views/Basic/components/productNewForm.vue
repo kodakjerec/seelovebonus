@@ -206,21 +206,21 @@ export default {
   methods: {
     // 讀取預設資料
     preLoading: async function () {
-      let response1 = await this.$api.basic.getDropdownList({ type: 'accounting' })
-      this.ddlAccounting = response1.data.result
-      let response2 = await this.$api.basic.getDropdownList({ type: 'unit' })
-      this.ddlUnit = response2.data.result
-      let response3 = await this.$api.basic.getDropdownList({ type: 'status' })
-      this.ddlBOM = response3.data.result
-      let response4 = await this.$api.basic.getDropdownList({ type: 'status' })
-      this.ddlStatus = response4.data.result
+      let response = await this.$api.basic.getDropdownList({ type: 'accounting' })
+      this.ddlAccounting = response.data.result
+      response = this.$api.local.getDropdownList({ type: 'Unit' })
+      this.ddlUnit = response
+      response = this.$api.local.getDropdownList({ type: 'Status' })
+      this.ddlBOM = response
+      response = this.$api.local.getDropdownList({ type: 'Status' })
+      this.ddlStatus = response
 
-      let resItemCategory1 = await this.$api.basic.getDropdownList({ type: 'itemCategory1' })
-      this.ddlCategory1 = resItemCategory1.data.result
-      let resItemCategory2 = await this.$api.basic.getDropdownList({ type: 'itemCategory2' })
-      this.ddlCategory2Origin = resItemCategory2.data.result
-      let resItemCategory3 = await this.$api.basic.getDropdownList({ type: 'itemCategory3' })
-      this.ddlCategory3Origin = resItemCategory3.data.result
+      response = this.$api.local.getDropdownList({ type: 'ItemCategory1' })
+      this.ddlCategory1 = response
+      response = this.$api.local.getDropdownList({ type: 'ItemCategory2' })
+      this.ddlCategory2Origin = response
+      response = this.$api.local.getDropdownList({ type: 'ItemCategory3' })
+      this.ddlCategory3Origin = response
       this.ddlCategory1Change()
       this.ddlCategory2Change()
 

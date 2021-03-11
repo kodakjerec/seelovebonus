@@ -14,6 +14,8 @@ export default new Vuex.Store({
     menuList: [],
     userProg: [],
     version: '2021.02.22.1',
+    globalSettings: [],
+    // 不用紀錄到localStorage
     loadingCounter: 0,
     isEnableLoadingMask: false
   },
@@ -25,6 +27,7 @@ export default new Vuex.Store({
       state.userName = ''
       state.menuList = []
       state.userProg = []
+      state.globalSettings = []
     },
     SET_AUTH (state, options) {
       state.token = options.token
@@ -32,12 +35,17 @@ export default new Vuex.Store({
       state.userID = options.userID
       state.userName = options.userName
     },
+    // 共用變數
     SET_MENULIST (state, menu) {
       state.menuList = menu
     },
     SET_USERPROG (state, proglist) {
       state.userProg = proglist
     },
+    SET_GLOBALSETTINGS (state, settings) {
+      state.globalSettings = settings
+    },
+    // 讀取遮罩 count
     ADD_LOADING_COUNTER (state) {
       state.loadingCounter += 1
     },
@@ -45,6 +53,7 @@ export default new Vuex.Store({
       state.loadingCounter -= 1
       if (state.loadingCounter < 0) { state.loadingCounter = 0 }
     },
+    // 讀取遮罩
     ENABLE_LOADING_MASK (state, isEnable) {
       state.isEnableLoadingMask = isEnable
     },
@@ -65,12 +74,17 @@ export default new Vuex.Store({
         userName: options.userName
       })
     },
+    // 共用變數
     setMenuList (context, menu) {
       context.commit('SET_MENULIST', menu)
     },
     setUserProg (context, proglist) {
       context.commit('SET_USERPROG', proglist)
     },
+    setGlobalSettings (context, settings) {
+      context.commit('SET_GLOBALSETTINGS', settings)
+    },
+    // 讀取遮罩 count
     increaseLoadingCounter ({ dispatch, commit, state }) {
       commit('ADD_LOADING_COUNTER')
       if (state.loadingCounter > 0 && !state.isEnableLoadingMask) {
@@ -83,6 +97,7 @@ export default new Vuex.Store({
         dispatch('disableLoadingMask')
       }
     },
+    // 讀取遮罩
     enableLoadingMask ({ commit, state }) {
       enableLoadingMaskTime = Date.now()
       commit('ENABLE_LOADING_MASK', true)
@@ -117,7 +132,8 @@ export default new Vuex.Store({
         userName: state.userName,
         menuList: state.menuList,
         userProg: state.userProg,
-        version: state.version
+        version: state.version,
+        globalSettings: state.globalSettings
       }
     }
   })]

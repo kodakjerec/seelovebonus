@@ -206,17 +206,19 @@ export default {
         this.ddlCustomer = this.ddlCustomerBefore
       }
 
-      let response = await this.$api.basic.getDropdownList({ type: 'post' })
-      this.postData = response.data.result
+      let response = this.$api.local.getDropdownList({ type: 'District' })
+      this.postData = response
 
-      let response1 = await this.$api.basic.getDropdownList({ type: 'country' })
-      this.ddlCountry = response1.data.result
-      let response2 = await this.$api.basic.getDropdownList({ type: 'city' })
-      this.ddlCity = response2.data.result
+      response = this.$api.local.getDropdownList({ type: 'Country' })
+      this.ddlCountry = response
+      response = this.$api.local.getDropdownList({ type: 'City' })
+      this.ddlCity = response
 
       // 法定代理人
-      this.ddlAgentCountry = response1.data.result
-      this.ddlAgentCity = response2.data.result
+      response = this.$api.local.getDropdownList({ type: 'Country' })
+      this.ddlAgentCountry = response
+      response = this.$api.local.getDropdownList({ type: 'City' })
+      this.ddlAgentCity = response
     },
     // 修改狀態:取得客戶資料
     bringCustomer: async function () {

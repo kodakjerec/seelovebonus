@@ -86,9 +86,9 @@ export default {
     formatterMoney: function (cellValue) {
       return formatMoney(cellValue)
     },
-    preLoading: async function () {
-      let response1 = await this.$api.orders.getDropdownList({ type: 'paymentMethod' })
-      this.ddlPaymentMethod = response1.data.result
+    preLoading: function () {
+      let response = this.$api.local.getDropdownList({ type: 'PaymentMethod' })
+      this.ddlPaymentMethod = response
       this.reLoading()
     },
     reLoading: async function () {
@@ -105,7 +105,7 @@ export default {
         this.subList.push({
           Seq: 1,
           ScheduledDate: this.parentDate,
-          InstallmentName: this.projectName + '-躉繳',
+          InstallmentName: '躉繳',
           ScheduledAmount: this.parentAmount,
           PaymentMethod: '1',
           PaymentFrequency: '1'

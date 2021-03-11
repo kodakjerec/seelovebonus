@@ -1,21 +1,25 @@
 <template>
-  <el-dialog :title="myTitle" :visible="dialogShow" center width="80vw" @close="cancel">
+  <el-dialog :title="myTitle" :visible="dialogShow" center width="80vw" @close="cancel" append-to-body>
     <el-form ref="form" :model="form" :rules="rules" label-width="10vw" label-position="right">
-      <el-form-item :label="$t('__customer')+$t('__id')" required>
-        <el-col :span="4" v-show="!disableForm.ID">
-          <el-select v-model="IDType" value-key="value" :placeholder="$t('__plzChoice')">
-            <el-option v-for="item in ddlIDType" :key="item.ID" :label="item.Value" :value="item.ID">
-              <span style="float: left">{{ item.Value }}</span>
-              <span style="float: right; color: #8492a6; font-size: 13px">{{ item.ID }}</span>
-            </el-option>
-          </el-select>
-        </el-col>
-        <el-col :span="12">
-          <el-form-item prop="ID">
-            <el-input v-model="form.ID" maxlength="20" show-word-limit :disabled="disableForm.ID"></el-input>
-          </el-form-item>
-        </el-col>
-      </el-form-item>
+      <!-- 客戶代號 -->
+      <template>
+        <el-form-item :label="$t('__customer')+$t('__id')" required>
+          <el-col :span="4" v-show="!disableForm.ID">
+            <el-select v-model="IDType" value-key="value" :placeholder="$t('__plzChoice')">
+              <el-option v-for="item in ddlIDType" :key="item.ID" :label="item.Value" :value="item.ID">
+                <span style="float: left">{{ item.Value }}</span>
+                <span style="float: right; color: #8492a6; font-size: 13px">{{ item.ID }}</span>
+              </el-option>
+            </el-select>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item prop="ID">
+              <el-input v-model="form.ID" maxlength="20" show-word-limit :placeholder="getPlaceholderID()" :disabled="disableForm.ID || IDType==='3'"></el-input>
+            </el-form-item>
+          </el-col>
+        </el-form-item>
+      </template>
+      <!-- 客戶名稱 -->
       <el-form-item :label="$t('__customer')+$t('__name')" prop="Name">
         <el-col :span="10">
           <el-input v-model="form.Name" maxlength="40" show-word-limit></el-input>
@@ -26,8 +30,9 @@
           </el-form-item>
         </el-col>
       </el-form-item>
+      <!-- 業務代表種類 -->
       <el-form-item :label="$t('__refKind')">
-        <el-col :span="10">
+        <el-col :span="4">
           <el-select v-model="form.refKind" value-key="value" :placeholder="$t('__plzChoice')" @change="ddlRefKindChange" :disabled="true">
             <el-option v-for="item in ddlRefKind" :key="item.ID" :label="item.Value" :value="item.ID">
               <span style="float: left">{{ item.Value }}</span>
@@ -35,7 +40,7 @@
             </el-option>
           </el-select>
         </el-col>
-        <el-col :span="14">
+        <el-col :span="10">
           <el-form-item :label="$t('__referrer')" prop="Referrer">
             <el-select v-model="form.Referrer" filterable value-key="value" :placeholder="$t('__plzChoice')" @change="ddlReferrerChange">
               <el-option v-for="item in ddlReferrer" :key="item.ID" :label="item.ID+' '+item.Value" :value="item.ID">
@@ -45,47 +50,90 @@
             </el-select>
           </el-form-item>
         </el-col>
-      </el-form-item>
-      <el-form-item :label="$t('__refEmployeeID')">
-        <el-select v-model="form.EmployeeID" filterable value-key="value" :placeholder="$t('__plzChoice')" disabled>
-          <el-option v-for="item in ddlEmployeeID" :key="item.ID" :label="item.ID+' '+item.Value" :value="item.ID">
-            <span style="float: left">{{ item.Value }}</span>
-            <span style="float: right; color: #8492a6; font-size: 13px">{{ item.ID }}</span>
-          </el-option>
-        </el-select>
-      </el-form-item>
-      <el-form-item :label="$t('__home')+$t('__tel')">
         <el-col :span="10">
-          <el-form-item prop="TelHome">
+          <el-form-item :label="$t('__refEmployeeID')">
+            <el-select v-model="form.EmployeeID" filterable value-key="value" :placeholder="$t('__plzChoice')" disabled>
+              <el-option v-for="item in ddlEmployeeID" :key="item.ID" :label="item.ID+' '+item.Value" :value="item.ID">
+                <span style="float: left">{{ item.Value }}</span>
+                <span style="float: right; color: #8492a6; font-size: 13px">{{ item.ID }}</span>
+              </el-option>
+            </el-select>
+          </el-form-item>
+        </el-col>
+      </el-form-item>
+      <!-- 性別 -->
+      <el-form-item :label="$t('__gender')">
+        <el-col :span="4">
+          <el-select v-model="form.Gender" value-key="value" :placeholder="$t('__plzChoice')">
+            <el-option v-for="item in ddlGender" :key="item.ID" :label="item.Value" :value="item.ID">
+              <span style="float: left">{{ item.Value }}</span>
+              <span style="float: right; color: #8492a6; font-size: 13px">{{ item.ID }}</span>
+            </el-option>
+          </el-select>
+        </el-col>
+        <el-col :span="10">
+          <el-form-item :label="$t('__home')+$t('__tel')" prop="TelHome">
             <el-input v-model="form.TelHome"></el-input>
           </el-form-item>
         </el-col>
-        <el-col :span="14">
+        <el-col :span="10">
           <el-form-item :label="$t('__mobile')+$t('__tel')" prop="TelMobile">
             <el-input v-model="form.TelMobile"></el-input>
           </el-form-item>
         </el-col>
       </el-form-item>
-      <el-form-item :label="$t('__gender')">
-        <el-col :span="10">
-        <el-select v-model="form.Gender" value-key="value" :placeholder="$t('__plzChoice')">
-          <el-option v-for="item in ddlGender" :key="item.ID" :label="item.Value" :value="item.ID">
-            <span style="float: left">{{ item.Value }}</span>
-            <span style="float: right; color: #8492a6; font-size: 13px">{{ item.ID }}</span>
-          </el-option>
-        </el-select>
-        </el-col>
-        <el-col :span="14">
-          <el-form-item :label="$t('__birth')">
+      <!-- 出生日期 -->
+      <el-form-item :label="$t('__birth')+'('+$t('__solarCalendar')+')'">
+        <el-col :span="4">
+          <el-form-item>
             <el-date-picker
               v-model="form.Birth"
               type="date"
               :placeholder="$t('__plzChoice')+$t('__birth')"
-              value-format="yyyy-MM-dd">
+              value-format="yyyy-MM-dd"
+              @change="solarToLunar">
             </el-date-picker>
           </el-form-item>
         </el-col>
+        <el-col :span="8">
+          <el-form-item :label="$t('__lunarDate')+'('+$t('__lunarCalendar')+')'">
+            <el-date-picker
+              v-model="form.BirthLunarDate"
+              type="date"
+              :placeholder="$t('__plzChoice')+$t('__lunarDate')+'('+$t('__lunarCalendar')+')'"
+              value-format="yyyy-MM-dd"
+              @change="lunarToSolar">
+            </el-date-picker>
+          </el-form-item>
+        </el-col>
+        <el-col :span="2">
+          <el-checkbox v-model="form.BirthLunarLeap" @change="lunarToSolar" :true-label="1" :false-label="0">閏月</el-checkbox>
+        </el-col>
+        <el-col :span="8">
+          <el-form-item :label="$t('__lunarTime')">
+            <el-select v-model="form.BirthLunarTime" value-key="value" :placeholder="$t('__plzChoice')" @change="ddlCityChange">
+              <el-option v-for="item in ddlLunarTime" :key="item.ID" :label="item.Value" :value="item.ID">
+                <span style="float: left">{{ item.Value + '(' + item.Memo + ')' }}</span>
+                <span style="float: right; color: #8492a6; font-size: 13px">{{ item.ID }}</span>
+              </el-option>
+            </el-select>
+          </el-form-item>
+        </el-col>
       </el-form-item>
+      <!-- 換算日期 -->
+      <el-form-item :label="$t('__convert')+$t('__lunarCalendar')">
+        <el-col :span="4">
+          <el-form-item>
+            <el-input v-model="form.CalcBirthLunarDate" disabled></el-input>
+          </el-form-item>
+        </el-col>
+        <el-col :span="10">
+          <el-form-item :label="$t('__convert')+$t('__solarCalendar')">
+            <el-input v-model="form.CalcBirth" disabled></el-input>
+          </el-form-item>
+        </el-col>
+      </el-form-item>
+      <!-- 國家etc -->
       <el-form-item :label="$t('__country')">
         <el-col :span="4">
           <el-select v-model="form.Country" value-key="value" :placeholder="$t('__plzChoice')">
@@ -116,12 +164,15 @@
           </el-form-item>
         </el-col>
       </el-form-item>
+      <!-- 住址 -->
       <el-form-item :label="$t('__address')">
         <el-input v-model="form.Address" maxlength="100" show-word-limit></el-input>
       </el-form-item>
+      <!-- 電子信箱 -->
       <el-form-item :label="$t('__eMail')">
         <el-input v-model="form.EMail" maxlength="60" show-word-limit></el-input>
       </el-form-item>
+      <!-- 狀態 -->
       <el-form-item :label="$t('__status')">
         <el-select v-model="form.Status" value-key="value" :placeholder="$t('__plzChoice')">
           <el-option v-for="item in ddlStatus" :key="item.ID" :label="item.Value" :value="item.ID">
@@ -137,7 +188,7 @@
             <h2>{{$t('__customer')+$t('__agent')}}<i class="el-icon-circle-plus" v-show="activeName===''"></i></h2>
           </template>
           <el-form-item :label="$t('__id')">
-            <el-select v-model="form.AgentID" value-key="value" :placeholder="$t('__palceholderCustomerID')" @change="ddlAgentIDChange">
+            <el-select v-model="form.AgentID" value-key="value" :placeholder="$t('__placeholderCustomerID')" @change="ddlAgentIDChange">
                 <el-option v-for="item in ddlAgentID" :key="item.ID" :label="item.Value" :value="item.ID">
                   <span style="float: left">{{ item.Value }}</span>
                   <span style="float: right; color: #8492a6; font-size: 13px">{{ item.ID }}</span>
@@ -202,7 +253,11 @@ export default {
     dialogType: { type: String, default: 'new' },
     dialogShow: { type: Boolean, default: false },
     customer: { type: Object },
-    buttonsShowUser: { type: Object }
+    buttonsShowUser: { type: Object },
+    fromData: { type: Object,
+      default () {
+        return null
+      } }
   },
   data () {
     // 切換驗證身分證號碼或護照
@@ -216,15 +271,18 @@ export default {
       // 強制轉為大寫
       this.form.ID = this.form.ID.toUpperCase()
 
-      let idType = this.IDType
       // 1.驗證可用性
       let checkValidate = null
-      switch (idType) {
+      switch (this.IDType) {
         case '1':
           checkValidate = await validate.validatePersonalID(rule, value, 'customer')
           break
-        default:
+        case '2':
           checkValidate = await validate.validatePassport(rule, value, 'customer')
+          break
+        case '3':
+          checkValidate = ''
+          break
       }
       if (checkValidate !== '') {
         callback(checkValidate)
@@ -251,12 +309,18 @@ export default {
         Post: null,
         Address: '',
         EMail: '',
-        EmployeeID: null, // 虛構欄位, 不存在資料庫
-        Birth: '',
+        Birth: null,
         Gender: '3',
         Status: '1',
         refKind: null,
-        Referrer: null
+        Referrer: null,
+        BirthLunarDate: null,
+        BirthLunarTime: null,
+        BirthLunarLeap: null,
+        // 顯示用
+        CalcBirthLunarDate: '',
+        CalcBirth: '',
+        EmployeeID: ''
       },
       rules: {
         ID: [{ trigger: 'blur', validator: validatePersonalID }],
@@ -287,6 +351,7 @@ export default {
       ddlRefKind: [],
       ddlReferrer: [],
       ddlAgentID: [],
+      ddlLunarTime: [],
       // 法定代理人專用下拉式選單
       ddlAgentCountry: [],
       ddlAgentCity: [],
@@ -302,16 +367,54 @@ export default {
 
         // 鎖定為業務
         this.form.refKind = '2'
+
+        // 如果是安座單來源, 自動帶入業務
+        if (this.fromData && this.fromData.type === 'anzaNewCustomer') {
+          this.form.Referrer = this.fromData.buyer.Referrer
+          // 預設系統產生客戶代號
+          this.IDType = '3'
+        }
         break
       case 'edit':
         this.myTitle = this.$t('__edit') + this.$t('__customer')
-        this.form = JSON.parse(JSON.stringify(this.customer))
+        let fromCustomer = this.customer
+        this.form.ID = fromCustomer.ID
+        this.form.Name = fromCustomer.Name
+        this.form.NameEnglish = fromCustomer.NameEnglish
+        this.form.AgentID = fromCustomer.AgentID
+        this.form.AgentName = fromCustomer.AgentName
+        this.form.AgentCountry = fromCustomer.AgentCountry
+        this.form.AgentCity = fromCustomer.AgentCity
+        this.form.AgentPost = fromCustomer.AgentPost
+        this.form.AgentAddress = fromCustomer.AgentAddress
+        this.form.TelHome = fromCustomer.TelHome
+        this.form.TelMobile = fromCustomer.TelMobile
+        this.form.Country = fromCustomer.Country
+        this.form.City = fromCustomer.City
+        this.form.Post = fromCustomer.Post
+        this.form.Address = fromCustomer.Address
+        this.form.EMail = fromCustomer.EMail
+        this.form.Gender = fromCustomer.Gender
+        this.form.Status = fromCustomer.Status
+        this.form.refKind = fromCustomer.refKind
+        this.form.Referrer = fromCustomer.Referrer
+        if (fromCustomer.Birth) {
+          this.form.Birth = fromCustomer.Birth.slice(0, 10)
+        }
+        if (fromCustomer.BirthLunarDate) {
+          this.form.BirthLunarDate = fromCustomer.BirthLunarDate.slice(0, 10)
+          this.form.BirthLunarTime = fromCustomer.BirthLunarTime
+          this.form.BirthLunarLeap = fromCustomer.BirthLunarLeap
+        }
+
         this.disableForm.ID = true
-        this.IDType = '2' // 修改狀態不要檢核ID
         // 有法定代理人打開面板
         if (this.form.AgentID !== '') {
           this.activeName = '1'
         }
+        // 帶入換算後的日期
+        this.solarToLunar()
+        this.lunarToSolar()
         break
     }
     await this.preLoading()
@@ -322,8 +425,8 @@ export default {
     // 讀取預設資料
     preLoading: async function () {
       // 取得所有原始資料
-      let response = await this.$api.basic.getDropdownList({ type: 'post' })
-      this.postData = response.data.result
+      let response = this.$api.local.getDropdownList({ type: 'District' })
+      this.postData = response
 
       let responseCustomers = await this.$api.basic.getDropdownList({ type: 'customers' })
       this.customersData = responseCustomers.data.result
@@ -331,37 +434,50 @@ export default {
       this.employeesData = responseEmployees.data.result
       let responseCompanies = await this.$api.basic.getDropdownList({ type: 'companies' })
       this.companiesData = responseCompanies.data.result
-      // 幫忙帶入虛構欄位: EmployeeID
-      switch (this.dialogType) {
-        case 'edit':
-          this.$nextTick(() => {
-            this.ddlReferrerChange(this.form.Referrer)
-          })
-          break
-      }
+      response = this.$api.local.getDropdownList({ type: 'LunarTime' })
+      this.ddlLunarTime = response
 
-      let response1 = await this.$api.basic.getDropdownList({ type: 'country' })
-      this.ddlCountry = response1.data.result
-      let response2 = await this.$api.basic.getDropdownList({ type: 'city' })
-      this.ddlCity = response2.data.result
+      response = this.$api.local.getDropdownList({ type: 'Country' })
+      this.ddlCountry = response
+      response = this.$api.local.getDropdownList({ type: 'City' })
+      this.ddlCity = response
       this.ddlCityChange()
-      let response3 = await this.$api.basic.getDropdownList({ type: 'status' })
-      this.ddlStatus = response3.data.result
-      let response4 = await this.$api.basic.getDropdownList({ type: 'gender' })
-      this.ddlGender = response4.data.result
-      let response5 = await this.$api.basic.getDropdownList({ type: 'refKind' })
-      this.ddlRefKind = response5.data.result
+      response = this.$api.local.getDropdownList({ type: 'Status' })
+      this.ddlStatus = response
+      response = this.$api.local.getDropdownList({ type: 'Gender' })
+      this.ddlGender = response
+      response = this.$api.local.getDropdownList({ type: 'RefKind' })
+      this.ddlRefKind = response
       this.ddlRefKindChange()
-      let response6 = await this.$api.basic.getDropdownList({ type: 'idType' })
-      this.ddlIDType = response6.data.result
+      response = this.$api.local.getDropdownList({ type: 'IdType' })
+      this.ddlIDType = response
       let response7 = await this.$api.basic.getDropdownList({ type: 'employeesList' })
       this.ddlEmployeeID = response7.data.result
+      // 幫忙帶入虛構欄位: EmployeeID
+      if (this.form.Referrer) {
+        this.$nextTick(() => {
+          this.ddlReferrerChange(this.form.Referrer)
+        })
+      }
 
       // 法定代理人
       this.ddlAgentID = this.customersData
-      this.ddlAgentCountry = response1.data.result
-      this.ddlAgentCity = response2.data.result
+      response = this.$api.local.getDropdownList({ type: 'Country' })
+      this.ddlAgentCountry = response
+      response = this.$api.local.getDropdownList({ type: 'City' })
+      this.ddlAgentCity = response
       this.ddlAgentCityChange()
+    },
+    // 身份證字號提示
+    getPlaceholderID: function () {
+      switch (this.IDType) {
+        case '1':
+          return this.$t('__placeholderCustomerID')
+        case '2':
+          return this.$t('__placeholderPassport')
+        case '3':
+          return this.$t('__placeholderCustomerIDAfterSave')
+      }
     },
     // 過濾郵遞區號
     ddlCityChange: function () {
@@ -475,7 +591,9 @@ export default {
         case 'new':
           let responseNew = await this.$api.basic.customerNew({ form: this.form })
           if (responseNew.headers['code'] === '200') {
-            this.$alert(responseNew.data.result[0].message, responseNew.data.result[0].code)
+            let { code, message, ID } = responseNew.data.result[0]
+            this.form.ID = ID
+            this.$alert(message, code)
             isSuccess = true
           }
           break
@@ -498,7 +616,29 @@ export default {
       }
 
       if (isSuccess) {
-        this.$emit('dialog-save')
+        this.$emit('dialog-save', { ID: this.form.ID })
+      }
+    },
+    // 西元->農曆
+    solarToLunar: async function () {
+      if (this.form.Birth) {
+        let responseCustomer = await this.$api.basic.getObject({ type: 'solarToLunar', keyword: this.form.Birth })
+        let resultDate = responseCustomer.data.result[0].calcDate
+        resultDate = resultDate.replace(',0', '')
+        resultDate = resultDate.replace(',1', ' 閏月')
+        this.form.CalcBirthLunarDate = resultDate
+      }
+    },
+    // 農曆->西元, 閏月 由使用者選擇
+    lunarToSolar: async function () {
+      if (this.form.BirthLunarDate) {
+        if (this.form.BirthLunarLeap) {
+          let responseCustomer = await this.$api.basic.getObject({ type: 'lunarToSolarWithLeap', keyword: this.form.BirthLunarDate })
+          this.form.CalcBirth = responseCustomer.data.result[0].calcDate
+        } else {
+          let responseCustomer = await this.$api.basic.getObject({ type: 'lunarToSolar', keyword: this.form.BirthLunarDate })
+          this.form.CalcBirth = responseCustomer.data.result[0].calcDate
+        }
       }
     }
   }

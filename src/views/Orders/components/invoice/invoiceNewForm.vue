@@ -329,12 +329,12 @@ export default {
       return formatMoney(cellValue)
     },
     preLoading: async function () {
-      let response1 = await this.$api.orders.getDropdownList({ type: 'invoiceKind' })
-      this.ddlInvoiceKind = response1.data.result
-      let response2 = await this.$api.orders.getDropdownList({ type: 'invoiceStatus' })
-      this.ddlInvoiceStatus = response2.data.result
-      let response3 = await this.$api.orders.getDropdownList({ type: 'tax' })
-      this.ddlTax = response3.data.result
+      let response = this.$api.local.getDropdownList({ type: 'InvoiceKind' })
+      this.ddlInvoiceKind = response
+      response = this.$api.local.getDropdownList({ type: 'InvoiceStatus' })
+      this.ddlInvoiceStatus = response
+      response = this.$api.local.getDropdownList({ type: 'Tax' })
+      this.ddlTax = response
       let response4 = await this.$api.orders.getDropdownList({ type: 'employee' })
       this.ddlCreateID = response4.data.result
 

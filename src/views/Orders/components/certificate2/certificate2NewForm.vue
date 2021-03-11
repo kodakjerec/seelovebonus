@@ -149,9 +149,9 @@ export default {
       return formatDate(cellValue)
     },
     // 讀取預設資料
-    preLoading: async function () {
-      let response3 = await this.$api.basic.getDropdownList({ type: 'status' })
-      this.ddlStatus = response3.data.result
+    preLoading: function () {
+      let response = this.$api.local.getDropdownList({ type: 'Status' })
+      this.ddlStatus = response
     },
     // 檢查輸入
     checkValidate: async function () {

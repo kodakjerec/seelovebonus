@@ -439,8 +439,8 @@ export default {
     },
     // 讀取預設資料
     preLoading: async function () {
-      let response1 = await this.$api.orders.getDropdownList({ type: 'orderStatus' })
-      this.ddlOrderStatus = response1.data.result
+      let response = this.$api.local.getDropdownList({ type: 'OrderStatus' })
+      this.ddlOrderStatus = response
       let response2 = await this.$api.orders.getDropdownList({ type: 'project' })
       this.ddlProject = response2.data.result
       let response4 = await this.$api.orders.getDropdownList({ type: 'customer' })

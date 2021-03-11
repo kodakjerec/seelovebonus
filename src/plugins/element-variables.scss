@@ -88,4 +88,9 @@ $--input-focus-fill: yellow !default;
 button.el-button.hideButton.el-button--default {
   visibility: hidden;
 }
+
+// 日期選擇套件, 強迫寬度縮小
+div.el-date-editor.el-input {
+  width: 100%
+}
 @import "~element-ui/packages/theme-chalk/src/index";

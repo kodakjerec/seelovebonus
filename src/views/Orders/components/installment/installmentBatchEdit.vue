@@ -2,7 +2,7 @@
   <el-dialog :title="myTitle" :visible="dialogShow" center width="80vw" @close="cancel">
     <el-form ref="form" :model="form" :rules="rules" label-width="10vw" label-position="right">
       <h4 style="text-align:center;color:red">{{$t('__installmentBatchEditWarning')}}</h4>
-      <el-form-item :label="$t('__installment')+$t('__name')" prop="InstallmentName">
+      <el-form-item :label="$t('__installment')+$t('__name')">
         <el-col :span="8">
           <el-input v-model="form.InstallmentName" maxlength="10" show-word-limit :disabled="disableForm.InstallmentName"></el-input>
         </el-col>
@@ -155,7 +155,6 @@ export default {
         PaymentFrequencyName: ''
       },
       rules: {
-        InstallmentName: [{ required: true, message: this.$t('__pleaseInput'), trigger: 'blur' }],
         ScheduledDate: [{ required: true, message: this.$t('__pleaseInput'), trigger: 'blur' }],
         PaymentMethod: [{ required: true, message: this.$t('__pleaseInput'), trigger: 'blur' }]
       },
@@ -212,10 +211,10 @@ export default {
     },
     // 讀取預設資料
     preLoading: async function () {
-      let response1 = await this.$api.orders.getDropdownList({ type: 'paymentMethod' })
-      this.ddlPaymentMethod = response1.data.result
-      let response2 = await this.$api.orders.getDropdownList({ type: 'paymentFrequency' })
-      this.ddlPaymentFrequency = response2.data.result
+      let response = this.$api.local.getDropdownList({ type: 'PaymentMethod' })
+      this.ddlPaymentMethod = response
+      response = this.$api.local.getDropdownList({ type: 'PaymentFrequency' })
+      this.ddlPaymentFrequency = response
 
       // 帶入訂單最大金額
       let responseRecords = await this.$api.orders.collectionRecordsFunctions({ type: 'installmentBatchEditNew', OrderID: this.orderID, Seq: null })
@@ -349,9 +348,9 @@ export default {
         row.Memo = this.form.Memo
         // 分期付款名稱
         if (this.form.PaymentFrequency === '1') {
-          row.InstallmentName = this.form.InstallmentName + '-躉繳'
+          row.InstallmentName = this.form.InstallmentName + '躉繳'
         } else {
-          row.InstallmentName = this.form.InstallmentName + '-分期第' + this.form.Seq.toString() + '-' + i.toString() + '期'
+          row.InstallmentName = this.form.InstallmentName + '分期第' + this.form.Seq.toString() + '-' + i.toString() + '期'
         }
 
         if (needInsertRow) {

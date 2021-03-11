@@ -161,14 +161,14 @@ export default {
       return formatDate(cellValue)
     },
     // 讀取預設資料
-    preLoading: async function () {
-      let response2 = await this.$api.reports.getDropdownList({ type: 'cer1Duration' })
-      this.ddlReportDuration = response2.data.result
-      let response3 = await this.$api.basic.getDropdownList({ type: 'status' })
-      this.ddlStatus = response3.data.result
+    preLoading: function () {
+      let response = this.$api.local.getDropdownList({ type: 'Cer1Duration' })
+      this.ddlReportDuration = response
+      response = this.$api.local.getDropdownList({ type: 'Status' })
+      this.ddlStatus = response
 
-      let response4 = await this.$api.orders.getDropdownList({ type: 'certificate1Prefix' })
-      this.ddlPrefix = response4.data.result
+      response = this.$api.local.getDropdownList({ type: 'Certificate1Prefix' })
+      this.ddlPrefix = response
       this.form.Prefix = this.ddlPrefix[0].ID
     },
     // 檢查輸入

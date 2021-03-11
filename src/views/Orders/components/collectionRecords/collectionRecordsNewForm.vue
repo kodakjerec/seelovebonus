@@ -241,16 +241,16 @@ export default {
     // 讀取預設資料
     preLoading: async function () {
       // 預先帶入發票名稱
-      let response4 = await this.$api.orders.collectionRecordsFunctions({ type: 'collectionRecordsNewInvoiceName', OrderID: this.orderID, Seq: this.Seq })
-      this.ddlInvoiceName = response4.data.result
+      let response = await this.$api.orders.collectionRecordsFunctions({ type: 'collectionRecordsNewInvoiceName', OrderID: this.orderID, Seq: this.Seq })
+      this.ddlInvoiceName = response.data.result
       if (this.dialogType === 'new') { this.form.InvoiceName = this.ddlInvoiceName[0].ID }
 
-      let response3 = await this.$api.orders.getDropdownList({ type: 'employee' })
-      this.ddlCreateID = response3.data.result
-      let response1 = await this.$api.orders.getDropdownList({ type: 'paymentMethod' })
-      this.ddlPaymentMethod = response1.data.result
-      let response2 = await this.$api.orders.getDropdownList({ type: 'bankID' })
-      this.ddlBankID = response2.data.result
+      response = await this.$api.orders.getDropdownList({ type: 'employee' })
+      this.ddlCreateID = response.data.result
+      response = this.$api.local.getDropdownList({ type: 'PaymentMethod' })
+      this.ddlPaymentMethod = response
+      response = this.$api.local.getDropdownList({ type: 'BankID' })
+      this.ddlBankID = response
 
       switch (this.dialogType) {
         case 'new':

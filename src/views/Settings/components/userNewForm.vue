@@ -138,8 +138,8 @@ export default {
       this.ddlGroup = response1.data.result
       let response2 = await this.$api.settings.getDropdownList({ type: 'employeesList' })
       this.ddlEmployee = response2.data.result
-      let response3 = await this.$api.settings.getDropdownList({ type: 'status' })
-      this.ddlStatus = response3.data.result
+      let response = this.$api.local.getDropdownList({ type: 'Status' })
+      this.ddlStatus = response
     },
     toggleSelection: function (rows) {
       if (rows) {
