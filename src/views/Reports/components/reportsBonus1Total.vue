@@ -81,9 +81,11 @@ export default {
     start = new Date(year, month, 1, 12)
     this.startDateChange(start)
 
-    let defaultCompany = this.ddlCompanies.find(item => { return item.ID === '83799375' })
+    let response = this.$api.local.getDropdownList({ type: 'DefCompanyID' })
+    let defaultCompany = response[0]
+
     if (defaultCompany) {
-      this.form.CompanyID = defaultCompany.ID
+      this.form.CompanyID = defaultCompany.Value
       this.ddlCompaniesChange(this.form.CompanyID)
     }
   },

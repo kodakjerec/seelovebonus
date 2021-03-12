@@ -117,7 +117,7 @@ export default {
 
       // 抓取預設廠商
       response = this.$api.local.getDropdownList({ type: 'DefCompanyID' })
-      let defaultCompany = response.data.result[0]
+      let defaultCompany = response[0]
 
       if (defaultCompany) {
         this.searchContent.CompanyID = defaultCompany.Value
