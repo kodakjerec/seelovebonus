@@ -140,7 +140,7 @@
         :parentDate="form.OrderDate"></installment-order-new>
     </template>
     <!-- 底部操作按鈕 -->
-    <div slot="footer" class="dialog-footer">
+    <div slot="footer">
       <br/>
       <el-button v-show="buttonsShow.delete && buttonsShowUser.delete && form.Status < '2'" type="danger" @click="deleteOrder">{{$t('__delete')}}</el-button>
       <el-button v-show="buttonsShow.delete && buttonsShowUser.delete" type="danger" @click="invalidOrder">{{$t('__invalid')}}</el-button>

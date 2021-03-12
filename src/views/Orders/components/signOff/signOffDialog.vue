@@ -9,7 +9,7 @@
           <el-input v-model="signOffReason" type="textarea" rows="2" maxlength="100" show-word-limit></el-input>
       </el-form-item>
     </el-form>
-    <div slot="footer" class="dialog-footer">
+    <div slot="footer">
       <el-button @click="cancel">{{$t('__cancel')}}</el-button>
       <el-button type="primary" @click="save">{{$t('__ok')}}</el-button>
     </div>

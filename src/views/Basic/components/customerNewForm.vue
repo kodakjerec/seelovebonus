@@ -83,7 +83,7 @@
         </el-col>
       </el-form-item>
       <!-- 出生日期 -->
-      <el-form-item :label="$t('__birth')+'('+$t('__solarCalendar')+')'">
+      <el-form-item :label="$t('__birth')">
         <el-col :span="4">
           <el-form-item>
             <el-date-picker
@@ -235,7 +235,7 @@
       </el-collapse>
       <!-- 以上為法定代理人 -->
     </el-form>
-    <div slot="footer" class="dialog-footer">
+    <div slot="footer">
       <el-button v-show="dialogType === 'edit' &&  buttonsShowUser.delete" type="danger" @click="deleteItem">{{$t('__delete')}}</el-button>
       <el-button @click="cancel">{{$t('__cancel')}}</el-button>
       <el-button v-show="buttonsShowUser.save" type="primary" @click="checkValidate">{{$t('__save')}}</el-button>

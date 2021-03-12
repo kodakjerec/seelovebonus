@@ -14,7 +14,7 @@
         <el-table-column prop="IncreaseMonth" :label="'Increase Month'"></el-table-column>
       </el-table>
     </el-form>
-    <div slot="footer" class="dialog-footer">
+    <div slot="footer">
       <el-button @click="cancel">{{$t('__cancel')}}</el-button>
     </div>
   </el-dialog>

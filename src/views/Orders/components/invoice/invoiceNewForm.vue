@@ -172,7 +172,7 @@
       </el-collapse-item>
     </el-collapse>
 
-    <div slot="footer" class="dialog-footer">
+    <div slot="footer">
       <br/>
       <el-button v-show="buttonsShow.delete && buttonsShowUser.delete" type="danger" @click="delInvoice">{{$t('__invalid')+$t('__invoice')}}</el-button>
       <el-button @click="cancel">{{$t('__cancel')}}</el-button>

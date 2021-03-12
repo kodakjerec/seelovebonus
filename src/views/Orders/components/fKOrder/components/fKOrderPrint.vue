@@ -5,7 +5,7 @@
           <el-input v-model="form.ID" :disabled="true"></el-input>
       </el-form-item>
     </el-form>
-    <div slot="footer" class="dialog-footer">
+    <div slot="footer">
       <el-button @click="cancel">{{$t('__cancel')}}</el-button>
       <p/>
       <iframeReportingService

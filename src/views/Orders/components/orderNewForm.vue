@@ -18,7 +18,7 @@
         <el-tab-pane v-if="projectFunctions.newCertificate2.Available" :label="$t('__certificate2')" name="certificate2OrderNew"></el-tab-pane>
         <el-tab-pane v-if="form.ProjectID" :label="$t('__installment')" name="installmentOrderNew"></el-tab-pane>
       </template>
-      <el-tab-pane :label="$t('__orderNewFormTabsBottom')" name="dialog-footer"></el-tab-pane>
+      <el-tab-pane :label="$t('__orderNewFormTabsBottom')"></el-tab-pane>
     </el-tabs>
     <div class="tabOrderNewForm_ThenDiv"></div>
     <h1>{{myTitle}}</h1>
@@ -226,7 +226,7 @@
         :parentDate="form.OrderDate"></installment-order-new>
     </template>
     <!-- 底部操作按鈕 -->
-    <div slot="footer" id="dialog-footer" class="dialog-footer">
+    <div slot="footer">
       <br/>
       <el-button v-show="buttonsShow.delete && buttonsShowUser.delete && form.Status < '2'" type="danger" @click="deleteOrder">{{$t('__delete')}}</el-button>
       <el-button v-show="buttonsShow.delete && buttonsShowUser.delete" type="danger" @click="invalidOrder">{{$t('__invalid')}}</el-button>

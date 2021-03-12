@@ -30,7 +30,7 @@
         <el-input type="textarea" rows="10" v-model="form.Text" maxlength="200" show-word-limit></el-input>
       </el-form-item>
     </el-form>
-    <div slot="footer" class="dialog-footer">
+    <div slot="footer">
       <el-button v-show="buttonsShow.delete && buttonsShowUser.delete" type="danger" @click.prevent="delRecord">{{$t('__delete')}}</el-button>
       <el-button @click="cancel">{{$t('__cancel')}}</el-button>
       <el-button v-show="buttonsShow.save && buttonsShowUser.save" type="primary" @click="checkValidate">{{$t('__save')}}</el-button>

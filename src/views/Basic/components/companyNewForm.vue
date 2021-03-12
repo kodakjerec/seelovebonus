@@ -138,7 +138,7 @@
           </exceedingDateLog>
         </el-collapse-item>
     </el-collapse>
-    <div slot="footer" class="dialog-footer">
+    <div slot="footer">
       <el-button v-show="dialogType === 'edit' &&  buttonsShowUser.delete" type="danger" @click="deleteItem">{{$t('__delete')}}</el-button>
       <el-button @click.prevent="cancel">{{$t('__cancel')}}</el-button>
       <el-button v-show="buttonsShowUser.save" type="primary" @click.prevent="checkValidate">{{$t('__save')}}</el-button>

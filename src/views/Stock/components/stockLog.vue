@@ -19,7 +19,7 @@
         <el-table-column prop="Purpose" label="Purpose"></el-table-column>
       </el-table>
     </el-form>
-    <div slot="footer" class="dialog-footer">
+    <div slot="footer">
       <el-button @click="cancel">{{$t('__cancel')}}</el-button>
     </div>
   </el-dialog>

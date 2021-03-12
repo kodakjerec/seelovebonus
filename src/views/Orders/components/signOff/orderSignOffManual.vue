@@ -93,7 +93,7 @@
           </template>
         </el-table-column>
       </el-table>
-      <div slot="footer" class="dialog-footer">
+      <div slot="footer">
         <el-button @click="cancel">{{$t('__cancel')}}</el-button>
         <el-button type="primary" @click="beforeSave">{{$t('__save')}}</el-button>
       </div>

@@ -43,7 +43,7 @@
         </el-select>
       </el-form-item>
     </el-form>
-    <div slot="footer" class="dialog-footer">
+    <div slot="footer">
       <el-button v-show="buttonsShow.edit && buttonsShowUser.save" icon="el-icon-printer" @click.prevent="print">{{$t('__print')}}</el-button>
       <p/>
       <el-button v-show="buttonsShow.delete && buttonsShowUser.delete" @click="retakeID">{{$t('__retakeID')}}</el-button>

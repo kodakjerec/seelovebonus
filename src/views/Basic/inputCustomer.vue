@@ -11,7 +11,7 @@
       </el-option>
     </el-select>
     <el-button-group>
-      <el-button type="primary">{{$t('__search')}}</el-button>
+      <el-button type="primary" @click="showSearch">{{$t('__search')}}</el-button>
       <el-button @click="showForm" :disabled="CustomerID === ''">{{$t('__edit')}}</el-button>
       <el-button @click="handleClick">{{$t('__new')}}</el-button>
     </el-button-group>
@@ -24,16 +24,22 @@
     :fromData="fromData"
     @dialog-cancel="dialogCancel"
     @dialog-save="dialogSave"></new-form>
+    <customer-search
+    :dialog-show="dialogShowSearch"
+    @dialog-cancel="dialogCancel"
+    @dialog-save="dialogSave"></customer-search>
   </el-form-item>
 </template>
 
 <script>
 import newForm from './components/customerNewForm'
+import customerSearch from './components/customerSearch'
 
 export default {
   name: 'inputCustomer',
   components: {
-    newForm
+    newForm,
+    customerSearch
   },
   props: {
     label: { type: String },
@@ -49,6 +55,7 @@ export default {
       // 開啟修改表單要的資訊
       dialogType: 'new',
       dialogShow: false,
+      dialogShowSearch: false,
       // 使用者能看到的權限
       buttonsShowUser: {
         new: 1,
@@ -107,14 +114,20 @@ export default {
     },
     dialogCancel: function () {
       this.dialogShow = false
+      this.dialogShowSearch = false
     },
     dialogSave: function (result) {
       this.dialogShow = false
+      this.dialogShowSearch = false
 
       let { ID } = result
       this.CustomerID = ID
       this.$emit('findID', this.CustomerID)
       this.preLoading()
+    },
+    // 開啟查詢
+    showSearch: function () {
+      this.dialogShowSearch = true
     }
   }
 }

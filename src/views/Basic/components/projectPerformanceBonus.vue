@@ -64,7 +64,7 @@
       :dialog-show="dialogShowNewPB"
       @dialog-cancel="cancelNewPB"
       @dialog-save="saveNewPB"></newForm>
-    <div slot="footer" class="dialog-footer">
+    <div slot="footer">
       <el-button @click="cancel">{{$t('__cancel')}}</el-button>
       <el-button v-show="buttonsShowUser.save" type="primary" @click="beforeSave">{{$t('__save')}}</el-button>
     </div>

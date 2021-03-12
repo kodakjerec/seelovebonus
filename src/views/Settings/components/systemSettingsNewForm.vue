@@ -47,7 +47,7 @@
         <el-checkbox v-model="form.Danger" :true-label="1" :false-label="0" @change="preLoading" border disabled>{{$t('__systemSettingsVIP')}}</el-checkbox>
       </el-form-item>
     </el-form>
-    <div slot="footer" class="dialog-footer">
+    <div slot="footer">
       <el-button v-show="buttonsShow.delete && buttonsShowUser.delete" type="danger" @click="delRecord">{{$t('__delete')}}</el-button>
       <el-button @click="cancel">{{$t('__cancel')}}</el-button>
       <el-button v-show="buttonsShow.save && buttonsShowUser.save" type="primary" @click="checkValidate">{{$t('__save')}}</el-button>
