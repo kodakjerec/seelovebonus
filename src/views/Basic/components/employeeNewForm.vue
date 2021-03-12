@@ -12,7 +12,7 @@
         </el-col>
         <el-col :span="12">
           <el-form-item prop="ID">
-            <el-input v-model="form.ID" maxlength="20" show-word-limit :disabled="disableForm.ID"></el-input>
+            <el-input v-model="form.ID" maxlength="20" show-word-limit :placeholder="getPlaceholderID()" :disabled="disableForm.ID || IDType==='3'"></el-input>
           </el-form-item>
         </el-col>
       </el-form-item>
@@ -264,11 +264,22 @@ export default {
       this.ddlStatus = response
       response = this.$api.local.getDropdownList({ type: 'Grade' })
       this.ddlGrade = response
-      response = this.$api.local.getDropdownList({ type: 'IdType' })
+      response = this.$api.local.getDropdownList({ type: 'IDType' })
       this.ddlIDType = response
 
       this.ddlCompanyID = this.companiesData
       this.ddlCompanyIDChange()
+    },
+    // 身份證字號提示
+    getPlaceholderID: function () {
+      switch (this.IDType) {
+        case '1':
+          return this.$t('__placeholderCustomerID')
+        case '2':
+          return this.$t('__placeholderPassport')
+        case '3':
+          return this.$t('__placeholderCustomerIDAfterSave')
+      }
     },
     // 切換公司
     ddlCompanyIDChange: function () {

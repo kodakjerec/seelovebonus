@@ -449,7 +449,7 @@ export default {
       response = this.$api.local.getDropdownList({ type: 'RefKind' })
       this.ddlRefKind = response
       this.ddlRefKindChange()
-      response = this.$api.local.getDropdownList({ type: 'IdType' })
+      response = this.$api.local.getDropdownList({ type: 'IDType' })
       this.ddlIDType = response
       let response7 = await this.$api.basic.getDropdownList({ type: 'employeesList' })
       this.ddlEmployeeID = response7.data.result
