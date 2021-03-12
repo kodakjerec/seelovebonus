@@ -9,6 +9,7 @@ export default {
   __new: '新增',
   __edit: '修改',
   __search: '查詢',
+  __searchResult: '查詢結果',
   __delete: '刪除',
   __invalid: '作廢',
   __save: '存檔',

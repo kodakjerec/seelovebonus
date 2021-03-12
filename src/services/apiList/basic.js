@@ -58,6 +58,13 @@ export default {
         return data
       })
     },
+    customerSearch: ({ form }) => {
+      let rawData = { form }
+      return post('/basic/customerSearch', rawData).then(data => {
+        console.log(`%c <<< Response(/rest/basic/customerSearch)⤵ `, 'background-color: #E0455D; color: white; font-size: 14px; font-weight: bold;', data)
+        return data
+      })
+    },
     employeesShow: ({ keyword }) => {
       let rawData = { keyword }
       return post('/basic/employeesShow', rawData).then(data => {

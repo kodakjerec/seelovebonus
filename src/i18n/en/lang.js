@@ -9,6 +9,7 @@ export default {
   __new: 'New',
   __edit: 'Edit',
   __search: 'Serach',
+  __searchResult: 'Search Result',
   __delete: 'Delete',
   __invalid: 'Invalid',
   __save: 'Save',

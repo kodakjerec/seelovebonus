@@ -25,6 +25,7 @@
     @dialog-cancel="dialogCancel"
     @dialog-save="dialogSave"></new-form>
     <customer-search
+    v-if="dialogShowSearch"
     :dialog-show="dialogShowSearch"
     @dialog-cancel="dialogCancel"
     @dialog-save="dialogSave"></customer-search>

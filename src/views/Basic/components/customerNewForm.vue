@@ -61,7 +61,7 @@
           </el-form-item>
         </el-col>
       </el-form-item>
-      <!-- 性別 -->
+      <!-- 性別,電話 -->
       <el-form-item :label="$t('__gender')">
         <el-col :span="4">
           <el-select v-model="form.Gender" value-key="value" :placeholder="$t('__plzChoice')">
