@@ -2,89 +2,81 @@
   <el-form ref="form" :model="form" :rules="rules" label-width="10vw" label-position="right">
     <h2 style="text-align:left">{{$t('__orderCustomer')+$t('__data')}}<span v-if="form.ModifyType">{{'('+form.ModifyType+')'}}</span></h2>
     <!-- 有法定代理人資料, 要顯示 -->
-    <template v-if="showAgentData">
+    <template>
+      <!-- 訂購者 -->
       <el-form-item :label="$t('__orderCustomer')+$t('__name')" prop="CustomerID">
         <el-col :span="8">
-          <el-select v-model="form.CustomerID" filterable value-key="value" :placeholder="$t('__plzChoice')" @change="ddlCustomerChange" :disabled="disableForm.CustomerID">
+          <el-select
+            v-model="form.CustomerID"
+            remote
+            filterable
+            default-first-option
+            :placeholder="$t('__plzChoice')"
+            :remote-method="remoteMethod"
+            :loading="loading"
+            :disabled="disableForm.CustomerID"
+            @change="ddlCustomerChange">
             <el-option v-for="item in ddlCustomer" :key="item.ID" :label="item.ID+' '+item.Value" :value="item.ID">
               <span style="float: left">{{ item.Value }}</span>
               <span style="float: right; color: #8492a6; font-size: 13px">{{ item.ID }}</span>
             </el-option>
           </el-select>
         </el-col>
-        <el-col :span="16">
+        <el-col :span="16" v-if="showAgentData">
           <el-form-item :label="$t('__agent')">
             <el-input v-model="form.AgentName" disabled></el-input>
           </el-form-item>
         </el-col>
       </el-form-item>
+      <!-- 身分證字號 -->
       <el-form-item :label="$t('__uniqueNumber')">
         <el-col :span="8">
           <el-input v-model="form.CustomerID" disabled></el-input>
         </el-col>
-        <el-col :span="16">
+        <el-col :span="16" v-if="showAgentData">
           <el-form-item :label="$t('__uniqueNumber')">
             <el-input v-model="form.AgentID" disabled></el-input>
           </el-form-item>
         </el-col>
       </el-form-item>
+      <!-- 電話 -->
       <el-form-item :label="$t('__home')+'/'+$t('__mobile')+$t('__tel')">
         <el-col :span="8" class="elInputWidth">
           <el-input v-model="form.TelHome" disabled></el-input>
           <el-input v-model="form.TelMobile" disabled></el-input>
         </el-col>
-        <el-col :span="7">
-          <el-form-item :label="$t('__address')">
-            <el-select v-model="form.AgentCity" value-key="value" :placeholder="$t('__plzChoice')" @change="ddlCityChange" disabled>
-              <el-option v-for="item in ddlAgentCity" :key="item.ID" :label="item.Value" :value="item.ID">
-                <span style="float: left">{{ item.Value }}</span>
-                <span style="float: right; color: #8492a6; font-size: 13px">{{ item.ID }}</span>
-              </el-option>
-            </el-select>
-          </el-form-item>
+        <template v-if="showAgentData">
+          <el-col :span="7">
+            <el-form-item :label="$t('__address')">
+              <el-select v-model="form.AgentCity" value-key="value" :placeholder="$t('__plzChoice')" @change="ddlCityChange" disabled>
+                <el-option v-for="item in ddlAgentCity" :key="item.ID" :label="item.Value" :value="item.ID">
+                  <span style="float: left">{{ item.Value }}</span>
+                  <span style="float: right; color: #8492a6; font-size: 13px">{{ item.ID }}</span>
+                </el-option>
+              </el-select>
+            </el-form-item>
+            </el-col>
+          <el-col :span="3">
+            <el-form-item>
+              <el-select v-model="form.AgentPost" value-key="value" :placeholder="$t('__plzChoice')" disabled>
+                <el-option v-for="item in ddlAgentPost" :key="item.ID" :label="item.Value" :value="item.ID">
+                  <span style="float: left">{{ item.Value }}</span>
+                  <span style="float: right; color: #8492a6; font-size: 13px">{{ item.ID }}</span>
+                </el-option>
+              </el-select>
+            </el-form-item>
+            </el-col>
+          <el-col :span="6">
+            <el-input v-model="form.AgentAddress" disabled></el-input>
           </el-col>
-        <el-col :span="3">
-          <el-form-item>
-            <el-select v-model="form.AgentPost" value-key="value" :placeholder="$t('__plzChoice')" disabled>
-              <el-option v-for="item in ddlAgentPost" :key="item.ID" :label="item.Value" :value="item.ID">
-                <span style="float: left">{{ item.Value }}</span>
-                <span style="float: right; color: #8492a6; font-size: 13px">{{ item.ID }}</span>
-              </el-option>
-            </el-select>
-          </el-form-item>
-          </el-col>
-        <el-col :span="6">
-          <el-input v-model="form.AgentAddress" disabled></el-input>
-        </el-col>
+        </template>
       </el-form-item>
     </template>
-    <!-- 無法定代理人資料 -->
-    <template v-else>
-            <el-form-item :label="$t('__orderCustomer')+$t('__name')" prop="CustomerID">
-        <el-col :span="6">
-          <el-select v-model="form.CustomerID" filterable value-key="value" :placeholder="$t('__plzChoice')" @change="ddlCustomerChange" :disabled="disableForm.CustomerID">
-            <el-option v-for="item in ddlCustomer" :key="item.ID" :label="item.ID+' '+item.Value" :value="item.ID">
-              <span style="float: left">{{ item.Value }}</span>
-              <span style="float: right; color: #8492a6; font-size: 13px">{{ item.ID }}</span>
-            </el-option>
-          </el-select>
-        </el-col>
-      </el-form-item>
-      <el-form-item :label="$t('__uniqueNumber')">
-        <el-col :span="8">
-          <el-input v-model="form.CustomerID" disabled></el-input>
-        </el-col>
-      </el-form-item>
-      <el-form-item :label="$t('__home')+'/'+$t('__mobile')+$t('__tel')">
-        <el-col :span="8" class="elInputWidth">
-          <el-input v-model="form.TelHome" disabled></el-input>
-          <el-input v-model="form.TelMobile" disabled></el-input>
-        </el-col>
-      </el-form-item>
-    </template>
+    <!-- EMail -->
     <el-form-item :label="$t('__eMail')">
       <el-input v-model="form.EMail" disabled></el-input>
     </el-form-item>
+    <!-- 地址 -->
     <el-form-item :label="$t('__address')">
       <el-col :span="4">
         <el-form-item>
@@ -119,8 +111,7 @@ export default {
   props: {
     dialogType: { type: String, default: 'new' },
     buttonsShowUser: { type: Object },
-    orderID: { type: String },
-    ddlCustomerBefore: { tpye: Array }
+    orderID: { type: String }
   },
   data () {
     return {
@@ -156,11 +147,13 @@ export default {
       },
       showAgentData: true, // 顯示代理人資訊
       fromModifyType: '',
+      loading: false,
       // 以下為下拉式選單專用
       postData: [],
       ddlCountry: [],
       ddlCity: [],
       ddlPost: [],
+      ddlCustomerBefore: [],
       ddlCustomer: [],
       // 法定代理人專用下拉式選單
       ddlAgentCountry: [],
@@ -184,17 +177,6 @@ export default {
             break
         }
       }
-    },
-    ddlCustomerBefore: function (value) {
-      if (this.ddlCustomerBefore) {
-        this.ddlCustomer = JSON.parse(JSON.stringify(this.ddlCustomerBefore))
-      }
-    },
-    form: {
-      handler: function (newValue, oldValue) {
-        this.customerChange()
-      },
-      deep: true
     }
   },
   mounted () {
@@ -202,11 +184,10 @@ export default {
   },
   methods: {
     preLoading: async function () {
-      if (this.ddlCustomerBefore) {
-        this.ddlCustomer = this.ddlCustomerBefore
-      }
+      let response = await this.$api.basic.getDropdownList({ type: 'customers' })
+      this.ddlCustomerBefore = response.data.result
 
-      let response = this.$api.local.getDropdownList({ type: 'District' })
+      response = this.$api.local.getDropdownList({ type: 'District' })
       this.postData = response
 
       response = this.$api.local.getDropdownList({ type: 'Country' })
@@ -219,6 +200,17 @@ export default {
       this.ddlAgentCountry = response
       response = this.$api.local.getDropdownList({ type: 'City' })
       this.ddlAgentCity = response
+    },
+    // 遠端即時查客戶代號
+    remoteMethod: async function (query) {
+      this.loading = true
+      this.ddlCustomer = this.ddlCustomerBefore.filter(item => {
+        return item.ID.indexOf(query) > -1 || item.Value.indexOf(query) > -1
+      })
+
+      setTimeout(() => {
+        this.loading = false
+      }, 500)
     },
     // 修改狀態:取得客戶資料
     bringCustomer: async function () {
@@ -260,36 +252,14 @@ export default {
 
       // 法定代理人
       this.ddlAgentCityChange()
+
+      this.remoteMethod(this.form.CustomerID)
     },
     // 選定客戶取得資料
     ddlCustomerChange: async function () {
       // 取得可以用的選單
       let responseRow = await this.$api.orders.getObject({ type: 'orderCustomerGetDetail', keyword: this.form.CustomerID })
       if (responseRow.data.result.length <= 0) {
-        this.form = {
-          OrderID: '',
-          CustomerID: '',
-          TelHome: '',
-          TelMobile: '',
-          EMail: '',
-          Country: null,
-          City: null,
-          Post: null,
-          Address: '',
-          AgentID: '',
-          AgentName: '',
-          AgentCountry: null,
-          AgentCity: null,
-          AgentPost: null,
-          AgentAddress: '',
-          refKind: null,
-          Referrer: null,
-          EmployeeID: null,
-          ModifyType: '',
-          CompanyID: null,
-          // 顯示用, 不存入資料庫
-          Status: ''
-        }
         return
       }
       let row = responseRow.data.result[0]
@@ -324,6 +294,11 @@ export default {
 
       // 法定代理人
       this.ddlAgentCityChange()
+
+      this.remoteMethod(this.form.CustomerID)
+      // ===== 安座單 =====
+      // 回傳客戶代號給上一層
+      this.$emit('customer-change', this.form.CustomerID)
     },
     // 過濾郵遞區號
     ddlCityChange: function () {
@@ -395,11 +370,6 @@ export default {
           this.form.ModifyType = fromObject
           break
       }
-    },
-    // ===== 安座單 =====
-    // 回傳客戶代號給上一層
-    customerChange: function () {
-      this.$emit('customer-change', this.form.CustomerID)
     }
   }
 }

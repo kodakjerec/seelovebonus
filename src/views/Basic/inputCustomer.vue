@@ -2,10 +2,15 @@
   <el-form-item :label="label">
     <el-select
       v-model="CustomerID"
+      remote
       filterable
+      default-first-option
       :placeholder="$t('__plzChoice')"
-      :disabled="disabled">
-      <el-option v-for="item in options" :key="item.ID" :label="item.ID+' '+item.Value" :value="item.ID">
+      :disabled="disabled"
+      :remote-method="remoteMethod"
+      :loading="loading"
+      @change="change">
+      <el-option v-for="item in ddlCustomer" :key="item.ID" :label="item.ID+' '+item.Value" :value="item.ID">
         <span style="float: left">{{ item.Value }}</span>
         <span style="float: right; color: #8492a6; font-size: 13px">{{ item.ID }}</span>
       </el-option>
@@ -15,6 +20,7 @@
       <el-button @click="showForm" :disabled="CustomerID === ''">{{$t('__edit')}}</el-button>
       <el-button @click="handleClick">{{$t('__new')}}</el-button>
     </el-button-group>
+    <!-- 新增/修改客戶 -->
     <new-form
     v-if="dialogShow"
     :dialog-type="dialogType"
@@ -24,6 +30,7 @@
     :fromData="fromData"
     @dialog-cancel="dialogCancel"
     @dialog-save="dialogSave"></new-form>
+    <!-- 查詢客戶 -->
     <customer-search
     v-if="dialogShowSearch"
     :dialog-show="dialogShowSearch"
@@ -45,7 +52,18 @@ export default {
   props: {
     label: { type: String },
     disabled: { type: Boolean },
-    fromCustomerID: { type: String }
+    fromCustomerID: { type: String },
+    parentObject: {
+      type: Object,
+      default: function () {
+        return {}
+      } }
+  },
+  watch: {
+    fromCustomerID: function () {
+      this.CustomerID = this.fromCustomerID
+      this.remoteMethod(this.fromCustomerID)
+    }
   },
   data () {
     return {
@@ -65,30 +83,37 @@ export default {
         delete: 0,
         search: 0
       },
-      fromData: null // 傳給新增客戶使用
+      fromData: null, // 傳給新增客戶使用
+      // 下拉式選單
+      ddlCustomer: []
     }
   },
   mounted () {
     this.CustomerID = this.fromCustomerID
-    this.preLoading()
+    this.remoteMethod(this.fromCustomerID)
   },
   methods: {
-    // // 遠端即時查客戶代號
-    // remoteMethod: async function (query) {
-    //   this.loading = true
-    //   setTimeout(() => {
-    //     this.options = this.ddlCustomer.filter(item => {
-    //       return item.ID.indexOf(query) > -1 || item.Value.indexOf(query) > -1
-    //     })
-    //     this.loading = false
-    //   }, 200)
-    // },
-    preLoading: async function () {
-      let response = await this.$api.orders.getDropdownList({ type: 'customer' })
-      this.options = response.data.result
+    // 遠端即時查客戶代號
+    remoteMethod: async function (query) {
+      this.loading = true
+      let response = await this.$api.basic.getDropdownList({ type: 'customers', keyword: query })
+      this.ddlCustomer = response.data.result
+      setTimeout(() => {
+        this.loading = false
+      }, 500)
+    },
+    // 選定客戶
+    change: function () {
+      this.$emit('findID', {
+        ID: this.CustomerID,
+        parentObject: this.parentObject
+      })
     },
     // 新增客戶
-    handleClick: function () {
+    handleClick: async function () {
+      let response = await this.$api.basic.getObject({ type: 'customer', keyword: this.CustomerID })
+      this.customer = response.data.result[0]
+
       this.buttonsShowUser.new = 1
 
       this.dialogType = 'new'
@@ -123,8 +148,10 @@ export default {
 
       let { ID } = result
       this.CustomerID = ID
-      this.$emit('findID', this.CustomerID)
-      this.preLoading()
+      this.$emit('findID', {
+        ID: this.CustomerID,
+        parentObject: this.parentObject
+      })
     },
     // 開啟查詢
     showSearch: function () {

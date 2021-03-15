@@ -70,16 +70,35 @@
         prop="CustomerID"
         :label="$t('__anzaCustomer')">
         <template slot-scope="scope">
-          <el-select v-model="scope.row[scope.column.property]" filterable value-key="value" :placeholder="$t('__plzChoice')">
-            <el-option v-for="item in ddlCustomer" :key="item.ID" :label="item.ID+' '+item.Value" :value="item.ID">
-              <span style="float: left">{{ item.Value }}</span>
-              <span style="float: right; color: #8492a6; font-size: 13px">{{ item.ID }}</span>
-            </el-option>
-          </el-select>
+          <!-- 安座人 -->
+          <input-customer
+            :fromCustomerID="scope.row.CustomerID"
+            :parent-object="scope.row"
+            @findID="findID"></input-customer>
         </template>
       </el-table-column>
       <!-- 個資 -->
       <el-table-column>
+        <template slot="header">
+          {{$t('__gender')}}<br/>
+          {{$t('__birth')+'('+$t('__solarCalendar')+')'}}<br/>
+          {{$t('__lunarDate')+'('+$t('__lunarCalendar')+')'+' '+$t('__lunarTime')}}
+        </template>
+        <template slot-scope="scope">
+          {{scope.row.GenderName}}<br/>
+          {{scope.row.Birth}}<br/>
+          {{scope.row.BirthLunarDate+' '+scope.row.BirthLunarTimeName}}
+        </template>
+      </el-table-column>
+      <el-table-column>
+        <template slot="header">
+          {{$t('__tel')}}<br/>
+          {{$t('__address')}}
+        </template>
+        <template slot-scope="scope">
+          {{scope.row.Tel}}<br/>
+          {{scope.row.AddressName}}
+        </template>
       </el-table-column>
       <!-- 數量 -->
       <el-table-column
@@ -116,7 +135,7 @@
       <!-- 操作 -->
       <el-table-column
         align="right"
-        width="95px">
+        width="95">
         <template slot="header">
           <el-button
             type="primary"
@@ -137,19 +156,23 @@
 </template>
 
 <script>
+import inputCustomer from '@/views/Basic/inputCustomer'
 
 export default {
   name: 'AnzaOrderForOrderNew',
+  components: {
+    inputCustomer
+  },
   props: {
     orderID: { type: String },
     parentOrderDate: { type: String },
     parentAnzaData: { type: Object },
-    parentQty: { type: Number },
-    ddlCustomerBefore: { tpye: Array }
+    parentQty: { type: Number }
   },
   data () {
     return {
       form: {
+        Seq: 0,
         OrderID: this.orderID,
         AnzaOrderID: '',
         CustomerID: '',
@@ -162,11 +185,12 @@ export default {
         FromStorageID: '',
         // 顯示用
         qty: 1,
+        Birth: '',
         BirthLunarDate: '',
-        BirthLunarTime: '',
-        Gender: '',
-        TelHome: '',
-        Address: ''
+        BirthLunarTimeName: '',
+        GenderName: '',
+        Tel: '',
+        AddressName: ''
       },
       disableForm: {
         CustomerID: false
@@ -193,17 +217,13 @@ export default {
         this.parentQtyChange()
         this.reCalDate(this.subList)
       },
-      deep: true },
+      deep: true
+    },
     parentOrderDate: function (newValue) {
       this.parentOrderDateChange()
     },
     parentQty: function () {
       this.parentQtyChange()
-    },
-    ddlCustomerBefore: function (value) {
-      if (this.ddlCustomerBefore) {
-        this.ddlCustomer = JSON.parse(JSON.stringify(this.ddlCustomerBefore))
-      }
     }
   },
   mounted () {
@@ -247,11 +267,9 @@ export default {
 
         index++
       })
-
-      this.refreshList()
     },
     // 父視窗: 變更客戶代號
-    parentCustomerChange: function () {
+    parentCustomerChange: async function () {
       // 如果是來自安座單的操作, 不更改CustomerID(續約, 展延, 繼承)
       switch (this.fromType) {
         case 'anzaRenew':
@@ -269,17 +287,15 @@ export default {
       if (this.subList.length === 0) {
         this.handleNew()
       }
-      let index = 0
 
-      this.subList.forEach(row => {
-        if (index === 0) {
+      for (let i = 0; i < this.subList.length; i++) {
+        let row = this.subList[i]
+        if (i === 0) {
           row.CustomerID = this.parentAnzaData.CustomerID
         }
-
-        index++
-      })
-
-      this.refreshList()
+        await this.bringCustomerData(row)
+        this.subList[i] = row
+      }
     },
     // 父視窗: 變更日期
     parentOrderDateChange: function () {
@@ -288,8 +304,6 @@ export default {
         this.handleNew()
       }
       this.reCalDate(this.subList)
-
-      this.refreshList()
     },
     // 父視窗: 變更任意資料
     parentAssginData: function (type, fromObject) {
@@ -398,20 +412,49 @@ export default {
         waitForReplaceList.ExpirationDate = ExpirationDate
       }
     },
-    // 強制觸發vue.js更新機制
-    refreshList: function () {
-      let tempList = JSON.parse(JSON.stringify(this.subList))
-      this.subList = []
-
-      tempList.forEach(row => {
-        this.subList.push(row)
-      })
+    // 找到客戶帳號
+    findID: async function (result) {
+      let { ID, parentObject } = result
+      let findRow = this.subList.find(item => { return item.Seq === parentObject.Seq })
+      if (findRow) {
+        findRow.CustomerID = ID
+      }
+      await this.bringCustomerData(findRow)
+    },
+    // 帶入客戶個資
+    bringCustomerData: async function (row) {
+      if (!row.CustomerID) {
+        return
+      }
+      let response = await this.$api.basic.getObject({ type: 'customer', keyword: row.CustomerID })
+      let result = response.data.result[0]
+      if (result) {
+        if (result.Birth) {
+          row.Birth = result.Birth.slice(0, 10)
+        }
+        if (result.BirthLunarDate) {
+          row.BirthLunarDate = result.BirthLunarDate.slice(0, 10)
+        }
+        row.BirthLunarTimeName = result.BirthLunarTimeName
+        row.GenderName = result.GenderName
+        row.Tel = result.Tel
+        row.AddressName = result.AddressName
+      }
     },
     // ============== 子結構 ===============
     // 新增子結構
     handleNew: function (specialRow) {
       let newObj = JSON.parse(JSON.stringify(this.form))
-
+      // find Maximum Seq
+      let nextSeq = 1
+      if (this.subList.length === 0) {
+        nextSeq = 1
+      } else {
+        let amounts = this.subList.map(item => item.Seq)
+        let highestSeq = Math.max(...amounts)
+        nextSeq = highestSeq + 1
+      }
+      newObj.Seq = nextSeq
       // 新增 item
       if (specialRow) {
         newObj.OrderID = specialRow.OrderID

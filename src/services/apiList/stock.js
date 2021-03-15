@@ -80,6 +80,9 @@ export default {
       })
     },
     getDropdownList: ({ type, keyword }) => {
+      if (!keyword) {
+        keyword = ''
+      }
       let rawData = { type, keyword }
       console.log('%c >>> getDropdownList: ', 'background-color: blue; color: white; font-size: 14px; font-weight: bold;', rawData)
       return post('/stock/getDropdownList', rawData).then(data => {
@@ -88,6 +91,9 @@ export default {
       })
     },
     getObject: ({ type, keyword }) => {
+      if (!keyword) {
+        keyword = ''
+      }
       let rawData = { type, keyword }
       console.log('%c >>> getObject: ', 'background-color: blue; color: white; font-size: 14px; font-weight: bold;', rawData)
       return post('/stock/getObject', rawData).then(data => {

@@ -297,6 +297,9 @@ export default {
       })
     },
     getDropdownList: ({ type, keyword }) => {
+      if (!keyword) {
+        keyword = ''
+      }
       let rawData = { type, keyword }
       return post('/basic/getDropdownList', rawData).then(data => {
         console.log(`%c <<< Response(/rest/basic/getDropdownList)⤵ `, 'background-color: #E0455D; color: white; font-size: 14px; font-weight: bold;', data)
@@ -304,6 +307,9 @@ export default {
       })
     },
     getObject: ({ type, keyword }) => {
+      if (!keyword) {
+        keyword = ''
+      }
       let rawData = { type, keyword }
       return post('/basic/getObject', rawData).then(data => {
         console.log(`%c <<< Response(/rest/basic/getObject)⤵ `, 'background-color: #E0455D; color: white; font-size: 14px; font-weight: bold;', data)

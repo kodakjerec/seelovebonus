@@ -265,10 +265,6 @@ export default {
       response = this.$api.local.getDropdownList({ type: 'Status' })
       this.ddlStatus = response
 
-      let responseCustomers = await this.$api.basic.getDropdownList({ type: 'customers' })
-      this.customersData = responseCustomers.data.result
-      let responseEmployees = await this.$api.basic.getDropdownList({ type: 'customerEmployees' })
-      this.employeesData = responseEmployees.data.result
       let responseCompanies = await this.$api.basic.getDropdownList({ type: 'companyParent' })
       this.companiesData = responseCompanies.data.result
       response = this.$api.local.getDropdownList({ type: 'RefKind' })
@@ -287,12 +283,6 @@ export default {
     // 過濾推薦人種類
     ddlRefKindChange: function () {
       switch (this.form.refKind) {
-        case '1':
-          this.ddlReferrer = this.customersData
-          break
-        case '2':
-          this.ddlReferrer = this.employeesData
-          break
         case '3':
           this.ddlReferrer = this.companiesData
           break

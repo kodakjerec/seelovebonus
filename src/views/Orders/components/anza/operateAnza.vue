@@ -313,6 +313,7 @@ export default {
       this.ddlLunarTime = response
       response = this.$api.local.getDropdownList({ type: 'Gender' })
       this.ddlGender = response
+      // 需要用到儲位才顯示
       if (!this.disableForm.StorageID) {
         let response2 = await this.$api.stock.findStorageID({
           ProductID: this.fromAnzaOrder.ProductID,
@@ -338,8 +339,9 @@ export default {
       this.ddlCityChange()
     },
     // 找到客戶帳號
-    findID: function (value) {
-      this.anzaOrder.CustomerID = value
+    findID: function (result) {
+      let { ID } = result
+      this.anzaOrder.CustomerID = ID
       this.bringCustomer()
     },
     // ===== 客戶資料 =====
@@ -382,6 +384,8 @@ export default {
         this.form.BirthLunarTime = fromCustomer.BirthLunarTime
         this.form.BirthLunarLeap = fromCustomer.BirthLunarLeap
       }
+      // 郵遞區號
+      this.ddlCityChange()
     },
     // 西元->農曆-- 抄襲 customerNewForm.vue
     solarToLunar: async function () {

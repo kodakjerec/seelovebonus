@@ -118,7 +118,6 @@
       :dialogType="dialogType"
       :buttonsShowUser="buttonsShowUser"
       :orderID="form.ID"
-      :ddlCustomerBefore="ddlCustomer"
       @customer-change="customerChange"></order-customer>
     <template>
       <!-- 新增訂單專用 -->
@@ -127,8 +126,7 @@
         :orderID="form.ID"
         :parentOrderDate="form.OrderDate"
         :parentQty="form.Qty"
-        :parentAnzaData="form.anzaForNew"
-        :ddlCustomerBefore="ddlCustomer"></anza-order-new>
+        :parentAnzaData="form.anzaForNew"></anza-order-new>
       <installment-order-new
         v-show="form.ProjectID !== ''"
         ref="installmentOrderNew"

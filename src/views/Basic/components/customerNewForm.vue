@@ -315,7 +315,7 @@ export default {
         refKind: null,
         Referrer: null,
         BirthLunarDate: null,
-        BirthLunarTime: null,
+        BirthLunarTime: '13',
         BirthLunarLeap: null,
         // 顯示用
         CalcBirthLunarDate: '',
@@ -370,7 +370,9 @@ export default {
 
         // 如果是安座單來源, 自動帶入業務
         if (this.fromData && this.fromData.type === 'anzaNewCustomer') {
-          this.form.Referrer = this.fromData.buyer.Referrer
+          if (this.fromData.buyer.Referrer) {
+            this.form.Referrer = this.fromData.buyer.Referrer
+          }
           // 預設系統產生客戶代號
           this.IDType = '3'
         }

@@ -140,7 +140,6 @@
       :dialogType="dialogType"
       :buttonsShowUser="buttonsShowUser"
       :orderID="form.ID"
-      :ddlCustomerBefore="ddlCustomer"
       @customer-change="customerChange"></order-customer>
     <template v-if="dialogType !== 'new'">
       <!-- 安座單 -->
@@ -200,8 +199,7 @@
         :orderID="form.ID"
         :parentOrderDate="form.OrderDate"
         :parentQty="form.Qty"
-        :parentAnzaData="form.anzaForNew"
-        :ddlCustomerBefore="ddlCustomer"></anza-order-new>
+        :parentAnzaData="form.anzaForNew"></anza-order-new>
       <certificate1-order-new
         v-show="projectFunctions.newCertificate1.Available"
         id="certificate1OrderNew"
@@ -345,7 +343,6 @@ export default {
       // 以下為下拉式選單專用
       ddlOrderStatus: [],
       ddlProject: [],
-      ddlCustomer: [],
       // 頂部導覽
       tabActiveName: 'orderHead'
     }
@@ -443,8 +440,6 @@ export default {
       this.ddlOrderStatus = response
       let response2 = await this.$api.orders.getDropdownList({ type: 'project' })
       this.ddlProject = response2.data.result
-      let response4 = await this.$api.orders.getDropdownList({ type: 'customer' })
-      this.ddlCustomer = response4.data.result
     },
     // 點擊"修改專案", 填入明細
     bringProject: async function () {
