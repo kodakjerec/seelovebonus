@@ -381,6 +381,9 @@ export default {
     },
     // 帶入專案功能
     bringFunctions: async function () {
+      if (!this.form.ProjectID) {
+        return
+      }
       let responseProjectFunctions = await this.$api.basic.getObject({ type: 'projectFunctions', keyword: this.form.ProjectID })
       let projectFunctions = responseProjectFunctions.data.result
 

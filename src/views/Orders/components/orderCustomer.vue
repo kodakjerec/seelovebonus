@@ -111,7 +111,7 @@ export default {
   props: {
     dialogType: { type: String, default: 'new' },
     buttonsShowUser: { type: Object },
-    orderID: { type: String }
+    fromOrderID: { type: String }
   },
   data () {
     return {
@@ -162,25 +162,25 @@ export default {
     }
   },
   watch: {
-    orderID: function (newValue) {
-      if (newValue) {
-        this.form.OrderID = newValue
-
-        switch (this.dialogType) {
-          case 'new':
-            break
-          case 'edit':
-            if (this.buttonsShowUser.new === 0) {
-              this.disableForm.CustomerID = true
-            }
-            this.bringCustomer()
-            break
-        }
-      }
+    fromOrderID: function (newValue) {
+      this.form.OrderID = newValue
     }
   },
-  mounted () {
-    this.preLoading()
+  async mounted () {
+    await this.preLoading()
+
+    this.form.OrderID = this.fromOrderID
+
+    switch (this.dialogType) {
+      case 'new':
+        break
+      case 'edit':
+        if (this.buttonsShowUser.new === 0) {
+          this.disableForm.CustomerID = true
+        }
+        this.bringCustomer()
+        break
+    }
   },
   methods: {
     preLoading: async function () {
@@ -214,7 +214,7 @@ export default {
     },
     // 修改狀態:取得客戶資料
     bringCustomer: async function () {
-      let responseRow = await this.$api.orders.getObject({ type: 'orderCustomer', keyword: this.orderID })
+      let responseRow = await this.$api.orders.getObject({ type: 'orderCustomer', keyword: this.fromOrderID })
 
       if (responseRow.data.result.length <= 0) {
         return
@@ -253,7 +253,7 @@ export default {
       // 法定代理人
       this.ddlAgentCityChange()
 
-      this.remoteMethod(this.form.CustomerID)
+      this.remoteMethod(row.CustomerID)
     },
     // 選定客戶取得資料
     ddlCustomerChange: async function () {
@@ -295,7 +295,6 @@ export default {
       // 法定代理人
       this.ddlAgentCityChange()
 
-      this.remoteMethod(this.form.CustomerID)
       // ===== 安座單 =====
       // 回傳客戶代號給上一層
       this.$emit('customer-change', this.form.CustomerID)
@@ -317,10 +316,10 @@ export default {
     // 存檔前檢查
     beforeSave: async function () {
       let isSuccess = false
-      if (this.orderID === '') {
+      if (this.fromOrderID === '') {
         return false
       }
-      this.form.OrderID = this.orderID
+      this.form.OrderID = this.fromOrderID
 
       // 開始更新
       switch (this.form.Status) {

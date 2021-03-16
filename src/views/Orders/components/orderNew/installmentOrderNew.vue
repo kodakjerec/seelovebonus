@@ -92,6 +92,9 @@ export default {
       this.reLoading()
     },
     reLoading: async function () {
+      if (!this.projectID) {
+        return
+      }
       let responseRecords = await this.$api.basic.getObject({ type: 'projectInstallmentDetail', keyword: this.projectID })
       this.projectInstallmentDetail = responseRecords.data.result
       this.reCalculateSubList()

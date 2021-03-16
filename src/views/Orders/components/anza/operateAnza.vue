@@ -389,24 +389,26 @@ export default {
     },
     // 西元->農曆-- 抄襲 customerNewForm.vue
     solarToLunar: async function () {
-      if (this.form.Birth) {
-        let responseCustomer = await this.$api.basic.getObject({ type: 'solarToLunar', keyword: this.form.Birth })
-        let resultDate = responseCustomer.data.result[0].calcDate
-        resultDate = resultDate.replace(',0', '')
-        resultDate = resultDate.replace(',1', ' 閏月')
-        this.form.CalcBirthLunarDate = resultDate
+      if (!this.form.Birth) {
+        return
       }
+      let responseCustomer = await this.$api.basic.getObject({ type: 'solarToLunar', keyword: this.form.Birth })
+      let resultDate = responseCustomer.data.result[0].calcDate
+      resultDate = resultDate.replace(',0', '')
+      resultDate = resultDate.replace(',1', ' 閏月')
+      this.form.CalcBirthLunarDate = resultDate
     },
     // 農曆->西元, 閏月 由使用者選擇-- 抄襲 customerNewForm.vue
     lunarToSolar: async function () {
-      if (this.form.BirthLunarDate) {
-        if (this.form.BirthLunarLeap) {
-          let responseCustomer = await this.$api.basic.getObject({ type: 'lunarToSolarWithLeap', keyword: this.form.BirthLunarDate })
-          this.form.CalcBirth = responseCustomer.data.result[0].calcDate
-        } else {
-          let responseCustomer = await this.$api.basic.getObject({ type: 'lunarToSolar', keyword: this.form.BirthLunarDate })
-          this.form.CalcBirth = responseCustomer.data.result[0].calcDate
-        }
+      if (!this.form.BirthLunarDate) {
+        return
+      }
+      if (this.form.BirthLunarLeap) {
+        let responseCustomer = await this.$api.basic.getObject({ type: 'lunarToSolarWithLeap', keyword: this.form.BirthLunarDate })
+        this.form.CalcBirth = responseCustomer.data.result[0].calcDate
+      } else {
+        let responseCustomer = await this.$api.basic.getObject({ type: 'lunarToSolar', keyword: this.form.BirthLunarDate })
+        this.form.CalcBirth = responseCustomer.data.result[0].calcDate
       }
     },
     // ===== 表單功能 =====

@@ -34,6 +34,9 @@ export default {
     }
   },
   async mounted () {
+    if (!this.projectID) {
+      return
+    }
     let responseRecords = await this.$api.basic.getObject({ type: 'projectInstallmentDetail', keyword: this.projectID })
     this.projectInstallmentDetail = responseRecords.data.result
   },

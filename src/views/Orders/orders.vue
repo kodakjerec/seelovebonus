@@ -267,6 +267,9 @@ export default {
     },
     // 點選訂單編號
     handleClick: async function (row, column, event) {
+      if (!row.ID) {
+        return
+      }
       // 取得可以用的選單
       let responseRow = await this.$api.orders.getObject({ type: 'orderHead', keyword: row.ID })
       this.order = responseRow.data.result[0]

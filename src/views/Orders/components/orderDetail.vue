@@ -262,8 +262,10 @@ export default {
       })
 
       // (既有)商品明細-額外功能
-      let responseDetail = await this.$api.orders.getObject({ type: 'productFunctons', keyword: this.orderID })
-      this.productFunctionsList = responseDetail.data.result
+      if (this.orderID) {
+        let responseDetail = await this.$api.orders.getObject({ type: 'productFunctons', keyword: this.orderID })
+        this.productFunctionsList = responseDetail.data.result
+      }
 
       // (設定)商品明細-額外功能
       let response2 = await this.$api.orders.getDropdownList({ type: 'productFunctionsForOrderDetail' })

@@ -136,10 +136,10 @@
     <order-customer
       id="orderCustomer"
       ref="orderCustomer"
-      v-show="form.ProjectID"
+      v-if="form.ProjectID"
       :dialogType="dialogType"
       :buttonsShowUser="buttonsShowUser"
-      :orderID="form.ID"
+      :fromOrderID="form.ID"
       @customer-change="customerChange"></order-customer>
     <template v-if="dialogType !== 'new'">
       <!-- 安座單 -->
@@ -488,6 +488,9 @@ export default {
     },
     // 帶入專案功能
     bringFunctions: async function () {
+      if (!this.form.ProjectID) {
+        return
+      }
       let responseProjectFunctions = await this.$api.basic.getObject({ type: 'projectFunctions', keyword: this.form.ProjectID })
       let projectFunctions = responseProjectFunctions.data.result
 
