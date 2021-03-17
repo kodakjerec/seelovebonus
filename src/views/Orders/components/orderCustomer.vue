@@ -210,7 +210,7 @@ export default {
 
       setTimeout(() => {
         this.loading = false
-      }, 500)
+      }, 300)
     },
     // 修改狀態:取得客戶資料
     bringCustomer: async function () {

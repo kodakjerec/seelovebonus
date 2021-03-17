@@ -126,11 +126,11 @@
             {{scope.row.Address}}
           </template>
         </el-table-column>
-        <!-- 預定安座日 -->
+        <!-- 申請安座日 -->
         <el-table-column
           prop="ScheduledDate">
           <template slot="header">
-            {{$t('__scheduled')+$t('__anza')+$t('__date')}}
+            {{$t('__anzaScheduledDate')}}
             <table-sort-arrow :prop="'ScheduledDate'" :sortable="sortable"></table-sort-arrow>
             <br/>{{$t('__real')+$t('__anza')+$t('__date')}}
           </template>

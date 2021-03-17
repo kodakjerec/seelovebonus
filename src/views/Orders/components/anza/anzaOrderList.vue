@@ -56,10 +56,10 @@
               {{scope.row.Address}}
             </template>
           </el-table-column>
-          <!-- 預定安座日期 -->
+          <!-- 申請安座日期 -->
           <el-table-column>
             <template slot="header">
-              {{$t('__scheduled')+$t('__anza')+$t('__date')}}<br/>{{$t('__real')+$t('__anza')+$t('__date')}}
+              {{$t('__anzaScheduledDate')}}<br/>{{$t('__real')+$t('__anza')+$t('__date')}}
             </template>
             <template slot-scope="scope">
               {{formatterDate(null,null,scope.row.ScheduledDate,null)}}<br/>
@@ -70,11 +70,19 @@
               </template>
             </template>
           </el-table-column>
+          <!-- 安座準備期 -->
+          <el-table-column
+            prop="PrepareDate"
+            :label="$t('__anzaPrepareDate')"
+            :formatter="formatterDate">
+          </el-table-column>
+          <!-- 到期日 -->
           <el-table-column
             prop="ExpirationDate"
             :label="this.$t('__expire') + this.$t('__date')"
             :formatter="formatterDate">
           </el-table-column>
+          <!-- 圓滿日期 -->
           <el-table-column
             prop="CompleteDate"
             :formatter="formatterDate">

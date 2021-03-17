@@ -21,7 +21,19 @@ export function formatMoney (value, mode) {
 // 日期
 export function formatDate (value) {
   if (value) {
-    return value.substring(0, 10)
+    switch (typeof value) {
+      case 'string':
+        // 文字格式
+        return value.substring(0, 10)
+      case 'object':
+        // 限定日期格式
+        if (typeof value.getMonth === 'function') {
+          return value.toISOString().slice(0, 10)
+        }
+        return value
+      default:
+        return value
+    }
   } else {
     return value
   }
