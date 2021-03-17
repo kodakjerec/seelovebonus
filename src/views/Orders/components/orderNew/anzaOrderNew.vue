@@ -32,7 +32,7 @@
         </el-table-column>
         <el-table-column
           prop="ScheduledDate"
-          :label="$t('__scheduled')+$t('__anza')+$t('__date')">
+          :label="$t('__anzaScheduledDate')">
           <template slot-scope="scope">
             <el-date-picker
               v-model="scope.row[scope.column.property]"
@@ -108,10 +108,10 @@
           <el-input-number v-model="scope.row[scope.column.property]" @change="(currentValue, oldValue)=>{qtyChange(currentValue, oldValue, scope.row)}"></el-input-number>
         </template>
       </el-table-column>
-      <!-- 預定安座日 -->
+      <!-- 申請安座日 -->
       <el-table-column
         prop="ScheduledDate"
-        :label="$t('__scheduled')+$t('__anza')+$t('__date')">
+        :label="$t('__anzaScheduledDate')">
         <template slot-scope="scope">
           <el-date-picker
             v-model="scope.row[scope.column.property]"
@@ -120,7 +120,13 @@
           </el-date-picker>
         </template>
       </el-table-column>
-      <!-- 實際安座日 -->
+      <!-- 安座準備期 -->
+      <el-table-column
+        prop="PrepareDate"
+        :label="$t('__anzaPrepareDate')"
+        :formatter="formatterDate">
+      </el-table-column>
+      <!-- 到期日 -->
       <el-table-column
         prop="ExpirationDate"
         :label="$t('__expire')+$t('__date')">
@@ -156,6 +162,7 @@
 </template>
 
 <script>
+import { formatDate } from '@/setup/format.js'
 import inputCustomer from '@/views/Basic/inputCustomer'
 
 export default {
@@ -183,6 +190,7 @@ export default {
         ProductID: '',
         ModifyType: '',
         FromStorageID: '',
+        PrepareDate: '',
         // 顯示用
         qty: 1,
         Birth: '',
@@ -230,6 +238,9 @@ export default {
     this.preLoading()
   },
   methods: {
+    formatterDate: function (row, column, cellValue, index) {
+      return formatDate(cellValue)
+    },
     preLoading: async function () {
       this.parentQtyChange()
     },
@@ -371,7 +382,7 @@ export default {
           break
       }
 
-      // 預定安座日: 預設90天
+      // 申請安座日: 預設90天
       let ScheduledDate = start
       // 安座單
       // 續約, 展延=>不變更安座日
@@ -403,11 +414,13 @@ export default {
       if (Array.isArray(waitForReplaceList)) {
         waitForReplaceList.forEach(row => {
           row.ScheduledDate = ScheduledDate
+          row.PrepareDate = ScheduledDate
           row.RealDate = null
           row.ExpirationDate = ExpirationDate
         })
       } else {
         waitForReplaceList.ScheduledDate = ScheduledDate
+        waitForReplaceList.PrepareDate = ScheduledDate
         waitForReplaceList.RealDate = null
         waitForReplaceList.ExpirationDate = ExpirationDate
       }
@@ -461,6 +474,7 @@ export default {
         newObj.AnzaOrderID = specialRow.AnzaOrderID
         newObj.CustomerID = specialRow.CustomerID
         newObj.ScheduledDate = specialRow.ScheduledDate
+        newObj.PrepareDate = specialRow.PrepareDate
         newObj.RealDate = specialRow.RealDate
         newObj.ExpirationDate = specialRow.ExpirationDate
         newObj.Status = specialRow.Status

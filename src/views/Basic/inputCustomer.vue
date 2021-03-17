@@ -100,7 +100,7 @@ export default {
       this.ddlCustomer = response.data.result
       setTimeout(() => {
         this.loading = false
-      }, 500)
+      }, 300)
     },
     // 選定客戶
     change: function () {
