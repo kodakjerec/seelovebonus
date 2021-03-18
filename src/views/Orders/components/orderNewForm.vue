@@ -1,6 +1,6 @@
 <template>
   <div id="orderHead">
-    <el-tabs class="tabOrderNewForm" v-model="tabActiveName" @tab-click="tabClick" type="card">
+    <el-tabs class="tabOrderNewForm" v-model="tabActiveName" @tab-click="tabClick">
       <el-tab-pane :label="$t('__orderID')" name="orderHead"></el-tab-pane>
       <template v-if="dialogType !== 'new'">
         <el-tab-pane :label="$t('__orderCustomer')" name="orderCustomer"></el-tab-pane>
