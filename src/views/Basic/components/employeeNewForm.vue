@@ -264,7 +264,7 @@ export default {
       this.ddlStatus = response
       response = this.$api.local.getDropdownList({ type: 'Grade' })
       this.ddlGrade = response
-      response = this.$api.local.getDropdownList({ type: 'IdType' })
+      response = this.$api.local.getDropdownList({ type: 'IDType' })
       this.ddlIDType = response
 
       this.ddlCompanyID = this.companiesData
