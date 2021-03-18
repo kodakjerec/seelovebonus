@@ -102,7 +102,7 @@ import { formatMoney, formatDate } from '@/setup/format.js'
 export default {
   name: 'AnzaOrderList',
   props: {
-    orderID: { type: String },
+    fromOrderID: { type: String },
     isShow: { type: Number }
   },
   data () {
@@ -115,12 +115,12 @@ export default {
     }
   },
   watch: {
-    orderID: function (newValue) {
+    fromOrderID: function (newValue) {
       if (newValue) { this.preLoading() }
     }
   },
   mounted () {
-    if (this.orderID) { this.preLoading() }
+    if (this.fromOrderID) { this.preLoading() }
   },
   methods: {
     formatterDate: function (row, column, cellValue, index) {
@@ -136,7 +136,7 @@ export default {
       }
     },
     preLoading: async function () {
-      let responseRecords = await this.$api.orders.anzaOrderShow({ keyword: this.orderID })
+      let responseRecords = await this.$api.orders.anzaOrderShow({ keyword: this.fromOrderID })
       this.anzaOrderList = responseRecords.data.result
       if (this.anzaOrderList && this.anzaOrderList.length > 0) {
         this.activeName = '1'

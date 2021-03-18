@@ -61,7 +61,7 @@
       <order-functions
         ref="orderFunctions"
         :dialogType="dialogType"
-        :orderID="form.ID"
+        :fromOrderID="form.ID"
         :buttonsShowUser="buttonsShowUser"
         :projectFunctions="projectFunctions"></order-functions>
       <!-- 選擇專案 -->
@@ -128,7 +128,8 @@
       ref="orderDetail"
       :dialogType="dialogType"
       :buttonsShowUser="buttonsShowUser"
-      :orderID="form.ID"
+      :fromOrderID="form.ID"
+      :fromOrderStatus="form.Status"
       :projectID="form.ProjectID"
       :parentQty="form.Qty"
       @reCalculateDetail="reCalculateDetail"></order-detail>
@@ -140,12 +141,13 @@
       :dialogType="dialogType"
       :buttonsShowUser="buttonsShowUser"
       :fromOrderID="form.ID"
+      :fromOrderStatus="form.Status"
       @customer-change="customerChange"></order-customer>
     <template v-if="dialogType !== 'new'">
       <!-- 安座單 -->
       <anza-order-list
         id="anzaOrderList"
-        :orderID="form.ID"
+        :fromOrderID="form.ID"
         :isShow="projectFunctions.newAnzaOrder.Available">
       </anza-order-list>
       <!-- 供奉憑證 -->
@@ -153,14 +155,14 @@
         id="certificate1"
         :buttonsShow="buttonsShow"
         :buttonsShowUser="buttonsShowUser"
-        :orderID="form.ID"
+        :fromOrderID="form.ID"
         :isShow="projectFunctions.newCertificate1.Available"></certificate1>
       <!-- 換狀證明 -->
       <certificate2
         id="certificate2"
         :buttonsShow="buttonsShow"
         :buttonsShowUser="buttonsShowUser"
-        :orderID="form.ID"
+        :fromOrderID="form.ID"
         :isShow="projectFunctions.newCertificate2.Available"></certificate2>
       <!-- 分期付款 -->
       <installment
@@ -168,26 +170,28 @@
         ref="installment"
         :buttonsShow="buttonsShow"
         :buttonsShowUser="buttonsShowUser"
-        :orderID="form.ID"></installment>
+        :fromOrderID="form.ID"
+        :fromOrderStatus="form.Status"></installment>
       <!-- 付款資訊 -->
       <collection-records
         id="collectionRecords"
         ref="collectionRecords"
         :buttonsShow="buttonsShow"
         :buttonsShowUser="buttonsShowUser"
-        :orderID="form.ID"
+        :fromOrderID="form.ID"
+        :fromOrderStatus="form.Status"
         @refreshInstallment="refreshInstallment"></collection-records>
       <!-- 發票資訊 -->
       <invoice
         id="invoice"
         ref="invoice"
         :buttonsShow="buttonsShow"
-        :buttonsShowUser="buttonsShowUser"
-        :orderID="form.ID"
+        :fromOrderID="form.ID"
+        :fromOrderStatus="form.Status"
         @refreshCollectionRecords="refreshCollectionRecords"></invoice>
       <!-- 蓋章區域 -->
       <orderStampArea
-        :orderID="form.ID"></orderStampArea>
+        :fromOrderID="form.ID"></orderStampArea>
       </template>
     <template v-else>
       <!-- 新增訂單專用 -->
@@ -196,7 +200,7 @@
         v-show="projectFunctions.newAnzaOrder.Available"
         id="anzaOrderNew"
         ref="anzaOrderNew"
-        :orderID="form.ID"
+        :fromOrderID="form.ID"
         :parentOrderDate="form.OrderDate"
         :parentQty="form.Qty"
         :parentAnzaData="form.anzaForNew"></anza-order-new>
@@ -204,19 +208,19 @@
         v-show="projectFunctions.newCertificate1.Available"
         id="certificate1OrderNew"
         ref="certificate1OrderNew"
-        :orderID="form.ID"
+        :fromOrderID="form.ID"
         :parentQty="form.Qty"></certificate1-order-new>
       <certificate2-order-new
         v-show="projectFunctions.newCertificate2.Available"
         id="certificate2OrderNew"
         ref="certificate2OrderNew"
-        :orderID="form.ID"
+        :fromOrderID="form.ID"
         :parentQty="form.Qty"></certificate2-order-new>
       <installment-order-new
         v-show="form.ProjectID"
         id="installmentOrderNew"
         ref="installmentOrderNew"
-        :orderID="form.ID"
+        :fromOrderID="form.ID"
         :projectID="form.ProjectID"
         :projectName="form.FirstItemName"
         :parentQty="form.Qty"
@@ -281,8 +285,11 @@ export default {
   props: {
     dialogType: { type: String, default: 'new' },
     order: { type: Object },
-    parent: { type: String, default: 'orders' },
-    buttonsShowUser: { type: Object }
+    parent: { type: String, default: 'Orders' },
+    buttonsShowUser: { type: Object,
+      default () {
+        return {}
+      } }
   },
   data () {
     return {
@@ -348,6 +355,12 @@ export default {
     }
   },
   mounted () {
+    // 不是從上層選單進入, 而是其他不允許路徑
+    if (this.order === undefined) {
+      this.cancel()
+      return
+    }
+
     switch (this.dialogType) {
       case 'new':
         this.myTitle = this.$t('__new') + this.$t('__orderPaper')
@@ -385,40 +398,43 @@ export default {
         this.form.Memo = this.order.Memo
 
         // 帶入原始單據狀態, 開啟或關閉
-        let intStatus = parseInt(this.form.Status)
-        if (intStatus === 0) {
-          // 是否允許修改
-          this.disableForm.ID = true
-          this.disableForm.ProjectID = true
-          this.disableForm.Qty = true
-          this.disableForm.CreateID = true
-          this.disableForm.OrderDate = true
-
-          this.buttonsShow = {
-            new: 0,
-            edit: 0,
-            save: 0,
-            delete: 0,
-            search: 0
-          }
-        } else if (intStatus > 0) {
-          // 是否允許修改
-          this.disableForm.ID = true
-          this.disableForm.ProjectID = true
-          this.disableForm.CreateID = true
-
-          if (this.buttonsShowUser.edit === 0) {
-            this.disableForm.OrderDate = true
+        switch (this.form.Status) {
+          case '0':
+          case '5':
+            // 是否允許修改
+            this.disableForm.ID = true
+            this.disableForm.ProjectID = true
             this.disableForm.Qty = true
-          }
+            this.disableForm.CreateID = true
+            this.disableForm.OrderDate = true
 
-          this.buttonsShow = {
-            new: 1,
-            edit: 1,
-            save: 1,
-            delete: 1,
-            search: 1
-          }
+            this.buttonsShow = {
+              new: 0,
+              edit: 0,
+              save: 0,
+              delete: 0,
+              search: 0
+            }
+            break
+          default:
+            // 是否允許修改
+            this.disableForm.ID = true
+            this.disableForm.ProjectID = true
+            this.disableForm.CreateID = true
+
+            if (this.buttonsShowUser.edit === 0) {
+              this.disableForm.OrderDate = true
+              this.disableForm.Qty = true
+            }
+
+            this.buttonsShow = {
+              new: 1,
+              edit: 1,
+              save: 1,
+              delete: 1,
+              search: 1
+            }
+            break
         }
         this.bringProject()
         break

@@ -10,8 +10,8 @@
       </el-form-item>
     </el-form>
     <div slot="footer">
-      <el-button @click="cancel">{{$t('__cancel')}}</el-button>
-      <el-button type="primary" @click="save">{{$t('__ok')}}</el-button>
+      <el-button @click.prevent="cancel">{{$t('__cancel')}}</el-button>
+      <el-button type="primary" @click.prevent="save">{{$t('__ok')}}</el-button>
     </div>
   </el-dialog>
 </template>

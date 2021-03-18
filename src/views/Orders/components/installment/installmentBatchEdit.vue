@@ -137,13 +137,13 @@ export default {
     dialogType: { type: String, default: 'new' },
     dialogShow: { type: Boolean, default: false },
     fromInstallmentShow: { type: Array },
-    orderID: { type: String },
+    fromOrderID: { type: String },
     buttonsShowUser: { type: Object }
   },
   data () {
     return {
       form: {
-        OrderID: this.orderID,
+        OrderID: this.fromOrderID,
         Seq: 0,
         InstallmentName: '',
         ScheduledDate: '',
@@ -217,7 +217,7 @@ export default {
       this.ddlPaymentFrequency = response
 
       // 帶入訂單最大金額
-      let responseRecords = await this.$api.orders.collectionRecordsFunctions({ type: 'installmentBatchEditNew', OrderID: this.orderID, Seq: null })
+      let responseRecords = await this.$api.orders.collectionRecordsFunctions({ type: 'installmentBatchEditNew', OrderID: this.fromOrderID, Seq: null })
       let order = responseRecords.data.result[0]
       this.form.ScheduledAmount = order.Amount
     },

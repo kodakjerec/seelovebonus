@@ -14,7 +14,7 @@
             :placeholder="$t('__plzChoice')"
             :remote-method="remoteMethod"
             :loading="loading"
-            :disabled="disableForm.CustomerID"
+            :disabled="!(buttonsShow.new === 1 && disableForm.CustomerID === false)"
             @change="ddlCustomerChange">
             <el-option v-for="item in ddlCustomer" :key="item.ID" :label="item.ID+' '+item.Value" :value="item.ID">
               <span style="float: left">{{ item.Value }}</span>
@@ -111,7 +111,8 @@ export default {
   props: {
     dialogType: { type: String, default: 'new' },
     buttonsShowUser: { type: Object },
-    fromOrderID: { type: String }
+    fromOrderID: { type: String },
+    fromOrderStatus: { type: String }
   },
   data () {
     return {
@@ -144,6 +145,14 @@ export default {
       },
       disableForm: {
         CustomerID: false
+      },
+      // 系統目前狀態權限
+      buttonsShow: {
+        new: 1,
+        edit: 0,
+        save: 1,
+        delete: 0,
+        search: 1
       },
       showAgentData: true, // 顯示代理人資訊
       fromModifyType: '',
@@ -179,6 +188,28 @@ export default {
           this.disableForm.CustomerID = true
         }
         this.bringCustomer()
+        break
+    }
+
+    // 系統簽核過程權限
+    switch (this.fromOrderStatus) {
+      case '1':
+        this.buttonsShow = {
+          new: 1,
+          edit: 1,
+          save: 1,
+          delete: 1,
+          search: 1
+        }
+        break
+      default:
+        this.buttonsShow = {
+          new: 0,
+          edit: 0,
+          save: 0,
+          delete: 0,
+          search: 0
+        }
         break
     }
   },
