@@ -99,29 +99,6 @@ export default {
     }
   },
   mounted () {
-    // 系統簽核過程權限
-    switch (this.fromOrderStatus) {
-      case '1':
-      case '2':
-      case '3':
-        this.buttonsShow = {
-          new: 1,
-          edit: 1,
-          save: 1,
-          delete: 1,
-          search: 1
-        }
-        break
-      default:
-        this.buttonsShow = {
-          new: 0,
-          edit: 0,
-          save: 0,
-          delete: 0,
-          search: 0
-        }
-        break
-    }
     if (this.fromOrderID) { this.preLoading() }
   },
   methods: {
@@ -142,6 +119,30 @@ export default {
       this.collectionRecordsShow = responseRecords.data.result
       if (this.collectionRecordsShow && this.collectionRecordsShow.length > 0) {
         this.activeName = '1'
+      }
+
+      // 系統簽核過程權限
+      switch (this.fromOrderStatus) {
+        case '1':
+        case '2':
+        case '3':
+          this.buttonsShow = {
+            new: 1,
+            edit: 1,
+            save: 1,
+            delete: 1,
+            search: 1
+          }
+          break
+        default:
+          this.buttonsShow = {
+            new: 0,
+            edit: 0,
+            save: 0,
+            delete: 0,
+            search: 0
+          }
+          break
       }
     },
     handleClick: async function (row, column, event) {
