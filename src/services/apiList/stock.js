@@ -58,15 +58,15 @@ export default {
         return data
       })
     },
-    mapGet: ({ Building, Floor, Area }) => {
-      let rawData = { Building, Floor, Area }
+    mapGet: ({ Building, Floor, Area, Column, Row, Grid, StorageID }) => {
+      let rawData = { Building, Floor, Area, Column, Row, Grid, StorageID }
       return post('/stock/mapGet', rawData).then(data => {
         console.log(`%c <<< Response(/rest/stock/mapGet)⤵ `, 'background-color: #E0455D; color: white; font-size: 14px; font-weight: bold;', data)
         return data
       })
     },
-    mapGetImage: ({ Building, Floor, Area }) => {
-      let rawData = { Building, Floor, Area }
+    mapGetImage: ({ Building, Floor, Area, Column, Row, Grid, StorageID }) => {
+      let rawData = { Building, Floor, Area, Column, Row, Grid, StorageID }
       return post('/stock/mapGetImage', rawData).then(data => {
         console.log(`%c <<< Response(/rest/stock/mapGetImage)⤵ `, 'background-color: #E0455D; color: white; font-size: 14px; font-weight: bold;', data)
         return data

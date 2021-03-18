@@ -23,6 +23,14 @@
         </el-col>
         {{$t('__anzaOperateWarning')}}
       </el-form-item>
+      <!-- 申請安座日 -->
+      <el-form-item v-if="operateType==='modify'" :label="$t('__anzaScheduledDate')" prop="ScheduledDate">
+        <el-date-picker
+          v-model="anzaOrder.ScheduledDate"
+          :placeholder="$t('__plzChoice')+$t('__date')"
+          value-format="yyyy-MM-dd">
+        </el-date-picker>
+      </el-form-item>
       <!-- 安座日期 -->
       <el-form-item v-if="operateType==='anza'" :label="$t('__real') + $t('__anza') + $t('__date')" prop="RealDate">
         <el-date-picker
@@ -225,7 +233,8 @@ export default {
         CustomerID: '',
         StorageID: '',
         RealDate: '',
-        CompleteDate: ''
+        CompleteDate: '',
+        ScheduledDate: ''
       },
       // 客戶基本資料 -- 抄襲 customerNewForm.vue
       form: {
@@ -285,6 +294,7 @@ export default {
     this.anzaOrder.StorageID = this.fromAnzaOrder.StorageID
     this.anzaOrder.RealDate = this.fromAnzaOrder.RealDate
     this.anzaOrder.CompleteDate = this.fromAnzaOrder.CompleteDate
+    this.anzaOrder.ScheduledDate = this.fromAnzaOrder.ScheduledDate
 
     switch (this.operateType) {
       case 'modify':

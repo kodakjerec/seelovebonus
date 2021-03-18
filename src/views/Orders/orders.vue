@@ -25,14 +25,14 @@
           <el-button type="text" size="mini" @click.prevent="openSignOffManual">{{$t('__signOffSettings')}}</el-button>
           <br/>{{$t('__batch')+$t('__signOff')}}
           <br/>
-          <el-button size="mini" @click="batchSignOffAgree()">{{$t('__signOffAgree')}}</el-button>
-          <el-button size="mini" @click="batchSignOffDeny()">{{$t('__signOffDeny')}}</el-button>
+          <el-button size="mini" @click.prevent="batchSignOffAgree()">{{$t('__signOffAgree')}}</el-button>
+          <el-button size="mini" @click.prevent="batchSignOffDeny()">{{$t('__signOffDeny')}}</el-button>
         </template>
         <template slot-scope="scope">
-          <el-button type="text" size="mini" @click.native.stop="openSignOffLog(scope.row)">{{$t('__signOffLog')}}</el-button>
+          <el-button type="text" size="mini" @click.stop="openSignOffLog(scope.row)">{{$t('__signOffLog')}}</el-button>
           <br/>
-          <el-button v-show="scope.row.StatusSignOff === 1" size="mini" type="primary" @click.native.stop="signOffAgree(scope.$index, scope.row)">{{$t('__signOffAgree')}}</el-button>
-          <el-button v-show="scope.row.StatusSignOff === 1" size="mini" type="danger" @click.native.stop="signOffDeny(scope.$index, scope.row)">{{$t('__signOffDeny')}}</el-button>
+          <el-button v-show="scope.row.StatusSignOff === 1" size="mini" type="primary" @click.stop="signOffAgree(scope.$index, scope.row)">{{$t('__signOffAgree')}}</el-button>
+          <el-button v-show="scope.row.StatusSignOff === 1" size="mini" type="danger" @click.stop="signOffDeny(scope.$index, scope.row)">{{$t('__signOffDeny')}}</el-button>
         </template>
       </el-table-column>
       <el-table-column
@@ -105,7 +105,6 @@
     <!-- 分頁 -->
     <el-pagination
       background
-      v-if="originData.length>0"
       @size-change="handleSizeChange"
       @current-change="handleCurrentChange"
       :current-page="pagination.currentPage"
@@ -359,17 +358,19 @@ export default {
     },
     // 變更排序
     tableHeaderClick: function (column, event) {
-      if (this.sortable.orderByValue !== column.property) {
-        this.sortable.orderByValue = column.property
-        this.sortable.orderBy = 'desc'
-      } else {
-        if (this.sortable.orderBy === 'asc') {
+      if (column.property) {
+        if (this.sortable.orderByValue !== column.property) {
+          this.sortable.orderByValue = column.property
           this.sortable.orderBy = 'desc'
         } else {
-          this.sortable.orderBy = 'asc'
+          if (this.sortable.orderBy === 'asc') {
+            this.sortable.orderBy = 'desc'
+          } else {
+            this.sortable.orderBy = 'asc'
+          }
         }
+        this.search()
       }
-      this.search()
     },
     // ===== 分頁相關 =====
     handleSizeChange: function (val) {
@@ -411,8 +412,7 @@ export default {
     },
     // 批次送簽
     batchSignOffAgree: function () {
-      this.originData
-        .filter(row => { return row.StatusSignOff === 1 })
+      this.originData.filter(row => { return row.StatusSignOff === 1 })
         .forEach(row => {
           this.signOffList.push({
             OrderID: row.ID,
@@ -443,7 +443,7 @@ export default {
     signOffFinish: function () {
       this.signOffList = []
       this.dialogShowSignOff = false
-      this.search('')
+      this.preLoading()
     },
     // 取消 批次視窗
     signOffCancel: function () {

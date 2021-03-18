@@ -5,6 +5,8 @@
       <el-button type="info" @click="goback">{{$t('__goback')}}</el-button>
       <span>{{'x:'+mouseLocation.x+' y:'+mouseLocation.y}}</span>
       <span>{{rectangleSize}}</span>
+      <p/>
+      <span>{{searchContent}}</span>
     </el-button-group>
   </div>
 </template>
@@ -106,6 +108,10 @@ export default {
         Building: '',
         Floor: '',
         Area: '',
+        Column: '',
+        Row: '',
+        Grid: '',
+        StorageID: '',
         imageUrl: '' // 背景URL
       },
       mouseLocation: {
@@ -165,7 +171,11 @@ export default {
       let responseUrl = await this.$api.stock.mapGetImage({
         Building: this.searchContent.Building,
         Floor: this.searchContent.Floor,
-        Area: this.searchContent.Area })
+        Area: this.searchContent.Area,
+        Column: this.searchContent.Column,
+        Row: this.searchContent.Row,
+        Grid: this.searchContent.Grid,
+        StorageID: this.searchContent.StorageID })
       if (responseUrl.data.result[0].URL) {
         this.searchContent.imageUrl = 'http://' + seeloveNodeServer.ip + ':' + seeloveNodeServer.port + '/' + responseUrl.data.result[0].URL
       } else {
@@ -176,7 +186,11 @@ export default {
       let response1 = await this.$api.stock.mapGet({
         Building: this.searchContent.Building,
         Floor: this.searchContent.Floor,
-        Area: this.searchContent.Area })
+        Area: this.searchContent.Area,
+        Column: this.searchContent.Column,
+        Row: this.searchContent.Row,
+        Grid: this.searchContent.Grid,
+        StorageID: this.searchContent.StorageID })
       let mapData = response1.data.result
 
       let index = 0
@@ -204,6 +218,7 @@ export default {
           properties: property
         }
         // 地圖
+        console.log()
         this.usaJson.features.push(item)
 
         // 統計
@@ -246,6 +261,18 @@ export default {
           this.searchContent.Layer = 'Area'
           break
         case 'Area':
+          this.searchContent.Column = property.StorageID
+          this.searchContent.Layer = 'Column'
+          break
+        case 'Column':
+          this.searchContent.Row = property.StorageID
+          this.searchContent.Layer = 'Row'
+          break
+        case 'Row':
+          this.searchContent.Grid = property.StorageID
+          this.searchContent.Layer = 'Grid'
+          break
+        case 'Grid':
           return
       }
       await this.preLoading()
