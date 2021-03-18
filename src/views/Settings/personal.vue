@@ -1,5 +1,6 @@
 <template>
   <div>
+    <el-divider>GLOBAL</el-divider>
     <el-button-group>
       <el-button @click="showForm">{{$t('__edit')+$t('__pwd')}}</el-button>
       <el-button @click="clearSearchSettings">{{$t('__clearSearchSettings')}}</el-button>
@@ -52,6 +53,9 @@ export default {
     clearSearchSettings: function () {
       for (let key in localStorage) {
         if (key.indexOf('searchHistory:') >= 0) {
+          localStorage.removeItem(key)
+        }
+        if (key.indexOf('paginationHistory:') >= 0) {
           localStorage.removeItem(key)
         }
       }

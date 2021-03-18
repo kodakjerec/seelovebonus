@@ -12,10 +12,13 @@
           <el-input v-model="form.UserID" autocomplete></el-input>
         </el-form-item>
         <el-form-item :label="$t('__pwd')" prop="Password">
-          <el-input v-model="form.Password" show-password></el-input>
+          <el-input
+            v-model="form.Password"
+            show-password
+            @keydown.native.enter="keyboardChange"></el-input>
         </el-form-item>
       </el-form>
-      <el-button class="submitButton" type="primary" @click.prevent="submit">{{$t('__login')}}</el-button>
+      <el-button class="submitButton" type="primary" @click.native="submit">{{$t('__login')}}</el-button>
     </el-card>
     <div>
       <br>
@@ -49,7 +52,8 @@ export default {
       rules: {
         UserID: [{ required: true, validator: validate.validateUserIDAndPassword, trigger: 'blur' }],
         Password: [{ required: true, validator: validate.validateUserIDAndPassword, trigger: 'blur' }]
-      }
+      },
+      lock: false // 避免按著Enter, 重複發送查詢指令
     }
   },
   mounted () {
@@ -91,12 +95,17 @@ export default {
     },
     // 按下登入
     submit: function () {
+      if (this.lock) {
+        return
+      }
+      this.lock = true
       this.$refs['form'].validate((valid) => {
         if (valid) {
           // valid
           this.login()
         } else {
           // error
+          this.lock = false
           return false
         }
       })
@@ -135,6 +144,8 @@ export default {
         this.$store.dispatch('setGlobalSettings', settingsOrigin)
 
         router.push('home')
+
+        this.lock = false
       }
     },
     // 檢查版本
@@ -144,6 +155,10 @@ export default {
       if (dbVersion !== this.$store.state.version) {
         errorMessage(this.$t('__versionError'), this.$t('__warning'))
       }
+    },
+    // 按下Enter檢核登入
+    keyboardChange: function () {
+      this.submit()
     }
   }
 }

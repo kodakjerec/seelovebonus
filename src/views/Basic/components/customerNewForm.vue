@@ -241,7 +241,7 @@ export default {
     buttonsShowUser: { type: Object },
     fromData: { type: Object,
       default () {
-        return null
+        return {}
       } }
   },
   data () {

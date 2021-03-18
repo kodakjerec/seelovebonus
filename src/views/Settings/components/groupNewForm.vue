@@ -14,7 +14,8 @@
       border
       ref="finalResult"
       @cell-mouse-enter="handleCellMouseEnter"
-      @selection-change="handleSelectChange">
+      @selection-change="handleSelectChange"
+      @select-all="handleSelectAll">
       <el-table-column
       type="selection"
       width="55">
@@ -140,16 +141,34 @@ export default {
         this.$refs.finalResult.clearSelection()
       }
     },
-    // 第一行的checkbox, 選中代表功能開放, event:select-change
+    // 全選:checkbox
+    handleSelectAll: function (selection) {
+      if (selection.length > 0) {
+        // 全選
+        this.finalResult = selection
+        this.finalResult.forEach(row => {
+          row.checked = 1
+          this.changeAllFunctionValue(row)
+        })
+      } else {
+        // 全不選
+        this.editableProgList.forEach(row => {
+          row.checked = 0
+          this.changeAllFunctionValue(row)
+        })
+        this.finalResult = selection
+      }
+    },
+    // 單選:checkbox, 選中代表功能開放
     handleSelectChange: function (selection) {
       this.finalResult = selection
-      if (this.tempRow !== undefined) {
+      if (this.tempRow !== {}) {
         if (this.tempRow.checked === 1) {
           this.tempRow.checked = 0
         } else {
           this.tempRow.checked = 1
         }
-        this.changeAllFunctionValue()
+        this.changeAllFunctionValue(this.tempRow)
       }
     },
     // event: cell-mouse-enter
@@ -160,11 +179,12 @@ export default {
         this.tempRow = row
       }
     },
-    changeAllFunctionValue: function () {
-      let finalValue = this.tempRow.checked
-      for (let key in this.tempRow) {
+    // 全部column都改為確認
+    changeAllFunctionValue: function (row) {
+      let finalValue = row.checked
+      for (let key in row) {
         if (key.indexOf('fun') >= 0) {
-          this.tempRow[key] = finalValue
+          row[key] = finalValue
         }
       }
     },
