@@ -6,7 +6,7 @@
           <h2>{{$t('__installment')}}<i class="el-icon-circle-plus" v-show="activeName===''"></i></h2>
         </template>
         <el-button-group>
-          <el-button v-show="buttonsShowUser.new" type="primary" icon="el-icon-edit" @click.prevent="handleBatchEdit()">{{$t('__installmentChange')}}</el-button>
+          <el-button v-show="buttonsShow.new && buttonsShowUser.new" type="primary" icon="el-icon-edit" @click.prevent="handleBatchEdit()">{{$t('__installmentChange')}}</el-button>
         </el-button-group>
         <p/>
         <el-table
@@ -58,7 +58,7 @@
     :dialog-type="dialogType"
     :dialog-show="dialogShow"
     :installment="installment"
-    :orderID="orderID"
+    :fromOrderID="fromOrderID"
     :buttonsShowUser="buttonsShowUser"
     @dialog-cancel="dialogCancel"
     @dialog-save="dialogSave"></new-form>
@@ -67,7 +67,7 @@
     :dialog-type="dialogTypeBatchEdit"
     :dialog-show="dialogShowBatchEdit"
     :fromInstallmentShow="installmentShow"
-    :orderID="orderID"
+    :fromOrderID="fromOrderID"
     :buttonsShowUser="buttonsShowUser"
     @dialog-cancel="dialogCancel"
     @dialog-save="dialogSave"></batch-edit>
@@ -86,9 +86,9 @@ export default {
     batchEdit
   },
   props: {
-    buttonsShow: { type: Object },
     buttonsShowUser: { type: Object },
-    orderID: { type: String }
+    fromOrderID: { type: String },
+    fromOrderStatus: { type: String }
   },
   data () {
     return {
@@ -98,16 +98,46 @@ export default {
       dialogShowBatchEdit: false,
       installmentShow: [],
       installment: {},
-      activeName: ''
+      activeName: '',
+      // 系統目前狀態權限
+      buttonsShow: {
+        new: 1,
+        edit: 0,
+        save: 1,
+        delete: 0,
+        search: 1
+      }
     }
   },
   watch: {
-    orderID: function (newValue) {
+    fromOrderID: function (newValue) {
       if (newValue) { this.preLoading() }
     }
   },
   mounted () {
-    if (this.orderID) { this.preLoading() }
+    // 系統簽核過程權限
+    switch (this.fromOrderStatus) {
+      case '1':
+        this.buttonsShow = {
+          new: 1,
+          edit: 1,
+          save: 1,
+          delete: 1,
+          search: 1
+        }
+        break
+      default:
+        this.buttonsShow = {
+          new: 0,
+          edit: 0,
+          save: 0,
+          delete: 0,
+          search: 0
+        }
+        break
+    }
+
+    if (this.fromOrderID) { this.preLoading() }
   },
   methods: {
     formatterDate: function (row, column, cellValue, index) {
@@ -123,7 +153,7 @@ export default {
       }
     },
     preLoading: async function () {
-      let responseRecords = await this.$api.orders.getObject({ type: 'installmentDetail', keyword: this.orderID })
+      let responseRecords = await this.$api.orders.getObject({ type: 'installmentDetail', keyword: this.fromOrderID })
       this.installmentShow = responseRecords.data.result
       if (this.installmentShow && this.installmentShow.length > 0) {
         this.activeName = '1'

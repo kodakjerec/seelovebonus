@@ -251,7 +251,7 @@ export default {
   __anzaOrderNewWarning: 'Please select project-id and customer-id',
   __anzaOperateWarning: 'Drop down to select value, or enter the specified value',
   __installmentBatchEditWarning: 'Change affets all installments(not including received details)',
-  __storageAddressNewFormWarning: '(粗估數量，實際存檔時會略過名稱含"4")',
+  __storageAddressNewFormWarning: '(Estimate Qty, the actual saving will skip "4")',
   // 以下為錯誤處理專用
   __error400: 'Bad Request',
   __error401: 'Unauthorized',
@@ -263,6 +263,7 @@ export default {
   __error500: 'Internal Server Error',
   __uploadFail: 'Upload Fail, please try again.',
   __versionError: 'Version Update, Please refresh web<br/>Windows: F5<br/>Mac: ⌘+R',
+  __denyEditNoPermission: 'Can\'t edit, No permission',
   // 以下為驗證專用
   __plzChoice: 'Please Choice',
   __pleaseInputUserID: 'Please Input UserID',

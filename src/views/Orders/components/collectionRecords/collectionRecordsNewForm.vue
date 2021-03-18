@@ -138,13 +138,13 @@ export default {
     dialogType: { type: String, default: 'new' },
     dialogShow: { type: Boolean, default: false },
     collectionRecord: { type: Object },
-    orderID: { type: String },
+    fromOrderID: { type: String },
     buttonsShowUser: { type: Object }
   },
   data () {
     return {
       form: {
-        OrderID: this.orderID,
+        OrderID: this.fromOrderID,
         Seq: 0,
         InvoiceID: '',
         PaymentMethod: '1',
@@ -241,7 +241,7 @@ export default {
     // 讀取預設資料
     preLoading: async function () {
       // 預先帶入發票名稱
-      let response = await this.$api.orders.collectionRecordsFunctions({ type: 'collectionRecordsNewInvoiceName', OrderID: this.orderID, Seq: this.Seq })
+      let response = await this.$api.orders.collectionRecordsFunctions({ type: 'collectionRecordsNewInvoiceName', OrderID: this.fromOrderID, Seq: this.Seq })
       this.ddlInvoiceName = response.data.result
       if (this.dialogType === 'new') { this.form.InvoiceName = this.ddlInvoiceName[0].ID }
 

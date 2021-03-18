@@ -8,18 +8,20 @@
   border
   class="orderFunctionsCSS"
   style="width: 100%">
+    <!-- 順序 -->
     <el-table-column
       prop="Seq"
       :label="$t('__seq')"
       width="50px">
     </el-table-column>
+    <!-- 商品代號 -->
     <el-table-column
       prop="ProductID">
       <template slot="header">
         {{$t('__product')+$t('__id')}}<br/>{{$t('__product')+$t('__name')}}
       </template>
       <template slot-scope="scope">
-        <div v-if="buttonsShowUser.new && scope.row.ItemType === 1">
+        <div v-if="buttonsShow.new && buttonsShowUser.new && scope.row.ItemType === 1">
           <el-select
             filterable
             v-model="scope.row[scope.column.property]"
@@ -41,13 +43,14 @@
         </div>
       </template>
     </el-table-column>
+    <!-- 價格 -->
     <el-table-column
       prop="Price"
       :formatter="formatterMoney"
       width="200px">
       <template slot="header">
         {{$t('__price')}}
-        <el-button size="mini" v-if="buttonsShowUser.new && !openEditMode" @click="checkOpenEditMode">{{$t('__openEditMode')}}</el-button>
+        <el-button size="mini" @click="checkOpenEditMode">{{$t('__openEditMode')}}</el-button>
       </template>
       <template slot-scope="scope">
         <el-input-number
@@ -60,6 +63,7 @@
         </span>
       </template>
     </el-table-column>
+    <!-- 數量 -->
     <el-table-column
       prop="Qty"
       :label="$t('__qty')"
@@ -68,7 +72,7 @@
         <el-input-number
           style="width:120px"
           :min="1"
-          v-if="buttonsShowUser.new && scope.row.ItemType === 1"
+          v-if="buttonsShow.new && buttonsShowUser.new && scope.row.ItemType === 1"
           v-model="scope.row[scope.column.property]"
           @change="(currentValue, oldValue)=>{qtyChange(currentValue, oldValue, scope.row)}"></el-input-number>
         <div v-else>
@@ -76,23 +80,34 @@
         </div>
       </template>
     </el-table-column>
+    <!-- 單位 -->
     <el-table-column
       prop="UnitName"
       :label="$t('__unit')"
       width="50px">
     </el-table-column>
+    <!-- 金額 -->
     <el-table-column
       prop="Amount"
       :label="$t('__amount')"
       :formatter="formatterMoneyUS"
       width="100px">
     </el-table-column>
+    <!-- 移出儲位 -->
     <el-table-column
       prop="FromStorageID"
       :label="$t('__fromStorageID')"
       width="200px">
       <template slot-scope="scope">
-        <el-select v-if="scope.row.Inventory" v-model="scope.row[scope.column.property]" allow-create default-first-option filterable clearable :placeholder="$t('__plzChoice')" :disabled="scope.row.disableFromStorageID">
+        <el-select
+          v-if="scope.row.Inventory"
+          v-model="scope.row[scope.column.property]"
+          allow-create
+          default-first-option
+          filterable
+          clearable
+          :placeholder="$t('__plzChoice')"
+          :disabled="!(buttonsShow.new === 1 && buttonsShowUser.new === 1 && scope.row.disableFromStorageID)">
           <el-option v-for="item in ddlFromStorageIDList[scope.row.Seq]" :key="item.ID" :label="item.ID+' '+item.Value" :value="item.ID">
             <span style="float: left">{{ item.Value }}</span>
             <span style="float: right; color: #8492a6; font-size: 13px">{{ item.ID }}</span>
@@ -100,12 +115,21 @@
         </el-select>
       </template>
     </el-table-column>
+    <!-- 移入儲位 -->
     <el-table-column
       prop="ToStorageID"
       :label="$t('__toStorageID')"
       width="200px">
       <template slot-scope="scope">
-        <el-select v-if="scope.row.Inventory" v-model="scope.row[scope.column.property]" allow-create default-first-option filterable clearable :placeholder="$t('__plzChoice')" :disabled="scope.row.disableToStorageID">
+        <el-select
+          v-if="scope.row.Inventory"
+          v-model="scope.row[scope.column.property]"
+          allow-create
+          default-first-option
+          filterable
+          clearable
+          :placeholder="$t('__plzChoice')"
+          :disabled="!(buttonsShow.new === 1 && buttonsShowUser.new === 1 && scope.row.disableToStorageID)">
           <el-option v-for="item in ddlToStorageIDList[scope.row.Seq]" :key="item.ID" :label="item.ID+' '+item.Value" :value="item.ID">
             <span style="float: left">{{ item.Value }}</span>
             <span style="float: right; color: #8492a6; font-size: 13px">{{ item.ID }}</span>
@@ -113,24 +137,25 @@
         </el-select>
       </template>
     </el-table-column>
+    <!-- 操作 -->
     <el-table-column
       align="right"
       width="95px">
       <template slot="header">
         <el-button
-          v-show="buttonsShowUser.new"
           type="primary"
           size="large"
           @click="handleNew()">{{$t('__new')}}</el-button>
       </template>
       <template slot-scope="scope">
         <el-button
-          v-show="buttonsShowUser.new && scope.row.ItemType === 1"
+          v-show="buttonsShow.new === 1 && buttonsShowUser.new === 1 && scope.row.ItemType === 1"
           size="mini"
           type="danger"
           @click="handleDelete(scope.$index, scope.row)">{{$t('__delete')}}</el-button>
       </template>
     </el-table-column>
+    <!-- 擴充功能 -->
     <el-table-column type="expand" width="50px">
       <template slot="header">
         {{$t('__extend')}}<br/>{{$t('__function')}}
@@ -165,14 +190,15 @@ export default {
   props: {
     dialogType: { type: String, default: 'new' },
     buttonsShowUser: { type: Object },
-    orderID: { type: String },
+    fromOrderID: { type: String },
+    fromOrderStatus: { type: String },
     projectID: { type: String },
     parentQty: { type: Number }
   },
   data () {
     return {
       subItem: {
-        OrderID: this.orderID,
+        OrderID: this.fromOrderID,
         Seq: 0,
         ProjectID: this.projectID,
         ProductID: '',
@@ -199,6 +225,14 @@ export default {
       subListDeleted: [],
       subListExpand: [], // 要展開的明細(給el-table展開用)
       productFunctionsList: [], // 特殊功能清單(所有商品)
+      // 系統目前狀態權限
+      buttonsShow: {
+        new: 1,
+        edit: 0,
+        save: 1,
+        delete: 0,
+        search: 1
+      },
       // 修改模式
       openEditMode: false, // 開啟修改金額模式
       dialogShowEditMode: false, // 顯示修改模式
@@ -211,7 +245,7 @@ export default {
     }
   },
   watch: {
-    orderID: function (newValue) {
+    fromOrderID: function (newValue) {
       if (newValue) {
         this.subItem.OrderID = newValue
 
@@ -232,6 +266,28 @@ export default {
         break
       case 'edit':
         this.bringOrderDetail()
+        break
+    }
+
+    // 系統簽核過程權限
+    switch (this.fromOrderStatus) {
+      case '1':
+        this.buttonsShow = {
+          new: 1,
+          edit: 1,
+          save: 1,
+          delete: 1,
+          search: 1
+        }
+        break
+      default:
+        this.buttonsShow = {
+          new: 0,
+          edit: 0,
+          save: 0,
+          delete: 0,
+          search: 0
+        }
         break
     }
   },
@@ -262,8 +318,8 @@ export default {
       })
 
       // (既有)商品明細-額外功能
-      if (this.orderID) {
-        let responseDetail = await this.$api.orders.getObject({ type: 'productFunctons', keyword: this.orderID })
+      if (this.fromOrderID) {
+        let responseDetail = await this.$api.orders.getObject({ type: 'productFunctons', keyword: this.fromOrderID })
         this.productFunctionsList = responseDetail.data.result
       }
 
@@ -273,7 +329,7 @@ export default {
     },
     // 修改狀態, 取得明細
     bringOrderDetail: async function () {
-      let responseDetail = await this.$api.orders.getObject({ type: 'orderDetail', keyword: this.orderID })
+      let responseDetail = await this.$api.orders.getObject({ type: 'orderDetail', keyword: this.fromOrderID })
       this.subList = responseDetail.data.result
 
       this.bringFunctions()
@@ -391,6 +447,12 @@ export default {
     // ============== 子結構 ===============
     // 新增子結構
     handleNew: function () {
+      // 檢核是否可修改
+      if ((this.buttonsShow.new && this.buttonsShowUser.new) === 0) {
+        this.$message.error(this.$t('__denyEditNoPermission'))
+        return
+      }
+
       let newObj = JSON.parse(JSON.stringify(this.subItem))
       // find Maximum Seq
       let nextSeq = 1
@@ -403,7 +465,7 @@ export default {
       }
 
       // 新增 item
-      newObj.OrderID = this.orderID
+      newObj.OrderID = this.fromOrderID
       newObj.ProjectID = this.projectID
       newObj.Seq = nextSeq
       newObj.ProductID = ''
@@ -606,6 +668,10 @@ export default {
     // ============== 修改單價 ===============
     // 開啟修改單價模式
     checkOpenEditMode: function () {
+      if ((this.buttonsShow.new && this.buttonsShowUser.new) === 0) {
+        this.$message.error(this.$t('__denyEditNoPermission'))
+        return
+      }
       // 不要重複啟動
       if (this.openEditMode) {
         return

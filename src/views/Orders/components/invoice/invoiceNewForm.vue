@@ -192,7 +192,7 @@ export default {
     dialogType: { type: String, default: 'new' },
     dialogShow: { type: Boolean, default: false },
     invoiceHead: { type: Object },
-    orderID: { type: String },
+    fromOrderID: { type: String },
     buttonsShowUser: { type: Object }
   },
   data () {
@@ -215,7 +215,7 @@ export default {
       form: {
         InvoiceID: null,
         InvoiceDate: '',
-        OrderID: this.orderID,
+        OrderID: this.fromOrderID,
         Title: '',
         UniformNumber: '',
         Amount: null,
