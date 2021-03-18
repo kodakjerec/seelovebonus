@@ -19,6 +19,10 @@
         :label="$t('__groups')">
       </el-table-column>
       <el-table-column
+        prop="GroupName"
+        :label="$t('__name')">
+      </el-table-column>
+      <el-table-column
         prop="refEmployeeIDName"
         :label="$t('__refEmployeeIDForUser')">
       </el-table-column>
