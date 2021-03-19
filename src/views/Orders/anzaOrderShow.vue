@@ -143,6 +143,12 @@
             </template>
           </template>
         </el-table-column>
+        <!-- 安座準備期 -->
+        <el-table-column
+          prop="PrepareDate"
+          :label="$t('__anzaPrepareDate')"
+          :formatter="formatterDate">
+        </el-table-column>
         <!-- 到期日期 -->
         <el-table-column
           prop="ExpirationDate"
