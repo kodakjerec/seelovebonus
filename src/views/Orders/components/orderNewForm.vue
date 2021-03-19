@@ -495,6 +495,7 @@ export default {
       let firstInventoryProduct = projectDetail.find(item => { return item.Inventory === 1 })
       if (firstInventoryProduct !== undefined) {
         this.form.anzaForNew.ProductID = firstInventoryProduct.ProductID
+        this.form.anzaForNew.FromStorageID = firstInventoryProduct.ToStorageID
       }
 
       // 主專案填入 orderDetail

@@ -171,7 +171,7 @@ export default {
     inputCustomer
   },
   props: {
-    orderID: { type: String },
+    fromOrderID: { type: String },
     parentOrderDate: { type: String },
     parentAnzaData: { type: Object },
     parentQty: { type: Number }
@@ -180,7 +180,7 @@ export default {
     return {
       form: {
         Seq: 0,
-        OrderID: this.orderID,
+        OrderID: this.fromOrderID,
         AnzaOrderID: '',
         CustomerID: '',
         ScheduledDate: '',
@@ -213,7 +213,7 @@ export default {
     }
   },
   watch: {
-    orderID: function (newValue) {
+    fromOrderID: function (newValue) {
       if (newValue) {
         this.form.OrderID = newValue
       }
@@ -482,7 +482,7 @@ export default {
         newObj.ModifyType = this.form.ModifyType
         newObj.qty = 1
       } else {
-        newObj.OrderID = this.orderID
+        newObj.OrderID = this.fromOrderID
         newObj.ProductID = this.parentAnzaData.ProductID
         newObj.CustomerID = ''
         newObj.qty = 0
