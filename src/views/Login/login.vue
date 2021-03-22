@@ -152,14 +152,8 @@ export default {
     checkVersion: async function () {
       let response = await this.$api.login.version()
       let dbVersion = response.data.result[0].Value
-      for (let i = 0; i < dbVersion.length; i++) {
-        let dbChar = dbVersion[i].slice(-1)
-        let nowChar = this.$store.state.version[i].slice(-1)
-        if (dbChar !== nowChar) {
-          if (parseInt(dbChar, 10) > parseInt(nowChar, 10)) {
-            errorMessage(this.$t('__versionError') + '<br/><h1>New:' + dbVersion + '</h1>' + '<br/>Now:' + this.$store.state.version, this.$t('__warning'))
-          }
-        }
+      if (dbVersion !== this.$store.state.version) {
+        errorMessage(this.$t('__versionError'), this.$t('__warning'))
       }
     },
     // 按下Enter檢核登入
