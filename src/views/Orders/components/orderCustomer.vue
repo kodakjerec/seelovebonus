@@ -238,7 +238,6 @@ export default {
       this.ddlCustomer = this.ddlCustomerBefore.filter(item => {
         return item.ID.indexOf(query) > -1 || item.Value.indexOf(query) > -1
       })
-
       setTimeout(() => {
         this.loading = false
       }, 300)
@@ -291,41 +290,58 @@ export default {
       // 取得可以用的選單
       let responseRow = await this.$api.orders.getObject({ type: 'orderCustomerGetDetail', keyword: this.form.CustomerID })
       if (responseRow.data.result.length <= 0) {
-        return
-      }
-      let row = responseRow.data.result[0]
-      this.form.TelHome = row.TelHome
-      this.form.TelMobile = row.TelMobile
-      this.form.EMail = row.EMail
-      this.form.Country = row.Country
-      this.form.City = row.City
-      this.form.Post = row.Post
-      this.form.Address = row.Address
-      this.form.AgentID = row.AgentID
-      this.form.AgentName = row.AgentName
-      this.form.AgentCountry = row.AgentCountry
-      this.form.AgentCity = row.AgentCity
-      this.form.AgentPost = row.AgentPost
-      this.form.AgentAddress = row.AgentAddress
-      this.form.refKind = row.refKind
-      this.form.Referrer = row.Referrer
-      this.form.EmployeeID = row.EmployeeID
-      this.form.CompanyID = row.CompanyID
-      this.form.ModifyType = this.fromModifyType
-
-      if (this.dialogType === 'new') {
-        this.form.Status = 'New'
+        this.form.TelHome = ''
+        this.form.TelMobile = ''
+        this.form.EMail = ''
+        this.form.Country = ''
+        this.form.City = ''
+        this.form.Post = ''
+        this.form.Address = ''
+        this.form.AgentID = ''
+        this.form.AgentName = ''
+        this.form.AgentCountry = ''
+        this.form.AgentCity = ''
+        this.form.AgentPost = ''
+        this.form.AgentAddress = ''
+        this.form.refKind = ''
+        this.form.Referrer = ''
+        this.form.EmployeeID = ''
+        this.form.CompanyID = ''
+        this.form.ModifyType = ''
       } else {
-        if (this.form.Status === '') {
-          this.form.Status = 'Modified'
+        let row = responseRow.data.result[0]
+        this.form.TelHome = row.TelHome
+        this.form.TelMobile = row.TelMobile
+        this.form.EMail = row.EMail
+        this.form.Country = row.Country
+        this.form.City = row.City
+        this.form.Post = row.Post
+        this.form.Address = row.Address
+        this.form.AgentID = row.AgentID
+        this.form.AgentName = row.AgentName
+        this.form.AgentCountry = row.AgentCountry
+        this.form.AgentCity = row.AgentCity
+        this.form.AgentPost = row.AgentPost
+        this.form.AgentAddress = row.AgentAddress
+        this.form.refKind = row.refKind
+        this.form.Referrer = row.Referrer
+        this.form.EmployeeID = row.EmployeeID
+        this.form.CompanyID = row.CompanyID
+        this.form.ModifyType = this.fromModifyType
+
+        if (this.dialogType === 'new') {
+          this.form.Status = 'New'
+        } else {
+          if (this.form.Status === '') {
+            this.form.Status = 'Modified'
+          }
         }
+
+        this.ddlCityChange()
+
+        // 法定代理人
+        this.ddlAgentCityChange()
       }
-
-      this.ddlCityChange()
-
-      // 法定代理人
-      this.ddlAgentCityChange()
-
       // ===== 安座單 =====
       // 回傳客戶代號給上一層
       this.$emit('customer-change', this.form.CustomerID)
@@ -388,18 +404,21 @@ export default {
 
       return isSuccess
     },
-    // 父視窗: 變更任意資料
-    parentAssginData: function (type, fromObject) {
+    // 父視窗: 變更任意資料, 目前只有安座單會用到
+    parentAssginData: async function (type, fromObject) {
       switch (type) {
         case 'CustomerID':
           this.form.CustomerID = fromObject
-          this.ddlCustomerChange()
+          await this.remoteMethod(fromObject)
+          await this.ddlCustomerChange()
           break
         case 'ModifyType':
           this.fromModifyType = fromObject
           this.form.ModifyType = fromObject
+          this.buttonsShow.new = 1
           break
       }
+      return true
     }
   }
 }

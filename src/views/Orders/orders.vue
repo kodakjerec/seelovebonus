@@ -35,6 +35,7 @@
           <el-button v-show="scope.row.StatusSignOff === 1" size="mini" type="danger" @click.stop="signOffDeny(scope.$index, scope.row)">{{$t('__signOffDeny')}}</el-button>
         </template>
       </el-table-column>
+      <!-- 契約編號,專案編號,狀態 -->
       <el-table-column
         prop="ID">
         <template slot="header">
@@ -47,6 +48,7 @@
           {{scope.row.ProjectName}}<br/>{{scope.row.StatusName}}
         </template>
       </el-table-column>
+      <!-- 客戶名稱,業務代表 -->
       <el-table-column
         prop="CustomerName">
         <template slot="header">
@@ -58,6 +60,7 @@
           {{scope.row.CustomerName}}<br/>{{scope.row.ReferrerName+'/'+scope.row.CompanyName}}
         </template>
       </el-table-column>
+      <!-- 訂購日期,總金額 -->
       <el-table-column
         prop="OrderDate">
         <template slot="header">
@@ -69,6 +72,7 @@
           {{formatterDate(null,null,scope.row.OrderDate,null)}}<br/>{{formatterMoney(null,null,scope.row.Amount,null)}}
         </template>
       </el-table-column>
+      <!-- 未收款,已收款,發票金額 -->
       <el-table-column>
         <template slot="header">
           {{$t('__notReceived')}}<br/>{{$t('__haveReceived')}}<br/>{{$t('__invoice')+$t('__amount')}}
@@ -77,22 +81,7 @@
           {{formatterMoneyUS(null,null,scope.row.Amount-scope.row.CollectionsAmount,null)}}<br/>{{formatterMoneyUS(null,null,scope.row.CollectionsAmount,null)}}<br/>{{formatterMoneyUS(null,null,scope.row.InvoicesAmount,null)}}
         </template>
       </el-table-column>
-      <el-table-column
-        :label="$t('__certificate1')">
-        <template slot-scope="scope">
-          <div v-for="item in scope.row.Certificate1List" :key="item.Certificate1">
-            {{item.Certificate1}}<template v-if="item['Status']==='0'">(停用)</template>
-          </div>
-        </template>
-      </el-table-column>
-      <el-table-column
-        :label="$t('__certificate2')">
-        <template slot-scope="scope">
-          <div v-for="item in scope.row.Certificate2List" :key="item.Certificate2">
-            {{item.Certificate2}}<template v-if="item['Status']==='0'">(停用)</template>
-          </div>
-        </template>
-      </el-table-column>
+      <!-- 發票 -->
       <el-table-column
         :label="$t('__invoice')">
         <template slot-scope="scope">

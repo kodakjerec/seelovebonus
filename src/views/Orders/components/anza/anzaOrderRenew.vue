@@ -40,7 +40,7 @@
       <order-functions
         ref="orderFunctions"
         :dialogType="dialogType"
-        :orderID="form.ID"
+        :fromOrderID="form.ID"
         :buttonsShowUser="buttonsShowUser"
         :projectFunctions="projectFunctions"></order-functions>
       <!-- 選擇專案 -->
@@ -107,30 +107,36 @@
       ref="orderDetail"
       :dialogType="dialogType"
       :buttonsShowUser="buttonsShowUser"
-      :orderID="form.ID"
+      :fromOrderID="form.ID"
+      :fromOrderStatus="form.Status"
       :projectID="form.ProjectID"
       :parentQty="form.Qty"
       @reCalculateDetail="reCalculateDetail"></order-detail>
     <!-- 訂購者資料 -->
     <order-customer
+      id="orderCustomer"
       ref="orderCustomer"
-      v-show="form.ProjectID"
+      v-if="form.ProjectID"
       :dialogType="dialogType"
       :buttonsShowUser="buttonsShowUser"
-      :orderID="form.ID"
+      :fromOrderID="form.ID"
+      :fromOrderStatus="form.Status"
       @customer-change="customerChange"></order-customer>
     <template>
       <!-- 新增訂單專用 -->
       <anza-order-new
+        v-show="projectFunctions.newAnzaOrder.Available"
+        id="anzaOrderNew"
         ref="anzaOrderNew"
-        :orderID="form.ID"
+        :fromOrderID="form.ID"
         :parentOrderDate="form.OrderDate"
         :parentQty="form.Qty"
         :parentAnzaData="form.anzaForNew"></anza-order-new>
       <installment-order-new
-        v-show="form.ProjectID !== ''"
+        v-show="form.ProjectID"
+        id="installmentOrderNew"
         ref="installmentOrderNew"
-        :orderID="form.ID"
+        :fromOrderID="form.ID"
         :projectID="form.ProjectID"
         :projectName="form.FirstItemName"
         :parentQty="form.Qty"
@@ -177,8 +183,11 @@ export default {
   props: {
     dialogType: { type: String, default: 'new' },
     order: { type: Object },
-    parent: { type: String, default: 'orders' },
-    buttonsShowUser: { type: Object }
+    parent: { type: String, default: 'AnzaOrderShow' },
+    buttonsShowUser: { type: Object,
+      default () {
+        return {}
+      } }
   },
   data () {
     return {
@@ -238,11 +247,16 @@ export default {
       },
       // 以下為下拉式選單專用
       ddlOrderStatus: [],
-      ddlProject: [],
-      ddlCustomer: []
+      ddlProject: []
     }
   },
-  mounted () {
+  async mounted () {
+    // 不是從上層選單進入, 而是其他不允許路徑
+    if (this.order === undefined) {
+      this.cancel()
+      return
+    }
+
     switch (this.dialogType) {
       case 'new':
         this.disableForm.ID = true
@@ -306,18 +320,19 @@ export default {
             search: 1
           }
         }
-        this.bringProject()
+        await this.bringProject()
         break
-    }
-    // 如果有其他來源, 要做不同處理
-    if (this.$attrs.fromParams) {
-      if (this.$attrs.fromParams.fromType) {
-        this.anzaOperation(this.$attrs.fromParams.fromType)
-      }
     }
     this.projectHead.push(this.form)
 
-    this.preLoading()
+    await this.preLoading()
+
+    // 如果有其他來源, 要做不同處理
+    if (this.$attrs.fromParams) {
+      if (this.$attrs.fromParams.fromType) {
+        await this.anzaOperation(this.$attrs.fromParams.fromType)
+      }
+    }
   },
   methods: {
     formatterMoney: function (row, column, cellValue, index) {
@@ -332,8 +347,6 @@ export default {
       this.ddlOrderStatus = response
       let response2 = await this.$api.orders.getDropdownList({ type: 'project' })
       this.ddlProject = response2.data.result
-      let response4 = await this.$api.orders.getDropdownList({ type: 'customer' })
-      this.ddlCustomer = response4.data.result
     },
     // 點擊"修改專案", 填入明細
     bringProject: async function () {
@@ -348,6 +361,7 @@ export default {
       let firstInventoryProduct = projectDetail.find(item => { return item.Inventory === 1 })
       if (firstInventoryProduct !== undefined) {
         this.form.anzaForNew.ProductID = firstInventoryProduct.ProductID
+        this.form.anzaForNew.FromStorageID = firstInventoryProduct.ToStorageID
       }
 
       this.bringFunctions()
@@ -372,6 +386,7 @@ export default {
       let firstInventoryProduct = projectDetail.find(item => { return item.Inventory === 1 })
       if (firstInventoryProduct !== undefined) {
         this.form.anzaForNew.ProductID = firstInventoryProduct.ProductID
+        this.form.anzaForNew.FromStorageID = firstInventoryProduct.ToStorageID
       }
 
       // 主專案填入 orderDetail
@@ -644,14 +659,6 @@ export default {
           break
       }
     },
-    // 儲存收款資訊後更新分期付款
-    refreshInstallment: function () {
-      this.$refs['installment'].preLoading()
-    },
-    // 儲存發票後更新付款紀錄資訊
-    refreshCollectionRecords: function () {
-      this.$refs['collectionRecords'].preLoading()
-    },
     // 子->父: 統計商品明細總價
     reCalculateDetail: function (object) {
       const { masterAmount, subAmount } = object
@@ -670,23 +677,23 @@ export default {
       switch (fromType) {
         case 'anzaRenew':
           this.myTitle = this.$t('__anzaRenew') + this.$t('__anzaOrder')
-          this.$refs['anzaOrderNew'].parentAssginData('ModifyType', this.$t('__anzaRenew'))
+          await this.$refs['anzaOrderNew'].parentAssginData('ModifyType', this.$t('__anzaRenew'))
           break
         case 'anzaExtend':
           this.myTitle = this.$t('__anzaExtend') + this.$t('__anzaOrder')
-          this.$refs['anzaOrderNew'].parentAssginData('ModifyType', this.$t('__anzaExtend'))
+          await this.$refs['anzaOrderNew'].parentAssginData('ModifyType', this.$t('__anzaExtend'))
           break
         case 'anzaTransfer':
           this.myTitle = this.$t('__anzaTransfer') + this.$t('__anzaOrder')
-          this.$refs['anzaOrderNew'].parentAssginData('ModifyType', this.$t('__anzaTransfer'))
+          await this.$refs['anzaOrderNew'].parentAssginData('ModifyType', this.$t('__anzaTransfer'))
           break
         case 'anzaInherit':
           this.myTitle = this.$t('__anzaInherit') + this.$t('__anzaOrder')
-          this.$refs['anzaOrderNew'].parentAssginData('ModifyType', this.$t('__anzaInherit'))
+          await this.$refs['anzaOrderNew'].parentAssginData('ModifyType', this.$t('__anzaInherit'))
           break
       }
-      this.$refs['anzaOrderNew'].parentAssginData('fromType', this.$attrs.fromParams.fromType)
-      this.$refs['orderFunctions'].parentAssginData('fromType', this.$attrs.fromParams.fromType)
+      await this.$refs['anzaOrderNew'].parentAssginData('fromType', this.$attrs.fromParams.fromType)
+      await this.$refs['orderFunctions'].parentAssginData('fromType', this.$attrs.fromParams.fromType)
 
       // 舊有契約單據資料
       let oldOrderHead = this.$attrs.fromParams.fromOrder
@@ -712,7 +719,7 @@ export default {
             this.form.ProjectID = projectExtend.nextProjectID
             await this.ddlProjectChange(this.form.ProjectID)
             // 給予orderFunction額外料
-            this.$refs['orderFunctions'].parentAssginData('newAnzaOrder', oldOrderHead.ID)
+            await this.$refs['orderFunctions'].parentAssginData('newAnzaOrder', oldOrderHead.ID)
             break
           case 'anzaTransfer':
             let tempDate = new Date()
@@ -728,20 +735,20 @@ export default {
         switch (fromType) {
           case 'anzaRenew':
           case 'anzaExtend':
-            this.$refs['orderCustomer'].parentAssginData('CustomerID', oldOrderExtend.CustomerID)
+            await this.$refs['orderCustomer'].parentAssginData('CustomerID', oldOrderExtend.CustomerID)
             break
           case 'anzaTransfer':
-            this.$refs['orderCustomer'].parentAssginData('CustomerID', '')
-            this.$refs['orderCustomer'].parentAssginData('ModifyType', this.$t('__anzaTransfer'))
+            await this.$refs['orderCustomer'].parentAssginData('CustomerID', '')
+            await this.$refs['orderCustomer'].parentAssginData('ModifyType', this.$t('__anzaTransfer'))
             break
           case 'anzaInherit':
-            this.$refs['orderCustomer'].parentAssginData('CustomerID', '')
-            this.$refs['orderCustomer'].parentAssginData('ModifyType', this.$t('__anzaInherit'))
+            await this.$refs['orderCustomer'].parentAssginData('CustomerID', '')
+            await this.$refs['orderCustomer'].parentAssginData('ModifyType', this.$t('__anzaInherit'))
             break
         }
 
         // 代入舊的安座單清單
-        this.$refs['anzaOrderNew'].parentAssginData('subList', this.$attrs.fromParams.fromAnzaList)
+        await this.$refs['anzaOrderNew'].parentAssginData('subList', this.$attrs.fromParams.fromAnzaList)
       }
     }
   }

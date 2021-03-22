@@ -5,31 +5,55 @@
   <el-form>
     <h2 class="alignLeft">{{$t('__anzaOrder')}}</h2>
     <p/>
-    <span v-if="parentAnzaData.CustomerID===''" v-html="$t('__anzaOrderNewWarning')"></span>
+    <span v-if="!fromType && parentAnzaData.CustomerID===''" v-html="$t('__anzaOrderNewWarning')"></span>
     <template v-else>
-      <!-- 純觀賞table -->
+      <!-- 提供給安座單(續約, 展延, 轉讓, 繼承)專用 -->
       <el-table
-      v-if="fromType !== null"
+      v-if="fromType !== ''"
       :data="subList"
       stripe
       border
       style="width: 100%">
+        <!-- 單號 -->
         <el-table-column
           prop="AnzaOrderID"
           :label="this.$t('__anzaOrder')">
         </el-table-column>
+        <!-- 安座人 -->
         <el-table-column
           prop="CustomerID"
           :label="$t('__customer')">
           <template slot-scope="scope">
-            <el-select v-model="scope.row[scope.column.property]" filterable value-key="value" :placeholder="$t('__plzChoice')" :disabled="disableForm.CustomerID">
-              <el-option v-for="item in ddlCustomer" :key="item.ID" :label="item.ID+' '+item.Value" :value="item.ID">
-                <span style="float: left">{{ item.Value }}</span>
-                <span style="float: right; color: #8492a6; font-size: 13px">{{ item.ID }}</span>
-              </el-option>
-            </el-select>
+            <input-customer
+              :fromCustomerID="scope.row.CustomerID"
+              :parent-object="scope.row"
+              @findID="findID"></input-customer>
           </template>
         </el-table-column>
+        <!-- 個資 -->
+        <el-table-column>
+          <template slot="header">
+            {{$t('__gender')}}<br/>
+            {{$t('__birth')+'('+$t('__solarCalendar')+')'}}<br/>
+            {{$t('__lunarDate')+'('+$t('__lunarCalendar')+')'+' '+$t('__lunarTime')}}
+          </template>
+          <template slot-scope="scope">
+            {{scope.row.GenderName}}<br/>
+            {{scope.row.Birth}}<br/>
+            {{scope.row.BirthLunarDate+' '+scope.row.BirthLunarTimeName}}
+          </template>
+        </el-table-column>
+        <el-table-column>
+          <template slot="header">
+            {{$t('__tel')}}<br/>
+            {{$t('__address')}}
+          </template>
+          <template slot-scope="scope">
+            {{scope.row.Tel}}<br/>
+            {{scope.row.AddressName}}
+          </template>
+        </el-table-column>
+        <!-- 申請安座日 -->
         <el-table-column
           prop="ScheduledDate"
           :label="$t('__anzaScheduledDate')">
@@ -37,11 +61,17 @@
             <el-date-picker
               v-model="scope.row[scope.column.property]"
               :placeholder="$t('__plzChoice')+$t('__date')"
-              value-format="yyyy-MM-dd"
-              disabled>
+              value-format="yyyy-MM-dd">
             </el-date-picker>
           </template>
         </el-table-column>
+        <!-- 安座準備期 -->
+        <el-table-column
+          prop="PrepareDate"
+          :label="$t('__anzaPrepareDate')"
+          :formatter="formatterDate">
+        </el-table-column>
+        <!-- 到期日 -->
         <el-table-column
           prop="ExpirationDate"
           :label="$t('__expire')+$t('__date')">
@@ -54,23 +84,24 @@
             </el-date-picker>
           </template>
         </el-table-column>
+        <!-- 備註 -->
         <el-table-column
           prop="ModifyType"
           :label="$t('__memo')">
         </el-table-column>
       </el-table>
-      <!-- 可修改table -->
+      <!-- 提供給訂單新增專用 -->
       <el-table
       v-else
       :data="subList"
       stripe
       border
       style="width: 100%">
+      <!-- 安座人 -->
       <el-table-column
         prop="CustomerID"
         :label="$t('__anzaCustomer')">
         <template slot-scope="scope">
-          <!-- 安座人 -->
           <input-customer
             :fromCustomerID="scope.row.CustomerID"
             :parent-object="scope.row"
@@ -299,6 +330,7 @@ export default {
         this.handleNew()
       }
 
+      // 帶入客戶資訊
       for (let i = 0; i < this.subList.length; i++) {
         let row = this.subList[i]
         if (i === 0) {
@@ -316,14 +348,22 @@ export default {
       }
       this.reCalDate(this.subList)
     },
-    // 父視窗: 變更任意資料
-    parentAssginData: function (type, fromObject) {
+    // 父視窗: 變更任意資料, 目前只有安座單會用到
+    parentAssginData: async function (type, fromObject) {
       switch (type) {
         case 'subList':
           this.subList = []
           fromObject.forEach(row => {
             this.handleNew(row)
           })
+          this.reCalDate(this.subList)
+
+          // 帶入客戶資訊(已有安座單)
+          for (let i = 0; i < this.subList.length; i++) {
+            let row = this.subList[i]
+            await this.bringCustomerData(row)
+            this.subList[i] = row
+          }
           break
         case 'fromType':
           this.fromType = fromObject
@@ -359,12 +399,11 @@ export default {
       }
 
       // 設定開始日
-      let start = new Date(this.parentOrderDate)
-
       // 安座單
       // 續約, 展延=>從到期日開始算
       // 繼承=>不變更日期
-      // 轉讓=>使用者自訂
+      // 轉讓=>不變更日期
+      let start = new Date(this.parentOrderDate)
       switch (this.fromType) {
         case 'anzaRenew':
         case 'anzaExtend':
@@ -375,19 +414,17 @@ export default {
           }
           break
         case 'anzaTransfer':
-          break
         case 'anzaInherit':
-          return
         default:
           break
       }
 
       // 申請安座日: 預設90天
-      let ScheduledDate = start
       // 安座單
       // 續約, 展延=>不變更安座日
-      // 繼承=>不變更日期
-      // 轉讓=>使用者自訂
+      // 繼承=>變更日期
+      // 轉讓=>變更日期
+      let ScheduledDate = start
       switch (this.fromType) {
         case 'anzaRenew':
         case 'anzaExtend':
@@ -398,18 +435,37 @@ export default {
           }
           break
         case 'anzaTransfer':
-          ScheduledDate = new Date(start.setDate(start.getDate() + 90))
-          break
         case 'anzaInherit':
-          return
         default:
           ScheduledDate = new Date(start.setDate(start.getDate() + 90))
           break
       }
 
       // 到期日: 安座準備其滿***第91天*** + 抓取專案設定Extend.Year
+      // 安座單
+      // 續約, 展延=>變更
+      // 繼承=>不變更
+      // 轉讓=>變更
       let ExpirationDate = new Date(start.setDate(start.getDate() + 1))
-      ExpirationDate = new Date(ExpirationDate.setFullYear(ExpirationDate.getFullYear() + parseInt(this.parentAnzaData.Extend.year)))
+      switch (this.fromType) {
+        case 'anzaRenew':
+        case 'anzaExtend':
+          ExpirationDate = new Date(ExpirationDate.setFullYear(ExpirationDate.getFullYear() + parseInt(this.parentAnzaData.Extend.year)))
+          break
+        case 'anzaTransfer':
+          ExpirationDate = new Date(ExpirationDate.setFullYear(ExpirationDate.getFullYear() + parseInt(this.parentAnzaData.Extend.year)))
+          break
+        case 'anzaInherit':
+          if (Array.isArray(waitForReplaceList)) {
+            ExpirationDate = waitForReplaceList[0].ExpirationDate
+          } else {
+            ExpirationDate = waitForReplaceList.ExpirationDate
+          }
+          break
+        default:
+          ExpirationDate = new Date(ExpirationDate.setFullYear(ExpirationDate.getFullYear() + parseInt(this.parentAnzaData.Extend.year)))
+          break
+      }
 
       if (Array.isArray(waitForReplaceList)) {
         waitForReplaceList.forEach(row => {
