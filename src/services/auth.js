@@ -31,7 +31,7 @@ axios.interceptors.response.use((response) => {
   // 成功發出請求且收到response, 有客製化的error
   if (response.headers['code'] !== '200') {
     let requestURL = response.request.responseURL
-    errorMessage(response.data.result.message + requestURL, response.headers['code'])
+    errorMessage(response.data.result.message + '<br/>' + requestURL, response.headers['code'])
   }
   return response
 }, (error) => {
