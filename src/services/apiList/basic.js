@@ -302,7 +302,7 @@ export default {
       }
       let rawData = { type, keyword }
       return post('/basic/getDropdownList', rawData).then(data => {
-        console.log(`%c <<< Response(/rest/basic/getDropdownList)⤵ `, 'background-color: #E0455D; color: white; font-size: 14px; font-weight: bold;', data)
+        console.log(`%c <<< Response(/rest/basic/getDropdownList)⤵ `, 'background-color: #E0455D; color: white; font-size: 14px; font-weight: bold;', data, rawData)
         return data
       })
     },
@@ -312,7 +312,7 @@ export default {
       }
       let rawData = { type, keyword }
       return post('/basic/getObject', rawData).then(data => {
-        console.log(`%c <<< Response(/rest/basic/getObject)⤵ `, 'background-color: #E0455D; color: white; font-size: 14px; font-weight: bold;', data)
+        console.log(`%c <<< Response(/rest/basic/getObject)⤵ `, 'background-color: #E0455D; color: white; font-size: 14px; font-weight: bold;', data, rawData)
         return data
       })
     }

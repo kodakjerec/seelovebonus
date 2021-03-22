@@ -317,7 +317,7 @@ export default {
       }
       let rawData = { type, keyword }
       return post('/orders/getDropdownList', rawData).then(data => {
-        console.log(`%c <<< Response(/rest/orders/getDropdownList)⤵ `, 'background-color: #E0455D; color: white; font-size: 14px; font-weight: bold;', data)
+        console.log(`%c <<< Response(/rest/orders/getDropdownList)⤵ `, 'background-color: #E0455D; color: white; font-size: 14px; font-weight: bold;', data, rawData)
         return data
       })
     },
@@ -327,7 +327,7 @@ export default {
       }
       let rawData = { type, keyword }
       return post('/orders/getObject', rawData).then(data => {
-        console.log(`%c <<< Response(/rest/orders/getObject)⤵ `, 'background-color: #E0455D; color: white; font-size: 14px; font-weight: bold;', data)
+        console.log(`%c <<< Response(/rest/orders/getObject)⤵ `, 'background-color: #E0455D; color: white; font-size: 14px; font-weight: bold;', data, rawData)
         return data
       })
     }
