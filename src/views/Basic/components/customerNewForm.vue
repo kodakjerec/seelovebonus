@@ -2,23 +2,21 @@
   <el-dialog :title="myTitle" :visible="dialogShow" center width="80vw" @close="cancel" append-to-body>
     <el-form ref="form" :model="form" :rules="rules" label-width="10vw" label-position="right">
       <!-- 客戶代號 -->
-      <template>
-        <el-form-item :label="$t('__customer')+$t('__id')" required>
-          <el-col :span="4" v-show="!disableForm.ID">
-            <el-select v-model="IDType" value-key="value" :placeholder="$t('__plzChoice')">
-              <el-option v-for="item in ddlIDType" :key="item.ID" :label="item.Value" :value="item.ID">
-                <span style="float: left">{{ item.Value }}</span>
-                <span style="float: right; color: #8492a6; font-size: 13px">{{ item.ID }}</span>
-              </el-option>
-            </el-select>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item prop="ID">
-              <el-input v-model="form.ID" maxlength="20" show-word-limit :placeholder="getPlaceholderID()" :disabled="disableForm.ID || IDType==='3'"></el-input>
-            </el-form-item>
-          </el-col>
-        </el-form-item>
-      </template>
+      <el-form-item :label="$t('__customer')+$t('__id')" required>
+        <el-col :span="4" v-show="!disableForm.ID">
+          <el-select v-model="IDType" value-key="value" :placeholder="$t('__plzChoice')">
+            <el-option v-for="item in ddlIDType" :key="item.ID" :label="item.Value" :value="item.ID">
+              <span style="float: left">{{ item.Value }}</span>
+              <span style="float: right; color: #8492a6; font-size: 13px">{{ item.ID }}</span>
+            </el-option>
+          </el-select>
+        </el-col>
+        <el-col :span="12">
+          <el-form-item prop="ID">
+            <el-input v-model="form.ID" maxlength="20" show-word-limit :placeholder="getPlaceholderID()" :disabled="disableForm.ID || IDType==='3'"></el-input>
+          </el-form-item>
+        </el-col>
+      </el-form-item>
       <!-- 客戶名稱 -->
       <el-form-item :label="$t('__customer')+$t('__name')" prop="Name">
         <el-col :span="10">
