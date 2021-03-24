@@ -155,10 +155,17 @@ export default {
   methods: {
     // 取得群組清單
     preLoading: async function () {
-      let response2 = await this.$api.settings.getDropdownList({ type: 'settingsType', keyword: this.fromDanger })
-      this.ddlCategory = JSON.parse(JSON.stringify(response2.data.result))
-      this.ddlParentCategory = JSON.parse(JSON.stringify(response2.data.result))
+      let response2 = this.$api.local.getDropdownList({ type: 'SettingsType' })
+      this.ddlCategory = response2.filter(item => item.Danger === this.fromDanger)
+      this.ddlParentCategory = JSON.parse(JSON.stringify(this.ddlCategory))
       this.form.Category = this.category
+
+      // 父階層分類, 移除目前設定選項
+      let findIndex = this.ddlCategory.findIndex(item => { return item.ID === this.form.Category })
+      console.log(findIndex)
+      if (findIndex > -1) {
+        this.ddlParentCategory.splice(findIndex, 1)
+      }
 
       let response3 = await this.$api.settings.getDropdownList({ type: 'systemSettingsNewFormParentID' })
       this.ddlParentIDOrigin = response3.data.result
