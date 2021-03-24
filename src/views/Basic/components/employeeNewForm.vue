@@ -24,7 +24,7 @@
       <!-- 體系,單位,職等 -->
       <el-form-item :label="$t('__depart')">
         <el-col :span="4">
-          <el-select v-model="form.Depart" value-key="value" :placeholder="$t('__plzChoice')">
+          <el-select v-model="form.Depart" value-key="value" :placeholder="$t('__plzChoice')" @change="ddlDeaprtChange">
             <el-option v-for="item in ddlDepart" :key="item.ID" :label="item.Value" :value="item.ID">
               <span style="float: left">{{ item.Value }}</span>
               <span style="float: right; color: #8492a6; font-size: 13px">{{ item.ID }}</span>
@@ -33,7 +33,7 @@
         </el-col>
         <el-col :span="8">
           <el-form-item :label="$t('__office')">
-            <el-select v-model="form.Office" value-key="value" :placeholder="$t('__plzChoice')" @change="ddlCityChange">
+            <el-select v-model="form.Office" value-key="value" :placeholder="$t('__plzChoice')" @change="ddlCityChange" :disabled="!form.Depart">
               <el-option v-for="item in ddlOffice" :key="item.ID" :label="item.Value" :value="item.ID">
                 <span style="float: left">{{ item.Value }}</span>
                 <span style="float: right; color: #8492a6; font-size: 13px">{{ item.ID }}</span>
@@ -120,7 +120,7 @@
         </el-col>
         <el-col :span="8">
           <el-form-item :label="$t('__city')">
-            <el-select v-model="form.City" value-key="value" :placeholder="$t('__plzChoice')" @change="ddlCityChange">
+            <el-select v-model="form.City" value-key="value" :placeholder="$t('__plzChoice')" @change="ddlCityChange" :disabled="!form.Country">
               <el-option v-for="item in ddlCity" :key="item.ID" :label="item.Value" :value="item.ID">
                 <span style="float: left">{{ item.Value }}</span>
                 <span style="float: right; color: #8492a6; font-size: 13px">{{ item.ID }}</span>
@@ -130,7 +130,7 @@
         </el-col>
         <el-col :span="12">
           <el-form-item :label="$t('__post')">
-            <el-select v-model="form.Post" value-key="value" :placeholder="$t('__plzChoice')">
+            <el-select v-model="form.Post" value-key="value" :placeholder="$t('__plzChoice')" :disabled="!form.City">
               <el-option v-for="item in ddlPost" :key="item.ID" :label="item.Value" :value="item.ID">
                 <span style="float: left">{{ item.Value }}</span>
                 <span style="float: right; color: #8492a6; font-size: 13px">{{ item.ID }}</span>
@@ -260,6 +260,7 @@ export default {
       ddlParentID: [],
       ddlIDType: [],
       ddlDepart: [],
+      ddlOfficeOrigin: [],
       ddlOffice: []
     }
   },
@@ -311,7 +312,8 @@ export default {
       response = this.$api.local.getDropdownList({ type: 'Depart' })
       this.ddlDepart = response
       response = this.$api.local.getDropdownList({ type: 'Office' })
-      this.ddlOffice = response
+      this.ddlOfficeOrigin = response
+      this.ddlDeaprtChange()
 
       this.ddlCompanyID = this.companiesData
       this.ddlCompanyIDChange()
@@ -340,6 +342,10 @@ export default {
       if (this.isLoadingFinish) {
         this.form.Post = null
       }
+    },
+    // 切換體系
+    ddlDeaprtChange: function () {
+      this.ddlOffice = this.ddlOfficeOrigin.filter(item => item.ParentID === this.form.Depart)
     },
     // 檢查輸入
     checkValidate: function () {
