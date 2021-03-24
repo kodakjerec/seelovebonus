@@ -346,6 +346,9 @@ export default {
     // 切換體系
     ddlDeaprtChange: function () {
       this.ddlOffice = this.ddlOfficeOrigin.filter(item => item.ParentID === this.form.Depart)
+      if (this.isLoadingFinish) {
+        this.form.Office = ''
+      }
     },
     // 檢查輸入
     checkValidate: function () {
