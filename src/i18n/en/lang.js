@@ -239,6 +239,8 @@ export default {
   __after: 'After',
   __clearSearchSettings: 'Clear Search Settings',
   __modifyType: 'ModifyType',
+  __depart: 'Depart',
+  __office: 'Office',
   // 請在上方新增字串
   // 以下為 警告
   __warning: 'Warning',

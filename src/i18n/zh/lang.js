@@ -239,6 +239,8 @@ export default {
   __after: '之後',
   __clearSearchSettings: '清除搜尋設定',
   __modifyType: '異動類別',
+  __depart: '體系',
+  __office: '單位',
   // 請在上方新增字串
   // 以下為 警告
   __warning: '警告',

@@ -21,14 +21,38 @@
       <el-form-item :label="$t('__employee')+$t('__name')" prop="Name">
           <el-input v-model="form.Name" maxlength="40" show-word-limit></el-input>
       </el-form-item>
-      <el-form-item :label="$t('__grade')" prop="Grade">
-        <el-select v-model="form.Grade" value-key="value" :placeholder="$t('__plzChoice')">
-          <el-option v-for="item in ddlGrade" :key="item.ID" :label="item.Value" :value="item.ID">
-            <span style="float: left">{{ item.Value }}</span>
-            <span style="float: right; color: #8492a6; font-size: 13px">{{ item.ID }}</span>
-          </el-option>
-        </el-select>
+      <!-- 體系,單位,職等 -->
+      <el-form-item :label="$t('__depart')">
+        <el-col :span="4">
+          <el-select v-model="form.Depart" value-key="value" :placeholder="$t('__plzChoice')">
+            <el-option v-for="item in ddlDepart" :key="item.ID" :label="item.Value" :value="item.ID">
+              <span style="float: left">{{ item.Value }}</span>
+              <span style="float: right; color: #8492a6; font-size: 13px">{{ item.ID }}</span>
+            </el-option>
+          </el-select>
+        </el-col>
+        <el-col :span="8">
+          <el-form-item :label="$t('__office')">
+            <el-select v-model="form.Office" value-key="value" :placeholder="$t('__plzChoice')" @change="ddlCityChange">
+              <el-option v-for="item in ddlOffice" :key="item.ID" :label="item.Value" :value="item.ID">
+                <span style="float: left">{{ item.Value }}</span>
+                <span style="float: right; color: #8492a6; font-size: 13px">{{ item.ID }}</span>
+              </el-option>
+            </el-select>
+          </el-form-item>
+        </el-col>
+        <el-col :span="12">
+          <el-form-item :label="$t('__grade')">
+            <el-select v-model="form.Grade" value-key="value" :placeholder="$t('__plzChoice')" :disabled="disableForm.Grade">
+              <el-option v-for="item in ddlGrade" :key="item.ID" :label="item.Value" :value="item.ID">
+                <span style="float: left">{{ item.Value }}</span>
+                <span style="float: right; color: #8492a6; font-size: 13px">{{ item.ID }}</span>
+              </el-option>
+            </el-select>
+          </el-form-item>
+        </el-col>
       </el-form-item>
+      <!-- 公司 -->
       <el-form-item :label="$t('__companyID')" prop="CompanyID">
         <el-col :span="10">
           <el-select v-model="form.CompanyID" filterable value-key="value" :placeholder="$t('__plzChoice')" @change="ddlCompanyIDChange">
@@ -49,6 +73,7 @@
           </el-form-item>
         </el-col>
       </el-form-item>
+      <!-- 資格起始日 -->
       <el-form-item :label="$t('__qualifications')+$t('__startDate')" required>
         <el-col :span="10">
           <el-form-item prop="StartDate">
@@ -71,6 +96,7 @@
           </el-form-item>
         </el-col>
       </el-form-item>
+      <!-- 個資 -->
       <el-form-item :label="$t('__home')+$t('__tel')">
         <el-col :span="10">
           <el-form-item prop="TelHome">
@@ -119,6 +145,7 @@
       <el-form-item :label="$t('__eMail')">
         <el-input v-model="form.EMail" maxlength="60" show-word-limit></el-input>
       </el-form-item>
+      <!-- 狀態 -->
       <el-form-item :label="$t('__status')">
         <el-select v-model="form.Status" value-key="value" :placeholder="$t('__plzChoice')">
           <el-option v-for="item in ddlStatus" :key="item.ID" :label="item.Value" :value="item.ID">
@@ -187,7 +214,7 @@ export default {
         Name: '',
         TelHome: '',
         TelMobile: '',
-        Grade: null,
+        Grade: '3',
         CompanyID: null,
         StartDate: '',
         EndDate: '',
@@ -198,21 +225,23 @@ export default {
         Address: '',
         EMail: '',
         ParentID: null,
-        Memo: ''
+        Memo: '',
+        Depart: '',
+        Office: ''
       },
       rules: {
         ID: [{ trigger: 'blur', validator: validatePersonalID }],
         Name: [{ required: true, message: this.$t('__pleaseInput'), trigger: 'blur' }],
         TelHome: [{ trigger: 'blur', validator: validate.validatePhone }],
         TelMobile: [{ trigger: 'blur', validator: validate.validatePhone }],
-        Grade: [{ required: true, message: this.$t('__pleaseInput'), trigger: 'blur' }],
         CompanyID: [{ required: true, message: this.$t('__pleaseInput'), trigger: 'blur' }],
         StartDate: [{ required: true, message: this.$t('__pleaseInput'), trigger: 'blur' }],
         EndDate: [{ required: true, message: this.$t('__pleaseInput'), trigger: 'blur' }],
         ParentID: [{ required: true, message: this.$t('__pleaseInput'), trigger: 'blur' }]
       },
       disableForm: {
-        ID: false
+        ID: false,
+        Grade: true
       },
       IDType: '1',
       myTitle: '',
@@ -229,7 +258,9 @@ export default {
       ddlGrade: [],
       ddlCompanyID: [],
       ddlParentID: [],
-      ddlIDType: []
+      ddlIDType: [],
+      ddlDepart: [],
+      ddlOffice: []
     }
   },
   async mounted () {
@@ -237,6 +268,11 @@ export default {
       case 'new':
         this.myTitle = this.$t('__new') + this.$t('__employee')
         this.disableForm.ID = false
+        let startDate = new Date()
+        this.form.StartDate = startDate.toISOString().slice(0, 10)
+        let endDate = new Date()
+        endDate = new Date(endDate.setFullYear(endDate.getFullYear() + 10))
+        this.form.EndDate = endDate.toISOString().slice(0, 10)
         break
       case 'edit':
         this.myTitle = this.$t('__edit') + this.$t('__employee')
@@ -272,6 +308,10 @@ export default {
       this.ddlGrade = response
       response = this.$api.local.getDropdownList({ type: 'IDType' })
       this.ddlIDType = response
+      response = this.$api.local.getDropdownList({ type: 'Depart' })
+      this.ddlDepart = response
+      response = this.$api.local.getDropdownList({ type: 'Office' })
+      this.ddlOffice = response
 
       this.ddlCompanyID = this.companiesData
       this.ddlCompanyIDChange()

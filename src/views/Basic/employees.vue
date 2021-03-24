@@ -22,6 +22,12 @@
         :label="$t('__employee')+$t('__name')">
       </el-table-column>
       <el-table-column
+        :label="$t('__depart')+' '+$t('__office')">
+        <template slot-scope="scope">
+          {{scope.row.DepartName + ' ' + scope.row.OfficeName}}
+        </template>
+      </el-table-column>
+      <el-table-column
         prop="GradeName"
         :label="$t('__grade')">
       </el-table-column>

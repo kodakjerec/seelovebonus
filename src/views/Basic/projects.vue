@@ -2,7 +2,7 @@
   <el-form>
     <el-button-group class="defineCSS_ButtonGroup">
       <el-button icon="el-icon-setting" @click.prevent="showFormPBonus('new')">{{$t('__performanceBonus')}}</el-button>
-      <el-button icon="el-icon-setting" @click.prevent="showFormSBonus('new')">{{$t('__superBonus')}}</el-button>
+      <!-- <el-button icon="el-icon-setting" @click.prevent="showFormSBonus('new')">{{$t('__superBonus')}}</el-button> -->
     </el-button-group>
     <el-button-group style="padding-bottom: 5px">
       <el-button v-show="buttonsShowUser.new" type="primary" icon="el-icon-plus" @click.prevent="showForm('new')">{{$t('__new')}}</el-button>
