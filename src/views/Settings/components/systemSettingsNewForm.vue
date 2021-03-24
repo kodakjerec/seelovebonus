@@ -2,16 +2,24 @@
   <el-dialog :title="myTitle" :visible="dialogShow" center width="80vw" @close="cancel">
     <el-form ref="form" :model="form" :rules="rules" label-width="10vw">
       <el-form-item :label="$t('__systemSettingsCategory')" prop="Category">
-        <el-select v-model="form.Category" :disabled="disableForm.Category" :placeholder="$t('__plzChoice')">
-          <el-option v-for="item in ddlCategory" :key="item.ID" :label="item.Value" :value="item.ID">
+        <el-select
+          v-model="form.Category"
+          filterable
+          :disabled="disableForm.Category"
+          :placeholder="$t('__plzChoice')">
+          <el-option v-for="item in ddlCategory" :key="item.ID" :label="item.ID+' '+item.Value" :value="item.ID">
             <span style="float: left">{{ item.Value }}</span>
             <span style="float: right; color: #8492a6; font-size: 13px">{{ item.ID }}</span>
           </el-option>
         </el-select>
       </el-form-item>
       <el-form-item :label="$t('__systemSettingsParentCategory')">
-        <el-select v-model="form.ParentCategory" :placeholder="$t('__plzChoice')" @change="selectChange">
-          <el-option v-for="item in ddlParentCategory" :key="item.ID" :label="item.Value" :value="item.ID">
+        <el-select
+          v-model="form.ParentCategory"
+          filterable
+          :placeholder="$t('__plzChoice')"
+          @change="selectChange">
+          <el-option v-for="item in ddlParentCategory" :key="item.ID" :label="item.ID+' '+item.Value" :value="item.ID">
             <span style="float: left">{{ item.Value }}</span>
             <span style="float: right; color: #8492a6; font-size: 13px">{{ item.ID }}</span>
           </el-option>
@@ -43,8 +51,8 @@
       <el-form-item :label="$t('__memo')">
           <el-input type="textarea" v-model="form.Memo" maxlength="200" show-word-limit></el-input>
       </el-form-item>
-      <el-form-item>
-        <el-checkbox v-model="form.Danger" :true-label="1" :false-label="0" @change="preLoading" border disabled>{{$t('__systemSettingsVIP')}}</el-checkbox>
+      <el-form-item v-if="dialogType==='newSettingsType'">
+        <el-checkbox v-model="form.Danger" :true-label="1" :false-label="0" border>{{$t('__systemSettingsVIP')}}</el-checkbox>
       </el-form-item>
     </el-form>
     <div slot="footer">
@@ -124,6 +132,9 @@ export default {
       case 'new':
         this.myTitle = this.$t('__new') + this.$t('__systemSettingsID')
         break
+      case 'newSettingsType':
+        this.myTitle = this.$t('__systemSettingsSettingsType')
+        break
       case 'edit':
         this.myTitle = this.$t('__edit') + this.$t('__systemSettingsID')
         this.form = JSON.parse(JSON.stringify(this.systemSettings))
@@ -180,6 +191,7 @@ export default {
       let isSuccess = false
       switch (dialogType) {
         case 'new':
+        case 'newSettingsType':
           let responseNew = await this.$api.settings.settingsNew({ form: this.form })
           if (responseNew.headers['code'] === '200') {
             this.$alert(responseNew.data.result[0].message, responseNew.data.result[0].code)
