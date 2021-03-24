@@ -1,18 +1,22 @@
 <template>
   <el-form>
     <el-form-item>
-      <el-button-group class="defineCSS_ButtonGroup">
-        <el-checkbox v-model="form.Danger" :true-label="1" :false-label="0" @change="preLoading" border>{{$t('__systemSettingsVIP')}}</el-checkbox>
-        <el-button v-if="form.Danger" icon="el-icon-setting" @click.prevent="showFormSettingsType('new')">{{$t('__systemSettingsSettingsType')}}</el-button>
-      </el-button-group>
+      <div class="defineCSS_ButtonGroup">
+        <el-checkbox v-model="form.Danger" :true-label="1" :false-label="0" @change="changeDanger" border>{{$t('__systemSettingsVIP')}}</el-checkbox>
+        <el-button v-if="form.Danger" icon="el-icon-setting" @click.prevent="showFormSettingsType('newSettingsType')">{{$t('__systemSettingsSettingsType')}}</el-button>
+      </div>
       <el-button-group style="padding-bottom: 5px">
         <el-button type="primary" icon="el-icon-plus" @click.prevent="showForm('new')">{{$t('__new')}}</el-button>
       </el-button-group>
     </el-form-item>
     <el-form-item :label="$t('__systemSettingsCategory')">
       <el-col :span="8">
-        <el-select style="width:100%" v-model="form.category" value-key="value" :placeholder="$t('__plzChoice')" @change="selectChange">
-          <el-option v-for="item in ddlCategory" :key="item.ID" :label="item.Value" :value="item.ID">
+        <el-select
+          v-model="form.category"
+          filterable
+          :placeholder="$t('__plzChoice')"
+          @change="selectChange">
+          <el-option v-for="item in ddlCategory" :key="item.ID" :label="item.ID+' '+item.Value" :value="item.ID">
             <span style="float: left">{{ item.Value+'('+item.Memo+')'}}</span>
             <span style="float: right; color: #8492a6; font-size: 13px">{{ item.ID }}</span>
           </el-option>
@@ -112,14 +116,21 @@ export default {
       let response = await this.$api.settings.getDropdownList({ type: 'systemSettings' })
       this.settingsOrigin = response.data.result
 
-      let response2 = await this.$api.settings.getDropdownList({ type: 'settingsType', keyword: this.form.Danger })
-      this.ddlCategory = response2.data.result
+      let response2 = this.$api.local.getDropdownList({ type: 'SettingsType' })
+      this.ddlCategory = response2.filter(item => item.Danger === this.form.Danger)
 
       if (this.form.category === null) {
         this.form.category = this.ddlCategory[0].ID
         this.form.language = this.ddlLanguages[1].ID
       }
+
       this.selectChange()
+    },
+    // 切換危險選單
+    changeDanger: function () {
+      this.form.category = null
+      this.form.language = null
+      this.preLoading()
     },
     // 篩選
     selectChange: function () {
@@ -144,7 +155,7 @@ export default {
     },
     dialogSave: async function () {
       this.dialogShow = false
-      await this.preLoading()
+      this.preLoading()
     },
     showFormSettingsType: function (eventType) {
       // 切換成 settingsType
