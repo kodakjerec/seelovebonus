@@ -97,7 +97,7 @@
         </el-col>
         <el-col :span="8">
           <el-form-item :label="$t('__city')">
-            <el-select v-model="form.City" value-key="value" :placeholder="$t('__plzChoice')" @change="ddlCityChange">
+            <el-select v-model="form.City" value-key="value" :placeholder="$t('__plzChoice')" @change="ddlCityChange" :disabled="!form.Country">
               <el-option v-for="item in ddlCity" :key="item.ID" :label="item.Value" :value="item.ID">
                 <span style="float: left">{{ item.Value }}</span>
                 <span style="float: right; color: #8492a6; font-size: 13px">{{ item.ID }}</span>
@@ -107,7 +107,7 @@
         </el-col>
         <el-col :span="12">
           <el-form-item :label="$t('__post')">
-            <el-select v-model="form.Post" value-key="value" :placeholder="$t('__plzChoice')">
+            <el-select v-model="form.Post" value-key="value" :placeholder="$t('__plzChoice')" :disabled="!form.City">
               <el-option v-for="item in ddlPost" :key="item.ID" :label="item.Value" :value="item.ID">
                 <span style="float: left">{{ item.Value }}</span>
                 <span style="float: right; color: #8492a6; font-size: 13px">{{ item.ID }}</span>
