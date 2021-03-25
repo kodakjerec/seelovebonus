@@ -1,5 +1,5 @@
 <template>
-  <el-dialog :title="myTitle" :visible="dialogShow" center width="80vw" @close="cancel">
+  <el-dialog :title="myTitle" :visible="dialogShow" center width="80vw" top="5vh" @close="cancel">
     <el-form label-width="10vw" label-position="right">
       <h2>{{$t('__signOffWarning')}}</h2>
       <el-tag effect="plain" v-for="(item, index) in signOffList" :key="index">
