@@ -243,6 +243,10 @@ export default {
   __modifyType: '異動類別',
   __depart: '體系',
   __office: '單位',
+  __bankAccounts: '銀行帳戶',
+  __bankBranch: '分行',
+  __bankAccountNo: '帳號',
+  __bankUserName: '戶名',
   // 請在上方新增字串
   // 以下為 警告
   __warning: '警告',

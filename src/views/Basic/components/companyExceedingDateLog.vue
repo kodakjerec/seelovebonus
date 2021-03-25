@@ -1,24 +1,24 @@
 <template>
   <el-table
-      :data="log"
-      stripe
-      border
-      style="width: 100%">
-      <el-table-column
-        prop="LogTime"
-        :label="$t('__logTime')"
-        :formatter="formatterDateTime">
-      </el-table-column>
-      <el-table-column
-        prop="StartDate"
-        :label="$t('__startDate')"
-        :formatter="formatterDate">
-      </el-table-column>
-      <el-table-column
-        prop="EndDate"
-        :label="$t('__endDate')"
-        :formatter="formatterDate">
-      </el-table-column>
+    :data="log"
+    stripe
+    border
+    style="width: 100%">
+    <el-table-column
+      prop="LogTime"
+      :label="$t('__logTime')"
+      :formatter="formatterDateTime">
+    </el-table-column>
+    <el-table-column
+      prop="StartDate"
+      :label="$t('__startDate')"
+      :formatter="formatterDate">
+    </el-table-column>
+    <el-table-column
+      prop="EndDate"
+      :label="$t('__endDate')"
+      :formatter="formatterDate">
+    </el-table-column>
   </el-table>
 </template>
 

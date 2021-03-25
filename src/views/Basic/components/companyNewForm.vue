@@ -128,15 +128,28 @@
         </el-select>
       </el-form-item>
     </el-form>
+    <!-- 銀行帳戶 -->
+    <el-collapse v-model="activeNameBankAccounts" accordion="">
+      <el-collapse-item name="1">
+        <template slot="title">
+          <h2>{{$t('__bankAccounts')}}<i class="el-icon-circle-plus" v-show="activeNameBankAccounts===''"></i></h2>
+        </template>
+        <bank-accounts
+          :fromType="'company'"
+          :fromID="company.ID"
+        ></bank-accounts>
+      </el-collapse-item>
+    </el-collapse>
+    <!-- 展期紀錄 -->
     <el-collapse v-model="activeName" accordion="">
-        <el-collapse-item name="1">
-          <template slot="title">
-            <h2>{{$t('__logExceedingCompanyContractDate')}}<i class="el-icon-circle-plus" v-show="activeName===''"></i></h2>
-          </template>
-          <exceedingDateLog
-            :companyID="form.ID">
-          </exceedingDateLog>
-        </el-collapse-item>
+      <el-collapse-item name="1">
+        <template slot="title">
+          <h2>{{$t('__logExceedingCompanyContractDate')}}<i class="el-icon-circle-plus" v-show="activeNameBankAccounts===''"></i></h2>
+        </template>
+        <exceedingDateLog
+          :companyID="form.ID">
+        </exceedingDateLog>
+      </el-collapse-item>
     </el-collapse>
     <div slot="footer">
       <el-button v-show="dialogType === 'edit' &&  buttonsShowUser.delete" type="danger" @click="deleteItem">{{$t('__delete')}}</el-button>
@@ -149,12 +162,14 @@
 <script>
 import validate from '@/setup/validate.js'
 import exceedingDateLog from './companyExceedingDateLog'
+import bankAccounts from './bankAccounts'
 import { messageBoxYesNo } from '@/services/utils'
 
 export default {
   name: 'CompanyNewForm',
   components: {
-    exceedingDateLog
+    exceedingDateLog,
+    bankAccounts
   },
   props: {
     dialogType: { type: String, default: 'new' },
@@ -224,6 +239,7 @@ export default {
       isLoadingFinish: false, // 讀取完畢
       postData: [], // 郵遞區號
       activeName: '',
+      activeNameBankAccounts: '1',
       // 以下為下拉式選單專用
       ddlCountry: [],
       ddlCity: [],

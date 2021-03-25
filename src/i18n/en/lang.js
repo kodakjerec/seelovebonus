@@ -243,6 +243,10 @@ export default {
   __modifyType: 'ModifyType',
   __depart: 'Depart',
   __office: 'Office',
+  __bankAccounts: 'Bank Accounts',
+  __bankBranch: 'Branch',
+  __bankAccountNo: 'Account No',
+  __bankUserName: 'Name',
   // 請在上方新增字串
   // 以下為 警告
   __warning: 'Warning',

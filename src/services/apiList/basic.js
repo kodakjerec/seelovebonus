@@ -2,6 +2,7 @@ import { getFile, post, uploadFile } from '@/services/utils'
 
 export default {
   basic: {
+    // company
     companiesShow: ({ keyword }) => {
       let rawData = { keyword }
       return post('/basic/companiesShow', rawData).then(data => {
@@ -30,6 +31,7 @@ export default {
         return data
       })
     },
+    // customer
     customersShow: ({ keyword }) => {
       let rawData = { keyword }
       return post('/basic/customersShow', rawData).then(data => {
@@ -65,6 +67,7 @@ export default {
         return data
       })
     },
+    // empoyee
     employeesShow: ({ keyword }) => {
       let rawData = { keyword }
       return post('/basic/employeesShow', rawData).then(data => {
@@ -93,6 +96,7 @@ export default {
         return data
       })
     },
+    // product
     productsShow: ({ keyword }) => {
       let rawData = { keyword }
       return post('/basic/productsShow', rawData).then(data => {
@@ -142,6 +146,7 @@ export default {
         return data
       })
     },
+    // project
     projectsShow: ({ keyword }) => {
       let rawData = { keyword }
       return post('/basic/projectsShow', rawData).then(data => {
@@ -170,6 +175,7 @@ export default {
         return data
       })
     },
+    // project Detail
     projectDetailNew: ({ form }) => {
       let rawData = { form }
       return post('/basic/projectDetailNew', rawData).then(data => {
@@ -191,6 +197,7 @@ export default {
         return data
       })
     },
+    // project Performance Bonus
     projectPBonusNew: ({ form }) => {
       let rawData = { form }
       return post('/basic/projectPBonusNew', rawData).then(data => {
@@ -212,6 +219,7 @@ export default {
         return data
       })
     },
+    // project Super Bonus
     projectSuperBonusNew: ({ form }) => {
       let rawData = { form }
       return post('/basic/projectSuperBonusNew', rawData).then(data => {
@@ -226,6 +234,14 @@ export default {
         return data
       })
     },
+    projectSuperBonusDelete: ({ form }) => {
+      let rawData = { form }
+      return post('/basic/projectSuperBonusDelete', rawData).then(data => {
+        console.log(`%c <<< Response(/rest/basic/projectSuperBonusDelete)⤵ `, 'background-color: #E0455D; color: white; font-size: 14px; font-weight: bold;', data)
+        return data
+      })
+    },
+    // project Functions
     projectFunctionsUpdate: ({ form }) => {
       let rawData = { form }
       return post('/basic/projectFunctionsUpdate', rawData).then(data => {
@@ -247,13 +263,7 @@ export default {
         return data
       })
     },
-    projectSuperBonusDelete: ({ form }) => {
-      let rawData = { form }
-      return post('/basic/projectSuperBonusDelete', rawData).then(data => {
-        console.log(`%c <<< Response(/rest/basic/projectSuperBonusDelete)⤵ `, 'background-color: #E0455D; color: white; font-size: 14px; font-weight: bold;', data)
-        return data
-      })
-    },
+    // storage Address
     storageAddressUpdate: ({ form }) => {
       let rawData = { form }
       return post('/basic/storageAddressUpdate', rawData).then(data => {
