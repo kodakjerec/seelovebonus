@@ -1,5 +1,5 @@
 <template>
-  <el-dialog :title="myTitle" :visible="dialogShow" center width="80vw" @close="cancel">
+  <el-dialog :title="myTitle" :visible="dialogShow" center width="80vw" top="5vh" @close="cancel">
     <el-form ref="form" :model="form" :rules="rules" label-width="10vw" label-position="right">
       <h4 style="text-align:center;color:red">{{$t('__installmentBatchEditWarning')}}</h4>
       <el-form-item :label="$t('__installment')+$t('__name')">

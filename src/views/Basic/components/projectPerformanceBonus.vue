@@ -1,5 +1,5 @@
 <template>
-  <el-dialog :title="myTitle" :visible="dialogShow" center width="80vw" @close="cancel">
+  <el-dialog :title="myTitle" :visible="dialogShow" center width="80vw" top="5vh" @close="cancel">
     <el-form :inline="true">
       <el-form-item :label="$t('__kind')">
         <el-select v-model="projectID" :placeholder="$t('__plzChoice')" style="display:block" :disabled="isNewPB" @change="(value)=>{ddlPPBListChange(value)}">

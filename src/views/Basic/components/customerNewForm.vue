@@ -1,5 +1,5 @@
 <template>
-  <el-dialog :title="myTitle" :visible="dialogShow" center width="80vw" @close="cancel" append-to-body>
+  <el-dialog :title="myTitle" :visible="dialogShow" center width="80vw" top="5vh" @close="cancel" append-to-body>
     <el-form ref="form" :model="form" :rules="rules" label-width="10vw" label-position="right">
       <!-- 客戶代號 -->
       <el-form-item :label="$t('__customer')+$t('__id')" required>
