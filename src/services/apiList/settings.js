@@ -3,6 +3,7 @@ import crypto from '@/services/crypto' // 加解密
 
 export default {
   settings: {
+    // user
     getUserProg: ({ UserID }) => {
       UserID = crypto.encrypt(UserID)
       let rawData = { UserID }
@@ -38,6 +39,7 @@ export default {
         return data
       })
     },
+    // group Program List
     groupProgListDel: ({ GroupID, Row }) => {
       let rawData = { GroupID, Row }
       return post('/settings/groupProgListDel', rawData).then(data => {
@@ -59,6 +61,7 @@ export default {
         return data
       })
     },
+    // group
     groupNew: ({ GroupID, Name }) => {
       let rawData = { GroupID, Name }
       return post('/settings/groupNew', rawData).then(data => {
@@ -73,6 +76,7 @@ export default {
         return data
       })
     },
+    // settings
     settingsNew: ({ form }) => {
       let rawData = { form }
       return post('/settings/settingsNew', rawData).then(data => {
@@ -94,6 +98,7 @@ export default {
         return data
       })
     },
+    // announce
     announcementShow: ({ keyword }) => {
       let rawData = { keyword }
       return post('/settings/announcementShow', rawData).then(data => {
@@ -122,6 +127,7 @@ export default {
         return data
       })
     },
+    // others
     getDropdownList: ({ type, keyword }) => {
       if (!keyword) {
         keyword = ''

@@ -2,6 +2,7 @@ import { post } from '@/services/utils'
 
 export default {
   stock: {
+    // inbound Order
     inboundOrderShow: ({ keyword }) => {
       let rawData = { keyword }
       return post('/stock/inboundOrderShow', rawData).then(data => {
@@ -37,6 +38,7 @@ export default {
         return data
       })
     },
+    // stock
     stockNowShow: ({ searchContent, pagination }) => {
       let rawData = { searchContent, pagination }
       return post('/stock/stockNowShow', rawData).then(data => {
@@ -58,6 +60,7 @@ export default {
         return data
       })
     },
+    // map
     mapGet: ({ Building, Floor, Area, Column, Row, Grid, StorageID }) => {
       let rawData = { Building, Floor, Area, Column, Row, Grid, StorageID }
       return post('/stock/mapGet', rawData).then(data => {
@@ -79,6 +82,7 @@ export default {
         return data
       })
     },
+    // others
     getDropdownList: ({ type, keyword }) => {
       if (!keyword) {
         keyword = ''
