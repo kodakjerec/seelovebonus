@@ -67,7 +67,7 @@ export default {
         return data
       })
     },
-    // empoyee
+    // employee
     employeesShow: ({ keyword }) => {
       let rawData = { keyword }
       return post('/basic/employeesShow', rawData).then(data => {
@@ -125,6 +125,7 @@ export default {
         return data
       })
     },
+    // product BOM
     productBOMNew: ({ form }) => {
       let rawData = { form }
       return post('/basic/productBOMNew', rawData).then(data => {
@@ -241,7 +242,7 @@ export default {
         return data
       })
     },
-    // project Functions
+    // project functions
     projectFunctionsUpdate: ({ form }) => {
       let rawData = { form }
       return post('/basic/projectFunctionsUpdate', rawData).then(data => {
@@ -249,6 +250,7 @@ export default {
         return data
       })
     },
+    // product functions
     productFunctionsUpdate: ({ form }) => {
       let rawData = { form }
       return post('/basic/productFunctionsUpdate', rawData).then(data => {
@@ -263,7 +265,7 @@ export default {
         return data
       })
     },
-    // storage Address
+    // storageAddress
     storageAddressUpdate: ({ form }) => {
       let rawData = { form }
       return post('/basic/storageAddressUpdate', rawData).then(data => {
@@ -306,6 +308,7 @@ export default {
         return data
       })
     },
+    // others
     getDropdownList: ({ type, keyword }) => {
       if (!keyword) {
         keyword = ''
