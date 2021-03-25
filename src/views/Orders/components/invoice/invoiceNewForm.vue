@@ -193,7 +193,8 @@ export default {
     dialogShow: { type: Boolean, default: false },
     invoiceHead: { type: Object },
     fromOrderID: { type: String },
-    buttonsShowUser: { type: Object }
+    buttonsShowUser: { type: Object },
+    buttonsShow: { type: Object }
   },
   data () {
     let myValidate = async (rule, value, callback) => {
@@ -236,14 +237,6 @@ export default {
         InvoiceDate: [{ required: true, message: this.$t('__pleaseInput'), trigger: 'blur' }],
         InvoiceID: [{ required: true, trigger: 'blur', validator: myValidate }],
         CreateID: [{ required: true, message: this.$t('__pleaseInput'), trigger: 'blur' }]
-      },
-      // 系統目前狀態權限
-      buttonsShow: {
-        new: 1,
-        edit: 0,
-        save: 1,
-        delete: 0,
-        search: 1
       },
       disableForm: {
         InvoiceKind: false,
@@ -299,23 +292,6 @@ export default {
         this.disableForm.RandomCode = true
         this.disableForm.Status = true
         this.disableForm.selectCollectionRecords = true
-        if (this.form.Status === '0') {
-          this.buttonsShow = {
-            new: 0,
-            edit: 0,
-            save: 0,
-            delete: 0,
-            search: 0
-          }
-        } else {
-          this.buttonsShow = {
-            new: 1,
-            edit: 1,
-            save: 1,
-            delete: 1,
-            search: 1
-          }
-        }
         break
     }
 
@@ -477,13 +453,6 @@ export default {
       switch (answerAction) {
         case 'confirm':
           this.form.Status = '0'
-          this.buttonsShow = {
-            new: 0,
-            edit: 0,
-            save: 0,
-            delete: 0,
-            search: 0
-          }
           await this.save('delete')
 
           this.$emit('dialog-save')

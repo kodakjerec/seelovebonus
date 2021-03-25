@@ -60,6 +60,7 @@
     :installment="installment"
     :fromOrderID="fromOrderID"
     :buttonsShowUser="buttonsShowUser"
+    :buttonsShow="buttonsShow"
     @dialog-cancel="dialogCancel"
     @dialog-save="dialogSave"></new-form>
     <batch-edit

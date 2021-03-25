@@ -69,7 +69,7 @@
     </el-form>
     <div slot="footer">
       <el-button @click="cancel">{{$t('__cancel')}}</el-button>
-      <el-button v-show="buttonsShowUser.save" type="primary" @click="checkValidate">{{$t('__save')}}</el-button>
+      <el-button v-show="buttonsShow.save && buttonsShowUser.save" type="primary" @click="checkValidate">{{$t('__save')}}</el-button>
     </div>
   </el-dialog>
 </template>
@@ -84,7 +84,8 @@ export default {
     dialogShow: { type: Boolean, default: false },
     installment: { type: Object },
     fromOrderID: { type: String },
-    buttonsShowUser: { type: Object }
+    buttonsShowUser: { type: Object },
+    buttonsShow: { type: Object }
   },
   data () {
     return {

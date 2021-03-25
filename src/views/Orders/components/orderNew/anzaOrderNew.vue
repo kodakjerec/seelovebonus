@@ -237,7 +237,7 @@ export default {
       subList: [],
       subListDeleted: [],
       isExceedQtyLimit: false,
-      fromType: null,
+      fromType: '',
       fromModifyType: '',
       // 下拉式選單
       ddlCustomer: []

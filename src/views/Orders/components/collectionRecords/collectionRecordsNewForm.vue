@@ -139,7 +139,8 @@ export default {
     dialogShow: { type: Boolean, default: false },
     collectionRecord: { type: Object },
     fromOrderID: { type: String },
-    buttonsShowUser: { type: Object }
+    buttonsShowUser: { type: Object },
+    buttonsShow: { type: Object }
   },
   data () {
     return {
@@ -161,14 +162,6 @@ export default {
         PaymentMethod: [{ required: true, message: this.$t('__pleaseInput'), trigger: 'blur' }],
         ReceivedDate: [{ required: true, message: this.$t('__pleaseInput'), trigger: 'blur' }],
         ReceivedID: [{ required: true, message: this.$t('__pleaseInput'), trigger: 'blur' }]
-      },
-      // 系統目前狀態權限
-      buttonsShow: {
-        new: 1,
-        edit: 0,
-        save: 1,
-        delete: 0,
-        search: 1
       },
       disableForm: {
         PaymentMethod: false,
@@ -210,23 +203,6 @@ export default {
         this.disableForm.ReceivedID = true
         this.disableForm.ChequeDate = true
         this.disableForm.selectCollectionRecords = true
-        if (this.form.Status === '0') {
-          this.buttonsShow = {
-            new: 0,
-            edit: 0,
-            save: 0,
-            delete: 0,
-            search: 0
-          }
-        } else {
-          this.buttonsShow = {
-            new: 1,
-            edit: 1,
-            save: 1,
-            delete: 1,
-            search: 1
-          }
-        }
         break
     }
     await this.preLoading()
@@ -378,13 +354,6 @@ export default {
       switch (answerAction) {
         case 'confirm':
           this.form.Status = '0'
-          this.buttonsShow = {
-            new: 0,
-            edit: 0,
-            save: 0,
-            delete: 0,
-            search: 0
-          }
           await this.save('delete')
 
           this.$emit('dialog-save')
