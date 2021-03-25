@@ -13,12 +13,19 @@
       :row-class-name="tableRowClassName"
       style="width: 100%">
       <el-table-column
-        prop="viewID"
-        :label="$t('__customer')+$t('__id')">
+        prop="ID"
+        :label="$t('__customer')+$t('__id')"
+        width="150">
       </el-table-column>
       <el-table-column
-        prop="Name"
         :label="$t('__customer')+$t('__name')">
+        <template slot-scope="scope">
+          {{scope.row.Name}}<br/>{{scope.row.NameEnglish}}
+        </template>
+      </el-table-column>
+      <el-table-column
+        prop="UniqueNumber"
+        :label="$t('__uniqueNumber')+'/'+$t('__passport')">
       </el-table-column>
       <el-table-column
         prop="RefferIDName"
@@ -27,6 +34,19 @@
       <el-table-column
         prop="EmployeeIDName"
         :label="$t('__refEmployeeID')">
+      </el-table-column>
+      <el-table-column
+        :label="$t('__tel')"
+        width="120">
+        <template slot-scope="scope">
+          {{scope.row.TelHome}}<br/>{{scope.row.TelMobile}}
+        </template>
+      </el-table-column>
+      <el-table-column
+        :label="$t('__address')">
+        <template slot-scope="scope">
+          {{scope.row.CityName+scope.row.PostName+scope.row.Address}}
+        </template>
       </el-table-column>
     </el-table>
     <el-pagination
@@ -43,7 +63,7 @@
     v-if="dialogShow"
     :dialog-type="dialogType"
     :dialog-show="dialogShow"
-    :customer="customer"
+    :fromCustomer="customer"
     :buttonsShowUser="buttonsShowUser"
     @dialog-cancel="dialogCancel"
     @dialog-save="dialogSave"></new-form>
@@ -121,6 +141,7 @@ export default {
     },
     // 開啟表單
     showForm: function (eventType) {
+      this.customer = {}
       // 權限管理
       this.buttonsShowUser.save = this.buttonsShowUser.new
 

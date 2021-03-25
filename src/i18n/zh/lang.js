@@ -126,6 +126,8 @@ export default {
   __date: '日期',
   __content: '內容',
   __uniqueNumber: '身分證字號',
+  __passport: '護照號碼',
+  __addressChange: '轉換填入城市郵遞區號',
   __afterSaveWillShow: '存檔後才會顯示單號',
   __placeholderCustomerID: '請輸入  身分證字號',
   __placeholderCustomerIDAfterSave: '存檔後系統自行給定代號，或切換代號類別輸入 身分證字號/護照號碼',

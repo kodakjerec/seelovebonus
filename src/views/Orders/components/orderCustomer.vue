@@ -22,21 +22,11 @@
             </el-option>
           </el-select>
         </el-col>
-        <el-col :span="16" v-if="showAgentData">
-          <el-form-item :label="$t('__agent')">
-            <el-input v-model="form.AgentName" disabled></el-input>
-          </el-form-item>
-        </el-col>
       </el-form-item>
       <!-- 身分證字號 -->
       <el-form-item :label="$t('__uniqueNumber')">
         <el-col :span="8">
           <el-input v-model="form.CustomerID" disabled></el-input>
-        </el-col>
-        <el-col :span="16" v-if="showAgentData">
-          <el-form-item :label="$t('__uniqueNumber')">
-            <el-input v-model="form.AgentID" disabled></el-input>
-          </el-form-item>
         </el-col>
       </el-form-item>
       <!-- 電話 -->
@@ -45,31 +35,6 @@
           <el-input v-model="form.TelHome" disabled></el-input>
           <el-input v-model="form.TelMobile" disabled></el-input>
         </el-col>
-        <template v-if="showAgentData">
-          <el-col :span="7">
-            <el-form-item :label="$t('__address')">
-              <el-select v-model="form.AgentCity" value-key="value" :placeholder="$t('__plzChoice')" @change="ddlCityChange" disabled>
-                <el-option v-for="item in ddlAgentCity" :key="item.ID" :label="item.Value" :value="item.ID">
-                  <span style="float: left">{{ item.Value }}</span>
-                  <span style="float: right; color: #8492a6; font-size: 13px">{{ item.ID }}</span>
-                </el-option>
-              </el-select>
-            </el-form-item>
-            </el-col>
-          <el-col :span="3">
-            <el-form-item>
-              <el-select v-model="form.AgentPost" value-key="value" :placeholder="$t('__plzChoice')" disabled>
-                <el-option v-for="item in ddlAgentPost" :key="item.ID" :label="item.Value" :value="item.ID">
-                  <span style="float: left">{{ item.Value }}</span>
-                  <span style="float: right; color: #8492a6; font-size: 13px">{{ item.ID }}</span>
-                </el-option>
-              </el-select>
-            </el-form-item>
-            </el-col>
-          <el-col :span="6">
-            <el-input v-model="form.AgentAddress" disabled></el-input>
-          </el-col>
-        </template>
       </el-form-item>
     </template>
     <!-- EMail -->
@@ -126,12 +91,6 @@ export default {
         City: null,
         Post: null,
         Address: '',
-        AgentID: '',
-        AgentName: '',
-        AgentCountry: null,
-        AgentCity: null,
-        AgentPost: null,
-        AgentAddress: '',
         refKind: null,
         Referrer: null,
         EmployeeID: null,
@@ -154,7 +113,6 @@ export default {
         delete: 0,
         search: 1
       },
-      showAgentData: true, // 顯示代理人資訊
       fromModifyType: '',
       loading: false,
       // 以下為下拉式選單專用
@@ -163,11 +121,7 @@ export default {
       ddlCity: [],
       ddlPost: [],
       ddlCustomerBefore: [],
-      ddlCustomer: [],
-      // 法定代理人專用下拉式選單
-      ddlAgentCountry: [],
-      ddlAgentCity: [],
-      ddlAgentPost: []
+      ddlCustomer: []
     }
   },
   watch: {
@@ -225,12 +179,6 @@ export default {
       this.ddlCountry = response
       response = this.$api.local.getDropdownList({ type: 'City' })
       this.ddlCity = response
-
-      // 法定代理人
-      response = this.$api.local.getDropdownList({ type: 'Country' })
-      this.ddlAgentCountry = response
-      response = this.$api.local.getDropdownList({ type: 'City' })
-      this.ddlAgentCity = response
     },
     // 遠端即時查客戶代號
     remoteMethod: async function (query) {
@@ -260,28 +208,14 @@ export default {
       this.form.City = row.City
       this.form.Post = row.Post
       this.form.Address = row.Address
-      this.form.AgentID = row.AgentID
-      this.form.AgentName = row.AgentName
-      this.form.AgentCountry = row.AgentCountry
-      this.form.AgentCity = row.AgentCity
-      this.form.AgentPost = row.AgentPost
-      this.form.AgentAddress = row.AgentAddress
       this.form.refKind = row.refKind
       this.form.Referrer = row.Referrer
       this.form.EmployeeID = row.EmployeeID
       this.form.ModifyType = row.ModifyType
       this.form.Status = ''
 
-      // 是否顯示代理人區域
-      if (this.form.AgentID === '') {
-        this.showAgentData = false
-      }
-
       // 切換城市下拉式選單
       this.ddlCityChange()
-
-      // 法定代理人
-      this.ddlAgentCityChange()
 
       this.remoteMethod(row.CustomerID)
     },
@@ -297,12 +231,6 @@ export default {
         this.form.City = ''
         this.form.Post = ''
         this.form.Address = ''
-        this.form.AgentID = ''
-        this.form.AgentName = ''
-        this.form.AgentCountry = ''
-        this.form.AgentCity = ''
-        this.form.AgentPost = ''
-        this.form.AgentAddress = ''
         this.form.refKind = ''
         this.form.Referrer = ''
         this.form.EmployeeID = ''
@@ -317,12 +245,6 @@ export default {
         this.form.City = row.City
         this.form.Post = row.Post
         this.form.Address = row.Address
-        this.form.AgentID = row.AgentID
-        this.form.AgentName = row.AgentName
-        this.form.AgentCountry = row.AgentCountry
-        this.form.AgentCity = row.AgentCity
-        this.form.AgentPost = row.AgentPost
-        this.form.AgentAddress = row.AgentAddress
         this.form.refKind = row.refKind
         this.form.Referrer = row.Referrer
         this.form.EmployeeID = row.EmployeeID
@@ -338,9 +260,6 @@ export default {
         }
 
         this.ddlCityChange()
-
-        // 法定代理人
-        this.ddlAgentCityChange()
       }
       // ===== 安座單 =====
       // 回傳客戶代號給上一層
@@ -349,10 +268,6 @@ export default {
     // 過濾郵遞區號
     ddlCityChange: function () {
       this.ddlPost = this.postData.filter(item => item.ParentID === this.form.City)
-    },
-    // 過濾法定代理人郵遞區號
-    ddlAgentCityChange: function () {
-      this.ddlAgentPost = this.postData.filter(item => item.ParentID === this.form.AgentCity)
     },
     // 檢查輸入
     checkValidate: function () {

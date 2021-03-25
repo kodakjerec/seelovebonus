@@ -14,38 +14,48 @@
       :row-class-name="tableRowClassName"
       style="width: 100%">
       <el-table-column
-        prop="CompanyName"
-        :label="$t('__company')+$t('__name')">
-      </el-table-column>
-      <el-table-column
-        prop="Name"
-        :label="$t('__employee')+$t('__name')">
-      </el-table-column>
-      <el-table-column
-        :label="$t('__depart')+' '+$t('__office')">
+        :label="$t('__company')+$t('__name')"
+        width="100">
         <template slot-scope="scope">
-          {{scope.row.DepartName + ' ' + scope.row.OfficeName}}
+          {{scope.row.Nickname}}<br/>{{scope.row.CompanyName}}
         </template>
       </el-table-column>
       <el-table-column
-        prop="GradeName"
-        :label="$t('__grade')">
+        prop="DepartName"
+        :label="$t('__depart')"
+        width="100">
+      </el-table-column>
+      <el-table-column
+        prop="OfficeName"
+        :label="$t('__office')"
+        width="100">
       </el-table-column>
       <el-table-column
         prop="ID"
         :label="$t('__employee')+$t('__id')">
       </el-table-column>
       <el-table-column
-        prop="TelMobile"
-        :label="$t('__mobile')+$t('__tel')">
+        prop="Name"
+        :label="$t('__employee')+$t('__name')">
       </el-table-column>
       <el-table-column
-        prop="ParentID"
-        :label="$t('__parent')+$t('__id')">
+        prop="GradeName"
+        :label="$t('__grade')">
       </el-table-column>
       <el-table-column
         prop="ParentName"
-        :label="$t('__parent')+$t('__name')">
+        :label="$t('__parent')">
+      </el-table-column>
+      <el-table-column
+        prop="UniqueNumber"
+        :label="$t('__uniqueNumber')+'/'+$t('__passport')">
+      </el-table-column>
+      <el-table-column
+        :label="$t('__tel')"
+        width="120">
+        <template slot-scope="scope">
+          {{scope.row.TelHome}}<br/>{{scope.row.TelMobile}}
+        </template>
       </el-table-column>
     </el-table>
     <el-pagination
@@ -62,7 +72,7 @@
     v-if="dialogShow"
     :dialog-type="dialogType"
     :dialog-show="dialogShow"
-    :employee="employee"
+    :fromEmployee="employee"
     :buttonsShowUser="buttonsShowUser"
     @dialog-cancel="dialogCancel"
     @dialog-save="dialogSave"></new-form>
@@ -141,6 +151,7 @@ export default {
     },
     // 開啟表單
     showForm: function (eventType) {
+      this.employee = {}
       // 權限管理
       this.buttonsShowUser.save = this.buttonsShowUser.new
 
@@ -175,13 +186,43 @@ export default {
       this.results = this.originData.slice((this.pagination.currentPage - 1) * this.pagination.pageSize, this.pagination.pageSize * this.pagination.currentPage)
 
       // table span
-      this.tableSpanList = []
+      this.tableSpanList = [[], [], []]
       this.results.forEach(row => {
-        let findObject = this.tableSpanList.find(row2 => { return row2.SpanID === row.CompanyID })
+        // CompanyID
+        let findKey = row.CompanyID
+        let findObject = this.tableSpanList[0].find(row2 => { return row2.SpanID === findKey })
         if (findObject === undefined) {
-          let firstIndex = this.results.findIndex(row3 => row3.CompanyID === row.CompanyID)
-          this.tableSpanList.push({
-            SpanID: row.CompanyID,
+          let firstIndex = this.results.findIndex(row3 => row3.CompanyID === findKey)
+          this.tableSpanList[0].push({
+            SpanID: findKey,
+            rowIndex: firstIndex,
+            Qty: 1
+          })
+        } else {
+          findObject.Qty += 1
+        }
+
+        // CompanyID, DepartName
+        findKey = row.CompanyID + row.DepartName
+        findObject = this.tableSpanList[1].find(row2 => { return row2.SpanID === findKey })
+        if (findObject === undefined) {
+          let firstIndex = this.results.findIndex(row3 => row3.CompanyID + row3.DepartName === findKey)
+          this.tableSpanList[1].push({
+            SpanID: findKey,
+            rowIndex: firstIndex,
+            Qty: 1
+          })
+        } else {
+          findObject.Qty += 1
+        }
+
+        // CompanyID, DepartName, OfficeName
+        findKey = row.CompanyID + row.DepartName + row.OfficeName
+        findObject = this.tableSpanList[2].find(row2 => { return row2.SpanID === findKey })
+        if (findObject === undefined) {
+          let firstIndex = this.results.findIndex(row3 => row3.CompanyID + row3.DepartName + row3.OfficeName === findKey)
+          this.tableSpanList[2].push({
+            SpanID: findKey,
             rowIndex: firstIndex,
             Qty: 1
           })
@@ -193,7 +234,40 @@ export default {
     // table span method
     objectSpanMethod: function (row, column, rowIndex, columnIndex) {
       if (row.columnIndex === 0) {
-        let findObject = this.tableSpanList.find(item => { return item.SpanID === row.row.CompanyID })
+        let findKey = row.row.CompanyID
+        let findObject = this.tableSpanList[row.columnIndex].find(item => { return item.SpanID === findKey })
+        // 沒找到
+        if (findObject === undefined) {
+          return [1, 0]
+        } else {
+          // 有找到
+          // 是第一筆, 就要做 colspan
+          if (row.rowIndex === findObject.rowIndex) {
+            return [findObject.Qty, 1]
+          } else {
+            // 其他筆
+            return [1, 0]
+          }
+        }
+      } else if (row.columnIndex === 1) {
+        let findKey = row.row.CompanyID + row.row.DepartName
+        let findObject = this.tableSpanList[row.columnIndex].find(item => { return item.SpanID === findKey })
+        // 沒找到
+        if (findObject === undefined) {
+          return [1, 0]
+        } else {
+          // 有找到
+          // 是第一筆, 就要做 colspan
+          if (row.rowIndex === findObject.rowIndex) {
+            return [findObject.Qty, 1]
+          } else {
+            // 其他筆
+            return [1, 0]
+          }
+        }
+      } else if (row.columnIndex === 2) {
+        let findKey = row.row.CompanyID + row.row.DepartName + row.row.OfficeName
+        let findObject = this.tableSpanList[row.columnIndex].find(item => { return item.SpanID === findKey })
         // 沒找到
         if (findObject === undefined) {
           return [1, 0]

@@ -4,16 +4,28 @@
       <!-- 業務代號 -->
       <el-form-item :label="$t('__employee')+$t('__id')" required>
         <el-col :span="4" v-show="!disableForm.ID">
-          <el-select v-model="IDType" value-key="value" :placeholder="$t('__plzChoice')">
+          <el-select v-model="IDType" value-key="value" :placeholder="$t('__plzChoice')" @change="idTypeChange">
             <el-option v-for="item in ddlIDType" :key="item.ID" :label="item.Value" :value="item.ID">
               <span style="float: left">{{ item.Value }}</span>
               <span style="float: right; color: #8492a6; font-size: 13px">{{ item.ID }}</span>
             </el-option>
           </el-select>
         </el-col>
-        <el-col :span="12">
+        <el-col :span="7">
           <el-form-item prop="ID">
-            <el-input v-model="form.ID" maxlength="20" show-word-limit :placeholder="getPlaceholderID()" :disabled="disableForm.ID || IDType==='3'"></el-input>
+            <el-input
+            v-model="form.ID"
+            maxlength="20"
+            show-word-limit
+            :placeholder="getPlaceholderID()"
+            :disabled="disableForm.ID || IDType==='3'"
+            @input="idInput"></el-input>
+          </el-form-item>
+        </el-col>
+        <!-- 身分證字號 -->
+        <el-col :span="10" v-show="disableForm.ID || IDType!=='1'">
+          <el-form-item :label="$t('__uniqueNumber')">
+            <el-input v-model="form.UniqueNumber" maxlength="10" show-word-limit @change="uniqueNumberChange"></el-input>
           </el-form-item>
         </el-col>
       </el-form-item>
@@ -97,6 +109,7 @@
         </el-col>
       </el-form-item>
       <!-- 個資 -->
+      <el-divider></el-divider>
       <el-form-item :label="$t('__home')+$t('__tel')">
         <el-col :span="10">
           <el-form-item prop="TelHome">
@@ -131,7 +144,7 @@
         <el-col :span="12">
           <el-form-item :label="$t('__post')">
             <el-select v-model="form.Post" value-key="value" :placeholder="$t('__plzChoice')" :disabled="!form.City">
-              <el-option v-for="item in ddlPost" :key="item.ID" :label="item.Value" :value="item.ID">
+              <el-option v-for="item in ddlPost" :key="item.ID" :label="item.ID+' '+item.Value" :value="item.ID">
                 <span style="float: left">{{ item.Value }}</span>
                 <span style="float: right; color: #8492a6; font-size: 13px">{{ item.ID }}</span>
               </el-option>
@@ -140,8 +153,18 @@
         </el-col>
       </el-form-item>
       <el-form-item :label="$t('__address')">
-        <el-input v-model="form.Address" maxlength="100" show-word-limit></el-input>
+        <el-col :span="12">
+          <el-input v-model="form.Address" maxlength="100" show-word-limit></el-input>
+        </el-col>
+        <el-col :span="8">
+          <el-button @click="addressChange">{{$t('__addressChange')}}</el-button>
+          <el-tooltip effect="dark" placement="top">
+            <div slot="content">住址欄填入"完整地址"<br/>按下按鈕自動填入城市與郵遞區號<br/>例：台北市中山區民權東路二段109號<br/>=>民權東路二段109號 城市:台北市 郵遞區號:中山區</div>
+          <i class="el-icon-question"></i>
+          </el-tooltip>
+        </el-col>
       </el-form-item>
+      <!-- 電子信箱 -->
       <el-form-item :label="$t('__eMail')">
         <el-input v-model="form.EMail" maxlength="60" show-word-limit></el-input>
       </el-form-item>
@@ -172,7 +195,7 @@ export default {
   props: {
     dialogType: { type: String, default: 'new' },
     dialogShow: { type: Boolean, default: false },
-    employee: { type: Object },
+    fromEmployee: { type: Object },
     buttonsShowUser: { type: Object }
   },
   data () {
@@ -227,7 +250,8 @@ export default {
         ParentID: null,
         Memo: '',
         Depart: '',
-        Office: ''
+        Office: '',
+        UniqueNumber: ''
       },
       rules: {
         ID: [{ trigger: 'blur', validator: validatePersonalID }],
@@ -277,7 +301,7 @@ export default {
         break
       case 'edit':
         this.myTitle = this.$t('__edit') + this.$t('__employee')
-        this.form = JSON.parse(JSON.stringify(this.employee))
+        this.form = JSON.parse(JSON.stringify(this.fromEmployee))
         this.disableForm.ID = true
         this.IDType = '2' // 修改狀態不要檢核ID
         break
@@ -425,6 +449,37 @@ export default {
       if (isSuccess) {
         this.$emit('dialog-save')
       }
+    },
+    // 地址自動帶出
+    addressChange: function () {
+      let value = this.form.Address
+      let { findCity, findPost, fromAddress } = validate.addressSeparate(value)
+      if (!this.form.City) {
+        this.form.City = findCity
+        this.ddlCityChange()
+      }
+      if (!this.form.Post) {
+        this.form.Post = findPost
+      }
+      this.form.Address = fromAddress
+    },
+    // 輸入ID自動帶入uniqueNumber
+    idInput: function (value) {
+      switch (this.IDType) {
+        case '1':
+          this.form.UniqueNumber = value.substring(0, 10)
+          break
+      }
+    },
+    // 變更代號驗證方式
+    idTypeChange: function (value) {
+      this.form.ID = ''
+    },
+    // 驗證身份證字號
+    uniqueNumberChange: async function (value) {
+      let result = await validate.validatePersonalID(null, value, 'customer', false)
+      this.$message.error(result.message)
+      this.form.UniqueNumber = this.fromEmployee.UniqueNumber
     }
   }
 }

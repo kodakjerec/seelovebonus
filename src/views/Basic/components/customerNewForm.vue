@@ -3,17 +3,29 @@
     <el-form ref="form" :model="form" :rules="rules" label-width="10vw" label-position="right">
       <!-- 客戶代號 -->
       <el-form-item :label="$t('__customer')+$t('__id')" required>
-        <el-col :span="4" v-show="!disableForm.ID">
-          <el-select v-model="IDType" value-key="value" :placeholder="$t('__plzChoice')">
+        <el-col :span="3" v-show="!disableForm.ID">
+          <el-select v-model="IDType" value-key="value" :placeholder="$t('__plzChoice')" @change="idTypeChange">
             <el-option v-for="item in ddlIDType" :key="item.ID" :label="item.Value" :value="item.ID">
               <span style="float: left">{{ item.Value }}</span>
               <span style="float: right; color: #8492a6; font-size: 13px">{{ item.ID }}</span>
             </el-option>
           </el-select>
         </el-col>
-        <el-col :span="12">
+        <el-col :span="7">
           <el-form-item prop="ID">
-            <el-input v-model="form.ID" maxlength="20" show-word-limit :placeholder="getPlaceholderID()" :disabled="disableForm.ID || IDType==='3'"></el-input>
+            <el-input
+            v-model="form.ID"
+            maxlength="20"
+            show-word-limit
+            :placeholder="getPlaceholderID()"
+            :disabled="disableForm.ID || IDType==='3'"
+            @input="idInput"></el-input>
+          </el-form-item>
+        </el-col>
+        <!-- 身分證字號 -->
+        <el-col :span="10" v-show="disableForm.ID || IDType!=='1'">
+          <el-form-item :label="$t('__uniqueNumber')">
+            <el-input v-model="form.UniqueNumber" maxlength="10" show-word-limit @change="uniqueNumberChange"></el-input>
           </el-form-item>
         </el-col>
       </el-form-item>
@@ -59,6 +71,7 @@
           </el-form-item>
         </el-col>
       </el-form-item>
+      <el-divider></el-divider>
       <!-- 性別,電話 -->
       <el-form-item :label="$t('__gender')">
         <el-col :span="4">
@@ -154,7 +167,7 @@
         <el-col :span="12">
           <el-form-item :label="$t('__post')">
             <el-select v-model="form.Post" value-key="value" :placeholder="$t('__plzChoice')" :disabled="!form.City">
-              <el-option v-for="item in ddlPost" :key="item.ID" :label="item.Value" :value="item.ID">
+              <el-option v-for="item in ddlPost" :key="item.ID" :label="item.ID+''+item.Value" :value="item.ID">
                 <span style="float: left">{{ item.Value }}</span>
                 <span style="float: right; color: #8492a6; font-size: 13px">{{ item.ID }}</span>
               </el-option>
@@ -164,7 +177,16 @@
       </el-form-item>
       <!-- 住址 -->
       <el-form-item :label="$t('__address')">
-        <el-input v-model="form.Address" maxlength="100" show-word-limit></el-input>
+        <el-col :span="12">
+          <el-input v-model="form.Address" maxlength="100" show-word-limit></el-input>
+        </el-col>
+        <el-col :span="8">
+          <el-button @click="addressChange">{{$t('__addressChange')}}</el-button>
+          <el-tooltip effect="dark" placement="top">
+            <div slot="content">住址欄填入"完整地址"<br/>按下按鈕自動填入城市與郵遞區號<br/>例：台北市中山區民權東路二段109號</div>
+          <i class="el-icon-question"></i>
+          </el-tooltip>
+        </el-col>
       </el-form-item>
       <!-- 電子信箱 -->
       <el-form-item :label="$t('__eMail')">
@@ -179,59 +201,6 @@
           </el-option>
         </el-select>
       </el-form-item>
-      <!-- 以下為法定代理人 -->
-      <el-collapse v-model="activeName" accordion="">
-        <el-collapse-item name="1">
-          <template slot="title">
-            <h2>{{$t('__customer')+$t('__agent')}}<i class="el-icon-circle-plus" v-show="activeName===''"></i></h2>
-          </template>
-          <el-form-item :label="$t('__id')">
-            <el-select v-model="form.AgentID" value-key="value" :placeholder="$t('__placeholderCustomerID')" @change="ddlAgentIDChange">
-                <el-option v-for="item in ddlAgentID" :key="item.ID" :label="item.Value" :value="item.ID">
-                  <span style="float: left">{{ item.Value }}</span>
-                  <span style="float: right; color: #8492a6; font-size: 13px">{{ item.ID }}</span>
-                </el-option>
-              </el-select>
-          </el-form-item>
-          <el-form-item :label="$t('__name')">
-            <el-input v-model="form.AgentName" maxlength="40" show-word-limit></el-input>
-          </el-form-item>
-          <el-form-item :label="$t('__country')">
-            <el-col :span="4">
-              <el-select v-model="form.AgentCountry" value-key="value" :placeholder="$t('__plzChoice')">
-                <el-option v-for="item in ddlAgentCountry" :key="item.ID" :label="item.Value" :value="item.ID">
-                  <span style="float: left">{{ item.Value }}</span>
-                  <span style="float: right; color: #8492a6; font-size: 13px">{{ item.ID }}</span>
-                </el-option>
-              </el-select>
-            </el-col>
-            <el-col :span="8">
-              <el-form-item :label="$t('__city')">
-                <el-select v-model="form.AgentCity" value-key="value" :placeholder="$t('__plzChoice')" @change="ddlAgentCityChange">
-                  <el-option v-for="item in ddlAgentCity" :key="item.ID" :label="item.Value" :value="item.ID">
-                    <span style="float: left">{{ item.Value }}</span>
-                    <span style="float: right; color: #8492a6; font-size: 13px">{{ item.ID }}</span>
-                  </el-option>
-                </el-select>
-              </el-form-item>
-            </el-col>
-            <el-col :span="12">
-              <el-form-item :label="$t('__post')">
-                <el-select v-model="form.AgentPost" value-key="value" :placeholder="$t('__plzChoice')">
-                  <el-option v-for="item in ddlAgentPost" :key="item.ID" :label="item.Value" :value="item.ID">
-                    <span style="float: left">{{ item.Value }}</span>
-                    <span style="float: right; color: #8492a6; font-size: 13px">{{ item.ID }}</span>
-                  </el-option>
-                </el-select>
-              </el-form-item>
-            </el-col>
-          </el-form-item>
-          <el-form-item :label="$t('__address')">
-            <el-input v-model="form.AgentAddress" maxlength="100" show-word-limit></el-input>
-          </el-form-item>
-        </el-collapse-item>
-      </el-collapse>
-      <!-- 以上為法定代理人 -->
     </el-form>
     <div slot="footer">
       <el-button v-show="dialogType === 'edit' &&  buttonsShowUser.delete" type="danger" @click="deleteItem">{{$t('__delete')}}</el-button>
@@ -250,7 +219,7 @@ export default {
   props: {
     dialogType: { type: String, default: 'new' },
     dialogShow: { type: Boolean, default: false },
-    customer: { type: Object },
+    fromCustomer: { type: Object },
     buttonsShowUser: { type: Object },
     fromData: { type: Object,
       default () {
@@ -294,12 +263,6 @@ export default {
         ID: '',
         Name: '',
         NameEnglish: '',
-        AgentID: '',
-        AgentName: '',
-        AgentCountry: '2',
-        AgentCity: null,
-        AgentPost: null,
-        AgentAddress: '',
         TelHome: '',
         TelMobile: '',
         Country: '2',
@@ -315,6 +278,7 @@ export default {
         BirthLunarDate: null,
         BirthLunarTime: '13',
         BirthLunarLeap: null,
+        UniqueNumber: '',
         // 顯示用
         CalcBirthLunarDate: '',
         CalcBirth: '',
@@ -348,12 +312,7 @@ export default {
       ddlEmployeeID: [],
       ddlRefKind: [],
       ddlReferrer: [],
-      ddlAgentID: [],
       ddlLunarTime: [],
-      // 法定代理人專用下拉式選單
-      ddlAgentCountry: [],
-      ddlAgentCity: [],
-      ddlAgentPost: [],
       ddlIDType: []
     }
   },
@@ -377,41 +336,32 @@ export default {
         break
       case 'edit':
         this.myTitle = this.$t('__edit') + this.$t('__customer')
-        let fromCustomer = this.customer
-        this.form.ID = fromCustomer.ID
-        this.form.Name = fromCustomer.Name
-        this.form.NameEnglish = fromCustomer.NameEnglish
-        this.form.AgentID = fromCustomer.AgentID
-        this.form.AgentName = fromCustomer.AgentName
-        this.form.AgentCountry = fromCustomer.AgentCountry
-        this.form.AgentCity = fromCustomer.AgentCity
-        this.form.AgentPost = fromCustomer.AgentPost
-        this.form.AgentAddress = fromCustomer.AgentAddress
-        this.form.TelHome = fromCustomer.TelHome
-        this.form.TelMobile = fromCustomer.TelMobile
-        this.form.Country = fromCustomer.Country
-        this.form.City = fromCustomer.City
-        this.form.Post = fromCustomer.Post
-        this.form.Address = fromCustomer.Address
-        this.form.EMail = fromCustomer.EMail
-        this.form.Gender = fromCustomer.Gender
-        this.form.Status = fromCustomer.Status
-        this.form.refKind = fromCustomer.refKind
-        this.form.Referrer = fromCustomer.Referrer
-        if (fromCustomer.Birth) {
-          this.form.Birth = fromCustomer.Birth.slice(0, 10)
+        this.form.ID = this.fromCustomer.ID
+        this.form.Name = this.fromCustomer.Name
+        this.form.NameEnglish = this.fromCustomer.NameEnglish
+        this.form.TelHome = this.fromCustomer.TelHome
+        this.form.TelMobile = this.fromCustomer.TelMobile
+        this.form.Country = this.fromCustomer.Country
+        this.form.City = this.fromCustomer.City
+        this.form.Post = this.fromCustomer.Post
+        this.form.Address = this.fromCustomer.Address
+        this.form.EMail = this.fromCustomer.EMail
+        this.form.Gender = this.fromCustomer.Gender
+        this.form.Status = this.fromCustomer.Status
+        this.form.refKind = this.fromCustomer.refKind
+        this.form.Referrer = this.fromCustomer.Referrer
+        this.form.UniqueNumber = this.fromCustomer.UniqueNumber
+        if (this.fromCustomer.Birth) {
+          this.form.Birth = this.fromCustomer.Birth.slice(0, 10)
         }
-        if (fromCustomer.BirthLunarDate) {
-          this.form.BirthLunarDate = fromCustomer.BirthLunarDate.slice(0, 10)
-          this.form.BirthLunarTime = fromCustomer.BirthLunarTime
-          this.form.BirthLunarLeap = fromCustomer.BirthLunarLeap
+        if (this.fromCustomer.BirthLunarDate) {
+          this.form.BirthLunarDate = this.fromCustomer.BirthLunarDate.slice(0, 10)
+          this.form.BirthLunarTime = this.fromCustomer.BirthLunarTime
+          this.form.BirthLunarLeap = this.fromCustomer.BirthLunarLeap
         }
 
         this.disableForm.ID = true
-        // 有法定代理人打開面板
-        if (this.form.AgentID !== '') {
-          this.activeName = '1'
-        }
+
         // 帶入換算後的日期
         this.solarToLunar()
         this.lunarToSolar()
@@ -459,14 +409,6 @@ export default {
           this.ddlReferrerChange(this.form.Referrer)
         })
       }
-
-      // 法定代理人
-      this.ddlAgentID = this.customersData
-      response = this.$api.local.getDropdownList({ type: 'Country' })
-      this.ddlAgentCountry = response
-      response = this.$api.local.getDropdownList({ type: 'City' })
-      this.ddlAgentCity = response
-      this.ddlAgentCityChange()
     },
     // 身份證字號提示
     getPlaceholderID: function () {
@@ -484,13 +426,6 @@ export default {
       this.ddlPost = this.postData.filter(item => item.ParentID === this.form.City)
       if (this.isLoadingFinish) {
         this.form.Post = null
-      }
-    },
-    // 過濾法定代理人郵遞區號
-    ddlAgentCityChange: function () {
-      this.ddlAgentPost = this.postData.filter(item => item.ParentID === this.form.AgentCity)
-      if (this.isLoadingFinish) {
-        this.form.AgentPost = null
       }
     },
     // 過濾推薦人種類
@@ -529,19 +464,6 @@ export default {
           break
       }
       this.form.EmployeeID = bringEmployeeID
-    },
-    // 切換 法定代理人
-    ddlAgentIDChange: async function (selectd) {
-      let responseCustomer = await this.$api.basic.getObject({ type: 'customer', keyword: selectd })
-      let row = responseCustomer.data.result[0]
-      if (row !== undefined) {
-        this.form.AgentName = row.Name
-        this.form.AgentCountry = row.Country
-        this.form.AgentCity = row.City
-        this.ddlAgentCityChange()
-        this.form.AgentPost = row.Post
-        this.form.AgentAddress = row.Address
-      }
     },
     // 檢查輸入
     checkValidate: function () {
@@ -640,6 +562,37 @@ export default {
           this.form.CalcBirth = responseCustomer.data.result[0].calcDate
         }
       }
+    },
+    // 地址自動帶出
+    addressChange: function () {
+      let value = this.form.Address
+      let { findCity, findPost, fromAddress } = validate.addressSeparate(value)
+      if (!this.form.City) {
+        this.form.City = findCity
+        this.ddlCityChange()
+      }
+      if (!this.form.Post) {
+        this.form.Post = findPost
+      }
+      this.form.Address = fromAddress
+    },
+    // 輸入ID自動帶入uniqueNumber
+    idInput: function (value) {
+      switch (this.IDType) {
+        case '1':
+          this.form.UniqueNumber = value.substring(0, 10)
+          break
+      }
+    },
+    // 變更代號驗證方式
+    idTypeChange: function (value) {
+      this.form.ID = ''
+    },
+    // 驗證身份證字號
+    uniqueNumberChange: async function (value) {
+      let result = await validate.validatePersonalID(null, value, 'customer', false)
+      this.$message.error(result.message)
+      this.form.UniqueNumber = this.fromCustomer.UniqueNumber
     }
   }
 }

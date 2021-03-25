@@ -119,7 +119,7 @@ const validate = {
     callback()
   },
   // 驗證身分證字號(客戶 業務 共用)
-  validatePersonalID: async (rule, value, userType) => {
+  validatePersonalID: async (rule, value, userType, checkRepeat = true) => {
     value = value.toUpperCase()
     let regex = /^[A-Z]{1}[1-2]{1}[0-9]{8}$/
     if (!regex.test(value)) {
@@ -127,10 +127,12 @@ const validate = {
     }
 
     // 2.驗證是否重複
-    let response = await api.basic.checkValidate({ type: userType, ID: value })
-    let rows = response.data.result
-    if (rows && rows.length > 0) {
-      return new Error(i18n.t('__id') + ' ' + value + i18n.t('__valueUsed'))
+    if (checkRepeat) {
+      let response = await api.basic.checkValidate({ type: userType, ID: value })
+      let rows = response.data.result
+      if (rows && rows.length > 0) {
+        return new Error(i18n.t('__id') + ' ' + value + i18n.t('__valueUsed'))
+      }
     }
 
     // 驗證正確性
@@ -254,6 +256,33 @@ const validate = {
     if (rows && rows.length > 0) {
       callback(new Error(i18n.t('__id') + ' ' + fromStorageID + i18n.t('__cantUse')))
     }
+  },
+  // 輸入 地址, 回傳 { City, Post, Address}
+  addressSeparate: (fromAddress) => {
+    let findCity = ''
+    let findPost = ''
+    let ddlCity = api.local.getDropdownList({ type: 'City' })
+    let postData = api.local.getDropdownList({ type: 'District' })
+
+    // 分離縣市
+    ddlCity.forEach(city => {
+      let findIndex = fromAddress.indexOf(city.Value)
+      if (findIndex > -1) {
+        findCity = city.ID
+        fromAddress = fromAddress.replace(city.Value, '')
+      }
+    })
+
+    // 分離區域
+    postData.forEach(post => {
+      let findIndex = fromAddress.indexOf(post.Value)
+      if (findIndex > -1) {
+        findPost = post.ID
+        fromAddress = fromAddress.replace(post.Value, '')
+      }
+    })
+
+    return { findCity, findPost, fromAddress }
   }
 }
 

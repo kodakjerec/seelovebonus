@@ -241,12 +241,6 @@ export default {
         ID: '',
         Name: '',
         NameEnglish: '',
-        AgentID: '',
-        AgentName: '',
-        AgentCountry: '2',
-        AgentCity: null,
-        AgentPost: null,
-        AgentAddress: '',
         TelHome: '',
         TelMobile: '',
         Country: '2',
@@ -369,12 +363,6 @@ export default {
       this.form.ID = fromCustomer.ID
       this.form.Name = fromCustomer.Name
       this.form.NameEnglish = fromCustomer.NameEnglish
-      this.form.AgentID = fromCustomer.AgentID
-      this.form.AgentName = fromCustomer.AgentName
-      this.form.AgentCountry = fromCustomer.AgentCountry
-      this.form.AgentCity = fromCustomer.AgentCity
-      this.form.AgentPost = fromCustomer.AgentPost
-      this.form.AgentAddress = fromCustomer.AgentAddress
       this.form.TelHome = fromCustomer.TelHome
       this.form.TelMobile = fromCustomer.TelMobile
       this.form.Country = fromCustomer.Country

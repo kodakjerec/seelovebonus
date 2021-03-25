@@ -126,6 +126,8 @@ export default {
   __date: 'Date',
   __content: 'Content',
   __uniqueNumber: 'Unique ID',
+  __passport: 'Passport',
+  __addressChange: 'Transfer address',
   __afterSaveWillShow: 'After saved will show data',
   __placeholderCustomerID: 'Please enter the ID number',
   __placeholderCustomerIDAfterSave: 'The system will assign a code after archiving, or switch the code type to enter the ID number/passport number',
