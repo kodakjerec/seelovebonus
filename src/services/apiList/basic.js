@@ -308,6 +308,28 @@ export default {
         return data
       })
     },
+    // bank Accounts
+    bankAccountUpdate: ({ form }) => {
+      let rawData = { form }
+      return post('/basic/bankAccountUpdate', rawData).then(data => {
+        console.log(`%c <<< Response(/rest/basic/bankAccountUpdate)⤵ `, 'background-color: #E0455D; color: white; font-size: 14px; font-weight: bold;', data)
+        return data
+      })
+    },
+    bankAccountShow: ({ form }) => {
+      let rawData = { form }
+      return post('/basic/bankAccountShow', rawData).then(data => {
+        console.log(`%c <<< Response(/rest/basic/bankAccountShow)⤵ `, 'background-color: #E0455D; color: white; font-size: 14px; font-weight: bold;', data)
+        return data
+      })
+    },
+    bankAccountDelete: ({ form }) => {
+      let rawData = { form }
+      return post('/basic/bankAccountDelete', rawData).then(data => {
+        console.log(`%c <<< Response(/rest/basic/bankAccountDelete)⤵ `, 'background-color: #E0455D; color: white; font-size: 14px; font-weight: bold;', data)
+        return data
+      })
+    },
     // others
     getDropdownList: ({ type, keyword }) => {
       if (!keyword) {

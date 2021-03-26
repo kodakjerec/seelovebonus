@@ -135,6 +135,7 @@
           <h2>{{$t('__bankAccounts')}}<i class="el-icon-circle-plus" v-show="activeNameBankAccounts===''"></i></h2>
         </template>
         <bank-accounts
+          ref="bankAccounts"
           :fromType="'company'"
           :fromID="company.ID"
         ></bank-accounts>
@@ -144,7 +145,7 @@
     <el-collapse v-model="activeName" accordion="">
       <el-collapse-item name="1">
         <template slot="title">
-          <h2>{{$t('__logExceedingCompanyContractDate')}}<i class="el-icon-circle-plus" v-show="activeNameBankAccounts===''"></i></h2>
+          <h2>{{$t('__logExceedingCompanyContractDate')}}<i class="el-icon-circle-plus" v-show="activeName===''"></i></h2>
         </template>
         <exceedingDateLog
           :companyID="form.ID">
@@ -376,6 +377,9 @@ export default {
           }
           break
       }
+
+      // 銀行帳戶
+      await this.$refs['bankAccounts'].beforeSave()
 
       if (isSuccess) {
         this.$emit('dialog-save')
