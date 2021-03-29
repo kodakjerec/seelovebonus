@@ -239,6 +239,9 @@ export default {
   __after: '之後',
   __clearSearchSettings: '清除搜尋設定',
   __modifyType: '異動類別',
+  __hide: '隱藏',
+  __show: '顯示',
+  __menu: '選單',
   // 請在上方新增字串
   // 以下為 警告
   __warning: '警告',
