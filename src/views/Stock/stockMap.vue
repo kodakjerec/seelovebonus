@@ -34,6 +34,7 @@ export default {
           showDelay: 0,
           transitionDuration: 0.2,
           formatter: function (params) {
+            // 滑鼠移到物件上面要顯示的內容
             let property = params.data
             return property.StorageID + ' ' + property.StorageName + '<br/>' + property.UsedQty + '/' + property.TotalQty
           }
@@ -89,8 +90,14 @@ export default {
               width: 20,
               overflow: 'breakAll',
               formatter: function (params) {
+                // 物件本身顯示的內容
                 let property = params.data
-                return property.StorageID + '\n' + property.StorageName
+                let showData = property.StorageID
+                if (property.StorageName) {
+                  showData += '\n' + property.StorageName
+                }
+                showData += '\n' + property.UsedQty + '/' + property.TotalQty
+                return showData
               }
             },
             emphasis: {
@@ -135,7 +142,8 @@ export default {
         border: '1px solid',
         'background-size': 'contain',
         'background-repeat': 'no-repeat',
-        'background-image': `url('${this.searchContent.imageUrl}')`
+        'background-image': `url('${this.searchContent.imageUrl}')`,
+        'background-color': 'black'
       }
       return cssprop
     }
@@ -269,9 +277,7 @@ export default {
           this.searchContent.Layer = 'Row'
           break
         case 'Row':
-          this.searchContent.Grid = property.StorageID
-          this.searchContent.Layer = 'Grid'
-          break
+          return
         case 'Grid':
           return
       }
@@ -311,7 +317,7 @@ export default {
 .stockMapOption{
   position: absolute;
   left: 0px;
-  bottom:0px;
+  top:30px;
   color: yellow;
   font-size: 20px;
   -webkit-text-stroke: 1px black; /* width and color */
