@@ -1,13 +1,13 @@
 <template>
   <div>
     <div id="eChart" :style="cssProps"></div>
-    <el-button-group class="stockMapOption">
+    <!-- <el-button-group class="stockMapOption">
       <el-button type="info" @click="goback">{{$t('__goback')}}</el-button>
       <span>{{'x:'+mouseLocation.x+' y:'+mouseLocation.y}}</span>
       <span>{{rectangleSize}}</span>
       <p/>
       <span>{{searchContent}}</span>
-    </el-button-group>
+    </el-button-group> -->
   </div>
 </template>
 
@@ -50,27 +50,31 @@ export default {
           text: ['High', 'Low'], // 文本，默认为数值文本
           calculable: true
         },
-        // toolbox: {
-        //   show: true,
-        //   itemSize: 24,
-        //   iconStyle: {
-        //     borderColor: '#ffffff',
-        //     borderWidth: 2
-        //   },
-        //   emphasis: {
-        //     iconStyle: {
-        //       borderColor: '#ffffff',
-        //       borderWidth: 2
-        //     }
-        //   },
-        //   left: 'left',
-        //   top: 'top',
-        //   feature: {
-        //     restore: {
-        //       title: '還原'
-        //     }
-        //   }
-        // },
+        toolbox: {
+          show: true,
+          itemSize: 48,
+          left: 'left',
+          top: 'top',
+          emphsis: {
+            iconStyle: {
+              color: '#ffffff',
+              borderColor: '#ffffff',
+              borderWidth: 2,
+              borderType: 'solid',
+              shadowColor: '#ffffff'
+            }
+          },
+          feature: {
+            myTool1: {
+              show: true,
+              title: this.$t('__goback'),
+              icon: 'image://' + require('@/assets/baseline_arrow_back_ios_black_48dp.png'),
+              onclick: () => {
+                this.goback()
+              }
+            }
+          }
+        },
         series: [
           {
             type: 'map',
@@ -317,7 +321,7 @@ export default {
 .stockMapOption{
   position: absolute;
   left: 0px;
-  top:30px;
+  top: 0px;
   color: yellow;
   font-size: 20px;
   -webkit-text-stroke: 1px black; /* width and color */
