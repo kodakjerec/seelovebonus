@@ -54,13 +54,8 @@
           </el-form-item>
         </el-col>
         <el-col :span="12">
-          <el-form-item :label="$t('__grade')">
-            <el-select v-model="form.Grade" value-key="value" :placeholder="$t('__plzChoice')" :disabled="disableForm.Grade">
-              <el-option v-for="item in ddlGrade" :key="item.ID" :label="item.Value" :value="item.ID">
-                <span style="float: left">{{ item.Value }}</span>
-                <span style="float: right; color: #8492a6; font-size: 13px">{{ item.ID }}</span>
-              </el-option>
-            </el-select>
+          <el-form-item :label="$t('__jobTitle')">
+            <el-input v-model="form.Grade" maxlength="5" show-word-limit></el-input>
           </el-form-item>
         </el-col>
       </el-form-item>
@@ -76,8 +71,8 @@
         </el-col>
         <el-col :span="14">
           <el-form-item :label="$t('__parent')+$t('__id')" prop="ParentID">
-            <el-select v-model="form.ParentID" value-key="value" :placeholder="$t('__plzChoice')" :disabled="!(form.CompanyID !== null)">
-              <el-option v-for="item in ddlParentID" :key="item.ID" :label="item.Value" :value="item.ID">
+            <el-select v-model="form.ParentID" filterable value-key="value" :placeholder="$t('__plzChoice')" :disabled="!(form.CompanyID !== null)">
+              <el-option v-for="item in ddlParentID" :key="item.ID" :label="item.ID+' '+item.Value" :value="item.ID">
                 <span style="float: left">{{ item.Value }}</span>
                 <span style="float: right; color: #8492a6; font-size: 13px">{{ item.ID }}</span>
               </el-option>

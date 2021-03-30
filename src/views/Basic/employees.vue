@@ -39,7 +39,7 @@
         :label="$t('__employee')+$t('__name')">
       </el-table-column>
       <el-table-column
-        prop="GradeName"
+        prop="Grade"
         :label="$t('__grade')">
       </el-table-column>
       <el-table-column

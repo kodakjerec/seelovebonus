@@ -63,7 +63,13 @@ export default {
   async mounted () {
     await this.preLoading()
     this.userPermission()
-    this.findCompany('83799375')
+
+    let response = this.$api.local.getDropdownList({ type: 'DefCompanyID' })
+    let defaultCompany = response[0]
+
+    if (defaultCompany) {
+      this.findCompany(defaultCompany.Value)
+    }
   },
   methods: {
     // 讀入系統清單

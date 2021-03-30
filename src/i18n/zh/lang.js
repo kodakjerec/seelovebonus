@@ -80,6 +80,7 @@ export default {
   __address: '住址',
   __parent: '上層',
   __grade: '職等',
+  __jobTitle: '職稱',
   __companyID: '隸屬公司',
   __product: '商品',
   __accounting: '會計',

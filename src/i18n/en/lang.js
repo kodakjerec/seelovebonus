@@ -80,6 +80,7 @@ export default {
   __address: 'Address',
   __parent: 'Parent',
   __grade: 'Grade',
+  __jobTitle: 'Job Title',
   __companyID: 'Company ID',
   __product: 'Product',
   __accounting: 'Accounting',
