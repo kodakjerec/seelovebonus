@@ -1,13 +1,35 @@
 <template>
   <div>
     <div id="eChart" :style="cssProps"></div>
-    <!-- <el-button-group class="stockMapOption">
-      <el-button type="info" @click="goback">{{$t('__goback')}}</el-button>
-      <span>{{'x:'+mouseLocation.x+' y:'+mouseLocation.y}}</span>
-      <span>{{rectangleSize}}</span>
-      <p/>
-      <span>{{searchContent}}</span>
-    </el-button-group> -->
+    <el-dialog :visible="showSearchPanel" center @close="cancel">
+      <el-form label-width="10vw">
+        <el-form-item :label="$t('__now')">
+          <el-input v-model="searchContent.Layer"></el-input>
+        </el-form-item>
+        <el-form-item :label="$t('__building')">
+          <el-input v-model="searchContent.Building"></el-input>
+        </el-form-item>
+        <el-form-item :label="$t('__floor')">
+          <el-input v-model="searchContent.Floor"></el-input>
+        </el-form-item>
+        <el-form-item :label="$t('__area')">
+          <el-input v-model="searchContent.Area"></el-input>
+        </el-form-item>
+        <el-form-item :label="$t('__column')">
+          <el-input v-model="searchContent.Column"></el-input>
+        </el-form-item>
+        <el-form-item :label="$t('__row')">
+          <el-input v-model="searchContent.Row"></el-input>
+        </el-form-item>
+        <el-form-item :label="$t('__grid')">
+          <el-input v-model="searchContent.Grid"></el-input>
+        </el-form-item>
+      </el-form>
+      <div slot="footer">
+        <el-button @click="cancel">{{$t('__cancel')}}</el-button>
+        <el-button type="primary" @click="search">{{$t('__save')}}</el-button>
+      </div>
+    </el-dialog>
   </div>
 </template>
 
@@ -53,16 +75,15 @@ export default {
         toolbox: {
           show: true,
           itemSize: 48,
+          orient: 'vertical',
           left: 'left',
           top: 'top',
-          emphsis: {
-            iconStyle: {
-              color: '#ffffff',
-              borderColor: '#ffffff',
-              borderWidth: 2,
-              borderType: 'solid',
-              shadowColor: '#ffffff'
-            }
+          iconStyle: {
+            color: '#ffffff',
+            borderColor: '#ffffff',
+            borderWidth: 2,
+            borderType: 'solid',
+            shadowColor: '#ffffff'
           },
           feature: {
             myTool1: {
@@ -71,6 +92,14 @@ export default {
               icon: 'image://' + require('@/assets/baseline_arrow_back_ios_black_48dp.png'),
               onclick: () => {
                 this.goback()
+              }
+            },
+            myTool2: {
+              show: true,
+              title: this.$t('__search'),
+              icon: 'image://' + require('@/assets/outline_search_black_48dp.png'),
+              onclick: () => {
+                this.showSearchPanelFunction()
               }
             }
           }
@@ -135,7 +164,8 @@ export default {
         yAxis: 0,
         Length: 0,
         Width: 0
-      } // 圖形尺寸
+      }, // 圖形尺寸
+      showSearchPanel: false
     }
   },
   computed: {
@@ -313,6 +343,19 @@ export default {
       let item = this.searchStack.pop()
       this.searchContent = item
       await this.preLoading()
+    },
+    // 查詢
+    search: async function () {
+      await this.preLoading()
+    },
+    // ===== 查詢平台 =====
+    // 秀出查詢平台
+    showSearchPanelFunction: function () {
+      this.showSearchPanel = true
+    },
+    // 隱藏
+    cancel: function () {
+      this.showSearchPanel = false
     }
   }
 }
