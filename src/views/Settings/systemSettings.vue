@@ -52,6 +52,10 @@
         :label="$t('__systemSettingsParentID')">
       </el-table-column>
       <el-table-column
+        prop="ParentValue"
+        :label="$t('__name')">
+      </el-table-column>
+      <el-table-column
         prop="ID"
         :label="$t('__systemSettingsID')">
       </el-table-column>
