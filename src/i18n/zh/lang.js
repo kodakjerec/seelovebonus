@@ -170,9 +170,9 @@ export default {
   __building: '棟別',
   __floor: '樓層',
   __area: '區域',
-  __row: '列',
-  __column: '排',
-  __location: '位',
+  __column: '列',
+  __row: '排',
+  __grid: '位',
   __length: '長',
   __width: '寬',
   __height: '高',
@@ -248,6 +248,9 @@ export default {
   __bankBranch: '分行',
   __bankAccountNo: '帳號',
   __bankUserName: '戶名',
+  __hide: '隱藏',
+  __show: '顯示',
+  __menu: '選單',
   // 請在上方新增字串
   // 以下為 警告
   __warning: '警告',

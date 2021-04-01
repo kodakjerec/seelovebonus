@@ -14,18 +14,18 @@
       </el-form-item>
       <!-- 批次新增 -->
       <template v-if="dialogType === 'new' && batchInsert === true">
-        <el-form-item :label="$t('__row')">
+        <el-form-item :label="$t('__column')">
           <el-col :span="6">
             <el-input v-model="form.RowStart" @change="batchInsertChange"></el-input>
           </el-col>
           <el-col :span="6">
-            <el-form-item :label="$t('__column')">
+            <el-form-item :label="$t('__row')">
               <el-input-number v-model="form.ColumnStart" :min="1" :max="99" @change="batchInsertChange"></el-input-number>
               <el-input-number v-model="form.ColumnEnd" :min="1" :max="99" @change="batchInsertChange"></el-input-number>
             </el-form-item>
           </el-col>
           <el-col :span="6">
-            <el-form-item :label="$t('__location')">
+            <el-form-item :label="$t('__grid')">
               <el-input-number v-model="form.LocationStart" :min="1" :max="99" @change="batchInsertChange"></el-input-number>
               <el-input-number v-model="form.LocationEnd" :min="1" :max="99" @change="batchInsertChange"></el-input-number>
             </el-form-item>

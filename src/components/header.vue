@@ -1,5 +1,5 @@
 <template>
-  <el-header height="30px" class="floatingMenu">
+  <el-header height="30px" class="floatingMenu" v-if="showMenu">
     <el-menu
       :default-active="activeIndex2"
       mode="horizontal"
@@ -25,8 +25,14 @@
         <i class="el-icon-switch-button"></i>
         <span>{{$t('__logout')}}</span>
       </el-menu-item>
+      <el-menu-item class="defineCSS_Hide">
+        <el-tag @click="showMenu=false" effect="dark" type="info">{{$t('__hide')}}</el-tag>
+      </el-menu-item>
     </el-menu>
   </el-header>
+  <div class="floatingButton" v-else>
+    <el-tag @click="showMenu=true" effect="dark" type="info">{{$t('__show')}}</el-tag>
+  </div>
 </template>
 
 <script>
@@ -37,7 +43,8 @@ export default {
   name: 'Header',
   data () {
     return {
-      activeIndex2: '1'
+      activeIndex2: '1',
+      showMenu: true
     }
   },
   computed: {
@@ -71,10 +78,22 @@ export default {
 }
 .defineCSS {
   position: absolute;
-  right:0px;
+  padding: 0px;
+  right:60px;
   i {
     color: yellow
   }
+}
+.defineCSS_Hide {
+  position: absolute;
+  padding: 0px;
+  right:0px;
+}
+.floatingButton {
+  position: fixed;
+  right: 0px;
+  top: 0px;
+  z-index: 2;
 }
 </style>
 <style lang="scss">

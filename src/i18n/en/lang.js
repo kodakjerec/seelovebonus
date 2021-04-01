@@ -170,9 +170,9 @@ export default {
   __building: 'Building',
   __floor: 'Floor',
   __area: 'Area',
-  __row: 'Row',
   __column: 'Column',
-  __location: 'Location',
+  __row: 'Row',
+  __grid: 'Location',
   __length: 'Length',
   __width: 'Width',
   __height: 'Height',
@@ -248,6 +248,9 @@ export default {
   __bankBranch: 'Branch',
   __bankAccountNo: 'Account No',
   __bankUserName: 'Name',
+  __hide: 'Hide',
+  __show: 'Show',
+  __menu: 'Menu',
   // 請在上方新增字串
   // 以下為 警告
   __warning: 'Warning',
