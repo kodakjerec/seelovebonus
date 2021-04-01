@@ -325,7 +325,8 @@ export default {
         let response2 = await this.$api.stock.findStorageID({
           ProductID: this.fromAnzaOrder.ProductID,
           Purpose: '',
-          Qty: 1
+          Qty: 1,
+          StorageID: this.anzaOrder.StorageID
         })
         this.ddlStorageID = response2.data.result
       }
