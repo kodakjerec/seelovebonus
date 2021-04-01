@@ -3,31 +3,46 @@
     <div id="eChart" :style="cssProps"></div>
     <el-dialog :visible="showSearchPanel" center @close="cancel">
       <el-form label-width="10vw">
-        <el-form-item :label="$t('__now')">
-          <el-input v-model="searchContent.Layer"></el-input>
+        <el-form-item :label="$t('__now')+'Layer'">
+          <el-input v-model="searchContent.Layer" disabled></el-input>
         </el-form-item>
         <el-form-item :label="$t('__building')">
-          <el-input v-model="searchContent.Building"></el-input>
+          <el-select v-model="searchContent.Building" value-key="value" :placeholder="$t('__plzChoice')" @change="ddlBuildingChange">
+            <el-option v-for="item in ddlBuilding" :key="item.ID" :label="item.ID+' '+item.Value" :value="item.ID">
+              <span style="float: left">{{ item.Value+'('+item.Counts+')' }}</span>
+              <span style="float: right; color: #8492a6; font-size: 13px">{{ item.ID }}</span>
+            </el-option>
+          </el-select>
         </el-form-item>
         <el-form-item :label="$t('__floor')">
-          <el-input v-model="searchContent.Floor"></el-input>
+          <el-select v-model="searchContent.Floor" value-key="value" :placeholder="$t('__plzChoice')" @change="ddlFloorChange" :disabled="!searchContent.Building">
+            <el-option v-for="item in ddlFloor" :key="item.ID" :label="item.ID+' '+item.Value" :value="item.ID">
+              <span style="float: left">{{ item.Value+'('+item.Counts+')' }}</span>
+              <span style="float: right; color: #8492a6; font-size: 13px">{{ item.ID }}</span>
+            </el-option>
+          </el-select>
         </el-form-item>
         <el-form-item :label="$t('__area')">
-          <el-input v-model="searchContent.Area"></el-input>
+          <el-select v-model="searchContent.Area" value-key="value" :placeholder="$t('__plzChoice')" @change="ddlAreaChange" :disabled="!searchContent.Floor">
+            <el-option v-for="item in ddlArea" :key="item.ID" :label="item.ID+' '+item.Value" :value="item.ID">
+              <span style="float: left">{{ item.Value+'('+item.Counts+')' }}</span>
+              <span style="float: right; color: #8492a6; font-size: 13px">{{ item.ID }}</span>
+            </el-option>
+          </el-select>
         </el-form-item>
         <el-form-item :label="$t('__column')">
-          <el-input v-model="searchContent.Column"></el-input>
+          <el-input v-model="searchContent.Column" :disabled="!searchContent.Area"></el-input>
         </el-form-item>
         <el-form-item :label="$t('__row')">
-          <el-input v-model="searchContent.Row"></el-input>
+          <el-input v-model="searchContent.Row" :disabled="!searchContent.Column"></el-input>
         </el-form-item>
         <el-form-item :label="$t('__grid')">
-          <el-input v-model="searchContent.Grid"></el-input>
+          <el-input v-model="searchContent.Grid" :disabled="!searchContent.Row"></el-input>
         </el-form-item>
       </el-form>
       <div slot="footer">
-        <el-button @click="cancel">{{$t('__cancel')}}</el-button>
-        <el-button type="primary" @click="search">{{$t('__save')}}</el-button>
+        <el-button @click="closeSearchPanel">{{$t('__cancel')}}</el-button>
+        <el-button type="primary" @click="searchSearchPanel">{{$t('__search')}}</el-button>
       </div>
     </el-dialog>
   </div>
@@ -165,16 +180,24 @@ export default {
         Length: 0,
         Width: 0
       }, // 圖形尺寸
-      showSearchPanel: false
+      // ===== 查詢平台 =====
+      showSearchPanel: false,
+      searchPanelClick: false,
+      // 下拉式選單
+      ddlBuilding: [],
+      ddlFloorOrigin: [],
+      ddlFloor: [],
+      ddlAreaOrigin: [],
+      ddlArea: []
     }
   },
   computed: {
     cssProps: function () {
       let cssprop = {
-        width: '100vw',
-        height: 'calc(100vh - 50px)',
+        width: '98vw',
+        height: '98vh',
         border: '1px solid',
-        'background-size': 'contain',
+        'background-size': '100% 100%',
         'background-repeat': 'no-repeat',
         'background-image': `url('${this.searchContent.imageUrl}')`,
         'background-color': 'black'
@@ -184,11 +207,11 @@ export default {
   },
   async mounted () {
     // 根據螢幕尺寸, 重新調整地圖大小
-    this.resizePer.x = document.body.clientWidth / this.baseWidth
-    this.resizePer.y = document.body.clientHeight / this.baseHeight
+    this.resizePer.x = window.innerWidth / this.baseWidth
+    this.resizePer.y = window.innerHeight / this.baseHeight
     this.option.series[0].boundingCoords = [
       [0, 0],
-      [document.body.clientWidth, document.body.clientHeight - this.othersHeight]
+      [window.innerWidth, window.innerHeight]
     ]
 
     // eChart
@@ -201,9 +224,19 @@ export default {
 
     // data
     await this.preLoading()
+    await this.search()
   },
   methods: {
     preLoading: async function () {
+      let response = null
+      response = await this.$api.basic.getDropdownList({ type: 'building' })
+      this.ddlBuilding = response.data.result
+      response = await this.$api.basic.getDropdownList({ type: 'floor' })
+      this.ddlFloorOrigin = response.data.result
+      response = await this.$api.basic.getDropdownList({ type: 'area' })
+      this.ddlAreaOrigin = response.data.result
+    },
+    search: async function () {
       // reset
       this.usaJson.features = []
       this.option.series[0].data = []
@@ -249,11 +282,11 @@ export default {
             type: 'Polygon',
             'coordinates': [
               [
-                [row.xAxis * this.resizePer.x, row.yAxis * this.resizePer.y], // 起點(左下)
-                [(row.xAxis + row.Length) * this.resizePer.x, row.yAxis * this.resizePer.y], // 右下
-                [(row.xAxis + row.Length) * this.resizePer.x, (row.yAxis + row.Width) * this.resizePer.y], // 右上
-                [row.xAxis * this.resizePer.x, (row.yAxis + row.Width) * this.resizePer.y], // 左上
-                [row.xAxis * this.resizePer.x, row.yAxis * this.resizePer.y] // 回到原點
+                [row.xAxis * this.resizePer.x, (this.baseHeight - row.yAxis) * this.resizePer.y], // 起點(左上)
+                [(row.xAxis + row.Length) * this.resizePer.x, (this.baseHeight - row.yAxis) * this.resizePer.y], // 右上
+                [(row.xAxis + row.Length) * this.resizePer.x, (this.baseHeight - row.yAxis - row.Width) * this.resizePer.y], // 右下
+                [row.xAxis * this.resizePer.x, (this.baseHeight - row.yAxis - row.Width) * this.resizePer.y], // 左下
+                [row.xAxis * this.resizePer.x, (this.baseHeight - row.yAxis) * this.resizePer.y] // 回到原點
               ]
             ]
           },
@@ -311,16 +344,19 @@ export default {
           this.searchContent.Layer = 'Row'
           break
         case 'Row':
-          return
         case 'Grid':
+          // 取消之前的結果
+          this.searchStack.pop()
+          this.$message('沒有下一層了')
           return
       }
-      await this.preLoading()
+      await this.search()
     },
     // 滑鼠移動
     mouseMove: function (params) {
       this.mouseLocation.x = Math.round(params.offsetX)
       this.mouseLocation.y = Math.round(params.offsetY)
+      console.log(this.mouseLocation.x, this.mouseLocation.y)
     },
     // 按下滑鼠
     // 按下滑鼠起來
@@ -340,22 +376,68 @@ export default {
       if (this.searchStack.length === 0) {
         return
       }
+      // 還原 目前的搜尋
       let item = this.searchStack.pop()
       this.searchContent = item
-      await this.preLoading()
-    },
-    // 查詢
-    search: async function () {
-      await this.preLoading()
+
+      await this.search()
     },
     // ===== 查詢平台 =====
     // 秀出查詢平台
     showSearchPanelFunction: function () {
+      // 紀錄 開啟前數據
+      // 儲存目前的搜尋
+      this.searchStack.push(JSON.parse(JSON.stringify(this.searchContent)))
+
       this.showSearchPanel = true
     },
     // 隱藏
     cancel: function () {
+      if (!this.searchPanelClick) {
+        // 還原 開啟前數據
+        // 還原 目前的搜尋
+        let item = this.searchStack.pop()
+        console.log(item)
+        this.searchContent = item
+      }
+
+      this.searchPanelClick = false
       this.showSearchPanel = false
+    },
+    // 查詢平台 關閉 按鈕
+    closeSearchPanel: function () {
+      this.showSearchPanel = false
+    },
+    // 查詢平台的搜尋
+    searchSearchPanel: async function () {
+      await this.search()
+
+      this.searchPanelClick = true
+      this.showSearchPanel = false
+    },
+    // ===== 下拉是選單 =====
+    ddlBuildingChange: function (isRefresh = true) {
+      this.ddlFloor = this.ddlFloorOrigin.filter(item => { return item.ParentID === this.searchContent.Building })
+      this.searchContent.Layer = 'Building'
+      this.searchContent.Floor = ''
+      this.searchContent.Area = ''
+      this.searchContent.Column = ''
+      this.searchContent.Row = ''
+      this.searchContent.Grid = ''
+    },
+    ddlFloorChange: function (isRefresh = true) {
+      this.ddlArea = this.ddlAreaOrigin.filter(item => { return item.ParentID === this.searchContent.Floor })
+      this.searchContent.Layer = 'Floor'
+      this.searchContent.Area = ''
+      this.searchContent.Column = ''
+      this.searchContent.Row = ''
+      this.searchContent.Grid = ''
+    },
+    ddlAreaChange: function (isRefresh = true) {
+      this.searchContent.Layer = 'Area'
+      this.searchContent.Column = ''
+      this.searchContent.Row = ''
+      this.searchContent.Grid = ''
     }
   }
 }
