@@ -7,12 +7,12 @@
       <el-form-item v-if="!disableForm.StorageID" :label="$t('__anzaStorageID')" prop="StorageID">
         <el-col :span="8">
           <el-select
-            allow-create
             default-first-option
             filterable
-            @visible-change="checkStorageID"
+            remote
             v-model="anzaOrder.StorageID"
             :disabled="disableForm.StorageID"
+            :remote-method="remoteMethod"
             :placeholder="$t('__plzChoice')"
             style="display:block">
             <el-option v-for="item in ddlStorageID" :key="item.ID" :label="item.ID+' '+item.Value" :value="item.ID">
@@ -21,6 +21,8 @@
             </el-option>
           </el-select>
         </el-col>
+        <i v-show="storageIDCheck==='success'" style="color:green" class='el-icon-success'></i>
+        <i v-show="storageIDCheck==='error'" style="color:red" class='el-icon-error'></i>
         {{$t('__anzaOperateWarning')}}
       </el-form-item>
       <!-- 申請安座日 -->
@@ -272,6 +274,7 @@ export default {
       },
       myTitle: '',
       postData: [],
+      storageIDCheck: '', // 驗證儲位正確性
       // 下拉是選單
       ddlStorageID: [],
       ddlLunarTime: [],
@@ -410,13 +413,19 @@ export default {
       }
     },
     // ===== 表單功能 =====
-    // 檢查輸入正確性
-    checkStorageID: function (event) {
-      // 強制轉為大寫
-      this.anzaOrder.StorageID = this.anzaOrder.StorageID.toUpperCase()
+    // 即時查詢可用儲位
+    remoteMethod: async function (query) {
+      if (query.length >= 5) {
+        // 強制轉為大寫
+        query = query.toUpperCase()
 
-      if (event === false) {
-        this.$refs['form'].validate((valid) => {})
+        let response2 = await this.$api.stock.findStorageID({
+          ProductID: this.fromAnzaOrder.ProductID,
+          Purpose: '',
+          Qty: 1,
+          StorageID: query
+        })
+        this.ddlStorageID = response2.data.result
       }
     },
     checkValidate: function () {

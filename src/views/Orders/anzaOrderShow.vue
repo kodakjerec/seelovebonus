@@ -47,7 +47,7 @@
           </template>
         </el-table-column>
         <el-table-column
-          width="130px">
+          width="130">
           <template slot-scope="scope">
           <div v-for="item in scope.row.OrderIDList" :key="item.OrderID">
               {{item.OrderID}}<template v-if="item.ModifyType!==''">{{'('+item.ModifyType+')'}}</template>
@@ -56,7 +56,7 @@
         </el-table-column>
         <!-- 安座作業 -->
         <el-table-column
-          width="160px">
+          width="160">
           <template slot="header">
             <el-button
             type="text"
@@ -79,7 +79,7 @@
         </el-table-column>
         <el-table-column
           prop="AnzaOrderID"
-          width="100px">
+          width="120">
           <template slot="header">
             {{$t('__anzaOrder')}}
             <table-sort-arrow :prop="'AnzaOrderID'" :sortable="sortable"></table-sort-arrow>
@@ -116,7 +116,8 @@
             {{scope.row.BirthLunarDate+' '+scope.row.BirthLunarTimeName}}
           </template>
         </el-table-column>
-        <el-table-column>
+        <el-table-column
+          width="200">
           <template slot="header">
             {{$t('__tel')}}<br/>
             {{$t('__address')}}
