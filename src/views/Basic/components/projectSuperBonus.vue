@@ -1,5 +1,5 @@
 <template>
-  <el-dialog :title="myTitle" :visible="dialogShow" center width="80vw" @close="cancel">
+  <el-dialog :title="myTitle" :visible="dialogShow" center width="80vw" top="5vh" @close="cancel">
     <el-table
     :data="subList"
     stripe
@@ -42,7 +42,7 @@
         </template>
       </el-table-column>
     </el-table>
-    <div slot="footer" class="dialog-footer">
+    <div slot="footer">
       <el-button @click="cancel">{{$t('__cancel')}}</el-button>
       <el-button v-show="buttonsShowUser.save" type="primary" @click="beforeSave">{{$t('__save')}}</el-button>
     </div>

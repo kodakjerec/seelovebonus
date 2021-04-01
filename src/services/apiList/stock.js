@@ -2,6 +2,7 @@ import { post } from '@/services/utils'
 
 export default {
   stock: {
+    // inbound Order
     inboundOrderShow: ({ keyword }) => {
       let rawData = { keyword }
       return post('/stock/inboundOrderShow', rawData).then(data => {
@@ -37,6 +38,7 @@ export default {
         return data
       })
     },
+    // stock
     stockNowShow: ({ searchContent, pagination }) => {
       let rawData = { searchContent, pagination }
       return post('/stock/stockNowShow', rawData).then(data => {
@@ -58,15 +60,16 @@ export default {
         return data
       })
     },
-    mapGet: ({ Building, Floor, Area }) => {
-      let rawData = { Building, Floor, Area }
+    // map
+    mapGet: ({ Building, Floor, Area, Column, Row, Grid, StorageID }) => {
+      let rawData = { Building, Floor, Area, Column, Row, Grid, StorageID }
       return post('/stock/mapGet', rawData).then(data => {
         console.log(`%c <<< Response(/rest/stock/mapGet)⤵ `, 'background-color: #E0455D; color: white; font-size: 14px; font-weight: bold;', data)
         return data
       })
     },
-    mapGetImage: ({ Building, Floor, Area }) => {
-      let rawData = { Building, Floor, Area }
+    mapGetImage: ({ Building, Floor, Area, Column, Row, Grid, StorageID }) => {
+      let rawData = { Building, Floor, Area, Column, Row, Grid, StorageID }
       return post('/stock/mapGetImage', rawData).then(data => {
         console.log(`%c <<< Response(/rest/stock/mapGetImage)⤵ `, 'background-color: #E0455D; color: white; font-size: 14px; font-weight: bold;', data)
         return data
@@ -79,7 +82,11 @@ export default {
         return data
       })
     },
+    // others
     getDropdownList: ({ type, keyword }) => {
+      if (!keyword) {
+        keyword = ''
+      }
       let rawData = { type, keyword }
       console.log('%c >>> getDropdownList: ', 'background-color: blue; color: white; font-size: 14px; font-weight: bold;', rawData)
       return post('/stock/getDropdownList', rawData).then(data => {
@@ -88,6 +95,9 @@ export default {
       })
     },
     getObject: ({ type, keyword }) => {
+      if (!keyword) {
+        keyword = ''
+      }
       let rawData = { type, keyword }
       console.log('%c >>> getObject: ', 'background-color: blue; color: white; font-size: 14px; font-weight: bold;', rawData)
       return post('/stock/getObject', rawData).then(data => {

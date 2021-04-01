@@ -41,7 +41,7 @@
     :dialog-type="dialogType"
     :dialog-show="dialogShow"
     :certificate1="certificate1"
-    :orderID="orderID"
+    :fromOrderID="fromOrderID"
     :buttonsShowUser="buttonsShowUser"
     @dialog-cancel="dialogCancel"
     @dialog-save="dialogSave"></new-form>
@@ -60,7 +60,7 @@ export default {
   props: {
     buttonsShow: { type: Object },
     buttonsShowUser: { type: Object },
-    orderID: { type: String },
+    fromOrderID: { type: String },
     isShow: { type: Number }
   },
   data () {
@@ -73,12 +73,12 @@ export default {
     }
   },
   watch: {
-    orderID: function (newValue) {
+    fromOrderID: function (newValue) {
       if (newValue) { this.preLoading() }
     }
   },
   mounted () {
-    if (this.orderID) { this.preLoading() }
+    if (this.fromOrderID) { this.preLoading() }
   },
   methods: {
     formatterDate: function (row, column, cellValue, index) {
@@ -94,7 +94,7 @@ export default {
       }
     },
     preLoading: async function () {
-      let responseRecords = await this.$api.orders.certificate1Show({ keyword: this.orderID })
+      let responseRecords = await this.$api.orders.certificate1Show({ keyword: this.fromOrderID })
       this.certificate1Show = responseRecords.data.result
       if (this.certificate1Show && this.certificate1Show.length > 0) {
         this.activeName = '1'

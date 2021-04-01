@@ -13,7 +13,7 @@ export default new Vuex.Store({
     userName: '',
     menuList: [],
     userProg: [],
-    version: '2021.02.22.1',
+    version: '2021.03.22.1',
     globalSettings: [],
     // 不用紀錄到localStorage
     loadingCounter: 0,

@@ -56,10 +56,10 @@
               {{scope.row.Address}}
             </template>
           </el-table-column>
-          <!-- 預定安座日期 -->
+          <!-- 申請安座日期 -->
           <el-table-column>
             <template slot="header">
-              {{$t('__scheduled')+$t('__anza')+$t('__date')}}<br/>{{$t('__real')+$t('__anza')+$t('__date')}}
+              {{$t('__anzaScheduledDate')}}<br/>{{$t('__real')+$t('__anza')+$t('__date')}}
             </template>
             <template slot-scope="scope">
               {{formatterDate(null,null,scope.row.ScheduledDate,null)}}<br/>
@@ -70,11 +70,19 @@
               </template>
             </template>
           </el-table-column>
+          <!-- 安座準備期 -->
+          <el-table-column
+            prop="PrepareDate"
+            :label="$t('__anzaPrepareDate')"
+            :formatter="formatterDate">
+          </el-table-column>
+          <!-- 到期日 -->
           <el-table-column
             prop="ExpirationDate"
             :label="this.$t('__expire') + this.$t('__date')"
             :formatter="formatterDate">
           </el-table-column>
+          <!-- 圓滿日期 -->
           <el-table-column
             prop="CompleteDate"
             :formatter="formatterDate">
@@ -94,7 +102,7 @@ import { formatMoney, formatDate } from '@/setup/format.js'
 export default {
   name: 'AnzaOrderList',
   props: {
-    orderID: { type: String },
+    fromOrderID: { type: String },
     isShow: { type: Number }
   },
   data () {
@@ -107,12 +115,12 @@ export default {
     }
   },
   watch: {
-    orderID: function (newValue) {
+    fromOrderID: function (newValue) {
       if (newValue) { this.preLoading() }
     }
   },
   mounted () {
-    if (this.orderID) { this.preLoading() }
+    if (this.fromOrderID) { this.preLoading() }
   },
   methods: {
     formatterDate: function (row, column, cellValue, index) {
@@ -128,7 +136,7 @@ export default {
       }
     },
     preLoading: async function () {
-      let responseRecords = await this.$api.orders.anzaOrderShow({ keyword: this.orderID })
+      let responseRecords = await this.$api.orders.anzaOrderShow({ keyword: this.fromOrderID })
       this.anzaOrderList = responseRecords.data.result
       if (this.anzaOrderList && this.anzaOrderList.length > 0) {
         this.activeName = '1'

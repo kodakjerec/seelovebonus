@@ -22,7 +22,7 @@
       </el-table-column>
     </el-table>
     <!-- 修改小視窗 -->
-    <el-dialog :title="myTitle2" :visible="dialogShow" center width="80vw" @close="cancel">
+    <el-dialog :title="myTitle2" :visible="dialogShow" center width="80vw" top="5vh" @close="cancel">
       <h2>{{step.StepName}}</h2>
       <el-table
         :data="step.subList"
@@ -93,7 +93,7 @@
           </template>
         </el-table-column>
       </el-table>
-      <div slot="footer" class="dialog-footer">
+      <div slot="footer">
         <el-button @click="cancel">{{$t('__cancel')}}</el-button>
         <el-button type="primary" @click="beforeSave">{{$t('__save')}}</el-button>
       </div>

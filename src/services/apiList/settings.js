@@ -3,20 +3,7 @@ import crypto from '@/services/crypto' // 加解密
 
 export default {
   settings: {
-    getObject: ({ type, keyword }) => {
-      let rawData = { type, keyword }
-      return post('/settings/getObject', rawData).then(data => {
-        console.log(`%c <<< Response(/rest/settings/getObject)⤵ `, 'background-color: #E0455D; color: white; font-size: 14px; font-weight: bold;', data)
-        return data
-      })
-    },
-    getDropdownList: ({ type, keyword }) => {
-      let rawData = { type, keyword }
-      return post('/settings/getDropdownList', rawData).then(data => {
-        console.log(`%c <<< Response(/rest/settings/getDropdownList)⤵ `, 'background-color: #E0455D; color: white; font-size: 14px; font-weight: bold;', data)
-        return data
-      })
-    },
+    // user
     getUserProg: ({ UserID }) => {
       UserID = crypto.encrypt(UserID)
       let rawData = { UserID }
@@ -52,6 +39,7 @@ export default {
         return data
       })
     },
+    // group Program List
     groupProgListDel: ({ GroupID, Row }) => {
       let rawData = { GroupID, Row }
       return post('/settings/groupProgListDel', rawData).then(data => {
@@ -73,6 +61,7 @@ export default {
         return data
       })
     },
+    // group
     groupNew: ({ GroupID, Name }) => {
       let rawData = { GroupID, Name }
       return post('/settings/groupNew', rawData).then(data => {
@@ -87,6 +76,7 @@ export default {
         return data
       })
     },
+    // settings
     settingsNew: ({ form }) => {
       let rawData = { form }
       return post('/settings/settingsNew', rawData).then(data => {
@@ -108,6 +98,7 @@ export default {
         return data
       })
     },
+    // announce
     announcementShow: ({ keyword }) => {
       let rawData = { keyword }
       return post('/settings/announcementShow', rawData).then(data => {
@@ -133,6 +124,27 @@ export default {
       let rawData = { form }
       return post('/settings/announcementDelete', rawData).then(data => {
         console.log(`%c <<< Response(/rest/settings/announcementDelete)⤵ `, 'background-color: #E0455D; color: white; font-size: 14px; font-weight: bold;', data)
+        return data
+      })
+    },
+    // others
+    getDropdownList: ({ type, keyword }) => {
+      if (!keyword) {
+        keyword = ''
+      }
+      let rawData = { type, keyword }
+      return post('/settings/getDropdownList', rawData).then(data => {
+        console.log(`%c <<< Response(/rest/settings/getDropdownList)⤵ `, 'background-color: #E0455D; color: white; font-size: 14px; font-weight: bold;', data)
+        return data
+      })
+    },
+    getObject: ({ type, keyword }) => {
+      if (!keyword) {
+        keyword = ''
+      }
+      let rawData = { type, keyword }
+      return post('/settings/getObject', rawData).then(data => {
+        console.log(`%c <<< Response(/rest/settings/getObject)⤵ `, 'background-color: #E0455D; color: white; font-size: 14px; font-weight: bold;', data)
         return data
       })
     }

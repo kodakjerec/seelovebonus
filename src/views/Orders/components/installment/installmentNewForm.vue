@@ -1,5 +1,5 @@
 <template>
-  <el-dialog :title="myTitle" :visible="dialogShow" center width="80vw" @close="cancel">
+  <el-dialog :title="myTitle" :visible="dialogShow" center width="80vw" top="5vh" @close="cancel">
     <el-form ref="form" :model="form" :rules="rules" label-width="10vw" label-position="right">
       <el-form-item :label="$t('__installment')+$t('__name')">
         <el-col :span="16">
@@ -67,7 +67,7 @@
           <el-input v-model="form.Memo" maxlength="100" show-word-limit></el-input>
       </el-form-item>
     </el-form>
-    <div slot="footer" class="dialog-footer">
+    <div slot="footer">
       <el-button @click="cancel">{{$t('__cancel')}}</el-button>
       <el-button v-show="buttonsShowUser.save" type="primary" @click="checkValidate">{{$t('__save')}}</el-button>
     </div>
@@ -83,13 +83,13 @@ export default {
     dialogType: { type: String, default: 'new' },
     dialogShow: { type: Boolean, default: false },
     installment: { type: Object },
-    orderID: { type: String },
+    fromOrderID: { type: String },
     buttonsShowUser: { type: Object }
   },
   data () {
     return {
       form: {
-        OrderID: this.orderID,
+        OrderID: this.fromOrderID,
         Seq: 0,
         InstallmentName: '',
         ScheduledDate: '',

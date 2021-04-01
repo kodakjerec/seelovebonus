@@ -1,5 +1,5 @@
 <template>
-  <el-dialog :title="myTitle" :visible="dialogShow" center width="80vw" @close="cancel">
+  <el-dialog :title="myTitle" :visible="dialogShow" center width="80vw" top="5vh" @close="cancel">
     <el-form ref="form" :model="form" :rules="rules" label-width="10vw" label-position="right">
       <el-form-item>
         <el-switch
@@ -14,18 +14,18 @@
       </el-form-item>
       <!-- 批次新增 -->
       <template v-if="dialogType === 'new' && batchInsert === true">
-        <el-form-item :label="$t('__row')">
+        <el-form-item :label="$t('__column')">
           <el-col :span="6">
             <el-input v-model="form.RowStart" @change="batchInsertChange"></el-input>
           </el-col>
           <el-col :span="6">
-            <el-form-item :label="$t('__column')">
+            <el-form-item :label="$t('__row')">
               <el-input-number v-model="form.ColumnStart" :min="1" :max="99" @change="batchInsertChange"></el-input-number>
               <el-input-number v-model="form.ColumnEnd" :min="1" :max="99" @change="batchInsertChange"></el-input-number>
             </el-form-item>
           </el-col>
           <el-col :span="6">
-            <el-form-item :label="$t('__location')">
+            <el-form-item :label="$t('__grid')">
               <el-input-number v-model="form.LocationStart" :min="1" :max="99" @change="batchInsertChange"></el-input-number>
               <el-input-number v-model="form.LocationEnd" :min="1" :max="99" @change="batchInsertChange"></el-input-number>
             </el-form-item>
@@ -131,7 +131,7 @@
           <el-input v-model="form.Memo" maxlength="200" show-word-limit></el-input>
       </el-form-item>
     </el-form>
-    <div slot="footer" class="dialog-footer">
+    <div slot="footer">
       <el-button v-show="dialogType === 'edit' &&  buttonsShowUser.delete" type="danger" @click="deleteItem">{{$t('__delete')}}</el-button>
       <el-button @click="cancel">{{$t('__cancel')}}</el-button>
       <el-button v-show="buttonsShowUser.save" type="primary" @click="checkValidate">{{$t('__save')}}</el-button>

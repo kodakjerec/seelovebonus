@@ -32,13 +32,13 @@ import { formatDate } from '@/setup/format.js'
 export default {
   name: 'Certificate1ForOrderNew',
   props: {
-    orderID: { type: String },
+    fromOrderID: { type: String },
     parentQty: { type: Number }
   },
   data () {
     return {
       form: {
-        OrderID: this.orderID,
+        OrderID: this.fromOrderID,
         Certificate1: '',
         PrintCount: 0,
         Status: '1',
@@ -51,7 +51,7 @@ export default {
     }
   },
   watch: {
-    orderID: function (newValue) {
+    fromOrderID: function (newValue) {
       if (newValue) {
         this.form.OrderID = newValue
       }

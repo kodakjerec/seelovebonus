@@ -1,13 +1,78 @@
 <template>
-  <el-dialog :title="myTitle" :visible="dialogShow" center width="80vw" @close="cancel">
+  <el-dialog :title="myTitle" :visible="dialogShow" center width="80vw" top="5vh" @close="cancel">
     <el-form ref="form" :model="anzaOrder" :rules="rules" label-width="10vw" label-position="right">
-    <h2>{{$t('__anzaOrder')+'：'}}{{fromAnzaOrder.AnzaOrderID}}</h2>
+      <h2>{{$t('__anzaOrder')+'：'}}{{fromAnzaOrder.AnzaOrderID}}</h2>
+      <el-divider>{{$t('__anzaOperation')}}</el-divider>
+      <!-- 儲位 -->
+      <el-form-item v-if="!disableForm.StorageID" :label="$t('__anzaStorageID')" prop="StorageID">
+        <el-col :span="8">
+          <el-select
+            allow-create
+            default-first-option
+            filterable
+            @visible-change="checkStorageID"
+            v-model="anzaOrder.StorageID"
+            :disabled="disableForm.StorageID"
+            :placeholder="$t('__plzChoice')"
+            style="display:block">
+            <el-option v-for="item in ddlStorageID" :key="item.ID" :label="item.ID+' '+item.Value" :value="item.ID">
+              <span style="float: left">{{ item.Value }}</span>
+              <span style="float: right; color: #8492a6; font-size: 13px">{{ item.ID }}</span>
+            </el-option>
+          </el-select>
+        </el-col>
+        {{$t('__anzaOperateWarning')}}
+      </el-form-item>
+      <!-- 申請安座日 -->
+      <el-form-item v-if="operateType==='modify'" :label="$t('__anzaScheduledDate')" prop="ScheduledDate">
+        <el-date-picker
+          v-model="anzaOrder.ScheduledDate"
+          :placeholder="$t('__plzChoice')+$t('__date')"
+          value-format="yyyy-MM-dd">
+        </el-date-picker>
+      </el-form-item>
+      <!-- 安座日期 -->
+      <el-form-item v-if="operateType==='anza'" :label="$t('__real') + $t('__anza') + $t('__date')" prop="RealDate">
+        <el-date-picker
+          v-model="anzaOrder.RealDate"
+          :placeholder="$t('__plzChoice')+$t('__date')"
+          value-format="yyyy-MM-dd">
+        </el-date-picker>
+      </el-form-item>
+      <!-- 圓滿日期 -->
+      <el-form-item v-if="operateType==='complete'" :label="$t('__yuanman') + $t('__date')" prop="CompleteDate">
+        <el-date-picker
+          v-model="anzaOrder.CompleteDate"
+          :placeholder="$t('__plzChoice')+$t('__date')"
+          value-format="yyyy-MM-dd">
+        </el-date-picker>
+      </el-form-item>
+      <el-divider>{{$t('__anzaCustomer')}}</el-divider>
       <!-- 安座人 -->
       <input-customer
+        v-if="operateType==='modify'"
         :label="$t('__anzaCustomer')"
         :disabled="disableForm.CustomerID"
         :fromCustomerID="anzaOrder.CustomerID"
         @findID="findID"></input-customer>
+      <!-- 客戶名稱 -->
+      <el-form-item
+        v-else
+        :label="$t('__anzaCustomer')">
+        <el-col :span="4">
+          <el-input v-model="form.ID" disabled></el-input>
+        </el-col>
+        <el-col :span="10">
+          <el-form-item :label="$t('__customer')+$t('__name')">
+          <el-input v-model="form.Name" maxlength="40" show-word-limit disabled></el-input>
+          </el-form-item>
+        </el-col>
+        <el-col :span="10">
+          <el-form-item :label="$t('__english')+$t('__name')">
+            <el-input v-model="form.NameEnglish" maxlength="40" show-word-limit disabled></el-input>
+          </el-form-item>
+        </el-col>
+      </el-form-item>
       <!-- 個資 -->
       <!-- 性別 -->
       <el-form-item :label="$t('__gender')">
@@ -31,7 +96,7 @@
         </el-col>
       </el-form-item>
       <!-- 出生日期 -->
-      <el-form-item :label="$t('__birth')+'('+$t('__solarCalendar')+')'">
+      <el-form-item :label="$t('__birth')">
         <el-col :span="4">
           <el-form-item>
             <el-date-picker
@@ -81,48 +146,43 @@
           </el-form-item>
         </el-col>
       </el-form-item>
-      <!-- 住址 -->
-      <el-form-item :label="$t('__address')">
-        <el-input v-model="form.Address" maxlength="100" show-word-limit disabled></el-input>
-      </el-form-item>
-      <!-- 儲位 -->
-      <el-form-item v-if="!disableForm.StorageID" :label="$t('__anzaStorageID')" prop="StorageID">
-        <el-col :span="8">
-          <el-select
-            allow-create
-            default-first-option
-            filterable
-            @visible-change="checkStorageID"
-            v-model="anzaOrder.StorageID"
-            :disabled="disableForm.StorageID"
-            :placeholder="$t('__plzChoice')"
-            style="display:block">
-            <el-option v-for="item in ddlStorageID" :key="item.ID" :label="item.ID+' '+item.Value" :value="item.ID">
+      <!-- 國家etc -->
+      <el-form-item :label="$t('__country')">
+        <el-col :span="4">
+          <el-select v-model="form.Country" value-key="value" :placeholder="$t('__plzChoice')" disabled>
+            <el-option v-for="item in ddlCountry" :key="item.ID" :label="item.Value" :value="item.ID">
               <span style="float: left">{{ item.Value }}</span>
               <span style="float: right; color: #8492a6; font-size: 13px">{{ item.ID }}</span>
             </el-option>
           </el-select>
         </el-col>
-        {{$t('__anzaOperateWarning')}}
+        <el-col :span="8">
+          <el-form-item :label="$t('__city')">
+            <el-select v-model="form.City" value-key="value" :placeholder="$t('__plzChoice')" disabled>
+              <el-option v-for="item in ddlCity" :key="item.ID" :label="item.Value" :value="item.ID">
+                <span style="float: left">{{ item.Value }}</span>
+                <span style="float: right; color: #8492a6; font-size: 13px">{{ item.ID }}</span>
+              </el-option>
+            </el-select>
+          </el-form-item>
+        </el-col>
+        <el-col :span="12">
+          <el-form-item :label="$t('__post')">
+            <el-select v-model="form.Post" value-key="value" :placeholder="$t('__plzChoice')" disabled>
+              <el-option v-for="item in ddlPost" :key="item.ID" :label="item.Value" :value="item.ID">
+                <span style="float: left">{{ item.Value }}</span>
+                <span style="float: right; color: #8492a6; font-size: 13px">{{ item.ID }}</span>
+              </el-option>
+            </el-select>
+          </el-form-item>
+        </el-col>
       </el-form-item>
-      <!-- 安座日期 -->
-      <el-form-item v-if="operateType==='anza'" :label="$t('__real') + $t('__anza') + $t('__date')" prop="RealDate">
-        <el-date-picker
-          v-model="anzaOrder.RealDate"
-          :placeholder="$t('__plzChoice')+$t('__date')"
-          value-format="yyyy-MM-dd">
-        </el-date-picker>
-      </el-form-item>
-      <!-- 圓滿日期 -->
-      <el-form-item v-if="operateType==='complete'" :label="$t('__yuanman') + $t('__date')" prop="CompleteDate">
-        <el-date-picker
-          v-model="anzaOrder.CompleteDate"
-          :placeholder="$t('__plzChoice')+$t('__date')"
-          value-format="yyyy-MM-dd">
-        </el-date-picker>
+      <!-- 住址 -->
+      <el-form-item :label="$t('__address')">
+        <el-input v-model="form.Address" maxlength="100" show-word-limit disabled></el-input>
       </el-form-item>
     </el-form>
-    <div slot="footer" class="dialog-footer">
+    <div slot="footer">
       <el-button @click="cancel">{{$t('__cancel')}}</el-button>
       <el-button type="primary" @click="checkValidate">{{$t('__ok')}}</el-button>
     </div>
@@ -173,7 +233,8 @@ export default {
         CustomerID: '',
         StorageID: '',
         RealDate: '',
-        CompleteDate: ''
+        CompleteDate: '',
+        ScheduledDate: ''
       },
       // 客戶基本資料 -- 抄襲 customerNewForm.vue
       form: {
@@ -216,10 +277,14 @@ export default {
         CompleteDate: [{ required: true, message: this.$t('__pleaseInput'), trigger: 'blur' }]
       },
       myTitle: '',
+      postData: [],
       // 下拉是選單
       ddlStorageID: [],
       ddlLunarTime: [],
-      ddlGender: []
+      ddlGender: [],
+      ddlCountry: [],
+      ddlCity: [],
+      ddlPost: []
     }
   },
   mounted () {
@@ -229,6 +294,7 @@ export default {
     this.anzaOrder.StorageID = this.fromAnzaOrder.StorageID
     this.anzaOrder.RealDate = this.fromAnzaOrder.RealDate
     this.anzaOrder.CompleteDate = this.fromAnzaOrder.CompleteDate
+    this.anzaOrder.ScheduledDate = this.fromAnzaOrder.ScheduledDate
 
     switch (this.operateType) {
       case 'modify':
@@ -257,6 +323,7 @@ export default {
       this.ddlLunarTime = response
       response = this.$api.local.getDropdownList({ type: 'Gender' })
       this.ddlGender = response
+      // 需要用到儲位才顯示
       if (!this.disableForm.StorageID) {
         let response2 = await this.$api.stock.findStorageID({
           ProductID: this.fromAnzaOrder.ProductID,
@@ -265,14 +332,33 @@ export default {
         })
         this.ddlStorageID = response2.data.result
       }
-      this.bringCustomer()
+      response = this.$api.local.getDropdownList({ type: 'District' })
+      this.postData = response
+      response = this.$api.local.getDropdownList({ type: 'Country' })
+      this.ddlCountry = response
+      response = this.$api.local.getDropdownList({ type: 'City' })
+      this.ddlCity = response
+
+      // 帶入客戶基本資料
+      await this.bringCustomer()
+
+      // 帶入換算後的日期
+      this.solarToLunar()
+      this.lunarToSolar()
+      // 郵遞區號
+      this.ddlCityChange()
     },
     // 找到客戶帳號
-    findID: function (value) {
-      this.anzaOrder.CustomerID = value
+    findID: function (result) {
+      let { ID } = result
+      this.anzaOrder.CustomerID = ID
       this.bringCustomer()
     },
     // ===== 客戶資料 =====
+    // 過濾郵遞區號
+    ddlCityChange: function () {
+      this.ddlPost = this.postData.filter(item => item.ParentID === this.form.City)
+    },
     // 帶入客戶資料-- 抄襲 customerNewForm.vue -- mounted ()
     bringCustomer: async function () {
       if (!this.anzaOrder.CustomerID) {
@@ -308,30 +394,31 @@ export default {
         this.form.BirthLunarTime = fromCustomer.BirthLunarTime
         this.form.BirthLunarLeap = fromCustomer.BirthLunarLeap
       }
-      // 帶入換算後的日期
-      this.solarToLunar()
-      this.lunarToSolar()
+      // 郵遞區號
+      this.ddlCityChange()
     },
     // 西元->農曆-- 抄襲 customerNewForm.vue
     solarToLunar: async function () {
-      if (this.form.Birth) {
-        let responseCustomer = await this.$api.basic.getObject({ type: 'solarToLunar', keyword: this.form.Birth })
-        let resultDate = responseCustomer.data.result[0].calcDate
-        resultDate = resultDate.replace(',0', '')
-        resultDate = resultDate.replace(',1', ' 閏月')
-        this.form.CalcBirthLunarDate = resultDate
+      if (!this.form.Birth) {
+        return
       }
+      let responseCustomer = await this.$api.basic.getObject({ type: 'solarToLunar', keyword: this.form.Birth })
+      let resultDate = responseCustomer.data.result[0].calcDate
+      resultDate = resultDate.replace(',0', '')
+      resultDate = resultDate.replace(',1', ' 閏月')
+      this.form.CalcBirthLunarDate = resultDate
     },
     // 農曆->西元, 閏月 由使用者選擇-- 抄襲 customerNewForm.vue
     lunarToSolar: async function () {
-      if (this.form.BirthLunarDate) {
-        if (this.form.BirthLunarLeap) {
-          let responseCustomer = await this.$api.basic.getObject({ type: 'lunarToSolarWithLeap', keyword: this.form.BirthLunarDate })
-          this.form.CalcBirth = responseCustomer.data.result[0].calcDate
-        } else {
-          let responseCustomer = await this.$api.basic.getObject({ type: 'lunarToSolar', keyword: this.form.BirthLunarDate })
-          this.form.CalcBirth = responseCustomer.data.result[0].calcDate
-        }
+      if (!this.form.BirthLunarDate) {
+        return
+      }
+      if (this.form.BirthLunarLeap) {
+        let responseCustomer = await this.$api.basic.getObject({ type: 'lunarToSolarWithLeap', keyword: this.form.BirthLunarDate })
+        this.form.CalcBirth = responseCustomer.data.result[0].calcDate
+      } else {
+        let responseCustomer = await this.$api.basic.getObject({ type: 'lunarToSolar', keyword: this.form.BirthLunarDate })
+        this.form.CalcBirth = responseCustomer.data.result[0].calcDate
       }
     },
     // ===== 表單功能 =====

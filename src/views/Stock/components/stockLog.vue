@@ -1,5 +1,5 @@
 <template>
-  <el-dialog :title="myTitle" :visible="dialogShow" center width="80vw" @close="cancel">
+  <el-dialog :title="myTitle" :visible="dialogShow" center width="80vw" top="5vh" @close="cancel">
     <el-form label-width="10vw" label-position="right">
       <h1>{{$t('__storageAddress')+' '+ stock.StorageID + ' ' + $t('__product')+' '+ stock.ProductID}}</h1>
       <el-table
@@ -19,7 +19,7 @@
         <el-table-column prop="Purpose" label="Purpose"></el-table-column>
       </el-table>
     </el-form>
-    <div slot="footer" class="dialog-footer">
+    <div slot="footer">
       <el-button @click="cancel">{{$t('__cancel')}}</el-button>
     </div>
   </el-dialog>

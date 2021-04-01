@@ -1,5 +1,5 @@
 <template>
-  <el-dialog :title="myTitle" :visible="dialogShow" center width="80vw" @close="cancel">
+  <el-dialog :title="myTitle" :visible="dialogShow" center width="80vw" top="5vh" @close="cancel">
     <el-form ref="invoiceForm" :model="form" :rules="rules" label-width="10vw" label-position="right">
       <el-form-item :label="$t('__orderID')">
           <el-input v-model="form.OrderID" disabled></el-input>
@@ -172,7 +172,7 @@
       </el-collapse-item>
     </el-collapse>
 
-    <div slot="footer" class="dialog-footer">
+    <div slot="footer">
       <br/>
       <el-button v-show="buttonsShow.delete && buttonsShowUser.delete" type="danger" @click="delInvoice">{{$t('__invalid')+$t('__invoice')}}</el-button>
       <el-button @click="cancel">{{$t('__cancel')}}</el-button>
@@ -192,7 +192,7 @@ export default {
     dialogType: { type: String, default: 'new' },
     dialogShow: { type: Boolean, default: false },
     invoiceHead: { type: Object },
-    orderID: { type: String },
+    fromOrderID: { type: String },
     buttonsShowUser: { type: Object }
   },
   data () {
@@ -215,7 +215,7 @@ export default {
       form: {
         InvoiceID: null,
         InvoiceDate: '',
-        OrderID: this.orderID,
+        OrderID: this.fromOrderID,
         Title: '',
         UniformNumber: '',
         Amount: null,

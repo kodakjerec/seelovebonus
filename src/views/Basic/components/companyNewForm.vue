@@ -1,5 +1,5 @@
 <template>
-  <el-dialog :title="myTitle" :visible="dialogShow" center width="80vw" @close="cancel">
+  <el-dialog :title="myTitle" :visible="dialogShow" center width="80vw" top="5vh" @close="cancel">
     <el-form ref="form" :model="form" :rules="rules" label-width="10vw" label-position="right">
       <el-form-item :label="$t('__company')+$t('__id')" prop="ID">
         <el-input v-model="form.ID" :placeholder="$t('__placeholderCompanyID')" :disabled="disableForm.ID" maxlength="20" show-word-limit></el-input>
@@ -97,7 +97,7 @@
         </el-col>
         <el-col :span="8">
           <el-form-item :label="$t('__city')">
-            <el-select v-model="form.City" value-key="value" :placeholder="$t('__plzChoice')" @change="ddlCityChange">
+            <el-select v-model="form.City" value-key="value" :placeholder="$t('__plzChoice')" @change="ddlCityChange" :disabled="!form.Country">
               <el-option v-for="item in ddlCity" :key="item.ID" :label="item.Value" :value="item.ID">
                 <span style="float: left">{{ item.Value }}</span>
                 <span style="float: right; color: #8492a6; font-size: 13px">{{ item.ID }}</span>
@@ -107,7 +107,7 @@
         </el-col>
         <el-col :span="12">
           <el-form-item :label="$t('__post')">
-            <el-select v-model="form.Post" value-key="value" :placeholder="$t('__plzChoice')">
+            <el-select v-model="form.Post" value-key="value" :placeholder="$t('__plzChoice')" :disabled="!form.City">
               <el-option v-for="item in ddlPost" :key="item.ID" :label="item.Value" :value="item.ID">
                 <span style="float: left">{{ item.Value }}</span>
                 <span style="float: right; color: #8492a6; font-size: 13px">{{ item.ID }}</span>
@@ -138,7 +138,7 @@
           </exceedingDateLog>
         </el-collapse-item>
     </el-collapse>
-    <div slot="footer" class="dialog-footer">
+    <div slot="footer">
       <el-button v-show="dialogType === 'edit' &&  buttonsShowUser.delete" type="danger" @click="deleteItem">{{$t('__delete')}}</el-button>
       <el-button @click.prevent="cancel">{{$t('__cancel')}}</el-button>
       <el-button v-show="buttonsShowUser.save" type="primary" @click.prevent="checkValidate">{{$t('__save')}}</el-button>
@@ -265,10 +265,6 @@ export default {
       response = this.$api.local.getDropdownList({ type: 'Status' })
       this.ddlStatus = response
 
-      let responseCustomers = await this.$api.basic.getDropdownList({ type: 'customers' })
-      this.customersData = responseCustomers.data.result
-      let responseEmployees = await this.$api.basic.getDropdownList({ type: 'customerEmployees' })
-      this.employeesData = responseEmployees.data.result
       let responseCompanies = await this.$api.basic.getDropdownList({ type: 'companyParent' })
       this.companiesData = responseCompanies.data.result
       response = this.$api.local.getDropdownList({ type: 'RefKind' })
@@ -287,12 +283,6 @@ export default {
     // 過濾推薦人種類
     ddlRefKindChange: function () {
       switch (this.form.refKind) {
-        case '1':
-          this.ddlReferrer = this.customersData
-          break
-        case '2':
-          this.ddlReferrer = this.employeesData
-          break
         case '3':
           this.ddlReferrer = this.companiesData
           break

@@ -1,5 +1,5 @@
 <template>
-  <el-dialog :title="myTitle" :visible="dialogShow" center width="80vw" @close="save">
+  <el-dialog :title="myTitle" :visible="dialogShow" center width="80vw" top="5vh" @close="save">
     <el-divider>{{$t('__orderID')+$t('__prefix')}}</el-divider>
     <el-checkbox-group v-model="searchContent.selectedOrdersType">
       <el-checkbox v-for="item in searchContent.OrdersType"

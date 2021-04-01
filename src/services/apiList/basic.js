@@ -2,6 +2,7 @@ import { getFile, post, uploadFile } from '@/services/utils'
 
 export default {
   basic: {
+    // company
     companiesShow: ({ keyword }) => {
       let rawData = { keyword }
       return post('/basic/companiesShow', rawData).then(data => {
@@ -30,6 +31,7 @@ export default {
         return data
       })
     },
+    // customer
     customersShow: ({ keyword }) => {
       let rawData = { keyword }
       return post('/basic/customersShow', rawData).then(data => {
@@ -58,6 +60,14 @@ export default {
         return data
       })
     },
+    customerSearch: ({ form }) => {
+      let rawData = { form }
+      return post('/basic/customerSearch', rawData).then(data => {
+        console.log(`%c <<< Response(/rest/basic/customerSearch)⤵ `, 'background-color: #E0455D; color: white; font-size: 14px; font-weight: bold;', data)
+        return data
+      })
+    },
+    // employee
     employeesShow: ({ keyword }) => {
       let rawData = { keyword }
       return post('/basic/employeesShow', rawData).then(data => {
@@ -86,6 +96,7 @@ export default {
         return data
       })
     },
+    // product
     productsShow: ({ keyword }) => {
       let rawData = { keyword }
       return post('/basic/productsShow', rawData).then(data => {
@@ -114,6 +125,7 @@ export default {
         return data
       })
     },
+    // product BOM
     productBOMNew: ({ form }) => {
       let rawData = { form }
       return post('/basic/productBOMNew', rawData).then(data => {
@@ -135,6 +147,7 @@ export default {
         return data
       })
     },
+    // project
     projectsShow: ({ keyword }) => {
       let rawData = { keyword }
       return post('/basic/projectsShow', rawData).then(data => {
@@ -163,6 +176,7 @@ export default {
         return data
       })
     },
+    // project Detail
     projectDetailNew: ({ form }) => {
       let rawData = { form }
       return post('/basic/projectDetailNew', rawData).then(data => {
@@ -184,6 +198,7 @@ export default {
         return data
       })
     },
+    // project Performance Bonus
     projectPBonusNew: ({ form }) => {
       let rawData = { form }
       return post('/basic/projectPBonusNew', rawData).then(data => {
@@ -205,6 +220,7 @@ export default {
         return data
       })
     },
+    // project Super Bonus
     projectSuperBonusNew: ({ form }) => {
       let rawData = { form }
       return post('/basic/projectSuperBonusNew', rawData).then(data => {
@@ -219,6 +235,14 @@ export default {
         return data
       })
     },
+    projectSuperBonusDelete: ({ form }) => {
+      let rawData = { form }
+      return post('/basic/projectSuperBonusDelete', rawData).then(data => {
+        console.log(`%c <<< Response(/rest/basic/projectSuperBonusDelete)⤵ `, 'background-color: #E0455D; color: white; font-size: 14px; font-weight: bold;', data)
+        return data
+      })
+    },
+    // project functions
     projectFunctionsUpdate: ({ form }) => {
       let rawData = { form }
       return post('/basic/projectFunctionsUpdate', rawData).then(data => {
@@ -226,6 +250,7 @@ export default {
         return data
       })
     },
+    // product functions
     productFunctionsUpdate: ({ form }) => {
       let rawData = { form }
       return post('/basic/productFunctionsUpdate', rawData).then(data => {
@@ -240,13 +265,7 @@ export default {
         return data
       })
     },
-    projectSuperBonusDelete: ({ form }) => {
-      let rawData = { form }
-      return post('/basic/projectSuperBonusDelete', rawData).then(data => {
-        console.log(`%c <<< Response(/rest/basic/projectSuperBonusDelete)⤵ `, 'background-color: #E0455D; color: white; font-size: 14px; font-weight: bold;', data)
-        return data
-      })
-    },
+    // storageAddress
     storageAddressUpdate: ({ form }) => {
       let rawData = { form }
       return post('/basic/storageAddressUpdate', rawData).then(data => {
@@ -289,7 +308,11 @@ export default {
         return data
       })
     },
+    // others
     getDropdownList: ({ type, keyword }) => {
+      if (!keyword) {
+        keyword = ''
+      }
       let rawData = { type, keyword }
       return post('/basic/getDropdownList', rawData).then(data => {
         console.log(`%c <<< Response(/rest/basic/getDropdownList)⤵ `, 'background-color: #E0455D; color: white; font-size: 14px; font-weight: bold;', data)
@@ -297,6 +320,9 @@ export default {
       })
     },
     getObject: ({ type, keyword }) => {
+      if (!keyword) {
+        keyword = ''
+      }
       let rawData = { type, keyword }
       return post('/basic/getObject', rawData).then(data => {
         console.log(`%c <<< Response(/rest/basic/getObject)⤵ `, 'background-color: #E0455D; color: white; font-size: 14px; font-weight: bold;', data)

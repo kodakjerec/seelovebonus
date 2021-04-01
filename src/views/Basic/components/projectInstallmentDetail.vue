@@ -1,5 +1,5 @@
 <template>
-  <el-dialog :title="myTitle" :visible="dialogShow" center width="80vw" @close="cancel" append-to-body>
+  <el-dialog :title="myTitle" :visible="dialogShow" center width="80vw" top="5vh" @close="cancel" append-to-body>
     <el-form>
       <el-table
         :data="projectInstallmentDetail"
@@ -14,7 +14,7 @@
         <el-table-column prop="IncreaseMonth" :label="'Increase Month'"></el-table-column>
       </el-table>
     </el-form>
-    <div slot="footer" class="dialog-footer">
+    <div slot="footer">
       <el-button @click="cancel">{{$t('__cancel')}}</el-button>
     </div>
   </el-dialog>
@@ -34,6 +34,9 @@ export default {
     }
   },
   async mounted () {
+    if (!this.projectID) {
+      return
+    }
     let responseRecords = await this.$api.basic.getObject({ type: 'projectInstallmentDetail', keyword: this.projectID })
     this.projectInstallmentDetail = responseRecords.data.result
   },

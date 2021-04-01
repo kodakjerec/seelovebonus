@@ -1,24 +1,22 @@
 <template>
-  <el-dialog :title="myTitle" :visible="dialogShow" center width="80vw" @close="cancel" append-to-body>
+  <el-dialog :title="myTitle" :visible="dialogShow" center width="80vw" top="5vh" @close="cancel" append-to-body>
     <el-form ref="form" :model="form" :rules="rules" label-width="10vw" label-position="right">
       <!-- 客戶代號 -->
-      <template>
-        <el-form-item :label="$t('__customer')+$t('__id')" required>
-          <el-col :span="4" v-show="!disableForm.ID">
-            <el-select v-model="IDType" value-key="value" :placeholder="$t('__plzChoice')">
-              <el-option v-for="item in ddlIDType" :key="item.ID" :label="item.Value" :value="item.ID">
-                <span style="float: left">{{ item.Value }}</span>
-                <span style="float: right; color: #8492a6; font-size: 13px">{{ item.ID }}</span>
-              </el-option>
-            </el-select>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item prop="ID">
-              <el-input v-model="form.ID" maxlength="20" show-word-limit :placeholder="getPlaceholderID()" :disabled="disableForm.ID || IDType==='3'"></el-input>
-            </el-form-item>
-          </el-col>
-        </el-form-item>
-      </template>
+      <el-form-item :label="$t('__customer')+$t('__id')" required>
+        <el-col :span="4" v-show="!disableForm.ID">
+          <el-select v-model="IDType" value-key="value" :placeholder="$t('__plzChoice')">
+            <el-option v-for="item in ddlIDType" :key="item.ID" :label="item.Value" :value="item.ID">
+              <span style="float: left">{{ item.Value }}</span>
+              <span style="float: right; color: #8492a6; font-size: 13px">{{ item.ID }}</span>
+            </el-option>
+          </el-select>
+        </el-col>
+        <el-col :span="12">
+          <el-form-item prop="ID">
+            <el-input v-model="form.ID" maxlength="20" show-word-limit :placeholder="getPlaceholderID()" :disabled="disableForm.ID || IDType==='3'"></el-input>
+          </el-form-item>
+        </el-col>
+      </el-form-item>
       <!-- 客戶名稱 -->
       <el-form-item :label="$t('__customer')+$t('__name')" prop="Name">
         <el-col :span="10">
@@ -61,7 +59,7 @@
           </el-form-item>
         </el-col>
       </el-form-item>
-      <!-- 性別 -->
+      <!-- 性別,電話 -->
       <el-form-item :label="$t('__gender')">
         <el-col :span="4">
           <el-select v-model="form.Gender" value-key="value" :placeholder="$t('__plzChoice')">
@@ -83,7 +81,7 @@
         </el-col>
       </el-form-item>
       <!-- 出生日期 -->
-      <el-form-item :label="$t('__birth')+'('+$t('__solarCalendar')+')'">
+      <el-form-item :label="$t('__birth')">
         <el-col :span="4">
           <el-form-item>
             <el-date-picker
@@ -109,7 +107,7 @@
         </el-col>
         <el-col :span="8">
           <el-form-item :label="$t('__lunarTime')">
-            <el-select v-model="form.BirthLunarTime" value-key="value" :placeholder="$t('__plzChoice')" @change="ddlCityChange">
+            <el-select v-model="form.BirthLunarTime" value-key="value" :placeholder="$t('__plzChoice')">
               <el-option v-for="item in ddlLunarTime" :key="item.ID" :label="item.Value" :value="item.ID">
                 <span style="float: left">{{ item.Value + '(' + item.Memo + ')' }}</span>
                 <span style="float: right; color: #8492a6; font-size: 13px">{{ item.ID }}</span>
@@ -130,7 +128,7 @@
         </el-col>
         <el-col :span="8">
           <el-form-item :label="$t('__city')">
-            <el-select v-model="form.City" value-key="value" :placeholder="$t('__plzChoice')" @change="ddlCityChange">
+            <el-select v-model="form.City" value-key="value" :placeholder="$t('__plzChoice')" @change="ddlCityChange" :disabled="!form.Country">
               <el-option v-for="item in ddlCity" :key="item.ID" :label="item.Value" :value="item.ID">
                 <span style="float: left">{{ item.Value }}</span>
                 <span style="float: right; color: #8492a6; font-size: 13px">{{ item.ID }}</span>
@@ -140,7 +138,7 @@
         </el-col>
         <el-col :span="12">
           <el-form-item :label="$t('__post')">
-            <el-select v-model="form.Post" value-key="value" :placeholder="$t('__plzChoice')">
+            <el-select v-model="form.Post" value-key="value" :placeholder="$t('__plzChoice')" :disabled="!form.City">
               <el-option v-for="item in ddlPost" :key="item.ID" :label="item.Value" :value="item.ID">
                 <span style="float: left">{{ item.Value }}</span>
                 <span style="float: right; color: #8492a6; font-size: 13px">{{ item.ID }}</span>
@@ -220,7 +218,7 @@
       </el-collapse>
       <!-- 以上為法定代理人 -->
     </el-form>
-    <div slot="footer" class="dialog-footer">
+    <div slot="footer">
       <el-button v-show="dialogType === 'edit' &&  buttonsShowUser.delete" type="danger" @click="deleteItem">{{$t('__delete')}}</el-button>
       <el-button @click="cancel">{{$t('__cancel')}}</el-button>
       <el-button v-show="buttonsShowUser.save" type="primary" @click="checkValidate">{{$t('__save')}}</el-button>
@@ -300,7 +298,7 @@ export default {
         refKind: null,
         Referrer: null,
         BirthLunarDate: null,
-        BirthLunarTime: null,
+        BirthLunarTime: '13',
         BirthLunarLeap: null,
         // 顯示用
         CalcBirthLunarDate: '',
@@ -355,7 +353,9 @@ export default {
 
         // 如果是安座單來源, 自動帶入業務
         if (this.fromData && this.fromData.type === 'anzaNewCustomer') {
-          this.form.Referrer = this.fromData.buyer.Referrer
+          if (this.fromData.buyer.Referrer) {
+            this.form.Referrer = this.fromData.buyer.Referrer
+          }
           // 預設系統產生客戶代號
           this.IDType = '3'
         }

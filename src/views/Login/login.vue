@@ -116,7 +116,6 @@ export default {
         UserID: this.form.UserID,
         Password: this.form.Password
       })
-
       // 成功登入
       if (response.headers['code'] === '200') {
         this.$store.dispatch('setAuth', {
@@ -147,13 +146,20 @@ export default {
 
         this.lock = false
       }
+      this.lock = false
     },
-    // 檢查版本
+    // 檢查版本, 比伺服器新則不檢查
     checkVersion: async function () {
       let response = await this.$api.login.version()
       let dbVersion = response.data.result[0].Value
-      if (dbVersion !== this.$store.state.version) {
-        errorMessage(this.$t('__versionError'), this.$t('__warning'))
+      for (let i = 0; i < dbVersion.length; i++) {
+        let dbChar = dbVersion[i].slice(-1)
+        let nowChar = this.$store.state.version[i].slice(-1)
+        if (dbChar !== nowChar) {
+          if (parseInt(dbChar, 10) > parseInt(nowChar, 10)) {
+            errorMessage(this.$t('__versionError') + '<br/><h1>New:' + dbVersion + '</h1>' + '<br/>Now:' + this.$store.state.version, this.$t('__warning'))
+          }
+        }
       }
     },
     // 按下Enter檢核登入

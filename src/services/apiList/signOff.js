@@ -31,6 +31,9 @@ export default {
       })
     },
     getObject: ({ type, keyword }) => {
+      if (!keyword) {
+        keyword = ''
+      }
       let rawData = { type, keyword }
       return post('/signOff/getObject', rawData).then(data => {
         console.log(`%c <<< Response(/rest/signOff/getObject)⤵ `, 'background-color: #E0455D; color: white; font-size: 14px; font-weight: bold;', data)

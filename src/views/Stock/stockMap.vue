@@ -1,11 +1,35 @@
 <template>
   <div>
     <div id="eChart" :style="cssProps"></div>
-    <el-button-group class="stockMapOption">
-      <el-button type="info" @click="goback">{{$t('__goback')}}</el-button>
-      <span>{{'x:'+mouseLocation.x+' y:'+mouseLocation.y}}</span>
-      <span>{{rectangleSize}}</span>
-    </el-button-group>
+    <el-dialog :visible="showSearchPanel" center @close="cancel">
+      <el-form label-width="10vw">
+        <el-form-item :label="$t('__now')">
+          <el-input v-model="searchContent.Layer"></el-input>
+        </el-form-item>
+        <el-form-item :label="$t('__building')">
+          <el-input v-model="searchContent.Building"></el-input>
+        </el-form-item>
+        <el-form-item :label="$t('__floor')">
+          <el-input v-model="searchContent.Floor"></el-input>
+        </el-form-item>
+        <el-form-item :label="$t('__area')">
+          <el-input v-model="searchContent.Area"></el-input>
+        </el-form-item>
+        <el-form-item :label="$t('__column')">
+          <el-input v-model="searchContent.Column"></el-input>
+        </el-form-item>
+        <el-form-item :label="$t('__row')">
+          <el-input v-model="searchContent.Row"></el-input>
+        </el-form-item>
+        <el-form-item :label="$t('__grid')">
+          <el-input v-model="searchContent.Grid"></el-input>
+        </el-form-item>
+      </el-form>
+      <div slot="footer">
+        <el-button @click="cancel">{{$t('__cancel')}}</el-button>
+        <el-button type="primary" @click="search">{{$t('__save')}}</el-button>
+      </div>
+    </el-dialog>
   </div>
 </template>
 
@@ -32,6 +56,7 @@ export default {
           showDelay: 0,
           transitionDuration: 0.2,
           formatter: function (params) {
+            // 滑鼠移到物件上面要顯示的內容
             let property = params.data
             return property.StorageID + ' ' + property.StorageName + '<br/>' + property.UsedQty + '/' + property.TotalQty
           }
@@ -47,27 +72,38 @@ export default {
           text: ['High', 'Low'], // 文本，默认为数值文本
           calculable: true
         },
-        // toolbox: {
-        //   show: true,
-        //   itemSize: 24,
-        //   iconStyle: {
-        //     borderColor: '#ffffff',
-        //     borderWidth: 2
-        //   },
-        //   emphasis: {
-        //     iconStyle: {
-        //       borderColor: '#ffffff',
-        //       borderWidth: 2
-        //     }
-        //   },
-        //   left: 'left',
-        //   top: 'top',
-        //   feature: {
-        //     restore: {
-        //       title: '還原'
-        //     }
-        //   }
-        // },
+        toolbox: {
+          show: true,
+          itemSize: 48,
+          orient: 'vertical',
+          left: 'left',
+          top: 'top',
+          iconStyle: {
+            color: '#ffffff',
+            borderColor: '#ffffff',
+            borderWidth: 2,
+            borderType: 'solid',
+            shadowColor: '#ffffff'
+          },
+          feature: {
+            myTool1: {
+              show: true,
+              title: this.$t('__goback'),
+              icon: 'image://' + require('@/assets/baseline_arrow_back_ios_black_48dp.png'),
+              onclick: () => {
+                this.goback()
+              }
+            },
+            myTool2: {
+              show: true,
+              title: this.$t('__search'),
+              icon: 'image://' + require('@/assets/outline_search_black_48dp.png'),
+              onclick: () => {
+                this.showSearchPanelFunction()
+              }
+            }
+          }
+        },
         series: [
           {
             type: 'map',
@@ -87,8 +123,14 @@ export default {
               width: 20,
               overflow: 'breakAll',
               formatter: function (params) {
+                // 物件本身顯示的內容
                 let property = params.data
-                return property.StorageID + '\n' + property.StorageName
+                let showData = property.StorageID
+                if (property.StorageName) {
+                  showData += '\n' + property.StorageName
+                }
+                showData += '\n' + property.UsedQty + '/' + property.TotalQty
+                return showData
               }
             },
             emphasis: {
@@ -106,6 +148,10 @@ export default {
         Building: '',
         Floor: '',
         Area: '',
+        Column: '',
+        Row: '',
+        Grid: '',
+        StorageID: '',
         imageUrl: '' // 背景URL
       },
       mouseLocation: {
@@ -118,7 +164,8 @@ export default {
         yAxis: 0,
         Length: 0,
         Width: 0
-      } // 圖形尺寸
+      }, // 圖形尺寸
+      showSearchPanel: false
     }
   },
   computed: {
@@ -129,7 +176,8 @@ export default {
         border: '1px solid',
         'background-size': 'contain',
         'background-repeat': 'no-repeat',
-        'background-image': `url('${this.searchContent.imageUrl}')`
+        'background-image': `url('${this.searchContent.imageUrl}')`,
+        'background-color': 'black'
       }
       return cssprop
     }
@@ -165,7 +213,11 @@ export default {
       let responseUrl = await this.$api.stock.mapGetImage({
         Building: this.searchContent.Building,
         Floor: this.searchContent.Floor,
-        Area: this.searchContent.Area })
+        Area: this.searchContent.Area,
+        Column: this.searchContent.Column,
+        Row: this.searchContent.Row,
+        Grid: this.searchContent.Grid,
+        StorageID: this.searchContent.StorageID })
       if (responseUrl.data.result[0].URL) {
         this.searchContent.imageUrl = 'http://' + seeloveNodeServer.ip + ':' + seeloveNodeServer.port + '/' + responseUrl.data.result[0].URL
       } else {
@@ -176,7 +228,11 @@ export default {
       let response1 = await this.$api.stock.mapGet({
         Building: this.searchContent.Building,
         Floor: this.searchContent.Floor,
-        Area: this.searchContent.Area })
+        Area: this.searchContent.Area,
+        Column: this.searchContent.Column,
+        Row: this.searchContent.Row,
+        Grid: this.searchContent.Grid,
+        StorageID: this.searchContent.StorageID })
       let mapData = response1.data.result
 
       let index = 0
@@ -204,6 +260,7 @@ export default {
           properties: property
         }
         // 地圖
+        console.log()
         this.usaJson.features.push(item)
 
         // 統計
@@ -246,6 +303,16 @@ export default {
           this.searchContent.Layer = 'Area'
           break
         case 'Area':
+          this.searchContent.Column = property.StorageID
+          this.searchContent.Layer = 'Column'
+          break
+        case 'Column':
+          this.searchContent.Row = property.StorageID
+          this.searchContent.Layer = 'Row'
+          break
+        case 'Row':
+          return
+        case 'Grid':
           return
       }
       await this.preLoading()
@@ -276,6 +343,19 @@ export default {
       let item = this.searchStack.pop()
       this.searchContent = item
       await this.preLoading()
+    },
+    // 查詢
+    search: async function () {
+      await this.preLoading()
+    },
+    // ===== 查詢平台 =====
+    // 秀出查詢平台
+    showSearchPanelFunction: function () {
+      this.showSearchPanel = true
+    },
+    // 隱藏
+    cancel: function () {
+      this.showSearchPanel = false
     }
   }
 }
@@ -284,7 +364,7 @@ export default {
 .stockMapOption{
   position: absolute;
   left: 0px;
-  bottom:0px;
+  top: 0px;
   color: yellow;
   font-size: 20px;
   -webkit-text-stroke: 1px black; /* width and color */

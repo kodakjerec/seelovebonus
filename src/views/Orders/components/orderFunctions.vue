@@ -16,7 +16,7 @@ export default {
   name: 'orderFunctions',
   props: {
     dialogType: { type: String, default: 'new' },
-    orderID: { type: String },
+    fromOrderID: { type: String },
     buttonsShowUser: { type: Object },
     projectFunctions: { type: Object }
   },
@@ -70,7 +70,7 @@ export default {
       }
 
       // 如果有舊資料, 填值
-      let responseCustomer = await this.$api.orders.getObject({ type: 'orderFunctons', keyword: this.orderID })
+      let responseCustomer = await this.$api.orders.getObject({ type: 'orderFunctons', keyword: this.fromOrderID })
       let fromData = responseCustomer.data.result
 
       fromData.forEach(row => {
@@ -123,7 +123,7 @@ export default {
     // 存檔前檢查
     beforeSave: async function () {
       let isSuccess = false
-      if (this.orderID === '') {
+      if (this.fromOrderID === '') {
         isSuccess = false
         return isSuccess
       }
@@ -140,7 +140,7 @@ export default {
         if (row.Value === '') { continue }
 
         // 代入
-        row.OrderID = this.orderID
+        row.OrderID = this.fromOrderID
 
         switch (row.Status) {
           case 'New':

@@ -1,5 +1,5 @@
 <template>
-  <el-dialog :title="myTitle" :visible="dialogShow" center width="80vw" @close="cancel">
+  <el-dialog :title="myTitle" :visible="dialogShow" center width="80vw" top="5vh" @close="cancel">
     <el-form label-width="10vw" label-position="right">
       <h1>{{$t('__orderID')+' '+ anzaOrder.OrderID + ' ' + $t('__anzaOrder')+' '+ anzaOrder.AnzaOrderID}}</h1>
       <el-table
@@ -9,7 +9,7 @@
         style="width: 100%">
         <el-table-column prop="CustomerID" :label="$t('__customer')+$t('__id')"></el-table-column>
         <el-table-column prop="StorageID" :label="$t('__anzaStorageID')"></el-table-column>
-        <el-table-column prop="ScheduledDate" :label="$t('__scheduled')+$t('__anza')+$t('__date')" :formatter="formatterDate"></el-table-column>
+        <el-table-column prop="ScheduledDate" :label="$t('__anzaScheduledDate')" :formatter="formatterDate"></el-table-column>
         <el-table-column prop="RealDate" :label="$t('__real')+$t('__anza')+$t('__date')" :formatter="formatterDate"></el-table-column>
         <el-table-column prop="ExpirationDate" :label="$t('__expire')+$t('__anza')+$t('__date')" :formatter="formatterDate"></el-table-column>
         <el-table-column prop="CompleteDate" :label="$t('__yuanman')+$t('__anza')+$t('__date')" :formatter="formatterDate"></el-table-column>
@@ -19,7 +19,7 @@
 
       </el-table>
     </el-form>
-    <div slot="footer" class="dialog-footer">
+    <div slot="footer">
       <el-button @click="cancel">{{$t('__cancel')}}</el-button>
     </div>
   </el-dialog>

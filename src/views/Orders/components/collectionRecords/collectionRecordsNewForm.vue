@@ -1,5 +1,5 @@
 <template>
-  <el-dialog :title="myTitle" :visible="dialogShow" center width="80vw" @close="cancel">
+  <el-dialog :title="myTitle" :visible="dialogShow" center width="80vw" top="5vh" @close="cancel">
     <el-form ref="form" :model="form" :rules="rules" label-width="10vw" label-position="right">
       <el-form-item :label="$t('__paymentMethod')" prop="PaymentMethod">
         <el-select v-model="form.PaymentMethod" value-key="value" :placeholder="$t('__plzChoice')" :disabled="disableForm.PaymentMethod">
@@ -108,7 +108,7 @@
         <div style="color:red" v-show="multipleSelection.length <= 0">{{$t('__pleaseSelectAtLeastOne')+$t('__installment')}}</div>
       </el-collapse-item>
     </el-collapse>
-    <div slot="footer" class="dialog-footer">
+    <div slot="footer">
       <el-button v-show="buttonsShow.delete && buttonsShowUser.delete" type="danger" @click="delRecord">{{$t('__delete')}}</el-button>
       <el-button @click="cancel">{{$t('__cancel')}}</el-button>
       <el-button v-show="buttonsShow.save && buttonsShowUser.save" type="primary" @click="checkValidate">{{$t('__save')}}</el-button>
@@ -138,13 +138,13 @@ export default {
     dialogType: { type: String, default: 'new' },
     dialogShow: { type: Boolean, default: false },
     collectionRecord: { type: Object },
-    orderID: { type: String },
+    fromOrderID: { type: String },
     buttonsShowUser: { type: Object }
   },
   data () {
     return {
       form: {
-        OrderID: this.orderID,
+        OrderID: this.fromOrderID,
         Seq: 0,
         InvoiceID: '',
         PaymentMethod: '1',
@@ -241,7 +241,7 @@ export default {
     // 讀取預設資料
     preLoading: async function () {
       // 預先帶入發票名稱
-      let response = await this.$api.orders.collectionRecordsFunctions({ type: 'collectionRecordsNewInvoiceName', OrderID: this.orderID, Seq: this.Seq })
+      let response = await this.$api.orders.collectionRecordsFunctions({ type: 'collectionRecordsNewInvoiceName', OrderID: this.fromOrderID, Seq: this.Seq })
       this.ddlInvoiceName = response.data.result
       if (this.dialogType === 'new') { this.form.InvoiceName = this.ddlInvoiceName[0].ID }
 

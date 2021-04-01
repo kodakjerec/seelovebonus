@@ -46,7 +46,7 @@
     :dialog-type="dialogType"
     :dialog-show="dialogShow"
     :invoiceHead="invoiceHead"
-    :orderID="orderID"
+    :fromOrderID="fromOrderID"
     :buttonsShowUser="buttonsShowUser"
     @dialog-cancel="dialogCancel"
     @dialog-save="dialogSave"></new-form>
@@ -63,9 +63,8 @@ export default {
     newForm
   },
   props: {
-    buttonsShow: { type: Object },
-    buttonsShowUser: { type: Object },
-    orderID: { type: String }
+    fromOrderID: { type: String },
+    fromOrderStatus: { type: String }
   },
   data () {
     return {
@@ -73,16 +72,35 @@ export default {
       dialogShow: false,
       invoiceHeadShow: [],
       invoiceHead: {},
-      activeName: ''
+      activeName: '',
+      // 使用者能看到的權限
+      buttonsShowUser: {
+        new: 0,
+        edit: 0,
+        save: 0,
+        delete: 0,
+        search: 0
+      },
+      // 系統目前狀態權限
+      buttonsShow: {
+        new: 1,
+        edit: 0,
+        save: 1,
+        delete: 0,
+        search: 1
+      }
     }
   },
   watch: {
-    orderID: function (newValue) {
+    fromOrderID: function (newValue) {
       if (newValue) { this.preLoading() }
     }
   },
   mounted () {
-    if (this.orderID) { this.preLoading() }
+    // 使用者權限
+    this.userPermission()
+
+    if (this.fromOrderID) { this.preLoading() }
   },
   methods: {
     formatterDate: function (row, column, cellValue, index) {
@@ -92,11 +110,44 @@ export default {
       return formatMoney(cellValue)
     },
     preLoading: async function () {
-      let responseRecords = await this.$api.orders.getObject({ type: 'invoiceHead', keyword: this.orderID })
+      let responseRecords = await this.$api.orders.getObject({ type: 'invoiceHead', keyword: this.fromOrderID })
       this.invoiceHeadShow = responseRecords.data.result
       if (this.invoiceHeadShow && this.invoiceHeadShow.length > 0) {
         this.activeName = '1'
       }
+
+      // 系統簽核過程權限
+      switch (this.fromOrderStatus) {
+        case '1':
+        case '2':
+        case '3':
+          this.buttonsShow = {
+            new: 1,
+            edit: 1,
+            save: 1,
+            delete: 1,
+            search: 1
+          }
+          break
+        default:
+          this.buttonsShow = {
+            new: 0,
+            edit: 0,
+            save: 0,
+            delete: 0,
+            search: 0
+          }
+          break
+      }
+    },
+    // 使用者權限
+    userPermission: async function () {
+      let progPermission = this.$store.state.userProg.filter(item => { return item.Path === '/Orders/Invoices' })[0]
+
+      this.buttonsShowUser.new = progPermission.fun1
+      this.buttonsShowUser.edit = progPermission.fun2
+      this.buttonsShowUser.save = progPermission.fun2
+      this.buttonsShowUser.delete = progPermission.fun3
     },
     handleClick: async function (row, column, event) {
       // 取得可以用的選單

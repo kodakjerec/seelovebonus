@@ -1,5 +1,5 @@
 <template>
-  <el-dialog :visible="dialogShow" center width="80vw" @close="cancel">
+  <el-dialog :visible="dialogShow" center width="80vw" top="5vh" @close="cancel">
     <el-upload
       ref="upload"
       :action="'123'"

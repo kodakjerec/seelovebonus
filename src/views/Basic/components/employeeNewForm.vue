@@ -1,6 +1,7 @@
 <template>
-  <el-dialog :title="myTitle" :visible="dialogShow" center width="80vw" @close="cancel">
+  <el-dialog :title="myTitle" :visible="dialogShow" center width="80vw" top="5vh" @close="cancel">
     <el-form ref="form" :model="form" :rules="rules" label-width="10vw" label-position="right">
+      <!-- 業務代號 -->
       <el-form-item :label="$t('__employee')+$t('__id')" required>
         <el-col :span="4" v-show="!disableForm.ID">
           <el-select v-model="IDType" value-key="value" :placeholder="$t('__plzChoice')">
@@ -16,6 +17,7 @@
           </el-form-item>
         </el-col>
       </el-form-item>
+      <!-- 名稱 -->
       <el-form-item :label="$t('__employee')+$t('__name')" prop="Name">
           <el-input v-model="form.Name" maxlength="40" show-word-limit></el-input>
       </el-form-item>
@@ -92,7 +94,7 @@
         </el-col>
         <el-col :span="8">
           <el-form-item :label="$t('__city')">
-            <el-select v-model="form.City" value-key="value" :placeholder="$t('__plzChoice')" @change="ddlCityChange">
+            <el-select v-model="form.City" value-key="value" :placeholder="$t('__plzChoice')" @change="ddlCityChange" :disabled="!form.Country">
               <el-option v-for="item in ddlCity" :key="item.ID" :label="item.Value" :value="item.ID">
                 <span style="float: left">{{ item.Value }}</span>
                 <span style="float: right; color: #8492a6; font-size: 13px">{{ item.ID }}</span>
@@ -102,7 +104,7 @@
         </el-col>
         <el-col :span="12">
           <el-form-item :label="$t('__post')">
-            <el-select v-model="form.Post" value-key="value" :placeholder="$t('__plzChoice')">
+            <el-select v-model="form.Post" value-key="value" :placeholder="$t('__plzChoice')" :disabled="!form.City">
               <el-option v-for="item in ddlPost" :key="item.ID" :label="item.Value" :value="item.ID">
                 <span style="float: left">{{ item.Value }}</span>
                 <span style="float: right; color: #8492a6; font-size: 13px">{{ item.ID }}</span>
@@ -126,7 +128,7 @@
         </el-select>
       </el-form-item>
     </el-form>
-    <div slot="footer" class="dialog-footer">
+    <div slot="footer">
       <el-button v-show="dialogType === 'edit' &&  buttonsShowUser.delete" type="danger" @click="deleteItem">{{$t('__delete')}}</el-button>
       <el-button @click="cancel">{{$t('__cancel')}}</el-button>
       <el-button v-show="buttonsShowUser.save" type="primary" @click="checkValidate">{{$t('__save')}}</el-button>
@@ -165,8 +167,12 @@ export default {
         case '1':
           checkValidate = await validate.validatePersonalID(rule, value, 'employee')
           break
-        default:
+        case '2':
           checkValidate = await validate.validatePassport(rule, value, 'employee')
+          break
+        case '3':
+          checkValidate = ''
+          break
       }
       if (checkValidate !== '') {
         callback(checkValidate)
@@ -343,7 +349,9 @@ export default {
         case 'new':
           let responseNew = await this.$api.basic.employeeNew({ form: this.form })
           if (responseNew.headers['code'] === '200') {
-            this.$alert(responseNew.data.result[0].message, responseNew.data.result[0].code)
+            let { code, message, ID } = responseNew.data.result[0]
+            this.form.ID = ID
+            this.$alert(message, code)
             isSuccess = true
           }
           break

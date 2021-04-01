@@ -48,7 +48,7 @@
 export default {
   name: 'orderStampArea',
   props: {
-    orderID: { type: String }
+    fromOrderID: { type: String }
   },
   data () {
     return {
@@ -56,13 +56,13 @@ export default {
     }
   },
   watch: {
-    orderID: function (newValue) {
+    fromOrderID: function (newValue) {
       this.preLoading()
     }
   },
   methods: {
     preLoading: async function () {
-      let responseStampShow = await this.$api.orders.getObject({ type: 'orderStampShow', keyword: this.orderID })
+      let responseStampShow = await this.$api.orders.getObject({ type: 'orderStampShow', keyword: this.fromOrderID })
       this.stampShow = responseStampShow.data.result
     }
   }

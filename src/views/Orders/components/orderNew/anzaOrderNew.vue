@@ -32,7 +32,7 @@
         </el-table-column>
         <el-table-column
           prop="ScheduledDate"
-          :label="$t('__scheduled')+$t('__anza')+$t('__date')">
+          :label="$t('__anzaScheduledDate')">
           <template slot-scope="scope">
             <el-date-picker
               v-model="scope.row[scope.column.property]"
@@ -70,16 +70,35 @@
         prop="CustomerID"
         :label="$t('__anzaCustomer')">
         <template slot-scope="scope">
-          <el-select v-model="scope.row[scope.column.property]" filterable value-key="value" :placeholder="$t('__plzChoice')">
-            <el-option v-for="item in ddlCustomer" :key="item.ID" :label="item.ID+' '+item.Value" :value="item.ID">
-              <span style="float: left">{{ item.Value }}</span>
-              <span style="float: right; color: #8492a6; font-size: 13px">{{ item.ID }}</span>
-            </el-option>
-          </el-select>
+          <!-- 安座人 -->
+          <input-customer
+            :fromCustomerID="scope.row.CustomerID"
+            :parent-object="scope.row"
+            @findID="findID"></input-customer>
         </template>
       </el-table-column>
       <!-- 個資 -->
       <el-table-column>
+        <template slot="header">
+          {{$t('__gender')}}<br/>
+          {{$t('__birth')+'('+$t('__solarCalendar')+')'}}<br/>
+          {{$t('__lunarDate')+'('+$t('__lunarCalendar')+')'+' '+$t('__lunarTime')}}
+        </template>
+        <template slot-scope="scope">
+          {{scope.row.GenderName}}<br/>
+          {{scope.row.Birth}}<br/>
+          {{scope.row.BirthLunarDate+' '+scope.row.BirthLunarTimeName}}
+        </template>
+      </el-table-column>
+      <el-table-column>
+        <template slot="header">
+          {{$t('__tel')}}<br/>
+          {{$t('__address')}}
+        </template>
+        <template slot-scope="scope">
+          {{scope.row.Tel}}<br/>
+          {{scope.row.AddressName}}
+        </template>
       </el-table-column>
       <!-- 數量 -->
       <el-table-column
@@ -89,10 +108,10 @@
           <el-input-number v-model="scope.row[scope.column.property]" @change="(currentValue, oldValue)=>{qtyChange(currentValue, oldValue, scope.row)}"></el-input-number>
         </template>
       </el-table-column>
-      <!-- 預定安座日 -->
+      <!-- 申請安座日 -->
       <el-table-column
         prop="ScheduledDate"
-        :label="$t('__scheduled')+$t('__anza')+$t('__date')">
+        :label="$t('__anzaScheduledDate')">
         <template slot-scope="scope">
           <el-date-picker
             v-model="scope.row[scope.column.property]"
@@ -101,7 +120,13 @@
           </el-date-picker>
         </template>
       </el-table-column>
-      <!-- 實際安座日 -->
+      <!-- 安座準備期 -->
+      <el-table-column
+        prop="PrepareDate"
+        :label="$t('__anzaPrepareDate')"
+        :formatter="formatterDate">
+      </el-table-column>
+      <!-- 到期日 -->
       <el-table-column
         prop="ExpirationDate"
         :label="$t('__expire')+$t('__date')">
@@ -116,7 +141,7 @@
       <!-- 操作 -->
       <el-table-column
         align="right"
-        width="95px">
+        width="95">
         <template slot="header">
           <el-button
             type="primary"
@@ -137,20 +162,25 @@
 </template>
 
 <script>
+import { formatDate } from '@/setup/format.js'
+import inputCustomer from '@/views/Basic/inputCustomer'
 
 export default {
   name: 'AnzaOrderForOrderNew',
+  components: {
+    inputCustomer
+  },
   props: {
-    orderID: { type: String },
+    fromOrderID: { type: String },
     parentOrderDate: { type: String },
     parentAnzaData: { type: Object },
-    parentQty: { type: Number },
-    ddlCustomerBefore: { tpye: Array }
+    parentQty: { type: Number }
   },
   data () {
     return {
       form: {
-        OrderID: this.orderID,
+        Seq: 0,
+        OrderID: this.fromOrderID,
         AnzaOrderID: '',
         CustomerID: '',
         ScheduledDate: '',
@@ -160,13 +190,15 @@ export default {
         ProductID: '',
         ModifyType: '',
         FromStorageID: '',
+        PrepareDate: '',
         // 顯示用
         qty: 1,
+        Birth: '',
         BirthLunarDate: '',
-        BirthLunarTime: '',
-        Gender: '',
-        TelHome: '',
-        Address: ''
+        BirthLunarTimeName: '',
+        GenderName: '',
+        Tel: '',
+        AddressName: ''
       },
       disableForm: {
         CustomerID: false
@@ -181,7 +213,7 @@ export default {
     }
   },
   watch: {
-    orderID: function (newValue) {
+    fromOrderID: function (newValue) {
       if (newValue) {
         this.form.OrderID = newValue
       }
@@ -193,23 +225,22 @@ export default {
         this.parentQtyChange()
         this.reCalDate(this.subList)
       },
-      deep: true },
+      deep: true
+    },
     parentOrderDate: function (newValue) {
       this.parentOrderDateChange()
     },
     parentQty: function () {
       this.parentQtyChange()
-    },
-    ddlCustomerBefore: function (value) {
-      if (this.ddlCustomerBefore) {
-        this.ddlCustomer = JSON.parse(JSON.stringify(this.ddlCustomerBefore))
-      }
     }
   },
   mounted () {
     this.preLoading()
   },
   methods: {
+    formatterDate: function (row, column, cellValue, index) {
+      return formatDate(cellValue)
+    },
     preLoading: async function () {
       this.parentQtyChange()
     },
@@ -247,11 +278,9 @@ export default {
 
         index++
       })
-
-      this.refreshList()
     },
     // 父視窗: 變更客戶代號
-    parentCustomerChange: function () {
+    parentCustomerChange: async function () {
       // 如果是來自安座單的操作, 不更改CustomerID(續約, 展延, 繼承)
       switch (this.fromType) {
         case 'anzaRenew':
@@ -269,17 +298,15 @@ export default {
       if (this.subList.length === 0) {
         this.handleNew()
       }
-      let index = 0
 
-      this.subList.forEach(row => {
-        if (index === 0) {
+      for (let i = 0; i < this.subList.length; i++) {
+        let row = this.subList[i]
+        if (i === 0) {
           row.CustomerID = this.parentAnzaData.CustomerID
         }
-
-        index++
-      })
-
-      this.refreshList()
+        await this.bringCustomerData(row)
+        this.subList[i] = row
+      }
     },
     // 父視窗: 變更日期
     parentOrderDateChange: function () {
@@ -288,8 +315,6 @@ export default {
         this.handleNew()
       }
       this.reCalDate(this.subList)
-
-      this.refreshList()
     },
     // 父視窗: 變更任意資料
     parentAssginData: function (type, fromObject) {
@@ -357,7 +382,7 @@ export default {
           break
       }
 
-      // 預定安座日: 預設90天
+      // 申請安座日: 預設90天
       let ScheduledDate = start
       // 安座單
       // 續約, 展延=>不變更安座日
@@ -389,35 +414,67 @@ export default {
       if (Array.isArray(waitForReplaceList)) {
         waitForReplaceList.forEach(row => {
           row.ScheduledDate = ScheduledDate
+          row.PrepareDate = ScheduledDate
           row.RealDate = null
           row.ExpirationDate = ExpirationDate
         })
       } else {
         waitForReplaceList.ScheduledDate = ScheduledDate
+        waitForReplaceList.PrepareDate = ScheduledDate
         waitForReplaceList.RealDate = null
         waitForReplaceList.ExpirationDate = ExpirationDate
       }
     },
-    // 強制觸發vue.js更新機制
-    refreshList: function () {
-      let tempList = JSON.parse(JSON.stringify(this.subList))
-      this.subList = []
-
-      tempList.forEach(row => {
-        this.subList.push(row)
-      })
+    // 找到客戶帳號
+    findID: async function (result) {
+      let { ID, parentObject } = result
+      let findRow = this.subList.find(item => { return item.Seq === parentObject.Seq })
+      if (findRow) {
+        findRow.CustomerID = ID
+      }
+      await this.bringCustomerData(findRow)
+    },
+    // 帶入客戶個資
+    bringCustomerData: async function (row) {
+      if (!row.CustomerID) {
+        return
+      }
+      let response = await this.$api.basic.getObject({ type: 'customer', keyword: row.CustomerID })
+      let result = response.data.result[0]
+      if (result) {
+        if (result.Birth) {
+          row.Birth = result.Birth.slice(0, 10)
+        }
+        if (result.BirthLunarDate) {
+          row.BirthLunarDate = result.BirthLunarDate.slice(0, 10)
+        }
+        row.BirthLunarTimeName = result.BirthLunarTimeName
+        row.GenderName = result.GenderName
+        row.Tel = result.Tel
+        row.AddressName = result.AddressName
+      }
     },
     // ============== 子結構 ===============
     // 新增子結構
     handleNew: function (specialRow) {
       let newObj = JSON.parse(JSON.stringify(this.form))
-
+      // find Maximum Seq
+      let nextSeq = 1
+      if (this.subList.length === 0) {
+        nextSeq = 1
+      } else {
+        let amounts = this.subList.map(item => item.Seq)
+        let highestSeq = Math.max(...amounts)
+        nextSeq = highestSeq + 1
+      }
+      newObj.Seq = nextSeq
       // 新增 item
       if (specialRow) {
         newObj.OrderID = specialRow.OrderID
         newObj.AnzaOrderID = specialRow.AnzaOrderID
         newObj.CustomerID = specialRow.CustomerID
         newObj.ScheduledDate = specialRow.ScheduledDate
+        newObj.PrepareDate = specialRow.PrepareDate
         newObj.RealDate = specialRow.RealDate
         newObj.ExpirationDate = specialRow.ExpirationDate
         newObj.Status = specialRow.Status
@@ -425,7 +482,7 @@ export default {
         newObj.ModifyType = this.form.ModifyType
         newObj.qty = 1
       } else {
-        newObj.OrderID = this.orderID
+        newObj.OrderID = this.fromOrderID
         newObj.ProductID = this.parentAnzaData.ProductID
         newObj.CustomerID = ''
         newObj.qty = 0

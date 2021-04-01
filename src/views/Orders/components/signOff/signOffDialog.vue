@@ -1,5 +1,5 @@
 <template>
-  <el-dialog :title="myTitle" :visible="dialogShow" center width="80vw" @close="cancel">
+  <el-dialog :title="myTitle" :visible="dialogShow" center width="80vw" top="5vh" @close="cancel">
     <el-form label-width="10vw" label-position="right">
       <h2>{{$t('__signOffWarning')}}</h2>
       <el-tag effect="plain" v-for="(item, index) in signOffList" :key="index">
@@ -9,9 +9,9 @@
           <el-input v-model="signOffReason" type="textarea" rows="2" maxlength="100" show-word-limit></el-input>
       </el-form-item>
     </el-form>
-    <div slot="footer" class="dialog-footer">
-      <el-button @click="cancel">{{$t('__cancel')}}</el-button>
-      <el-button type="primary" @click="save">{{$t('__ok')}}</el-button>
+    <div slot="footer">
+      <el-button @click.prevent="cancel">{{$t('__cancel')}}</el-button>
+      <el-button type="primary" @click.prevent="save">{{$t('__ok')}}</el-button>
     </div>
   </el-dialog>
 </template>

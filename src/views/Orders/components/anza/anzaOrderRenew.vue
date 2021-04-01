@@ -118,7 +118,6 @@
       :dialogType="dialogType"
       :buttonsShowUser="buttonsShowUser"
       :orderID="form.ID"
-      :ddlCustomerBefore="ddlCustomer"
       @customer-change="customerChange"></order-customer>
     <template>
       <!-- 新增訂單專用 -->
@@ -127,8 +126,7 @@
         :orderID="form.ID"
         :parentOrderDate="form.OrderDate"
         :parentQty="form.Qty"
-        :parentAnzaData="form.anzaForNew"
-        :ddlCustomerBefore="ddlCustomer"></anza-order-new>
+        :parentAnzaData="form.anzaForNew"></anza-order-new>
       <installment-order-new
         v-show="form.ProjectID !== ''"
         ref="installmentOrderNew"
@@ -140,7 +138,7 @@
         :parentDate="form.OrderDate"></installment-order-new>
     </template>
     <!-- 底部操作按鈕 -->
-    <div slot="footer" class="dialog-footer">
+    <div slot="footer">
       <br/>
       <el-button v-show="buttonsShow.delete && buttonsShowUser.delete && form.Status < '2'" type="danger" @click="deleteOrder">{{$t('__delete')}}</el-button>
       <el-button v-show="buttonsShow.delete && buttonsShowUser.delete" type="danger" @click="invalidOrder">{{$t('__invalid')}}</el-button>
@@ -383,6 +381,9 @@ export default {
     },
     // 帶入專案功能
     bringFunctions: async function () {
+      if (!this.form.ProjectID) {
+        return
+      }
       let responseProjectFunctions = await this.$api.basic.getObject({ type: 'projectFunctions', keyword: this.form.ProjectID })
       let projectFunctions = responseProjectFunctions.data.result
 

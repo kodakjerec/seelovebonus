@@ -6,7 +6,7 @@
         <span style="float: right; color: #8492a6; font-size: 13px">{{ item.ID }}</span>
       </el-option>
     </el-select>
-    <div slot="footer" class="dialog-footer">
+    <div slot="footer">
       <el-button @click="cancel">{{$t('__cancel')}}</el-button>
       <el-button type="primary" @click="save">{{$t('__save')}}</el-button>
     </div>

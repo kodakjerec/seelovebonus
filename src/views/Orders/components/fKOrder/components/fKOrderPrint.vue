@@ -1,11 +1,11 @@
 <template>
-  <el-dialog :title="myTitle" :visible="dialogShow" center width="80vw" @close="cancel">
+  <el-dialog :title="myTitle" :visible="dialogShow" center width="80vw" top="5vh" @close="cancel">
     <el-form ref="form" :model="form" label-width="10vw" label-position="right">
       <el-form-item :label="$t('__orderID')">
           <el-input v-model="form.ID" :disabled="true"></el-input>
       </el-form-item>
     </el-form>
-    <div slot="footer" class="dialog-footer">
+    <div slot="footer">
       <el-button @click="cancel">{{$t('__cancel')}}</el-button>
       <p/>
       <iframeReportingService

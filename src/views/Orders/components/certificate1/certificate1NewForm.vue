@@ -1,5 +1,5 @@
 <template>
-  <el-dialog :title="myTitle" :visible="dialogShow" center width="80vw" @close="cancel">
+  <el-dialog :title="myTitle" :visible="dialogShow" center width="80vw" top="5vh" @close="cancel">
     <el-form ref="form" :model="form" :rules="rules" label-width="10vw" label-position="right">
       <el-form-item :label="$t('__orderID')">
           <el-input v-model="form.OrderID" :disabled="disableForm.OrderID"></el-input>
@@ -43,7 +43,7 @@
         </el-select>
       </el-form-item>
     </el-form>
-    <div slot="footer" class="dialog-footer">
+    <div slot="footer">
       <el-button v-show="buttonsShow.edit && buttonsShowUser.save" icon="el-icon-printer" @click.prevent="print">{{$t('__print')}}</el-button>
       <p/>
       <el-button v-show="buttonsShow.delete && buttonsShowUser.delete" @click="retakeID">{{$t('__retakeID')}}</el-button>
@@ -72,13 +72,13 @@ export default {
     dialogType: { type: String, default: 'new' },
     dialogShow: { type: Boolean, default: false },
     certificate1: { type: Object },
-    orderID: { type: String },
+    fromOrderID: { type: String },
     buttonsShowUser: { type: Object }
   },
   data () {
     return {
       form: {
-        OrderID: this.orderID,
+        OrderID: this.fromOrderID,
         Certificate1: null,
         PrintCount: 0,
         Status: '1',

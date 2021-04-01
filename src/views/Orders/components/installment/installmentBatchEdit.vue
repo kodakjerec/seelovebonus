@@ -1,5 +1,5 @@
 <template>
-  <el-dialog :title="myTitle" :visible="dialogShow" center width="80vw" @close="cancel">
+  <el-dialog :title="myTitle" :visible="dialogShow" center width="80vw" top="5vh" @close="cancel">
     <el-form ref="form" :model="form" :rules="rules" label-width="10vw" label-position="right">
       <h4 style="text-align:center;color:red">{{$t('__installmentBatchEditWarning')}}</h4>
       <el-form-item :label="$t('__installment')+$t('__name')">
@@ -121,7 +121,7 @@
         </template>
       </el-table-column>
     </el-table>
-    <div slot="footer" class="dialog-footer">
+    <div slot="footer">
       <el-button @click="cancel">{{$t('__cancel')}}</el-button>
       <el-button v-show="buttonsShowUser.save" type="primary" @click="checkValidate">{{$t('__save')}}</el-button>
     </div>
@@ -137,13 +137,13 @@ export default {
     dialogType: { type: String, default: 'new' },
     dialogShow: { type: Boolean, default: false },
     fromInstallmentShow: { type: Array },
-    orderID: { type: String },
+    fromOrderID: { type: String },
     buttonsShowUser: { type: Object }
   },
   data () {
     return {
       form: {
-        OrderID: this.orderID,
+        OrderID: this.fromOrderID,
         Seq: 0,
         InstallmentName: '',
         ScheduledDate: '',
@@ -217,7 +217,7 @@ export default {
       this.ddlPaymentFrequency = response
 
       // 帶入訂單最大金額
-      let responseRecords = await this.$api.orders.collectionRecordsFunctions({ type: 'installmentBatchEditNew', OrderID: this.orderID, Seq: null })
+      let responseRecords = await this.$api.orders.collectionRecordsFunctions({ type: 'installmentBatchEditNew', OrderID: this.fromOrderID, Seq: null })
       let order = responseRecords.data.result[0]
       this.form.ScheduledAmount = order.Amount
     },

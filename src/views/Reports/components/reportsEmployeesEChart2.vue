@@ -74,6 +74,9 @@ export default {
   },
   methods: {
     preLoading: async function () {
+      if (!this.companyID) {
+        return
+      }
       let response1 = await this.$api.basic.getObject({ type: 'employeesHierarchy', keyword: this.companyID })
       this.rawData = response1.data.result
 

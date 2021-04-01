@@ -54,7 +54,7 @@
     :dialog-type="dialogType"
     :dialog-show="dialogShow"
     :collectionRecord="collectionRecord"
-    :orderID="orderID"
+    :fromOrderID="fromOrderID"
     :buttonsShowUser="buttonsShowUser"
     @dialog-cancel="dialogCancel"
     @dialog-save="dialogSave"></new-form>
@@ -71,9 +71,9 @@ export default {
     newForm
   },
   props: {
-    buttonsShow: { type: Object },
     buttonsShowUser: { type: Object },
-    orderID: { type: String }
+    fromOrderID: { type: String },
+    fromOrderStatus: { type: String }
   },
   data () {
     return {
@@ -82,16 +82,24 @@ export default {
       collectionRecordsShow: [],
       collectionRecord: {},
       activeName: '',
-      orderAmount: 0
+      orderAmount: 0,
+      // 系統目前狀態權限
+      buttonsShow: {
+        new: 1,
+        edit: 0,
+        save: 1,
+        delete: 0,
+        search: 1
+      }
     }
   },
   watch: {
-    orderID: function (newValue) {
+    fromOrderID: function (newValue) {
       if (newValue) { this.preLoading() }
     }
   },
   mounted () {
-    if (this.orderID) { this.preLoading() }
+    if (this.fromOrderID) { this.preLoading() }
   },
   methods: {
     formatterDate: function (row, column, cellValue, index) {
@@ -107,10 +115,34 @@ export default {
       }
     },
     preLoading: async function () {
-      let responseRecords = await this.$api.orders.getObject({ type: 'collectionRecords', keyword: this.orderID })
+      let responseRecords = await this.$api.orders.getObject({ type: 'collectionRecords', keyword: this.fromOrderID })
       this.collectionRecordsShow = responseRecords.data.result
       if (this.collectionRecordsShow && this.collectionRecordsShow.length > 0) {
         this.activeName = '1'
+      }
+
+      // 系統簽核過程權限
+      switch (this.fromOrderStatus) {
+        case '1':
+        case '2':
+        case '3':
+          this.buttonsShow = {
+            new: 1,
+            edit: 1,
+            save: 1,
+            delete: 1,
+            search: 1
+          }
+          break
+        default:
+          this.buttonsShow = {
+            new: 0,
+            edit: 0,
+            save: 0,
+            delete: 0,
+            search: 0
+          }
+          break
       }
     },
     handleClick: async function (row, column, event) {

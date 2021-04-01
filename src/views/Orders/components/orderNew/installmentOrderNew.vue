@@ -51,7 +51,7 @@ import { formatDate, formatMoney } from '@/setup/format.js'
 export default {
   name: 'InstallmentOrderNew',
   props: {
-    orderID: { type: String },
+    fromOrderID: { type: String },
     projectID: { type: String },
     projectName: { type: String },
     parentQty: { type: Number },
@@ -92,6 +92,9 @@ export default {
       this.reLoading()
     },
     reLoading: async function () {
+      if (!this.projectID) {
+        return
+      }
       let responseRecords = await this.$api.basic.getObject({ type: 'projectInstallmentDetail', keyword: this.projectID })
       this.projectInstallmentDetail = responseRecords.data.result
       this.reCalculateSubList()
@@ -148,7 +151,7 @@ export default {
       for (let i = 0; i < this.subList.length; i++) {
         let row = this.subList[i]
         let newObject = {
-          OrderID: this.orderID,
+          OrderID: this.fromOrderID,
           Seq: row.Seq,
           InstallmentName: row.InstallmentName,
           ScheduledDate: row.ScheduledDate,
