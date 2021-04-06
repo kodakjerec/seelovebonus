@@ -77,6 +77,10 @@
         :label="$t('__max') + $t('__inventory')">
       </el-table-column>
       <el-table-column
+        prop="StatusName"
+        :label="$t('__status')">
+      </el-table-column>
+      <el-table-column
         prop="Memo"
         :label="$t('__memo')">
       </el-table-column>

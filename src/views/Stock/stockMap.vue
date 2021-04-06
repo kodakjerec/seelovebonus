@@ -1,7 +1,6 @@
 <template>
-  <div>
-    <div id="eChart" :style="cssProps"></div>
-    <el-dialog :visible="showSearchPanel" center @close="cancel">
+  <el-container>
+    <el-drawer :title="$t('__search')" :visible="showSearchPanel" @close="cancel" :direction="'ltr'">
       <el-form label-width="10vw">
         <el-form-item :label="$t('__now')+'Layer'">
           <el-input v-model="searchContent.Layer" disabled></el-input>
@@ -31,21 +30,27 @@
           </el-select>
         </el-form-item>
         <el-form-item :label="$t('__column')">
-          <el-input v-model="searchContent.Column" :disabled="!searchContent.Area"></el-input>
+          <el-input v-model="searchContent.Column" :disabled="!searchContent.Area" @change="searchContent.Layer='Column'"></el-input>
         </el-form-item>
         <el-form-item :label="$t('__row')">
-          <el-input v-model="searchContent.Row" :disabled="!searchContent.Column"></el-input>
-        </el-form-item>
-        <el-form-item :label="$t('__grid')">
-          <el-input v-model="searchContent.Grid" :disabled="!searchContent.Row"></el-input>
+          <el-input v-model="searchContent.Row" :disabled="!searchContent.Column" @change="searchContent.Layer='Row'"></el-input>
         </el-form-item>
       </el-form>
-      <div slot="footer">
+      <el-button-group>
         <el-button @click="closeSearchPanel">{{$t('__cancel')}}</el-button>
         <el-button type="primary" @click="searchSearchPanel">{{$t('__search')}}</el-button>
+      </el-button-group>
+    </el-drawer>
+    <el-main id="eChart" :style="cssProps"></el-main>
+    <div class="compass">
+      <div class="compass-inner">
+        <div class="main-arrow">
+          <div class="arrow-up"></div>
+          <div class="arrow-down"></div>
+        </div>
       </div>
-    </el-dialog>
-  </div>
+    </div>
+  </el-container>
 </template>
 
 <script>
@@ -58,7 +63,7 @@ export default {
     return {
       baseWidth: 1440,
       baseHeight: 900,
-      othersHeight: 30, // 頂部操作列
+      othersHeight: 40, // 頂部操作列
       resizePer: { x: 1, y: 1 },
       eChart: null,
       usaJson: {
@@ -182,7 +187,7 @@ export default {
       }, // 圖形尺寸
       // ===== 查詢平台 =====
       showSearchPanel: false,
-      searchPanelClick: false,
+      searchPanelClick: false, // 如果是按下search關閉, 動作不一樣
       // 下拉式選單
       ddlBuilding: [],
       ddlFloorOrigin: [],
@@ -194,8 +199,8 @@ export default {
   computed: {
     cssProps: function () {
       let cssprop = {
-        width: '98vw',
-        height: '98vh',
+        width: '99vw',
+        height: `calc(100vh - ` + this.othersHeight + `px)`,
         border: '1px solid',
         'background-size': '100% 100%',
         'background-repeat': 'no-repeat',
@@ -225,6 +230,9 @@ export default {
     // data
     await this.preLoading()
     await this.search()
+
+    // 畫面都處理完之後, 才把查詢選單開出來
+    this.showSearchPanelFunction()
   },
   methods: {
     preLoading: async function () {
@@ -293,7 +301,6 @@ export default {
           properties: property
         }
         // 地圖
-        console.log()
         this.usaJson.features.push(item)
 
         // 統計
@@ -326,14 +333,17 @@ export default {
         case '':
           this.searchContent.Building = property.StorageID
           this.searchContent.Layer = 'Building'
+          this.ddlBuildingChange()
           break
         case 'Building':
           this.searchContent.Floor = property.StorageID
           this.searchContent.Layer = 'Floor'
+          this.ddlFloorChange()
           break
         case 'Floor':
           this.searchContent.Area = property.StorageID
           this.searchContent.Layer = 'Area'
+          this.ddlAreaChange()
           break
         case 'Area':
           this.searchContent.Column = property.StorageID
@@ -356,7 +366,6 @@ export default {
     mouseMove: function (params) {
       this.mouseLocation.x = Math.round(params.offsetX)
       this.mouseLocation.y = Math.round(params.offsetY)
-      console.log(this.mouseLocation.x, this.mouseLocation.y)
     },
     // 按下滑鼠
     // 按下滑鼠起來
@@ -373,14 +382,12 @@ export default {
     },
     // 返回上一層
     goback: async function () {
-      if (this.searchStack.length === 0) {
-        return
+      if (this.searchStack.length > 0) {
+        // 還原 目前的搜尋
+        let item = this.searchStack.pop()
+        this.searchContent = item
+        await this.search()
       }
-      // 還原 目前的搜尋
-      let item = this.searchStack.pop()
-      this.searchContent = item
-
-      await this.search()
     },
     // ===== 查詢平台 =====
     // 秀出查詢平台
@@ -395,10 +402,11 @@ export default {
     cancel: function () {
       if (!this.searchPanelClick) {
         // 還原 開啟前數據
+        if (this.searchStack.length > 0) {
         // 還原 目前的搜尋
-        let item = this.searchStack.pop()
-        console.log(item)
-        this.searchContent = item
+          let item = this.searchStack.pop()
+          this.searchContent = item
+        }
       }
 
       this.searchPanelClick = false
@@ -410,13 +418,31 @@ export default {
     },
     // 查詢平台的搜尋
     searchSearchPanel: async function () {
+      // 判斷現在層級
+      if (this.searchContent.Building) {
+        this.searchContent.Layer = 'Building'
+      }
+      if (this.searchContent.Floor) {
+        this.searchContent.Layer = 'Floor'
+      }
+      if (this.searchContent.Area) {
+        this.searchContent.Layer = 'Area'
+      }
+      if (this.searchContent.Column) {
+        this.searchContent.Layer = 'Column'
+      }
+      if (this.searchContent.Row) {
+        this.searchContent.Layer = 'Row'
+      }
+
+      // 搜尋
       await this.search()
 
       this.searchPanelClick = true
       this.showSearchPanel = false
     },
     // ===== 下拉是選單 =====
-    ddlBuildingChange: function (isRefresh = true) {
+    ddlBuildingChange: function () {
       this.ddlFloor = this.ddlFloorOrigin.filter(item => { return item.ParentID === this.searchContent.Building })
       this.searchContent.Layer = 'Building'
       this.searchContent.Floor = ''
@@ -425,7 +451,7 @@ export default {
       this.searchContent.Row = ''
       this.searchContent.Grid = ''
     },
-    ddlFloorChange: function (isRefresh = true) {
+    ddlFloorChange: function () {
       this.ddlArea = this.ddlAreaOrigin.filter(item => { return item.ParentID === this.searchContent.Floor })
       this.searchContent.Layer = 'Floor'
       this.searchContent.Area = ''
@@ -433,7 +459,7 @@ export default {
       this.searchContent.Row = ''
       this.searchContent.Grid = ''
     },
-    ddlAreaChange: function (isRefresh = true) {
+    ddlAreaChange: function () {
       this.searchContent.Layer = 'Area'
       this.searchContent.Column = ''
       this.searchContent.Row = ''
@@ -443,12 +469,39 @@ export default {
 }
 </script>
 <style lang='scss' scoped>
-.stockMapOption{
+.stockMapOption {
   position: absolute;
   left: 0px;
   top: 0px;
   color: yellow;
   font-size: 20px;
   -webkit-text-stroke: 1px black; /* width and color */
+}
+.compass {
+  height: 60px;
+  width: 30px;
+  right: 0px;
+  position: absolute;
+
+  .main-arrow {
+    box-sizing: border-box;
+    .arrow-up {
+      width: 0;
+      height: 0;
+      border-left: 10px solid transparent;
+      border-right: 10px solid transparent;
+      border-bottom: 30px solid #EF5052;
+      position: relative;
+    }
+    .arrow-down {
+      width: 0;
+      transform: rotate(180deg);
+      height: 0;
+      border-left: 10px solid transparent;
+      border-right: 10px solid transparent;
+      border-bottom: 30px solid #F3F3F3;
+      position: relative;
+    }
+  }
 }
 </style>
