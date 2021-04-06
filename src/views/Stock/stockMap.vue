@@ -1,8 +1,9 @@
 <template>
   <el-container>
+    <!-- 查詢視窗 -->
     <el-drawer :title="$t('__search')" :visible="showSearchPanel" @close="cancel" :direction="'ltr'">
-      <el-form label-width="10vw">
-        <el-form-item :label="$t('__now')+'Layer'">
+      <el-form label-width="5vw">
+        <el-form-item :label="'Layer'">
           <el-input v-model="searchContent.Layer" disabled></el-input>
         </el-form-item>
         <el-form-item :label="$t('__building')">
@@ -41,7 +42,9 @@
         <el-button type="primary" @click="searchSearchPanel">{{$t('__search')}}</el-button>
       </el-button-group>
     </el-drawer>
+    <!-- 圖層 -->
     <el-main id="eChart" :style="cssProps"></el-main>
+    <!-- 指南針 -->
     <div class="compass">
       <div class="compass-inner">
         <div class="main-arrow">
@@ -49,6 +52,14 @@
           <div class="arrow-down"></div>
         </div>
       </div>
+    </div>
+    <!-- 目前位置(文字) -->
+    <div class="nowPosition">
+      <span @click="nowPositionClick('Building')" v-show="searchContent.Building">{{searchContent.Building + ' ' + searchContent.BuildingName}}</span>
+      <span @click="nowPositionClick('Floor')" v-show="searchContent.Floor">{{'> ' + searchContent.Floor + ' ' + searchContent.FloorName}}</span>
+      <span @click="nowPositionClick('Area')" v-show="searchContent.Area">{{'> ' + searchContent.Area + ' ' + searchContent.AreaName}}</span>
+      <span @click="nowPositionClick('Column')" v-show="searchContent.Column">{{'> ' + searchContent.Column}}</span>
+      <span @click="nowPositionClick('Row')" v-show="searchContent.Row">{{'> ' + searchContent.Row}}</span>
     </div>
   </el-container>
 </template>
@@ -162,7 +173,7 @@ export default {
           }
         ]
       },
-      searchStack: [], // 搜尋階層
+      searchTemp: [], // 搜尋階層(避免查詢視窗造成資料錯亂)
       searchContent: { // 搜尋
         Layer: '',
         Building: '',
@@ -172,7 +183,11 @@ export default {
         Row: '',
         Grid: '',
         StorageID: '',
-        imageUrl: '' // 背景URL
+        imageUrl: '', // 背景URL
+        // 顯示用
+        BuildingName: '',
+        FloorName: '',
+        AreaName: ''
       },
       mouseLocation: {
         x: 0,
@@ -323,9 +338,6 @@ export default {
     },
     // 子結點 click
     mouseClick: async function (params) {
-      // 儲存目前的搜尋
-      this.searchStack.push(JSON.parse(JSON.stringify(this.searchContent)))
-
       // 準備下一階搜尋
       let property = params.data
 
@@ -355,12 +367,10 @@ export default {
           break
         case 'Row':
         case 'Grid':
-          // 取消之前的結果
-          this.searchStack.pop()
           this.$message('沒有下一層了')
           return
       }
-      await this.search()
+      this.search()
     },
     // 滑鼠移動
     mouseMove: function (params) {
@@ -382,31 +392,49 @@ export default {
     },
     // 返回上一層
     goback: async function () {
-      if (this.searchStack.length > 0) {
-        // 還原 目前的搜尋
-        let item = this.searchStack.pop()
-        this.searchContent = item
-        await this.search()
+      // 返回一步
+      switch (this.searchContent.Layer) {
+        case '':
+          this.$message('沒有上一層了')
+          return
+        case 'Building':
+          this.searchContent.Building = ''
+          this.searchContent.Layer = ''
+          break
+        case 'Floor':
+          this.searchContent.Floor = ''
+          this.searchContent.Layer = 'Building'
+          break
+        case 'Area':
+          this.searchContent.Area = ''
+          this.searchContent.Layer = 'Floor'
+          break
+        case 'Column':
+          this.searchContent.Column = ''
+          this.searchContent.Layer = 'Area'
+          break
+        case 'Row':
+          this.searchContent.Row = ''
+          this.searchContent.Layer = 'Column'
+          break
+        case 'Grid':
+          this.$message('沒有下一層了')
+          return
       }
+      this.search()
     },
     // ===== 查詢平台 =====
     // 秀出查詢平台
     showSearchPanelFunction: function () {
-      // 紀錄 開啟前數據
-      // 儲存目前的搜尋
-      this.searchStack.push(JSON.parse(JSON.stringify(this.searchContent)))
-
+      // 儲存目前內容
+      this.searchTemp = JSON.parse(JSON.stringify(this.searchContent))
       this.showSearchPanel = true
     },
     // 隱藏
     cancel: function () {
       if (!this.searchPanelClick) {
-        // 還原 開啟前數據
-        if (this.searchStack.length > 0) {
-        // 還原 目前的搜尋
-          let item = this.searchStack.pop()
-          this.searchContent = item
-        }
+        // 不是經由查詢關閉視窗, 表示為取消查詢
+        this.searchContent = JSON.parse(JSON.stringify(this.searchTemp))
       }
 
       this.searchPanelClick = false
@@ -418,7 +446,7 @@ export default {
     },
     // 查詢平台的搜尋
     searchSearchPanel: async function () {
-      // 判斷現在層級
+      // 判斷現在層級, 依照輸入內容有無
       if (this.searchContent.Building) {
         this.searchContent.Layer = 'Building'
       }
@@ -436,13 +464,19 @@ export default {
       }
 
       // 搜尋
-      await this.search()
+      this.search()
 
       this.searchPanelClick = true
       this.showSearchPanel = false
     },
     // ===== 下拉是選單 =====
     ddlBuildingChange: function () {
+      // 帶入文字
+      let findObject = this.ddlBuilding.find(item => item.ID === this.searchContent.Building)
+      if (findObject) {
+        this.searchContent.BuildingName = findObject.Value
+      }
+      // 篩選
       this.ddlFloor = this.ddlFloorOrigin.filter(item => { return item.ParentID === this.searchContent.Building })
       this.searchContent.Layer = 'Building'
       this.searchContent.Floor = ''
@@ -452,6 +486,12 @@ export default {
       this.searchContent.Grid = ''
     },
     ddlFloorChange: function () {
+      // 帶入文字
+      let findObject = this.ddlFloor.find(item => item.ID === this.searchContent.Floor)
+      if (findObject) {
+        this.searchContent.FloorName = findObject.Value
+      }
+      // 篩選
       this.ddlArea = this.ddlAreaOrigin.filter(item => { return item.ParentID === this.searchContent.Floor })
       this.searchContent.Layer = 'Floor'
       this.searchContent.Area = ''
@@ -460,10 +500,60 @@ export default {
       this.searchContent.Grid = ''
     },
     ddlAreaChange: function () {
+      // 帶入文字
+      let findObject = this.ddlArea.find(item => item.ID === this.searchContent.Area)
+      if (findObject) {
+        this.searchContent.AreaName = findObject.Value
+      }
+      // 篩選
       this.searchContent.Layer = 'Area'
       this.searchContent.Column = ''
       this.searchContent.Row = ''
       this.searchContent.Grid = ''
+    },
+    // ===== 目前文字說明 =====
+    nowPositionClick: function (type) {
+      // 根據點進來的Type, 判斷做何種查詢
+      switch (type) {
+        case '':
+          this.$message('沒有上一層了')
+          return
+        case 'Building':
+          this.searchContent.Floor = ''
+          this.searchContent.Area = ''
+          this.searchContent.Column = ''
+          this.searchContent.Row = ''
+          this.searchContent.Grid = ''
+          this.searchContent.Layer = type
+          break
+        case 'Floor':
+          this.searchContent.Area = ''
+          this.searchContent.Column = ''
+          this.searchContent.Row = ''
+          this.searchContent.Grid = ''
+          this.searchContent.Layer = type
+          break
+        case 'Area':
+          this.searchContent.Column = ''
+          this.searchContent.Row = ''
+          this.searchContent.Grid = ''
+          this.searchContent.Layer = type
+          break
+        case 'Column':
+          this.searchContent.Row = ''
+          this.searchContent.Grid = ''
+          this.searchContent.Layer = type
+          break
+        case 'Row':
+          this.searchContent.Grid = ''
+          this.searchContent.Layer = type
+          break
+        case 'Grid':
+          this.searchContent.Layer = type
+          this.$message('沒有下一層了')
+          return
+      }
+      this.search()
     }
   }
 }
@@ -502,6 +592,20 @@ export default {
       border-bottom: 30px solid #F3F3F3;
       position: relative;
     }
+  }
+}
+
+.nowPosition {
+  position: absolute;
+  left: 60px;
+  width:50vw;
+  height: 30px;
+  text-align: left;
+
+  span {
+    font-size: 2vw;
+    color: black;
+    text-shadow: -1px -1px 0 yellow, 1px 1px 0 yellow, -1px -1px 0 yellow, 1px 1px 0 yellow;
   }
 }
 </style>
