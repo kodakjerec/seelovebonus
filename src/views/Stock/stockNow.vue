@@ -68,19 +68,19 @@
       </el-table-column>
       <el-table-column
         prop="Qty"
-        :label="$t('__inventory')">
+        :label="$t('__qty')">
       </el-table-column>
       <el-table-column
-        prop="OrderType"
-        label="Type">
+        prop="OrderTypeName"
+        :label="$t('__kind')">
       </el-table-column>
       <el-table-column
         prop="OrderID"
-        :label="'Last'+$t('__orderID')">
+        :label="$t('__orderID')">
       </el-table-column>
       <el-table-column
         prop="ModifyDate"
-        :label="'Last' + $t('__edit')+$t('__date')"
+        :label="$t('__edit')+$t('__date')"
         :formatter="formatterDateTime">
       </el-table-column>
     </el-table>
