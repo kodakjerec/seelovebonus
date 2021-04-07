@@ -4,8 +4,8 @@
       <el-form-item :label="$t('__building') + '-' + $t('__floor') + '-' + $t('__area')">
         <!-- Building -->
         <el-col :span="6">
-          <el-select v-model="searchContent.Building" value-key="value" :placeholder="$t('__plzChoice')" @change="ddlBuildingChange">
-            <el-option v-for="item in ddlBuilding" :key="item.ID" :label="item.Value" :value="item.ID">
+          <el-select v-model="searchContent.Building" clearable :placeholder="$t('__plzChoice')" @change="ddlBuildingChange">
+            <el-option v-for="item in ddlBuilding" :key="item.ID" :label="item.ID+' '+item.Value" :value="item.ID">
               <span style="float: left">{{ item.Value+'('+item.Counts+')' }}</span>
               <span style="float: right; color: #8492a6; font-size: 13px">{{ item.ID }}</span>
             </el-option>
@@ -13,8 +13,8 @@
         </el-col>
         <!-- Floor -->
         <el-col :span="6">
-          <el-select v-model="searchContent.Floor" value-key="value" :placeholder="$t('__plzChoice')" @change="ddlFloorChange">
-            <el-option v-for="item in ddlFloor" :key="item.ID" :label="item.Value" :value="item.ID">
+          <el-select v-model="searchContent.Floor" clearable :placeholder="$t('__plzChoice')" @change="ddlFloorChange" :disabled="!searchContent.Building">
+            <el-option v-for="item in ddlFloor" :key="item.ID" :label="item.ID+' '+item.Value" :value="item.ID">
               <span style="float: left">{{ item.Value+'('+item.Counts+')' }}</span>
               <span style="float: right; color: #8492a6; font-size: 13px">{{ item.ID }}</span>
             </el-option>
@@ -22,8 +22,8 @@
         </el-col>
         <!-- Area -->
         <el-col :span="6">
-          <el-select v-model="searchContent.Area" value-key="value" :placeholder="$t('__plzChoice')" @change="ddlAreaChange">
-            <el-option v-for="item in ddlArea" :key="item.ID" :label="item.Value" :value="item.ID">
+          <el-select v-model="searchContent.Area" clearable :placeholder="$t('__plzChoice')" @change="ddlAreaChange" :disabled="!searchContent.Floor">
+            <el-option v-for="item in ddlArea" :key="item.ID" :label="item.ID+' '+item.Value" :value="item.ID">
               <span style="float: left">{{ item.Value+'('+item.Counts+')' }}</span>
               <span style="float: right; color: #8492a6; font-size: 13px">{{ item.ID }}</span>
             </el-option>
@@ -68,19 +68,19 @@
       </el-table-column>
       <el-table-column
         prop="Qty"
-        :label="$t('__inventory')">
+        :label="$t('__qty')">
       </el-table-column>
       <el-table-column
-        prop="OrderType"
-        label="Type">
+        prop="OrderTypeName"
+        :label="$t('__kind')">
       </el-table-column>
       <el-table-column
         prop="OrderID"
-        :label="'Last'+$t('__orderID')">
+        :label="$t('__orderID')">
       </el-table-column>
       <el-table-column
         prop="ModifyDate"
-        :label="'Last' + $t('__edit')+$t('__date')"
+        :label="$t('__edit')+$t('__date')"
         :formatter="formatterDateTime">
       </el-table-column>
     </el-table>
@@ -271,20 +271,13 @@ export default {
       this.ddlFloor = this.ddlFloorOrigin.filter(item => { return item.ParentID === this.searchContent.Building })
       if (isRefresh) {
         this.searchContent.Floor = ''
-        if (this.ddlFloor.length > 0) {
-          this.searchContent.Floor = this.ddlFloor[0].ID
-        }
-        this.ddlFloorChange()
+        this.searchContent.Area = ''
       }
     },
     ddlFloorChange: function (isRefresh = true) {
       this.ddlArea = this.ddlAreaOrigin.filter(item => { return item.ParentID === this.searchContent.Floor })
       if (isRefresh) {
         this.searchContent.Area = ''
-        if (this.ddlArea.length > 0) {
-          this.searchContent.Area = this.ddlArea[0].ID
-        }
-        this.ddlAreaChange()
       }
     },
     ddlAreaChange: function (isRefresh = true) {

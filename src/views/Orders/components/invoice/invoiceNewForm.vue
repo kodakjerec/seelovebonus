@@ -174,7 +174,8 @@
 
     <div slot="footer">
       <br/>
-      <el-button v-show="buttonsShow.delete && buttonsShowUser.delete" type="danger" @click="delInvoice">{{$t('__invalid')+$t('__invoice')}}</el-button>
+      <el-button v-show="buttonsShow.delete && buttonsShowUser.delete" type="danger" @click="delInvoice">{{$t('__delete')}}</el-button>
+      <el-button v-show="buttonsShow.delete && buttonsShowUser.delete" type="danger" @click="invalidInvoice">{{$t('__invalid')}}</el-button>
       <el-button @click="cancel">{{$t('__cancel')}}</el-button>
       <el-button v-show="buttonsShow.save && buttonsShowUser.save" type="primary" @click="checkValidate">{{$t('__save')}}</el-button>
     </div>
@@ -435,10 +436,17 @@ export default {
             isSuccess = true
           }
           break
-        case 'delete':
+        case 'invalid':
           let responseInvalid = await this.$api.orders.invoiceHeadInvalid({ form: this.form })
           if (responseInvalid.headers['code'] === '200') {
             this.$alert(responseInvalid.data.result[0].message, responseInvalid.data.result[0].code)
+            isSuccess = true
+          }
+          break
+        case 'delete':
+          let responseDelete = await this.$api.orders.invoiceHeadDelete({ form: this.form })
+          if (responseDelete.headers['code'] === '200') {
+            this.$alert(responseDelete.data.result[0].message, responseDelete.data.result[0].code)
             isSuccess = true
           }
           break
@@ -447,12 +455,43 @@ export default {
       return isSuccess
     },
     // 作廢發票
-    delInvoice: async function () {
+    invalidInvoice: async function () {
       let answerAction = await messageBoxYesNo(this.$t('__invalid') + this.$t('__invoice'), this.$t('__invalid'))
 
       switch (answerAction) {
         case 'confirm':
           this.form.Status = '0'
+          this.buttonsShow = {
+            new: 0,
+            edit: 0,
+            save: 0,
+            delete: 0,
+            search: 0
+          }
+          await this.save('invalid')
+
+          this.$emit('dialog-save')
+          break
+        case 'cancel':
+          break
+        case 'close':
+          break
+      }
+    },
+    // 刪除發票
+    delInvoice: async function () {
+      let answerAction = await messageBoxYesNo(this.$t('__delete') + this.$t('__invoice'), this.$t('__delete'))
+
+      switch (answerAction) {
+        case 'confirm':
+          this.form.Status = '0'
+          this.buttonsShow = {
+            new: 0,
+            edit: 0,
+            save: 0,
+            delete: 0,
+            search: 0
+          }
           await this.save('delete')
 
           this.$emit('dialog-save')
