@@ -199,6 +199,13 @@ export default {
         return data
       })
     },
+    invoiceHeadDelete: ({ form }) => {
+      let rawData = { form }
+      return post('/orders/invoiceHeadDelete', rawData).then(data => {
+        console.log(`%c <<< Response(/rest/orders/invoiceHeadDelete)⤵ `, 'background-color: #E0455D; color: white; font-size: 14px; font-weight: bold;', data)
+        return data
+      })
+    },
     invoiceFunctions: ({ type, OrderID, InvoiceID, Seq }) => {
       let rawData = { type, OrderID, InvoiceID, Seq }
       return post('/orders/invoiceFunctions', rawData).then(data => {

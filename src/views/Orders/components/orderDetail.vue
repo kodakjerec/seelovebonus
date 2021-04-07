@@ -580,6 +580,9 @@ export default {
     },
     // 帶入預設儲位
     bringDefaultStorageAddress: async function (row) {
+      if (row.Inventory === 0) {
+        return
+      }
       // 取得建議儲位
       // reset
       this.ddlFromStorageIDList[row.Seq] = []
