@@ -51,7 +51,7 @@
 import iframeReportingService from '@/components/iframeReportingService'
 
 export default {
-  name: 'GlReportBonus2',
+  name: 'GlReportBonus1',
   components: {
     iframeReportingService
   },
@@ -62,11 +62,9 @@ export default {
         selectedOrdersType: [],
         StartDate: new Date(),
         EndDate: new Date(),
-        ProjectName: '喜越幸福專案',
-        CompanyID: null,
-        CompanyName: null
+        CompanyID: null
       },
-      reportPath: 'reports_gl_Bonus2',
+      reportPath: 'reports_gl_OrderExportMGear',
       reportParams: {},
       // 以下為下拉式選單專用
       ddlCompanies: [],
@@ -190,12 +188,7 @@ export default {
       delete passSearchContent.CompanyName
       this.reportParams = {
         locale: strLocale,
-        searchContent: JSON.stringify(passSearchContent),
-        MasterName: this.searchContent.CompanyName,
-        ProjectName: this.searchContent.ProjectName,
-        StartDate: this.searchContent.StartDate,
-        EndDate: this.searchContent.EndDate,
-        CompanyID: this.searchContent.CompanyID }
+        searchContent: JSON.stringify(passSearchContent) }
 
       // 紀錄Log
       this.$api.reports.bonus2ToExcel({ reportParams: this.reportParams })
