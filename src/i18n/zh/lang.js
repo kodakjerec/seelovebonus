@@ -202,7 +202,7 @@ export default {
   __inboundOrder: '入庫單',
   __transportOrder: '調撥單',
   __supplier: '供應商',
-  __inventory: '存貨',
+  __inventory: '庫存',
   __putOn: '上架',
   __openEditMode: '開啟修改',
   __fKOrder: '信託指示函',
