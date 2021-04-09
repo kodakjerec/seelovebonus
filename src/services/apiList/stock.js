@@ -46,8 +46,8 @@ export default {
         return data
       })
     },
-    findStorageID: ({ ProductID, Purpose, Qty }) => {
-      let rawData = { ProductID, Purpose, Qty }
+    findStorageID: ({ ProductID, Purpose, Qty, StorageID }) => {
+      let rawData = { ProductID, Purpose, Qty, StorageID }
       return post('/stock/findStorageID', rawData).then(data => {
         console.log(`%c <<< Response(/rest/stock/findStorageID)⤵ `, 'background-color: #E0455D; color: white; font-size: 14px; font-weight: bold;', data)
         return data
