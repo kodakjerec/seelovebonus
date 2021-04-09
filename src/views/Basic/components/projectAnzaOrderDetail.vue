@@ -114,7 +114,7 @@
 import { formatMoney } from '@/setup/format.js'
 
 export default {
-  name: 'ProjectDetail',
+  name: 'ProjectAnzaOrderDetail',
   props: {
     projectID: { type: String }
   },
@@ -186,7 +186,7 @@ export default {
       this.ddlStorageIDDefaultList = response.data.result
     },
     bringProjectDetail: async function () {
-      let response1 = await this.$api.basic.getObject({ type: 'projectDetail', keyword: this.projectID })
+      let response1 = await this.$api.basic.getObject({ type: 'projectAnzaOrderDetail', keyword: this.projectID })
       this.subList = response1.data.result
     },
     // 存檔前先過濾
@@ -227,19 +227,14 @@ export default {
       let isSuccess = false
       switch (type) {
         case 'new':
-          let responseNew = await this.$api.basic.projectDetailNew({ form: row })
-          if (responseNew.headers['code'] === '200') {
-            isSuccess = true
-          }
-          break
         case 'edit':
-          let responseEdit = await this.$api.basic.projectDetailEdit({ form: row })
+          let responseEdit = await this.$api.basic.projectAnzaOrderDetailUpdate({ form: row })
           if (responseEdit.headers['code'] === '200') {
             isSuccess = true
           }
           break
         case 'delete':
-          let responseDelete = await this.$api.basic.projectDetailDelete({ form: row })
+          let responseDelete = await this.$api.basic.projectAnzaOrderDetailDelete({ form: row })
           if (responseDelete.headers['code'] === '200') {
             isSuccess = true
           }

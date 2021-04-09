@@ -590,7 +590,7 @@ export default {
       // get
       // fromStorageID
       if (row.FromStorageID === '') {
-        let response = await this.$api.stock.findStorageID({ ProductID: row.ProductID, Purpose: row.Purpose, Qty: 0 - row.Qty })
+        let response = await this.$api.stock.findStorageID({ ProductID: row.ProductID, Purpose: row.Purpose, Qty: 0 - row.Qty, StorageID: '' })
         let result = response.data.result
         if (result.length > 0) {
           this.ddlFromStorageIDList[row.Seq] = result
@@ -600,7 +600,7 @@ export default {
       // ToStorageID
 
       if (row.ToStorageID === '') {
-        let response = await this.$api.stock.findStorageID({ ProductID: row.ProductID, Purpose: row.Purpose, Qty: row.Qty })
+        let response = await this.$api.stock.findStorageID({ ProductID: row.ProductID, Purpose: row.Purpose, Qty: row.Qty, StorageID: '' })
         let result = response.data.result
         if (result.length > 0) {
           this.ddlToStorageIDList[row.Seq] = result

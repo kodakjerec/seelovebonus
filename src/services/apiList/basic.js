@@ -97,8 +97,8 @@ export default {
       })
     },
     // product
-    productsShow: ({ keyword }) => {
-      let rawData = { keyword }
+    productsShow: ({ searchContent }) => {
+      let rawData = { searchContent }
       return post('/basic/productsShow', rawData).then(data => {
         console.log(`%c <<< Response(/rest/basic/productsShow)⤵ `, 'background-color: #E0455D; color: white; font-size: 14px; font-weight: bold;', data)
         return data
@@ -195,6 +195,21 @@ export default {
       let rawData = { form }
       return post('/basic/projectDetailDelete', rawData).then(data => {
         console.log(`%c <<< Response(/rest/basic/projectDetailDelete)⤵ `, 'background-color: #E0455D; color: white; font-size: 14px; font-weight: bold;', data)
+        return data
+      })
+    },
+    // project AnzaOrder Detail
+    projectAnzaOrderDetailUpdate: ({ form }) => {
+      let rawData = { form }
+      return post('/basic/projectAnzaOrderDetailUpdate', rawData).then(data => {
+        console.log(`%c <<< Response(/rest/basic/projectAnzaOrderDetailUpdate)⤵ `, 'background-color: #E0455D; color: white; font-size: 14px; font-weight: bold;', data)
+        return data
+      })
+    },
+    projectAnzaOrderDetailDelete: ({ form }) => {
+      let rawData = { form }
+      return post('/basic/projectAnzaOrderDetailDelete', rawData).then(data => {
+        console.log(`%c <<< Response(/rest/basic/projectAnzaOrderDetailDelete)⤵ `, 'background-color: #E0455D; color: white; font-size: 14px; font-weight: bold;', data)
         return data
       })
     },

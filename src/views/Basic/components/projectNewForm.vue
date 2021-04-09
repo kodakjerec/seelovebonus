@@ -43,43 +43,56 @@
           <el-input-number v-model.number="form.PV" :precision="2" :min="0"></el-input-number>
           <span>{{$t('__100PercentInput100')}}</span>
       </el-form-item>
+      <el-form-item v-if="dialogType==='new'">{{$t('__projectDetailWarning')}}</el-form-item>
       <!-- 專案明細 -->
-      <template v-if="dialogType!=='new'">
+      <template v-else>
         <el-divider>{{$t('__project')+$t('__detail')}}</el-divider>
-        <project-detail ref="projectDetail"
+        <project-detail
+          ref="projectDetail"
           :projectID="form.ID"
-          @reCalculateDetail="reCalculateDetail"></project-detail>
-      </template>
-      <el-form-item v-else>{{$t('__projectDetailWarning')}}</el-form-item>
-      <!-- 專案功能 -->
-      <el-divider>{{$t('__project')+$t('__function')}}</el-divider>
-      <template v-for="fun in switchProjectFunctions">
-        <div :key="fun.Function">
-          {{fun.Value}}
-          <el-switch v-model="fun.Available" active-text="ON" inactive-text="OFF" :active-value="1" :inactive-value="0" @change="(value)=>switchChange(value, fun)"></el-switch>
-          <div v-if="fun.Function==='newAnzaOrder' && fun.Available === 1">
-            <el-col :span="4" class="anzaOrderFunction"><span>{{$t('__new')}}</span><el-switch v-model="fun.Extend.new" active-text="ON" inactive-text="OFF" :active-value="1" :inactive-value="0"></el-switch></el-col>
-            <el-col :span="4" class="anzaOrderFunction"><span>{{$t('__anzaTransfer')}}</span><el-switch v-model="fun.Extend.transfer" active-text="ON" inactive-text="OFF" :active-value="1" :inactive-value="0"></el-switch></el-col>
-            <el-col :span="4" class="anzaOrderFunction"><span>{{$t('__anzaExtend')}}</span><el-switch v-model="fun.Extend.extend" active-text="ON" inactive-text="OFF" :active-value="1" :inactive-value="0"></el-switch></el-col>
-            <el-col :span="4" class="anzaOrderFunction"><span>{{$t('__anzaRenew')}}</span><el-switch v-model="fun.Extend.renew" active-text="ON" inactive-text="OFF" :active-value="1" :inactive-value="0"></el-switch></el-col>
-            <el-col :span="4" class="anzaOrderFunction"><span>Year</span><el-input v-model="fun.Extend.year" style="width:50px"></el-input></el-col>
-            <el-col :span="4" class="anzaOrderFunction"><span>{{'Next'+$t('__project')}}</span><el-input v-model="fun.Extend.nextProjectID" style="width:100px"></el-input></el-col>
+          @reCalculateDetail="reCalculateDetail">
+        </project-detail>
+        <!-- 專案功能 -->
+        <el-divider>{{$t('__project')+$t('__function')}}</el-divider>
+        <template v-for="fun in switchProjectFunctions">
+          <div :key="fun.Function">
+            {{fun.Value}}
+            <el-switch v-model="fun.Available" active-text="ON" inactive-text="OFF" :active-value="1" :inactive-value="0" @change="(value)=>switchChange(value, fun)"></el-switch>
           </div>
-        </div>
+        </template>
+        <!-- 安座單功能 -->
+        <template v-if="projectFunctionForAnza && projectFunctionForAnza.Available === 1">
+          <el-divider>{{$t('__anzaOrder')+$t('__function')}}</el-divider>
+          <el-form-item>
+          <el-col :span="4"><span>{{$t('__new')}}</span><el-switch v-model="projectFunctionForAnza.Extend.new" active-text="ON" inactive-text="OFF" :active-value="1" :inactive-value="0"></el-switch></el-col>
+          <el-col :span="4"><span>{{$t('__anzaTransfer')}}</span><el-switch v-model="projectFunctionForAnza.Extend.transfer" active-text="ON" inactive-text="OFF" :active-value="1" :inactive-value="0"></el-switch></el-col>
+          <el-col :span="4"><span>{{$t('__anzaExtend')}}</span><el-switch v-model="projectFunctionForAnza.Extend.extend" active-text="ON" inactive-text="OFF" :active-value="1" :inactive-value="0"></el-switch></el-col>
+          <el-col :span="4"><span>{{$t('__anzaRenew')}}</span><el-switch v-model="projectFunctionForAnza.Extend.renew" active-text="ON" inactive-text="OFF" :active-value="1" :inactive-value="0"></el-switch></el-col>
+          </el-form-item>
+          <el-form-item>
+            <el-col :span="8"><span>Year</span><el-input v-model="projectFunctionForAnza.Extend.year" style="width:50px"></el-input></el-col>
+            <el-col :span="8"><span>{{$t('__after')+$t('__project')}}</span><el-input v-model="projectFunctionForAnza.Extend.nextProjectID" style="width:100px"></el-input></el-col>
+          </el-form-item>
+          <el-divider>{{$t('__anzaOrder')+$t('__detail')}}</el-divider>
+          <project-anza-order-detail
+            ref="projectAnzaOrderDetail"
+            v-if="buttonsShowUser.new"
+            :projectID="form.ID">
+          </project-anza-order-detail>
+        </template>
+        <!-- 分期付款 -->
+        <el-divider>{{$t('__installment')}}</el-divider>
+        <project-installment-detail
+          v-if="buttonsShowUser.new"
+          :projectID="form.ID">
+        </project-installment-detail>
       </template>
-      <el-button @click.prevent="dialogShowInstallment=true">{{$t('__project')+$t('__installment')}}</el-button>
     </el-form>
     <div slot="footer">
       <el-button v-show="dialogType === 'edit' &&  buttonsShowUser.delete" type="danger" @click="deleteItem">{{$t('__delete')}}</el-button>
       <el-button @click="cancel">{{$t('__cancel')}}</el-button>
       <el-button v-show="buttonsShowUser.save" type="primary" @click="checkValidate">{{$t('__save')}}</el-button>
     </div>
-    <projectInstallmentDetail
-      v-if="dialogType === 'edit' &&  buttonsShowUser.delete"
-      :dialog-show="dialogShowInstallment"
-      :projectID="form.ID"
-      @dialog-cancel="dialogShowInstallment=false"
-    ></projectInstallmentDetail>
   </el-dialog>
 </template>
 
@@ -88,13 +101,15 @@ import { formatMoney } from '@/setup/format.js'
 import validate from '@/setup/validate.js'
 import projectDetail from './projectDetail'
 import projectInstallmentDetail from './projectInstallmentDetail'
+import projectAnzaOrderDetail from './projectAnzaOrderDetail'
 import { messageBoxYesNo } from '@/services/utils'
 
 export default {
   name: 'ProjectNewForm',
   components: {
     projectDetail,
-    projectInstallmentDetail
+    projectInstallmentDetail,
+    projectAnzaOrderDetail
   },
   props: {
     dialogType: { type: String, default: 'new' },
@@ -143,8 +158,7 @@ export default {
         ID: false
       },
       myTitle: '',
-      anzaExtend: {},
-      dialogShowInstallment: false, // 專案分期付款明細
+      projectFunctionForAnza: {}, // 安座單專用設定
       // 下拉式選單
       switchProjectFunctions: []
     }
@@ -177,8 +191,14 @@ export default {
 
       this.switchProjectFunctions.forEach(item => {
         if (item.Extend) { item.Extend = JSON.parse(item.Extend) }
+
+        // 安座單設定拉出來
+        if (item.Function === 'newAnzaOrder') {
+          this.projectFunctionForAnza = item // 修改獨立出去的projectFunctionForAnza, 也可以回寫projectFunction
+        }
       })
     },
+    // 專案功能切換
     switchChange: function (value, fun) {
       if (fun.Function === 'newAnzaOrder' && value === 1) {
         fun.Extend = {
@@ -194,9 +214,12 @@ export default {
     // 檢查輸入
     checkValidate: async function () {
       if (this.dialogType !== 'new') {
-      // check BOM
+        // check BOM
         let isSuccess = false
         isSuccess = await this.$refs['projectDetail'].beforeSave()
+        if (!isSuccess) { return }
+        isSuccess = false
+        isSuccess = await this.$refs['projectAnzaOrderDetail'].beforeSave()
         if (!isSuccess) { return }
       }
 
@@ -296,9 +319,3 @@ export default {
   }
 }
 </script>
-<style lang="scss" scoped>
-.anzaOrderFunction {
-  border: 1px solid lightgray;
-  border-radius: 5px;
-}
-</style>
