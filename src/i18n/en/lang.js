@@ -294,5 +294,6 @@ export default {
   __cantUse: 'can`t use',
   __valueUsed: ' already used',
   __exceedQtyLimit: 'Value limit exceeded',
-  __100PercentInput100: '100% please enter "100"'
+  __100PercentInput100: '100% please enter "100"',
+  __inventoryShortage: 'inventory shortage'
 }

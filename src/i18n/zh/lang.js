@@ -294,5 +294,6 @@ export default {
   __cantUse: '不能使用',
   __valueUsed: ' 已被使用',
   __exceedQtyLimit: '超出數值上限',
-  __100PercentInput100: '100%請輸入"100"'
+  __100PercentInput100: '100%請輸入"100"',
+  __inventoryShortage: '庫存不足'
 }

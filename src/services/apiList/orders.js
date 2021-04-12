@@ -295,6 +295,14 @@ export default {
         return data
       })
     },
+    // Anza Order Detail
+    anzaOrderDetailUpdate: ({ form }) => {
+      let rawData = { form }
+      return post('/orders/anzaOrderDetailUpdate', rawData).then(data => {
+        console.log(`%c <<< Response(/rest/orders/anzaOrderDetailUpdate)⤵ `, 'background-color: #E0455D; color: white; font-size: 14px; font-weight: bold;', data)
+        return data
+      })
+    },
     // Order Installment
     installmentDetailShow: ({ keyword }) => {
       let rawData = { keyword }

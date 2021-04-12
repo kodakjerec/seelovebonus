@@ -243,7 +243,7 @@ const validate = {
   // 驗證儲位
   validateStorageID: async (fromProductID, fromPurpose, fromQty, fromStorageID, callback) => {
     if (fromStorageID === null) {
-      callback(new Error(i18n.t('__pleaseInput')))
+      if (callback) { callback(new Error(i18n.t('__pleaseInput'))) } else { return i18n.t('__pleaseInput') }
     }
 
     // 2.驗證是否重複
@@ -254,8 +254,9 @@ const validate = {
       StorageID: fromStorageID })
     let rows = response.data.result
     if (rows && rows.length > 0) {
-      callback(new Error(i18n.t('__id') + ' ' + fromStorageID + i18n.t('__cantUse')))
+      if (callback) { callback(new Error(i18n.t('__id') + ' ' + fromStorageID + i18n.t('__cantUse'))) } else { return i18n.t('__id') + ' ' + fromStorageID + i18n.t('__cantUse') }
     }
+    if (callback) { callback() } else { return '' }
   },
   // 輸入 地址, 回傳 { City, Post, Address}
   addressSeparate: (fromAddress) => {

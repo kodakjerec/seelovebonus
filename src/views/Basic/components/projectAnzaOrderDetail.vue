@@ -62,7 +62,7 @@
       :label="$t('__fromStorageID')"
       width="200px">
       <template slot-scope="scope">
-        <el-select v-if="scope.row.Inventory" v-model="scope.row[scope.column.property]" allow-create default-first-option filterable clearable :placeholder="$t('__autofill')">
+        <el-select v-if="scope.row.Inventory" v-model="scope.row[scope.column.property]" allow-create default-first-option filterable clearable :placeholder="$t('__autofill')" @change="storageChange(scope.row)">
           <el-option v-for="item in ddlStorageIDDefaultList" :key="item.ID" :label="item.ID+' '+item.Value" :value="item.ID">
             <span style="float: left">{{ item.Value }}</span>
             <span style="float: right; color: #8492a6; font-size: 13px">{{ item.ID }}</span>
@@ -75,7 +75,7 @@
       :label="$t('__toStorageID')"
       width="200px">
       <template slot-scope="scope">
-        <el-select v-if="scope.row.Inventory" v-model="scope.row[scope.column.property]" allow-create default-first-option filterable clearable :placeholder="$t('__autofill')">
+        <el-select v-if="scope.row.Inventory" v-model="scope.row[scope.column.property]" allow-create default-first-option filterable clearable :placeholder="$t('__autofill')" @change="storageChange(scope.row)">
           <el-option v-for="item in ddlStorageIDDefaultList" :key="item.ID" :label="item.ID+' '+item.Value" :value="item.ID">
             <span style="float: left">{{ item.Value }}</span>
             <span style="float: right; color: #8492a6; font-size: 13px">{{ item.ID }}</span>
@@ -290,6 +290,12 @@ export default {
       row.ToStorageID = ''
       row.Purpose = ''
       this.priceChange(row.Price, 0, row)
+    },
+    // 更改儲位
+    storageChange: function (row) {
+      if (row.Status === '') {
+        row.Status = 'Modified'
+      }
     },
     priceChange: function (currentValue, oldValue, row) {
       if (row.Status === '') {

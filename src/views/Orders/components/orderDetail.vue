@@ -180,6 +180,7 @@
 import { formatMoney } from '@/setup/format.js'
 import orderDetailFunctions from './orderDetailFunctions'
 import openEditMode from '@/components/openEditMode'
+import validate from '@/setup/validate'
 
 export default {
   name: 'OrderDetail',
@@ -341,7 +342,9 @@ export default {
       let isSuccess = false
 
       // 檢查主表單
-      this.subList.slice(0).forEach(row => {
+      for (let index = 0; index < this.subList.length; index++) {
+        let row = this.subList[index]
+
         if (row.chglandCertificate === 1) {
           isSuccess = this.$refs['orderDetailFunctions' + row.Seq].checkValidate()
         } else {
@@ -358,6 +361,7 @@ export default {
           return isSuccess
         }
 
+        // 關係庫存
         if (row.Inventory === 1) {
           if (row.FromStorageID === '' || row.ToStorageID === '') {
             this.$message({
@@ -367,8 +371,35 @@ export default {
             isSuccess = false
             return isSuccess
           }
+
+          // 檢查庫存餘額是否足夠
+          let checkValidate = null
+
+          // 移出
+          checkValidate = await validate.validateStorageID(row.ProductID, row.Purpose, 0 - row.Qty, row.FromStorageID, null)
+
+          if (checkValidate !== '') {
+            this.$message({
+              message: this.$t('__fromStorageID') + this.$t('__inventoryShortage'),
+              type: 'error'
+            })
+            isSuccess = false
+            return isSuccess
+          }
+
+          // 移入
+          checkValidate = await validate.validateStorageID(row.ProductID, row.Purpose, row.Qty, row.ToStorageID, null)
+
+          if (checkValidate !== '') {
+            this.$message({
+              message: this.$t('__tofromStorageID') + this.$t('__inventoryShortage'),
+              type: 'error'
+            })
+            isSuccess = false
+            return isSuccess
+          }
         }
-      })
+      }
 
       return isSuccess
     },
