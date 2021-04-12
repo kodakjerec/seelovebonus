@@ -200,6 +200,7 @@ export default {
   __chanyun: 'Chanyun',
   __landCertificate: 'Land Cer.',
   __inboundOrder: 'Inbound Order',
+  __outboundOrder: 'Outbound Order',
   __transportOrder: 'Transport Order',
   __supplier: 'Supplier',
   __inventory: 'Inventory',

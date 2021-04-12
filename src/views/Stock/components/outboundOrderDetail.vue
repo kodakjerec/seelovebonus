@@ -118,7 +118,7 @@
 import { formatMoney } from '@/setup/format.js'
 
 export default {
-  name: 'inboundOrderDetail',
+  name: 'outboundOrderDetail',
   props: {
     dialogType: { type: String, default: 'new' },
     buttonsShowUser: { type: Object },
@@ -194,7 +194,7 @@ export default {
       if (this.orderID === '') {
         this.handleNew()
       } else {
-        let responseDetail = await this.$api.stock.getObject({ type: 'inboundOrderDetail', keyword: this.orderID })
+        let responseDetail = await this.$api.stock.getObject({ type: 'outboundOrderDetail', keyword: this.orderID })
         this.subList = responseDetail.data.result
 
         this.reCalAmount()
@@ -266,13 +266,13 @@ export default {
       switch (type) {
         case 'new':
         case 'edit':
-          let responseEdit = await this.$api.stock.inboundOrderDetailUpdate({ form: row })
+          let responseEdit = await this.$api.stock.outboundOrderDetailUpdate({ form: row })
           if (responseEdit.headers['code'] === '200') {
             isSuccess = true
           }
           break
         case 'delete':
-          let responseDelete = await this.$api.stock.inboundOrderDetailDelete({ form: row })
+          let responseDelete = await this.$api.stock.outboundOrderDetailDelete({ form: row })
           if (responseDelete.headers['code'] === '200') {
             isSuccess = true
           }
@@ -287,12 +287,11 @@ export default {
       if (value.length >= 5) {
         // 強制轉為大寫
         value = value.toUpperCase()
-
         if (row.ProductID !== '') {
           let response2 = await this.$api.stock.findStorageID({
             ProductID: row.ProductID,
             Purpose: '',
-            Qty: row.Qty,
+            Qty: 0 - row.Qty,
             StorageID: value
           })
           this.ddlStorageID = response2.data.result
@@ -316,7 +315,7 @@ export default {
       newObj.OrderID = this.orderID
       newObj.Seq = nextSeq
       newObj.ProductID = ''
-      newObj.StorageID = 'InboundArea'
+      newObj.StorageID = 'OutboundArea'
       newObj.Status = 'New'
       this.subList.push(newObj)
       this.remoteMethod(newObj.StorageID, newObj)
