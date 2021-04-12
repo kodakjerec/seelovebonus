@@ -36,7 +36,7 @@
         {{formatterMoney(null,null,form.Amount,null)}}
       </el-form-item>
       <!-- 供應商 -->
-      <el-form-item :label="$t('__supplier')" prop="Supplier">
+      <el-form-item :label="$t('__receiver')" prop="Supplier">
         <el-select v-model="form.Supplier" default-first-option filterable clearable :placeholder="$t('__plzChoice')" :disabled="disableForm.OrderDate">
           <el-option v-for="item in ddlCompanies" :key="item.ID" :label="item.ID+' '+item.Value" :value="item.ID">
             <span style="float: left">{{ item.Value }}</span>
@@ -90,7 +90,7 @@ export default {
         Status: '1',
         CreateID: this.$store.state.userID,
         Amount: 0,
-        Prefix: 'IB',
+        Prefix: 'OB',
         Memo: ''
       },
       batchInsert: false, // 開啟批次新增

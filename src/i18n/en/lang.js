@@ -203,6 +203,7 @@ export default {
   __outboundOrder: 'Outbound Order',
   __transportOrder: 'Transport Order',
   __supplier: 'Supplier',
+  __receiver: 'Receiver',
   __inventory: 'Inventory',
   __putOn: 'Put on',
   __openEditMode: 'Editable',

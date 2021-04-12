@@ -114,7 +114,9 @@
     </el-table-column>
   </el-table>
 </template>
+
 <script>
+import validate from '@/setup/validate'
 import { formatMoney } from '@/setup/format.js'
 
 export default {
@@ -212,15 +214,31 @@ export default {
       }
 
       // 檢查主表單
-      this.subList.slice(0).forEach(row => {
+      for (let index = 0; index < this.subList.length; index++) {
+        let row = this.subList[index]
+
         if (row.ProductID === '' || row.Qty === 0 || row.StorageID === '') {
           this.$message({
             message: this.$t('__pleaseInput') + ' ' + this.$t('__detail'),
             type: 'error'
           })
           isSuccess = false
+          return isSuccess
         }
-      })
+
+        let checkValidate = null
+        let object = {
+          ProductID: row.ProductID,
+          Purpose: '',
+          Qty: 0 - row.Qty,
+          StorageID: row.StorageID
+        }
+        checkValidate = await validate.validateStorageIDNoCallback(object.ProductID, object.Purpose, object.Qty, object.StorageID)
+        if (checkValidate !== '') {
+          isSuccess = false
+          return isSuccess
+        }
+      }
 
       return isSuccess
     },
@@ -349,7 +367,7 @@ export default {
       this.reCalAmount()
     },
     // 變更明細商品數量
-    qtyChange: function (newValue, row) {
+    qtyChange: function (currentValue, oldValue, row) {
       if (row.Status === '') {
         row.Status = 'Modified'
       }

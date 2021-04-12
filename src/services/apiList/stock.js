@@ -38,6 +38,42 @@ export default {
         return data
       })
     },
+    // outbound Order
+    outboundOrderShow: ({ keyword }) => {
+      let rawData = { keyword }
+      return post('/stock/outboundOrderShow', rawData).then(data => {
+        console.log(`%c <<< Response(/rest/stock/outboundOrderShow)⤵ `, 'background-color: #E0455D; color: white; font-size: 14px; font-weight: bold;', data)
+        return data
+      })
+    },
+    outboundOrderUpdate: ({ form }) => {
+      let rawData = { form }
+      return post('/stock/outboundOrderUpdate', rawData).then(data => {
+        console.log(`%c <<< Response(/rest/stock/outboundOrderUpdate)⤵ `, 'background-color: #E0455D; color: white; font-size: 14px; font-weight: bold;', data)
+        return data
+      })
+    },
+    outboundOrderDelete: ({ form }) => {
+      let rawData = { form }
+      return post('/stock/outboundOrderDelete', rawData).then(data => {
+        console.log(`%c <<< Response(/rest/stock/outboundOrderDelete)⤵ `, 'background-color: #E0455D; color: white; font-size: 14px; font-weight: bold;', data)
+        return data
+      })
+    },
+    outboundOrderDetailUpdate: ({ form }) => {
+      let rawData = { form }
+      return post('/stock/outboundOrderDetailUpdate', rawData).then(data => {
+        console.log(`%c <<< Response(/rest/stock/outboundOrderDetailUpdate)⤵ `, 'background-color: #E0455D; color: white; font-size: 14px; font-weight: bold;', data)
+        return data
+      })
+    },
+    outboundOrderDetailDelete: ({ form }) => {
+      let rawData = { form }
+      return post('/stock/outboundOrderDetailDelete', rawData).then(data => {
+        console.log(`%c <<< Response(/rest/stock/outboundOrderDetailDelete)⤵ `, 'background-color: #E0455D; color: white; font-size: 14px; font-weight: bold;', data)
+        return data
+      })
+    },
     // stock
     stockNowShow: ({ searchContent, pagination }) => {
       let rawData = { searchContent, pagination }

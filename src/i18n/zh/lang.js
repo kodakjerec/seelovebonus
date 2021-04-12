@@ -203,6 +203,7 @@ export default {
   __outboundOrder: '出貨單',
   __transportOrder: '調撥單',
   __supplier: '供應商',
+  __receiver: '收件者',
   __inventory: '庫存',
   __putOn: '上架',
   __openEditMode: '開啟修改',
