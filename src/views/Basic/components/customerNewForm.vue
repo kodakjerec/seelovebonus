@@ -4,8 +4,8 @@
       <!-- 客戶代號 -->
       <el-form-item :label="$t('__customer')+$t('__id')" required>
         <el-col :span="4" v-show="!disableForm.ID">
-          <el-select v-model="IDType" value-key="value" :placeholder="$t('__plzChoice')">
-            <el-option v-for="item in ddlIDType" :key="item.ID" :label="item.Value" :value="item.ID">
+          <el-select v-model="IDType" default-first-option filterable clearable :placeholder="$t('__plzChoice')">
+            <el-option v-for="item in ddlIDType" :label="item.ID+' '+item.Value" :key="item.ID" :value="item.ID">
               <span style="float: left">{{ item.Value }}</span>
               <span style="float: right; color: #8492a6; font-size: 13px">{{ item.ID }}</span>
             </el-option>
@@ -31,8 +31,8 @@
       <!-- 業務代表種類 -->
       <el-form-item :label="$t('__refKind')">
         <el-col :span="4">
-          <el-select v-model="form.refKind" value-key="value" :placeholder="$t('__plzChoice')" @change="ddlRefKindChange" :disabled="true">
-            <el-option v-for="item in ddlRefKind" :key="item.ID" :label="item.Value" :value="item.ID">
+          <el-select v-model="form.refKind" default-first-option filterable clearable :placeholder="$t('__plzChoice')" @change="ddlRefKindChange" :disabled="true">
+            <el-option v-for="item in ddlRefKind" :label="item.ID+' '+item.Value" :key="item.ID" :value="item.ID">
               <span style="float: left">{{ item.Value }}</span>
               <span style="float: right; color: #8492a6; font-size: 13px">{{ item.ID }}</span>
             </el-option>
@@ -40,8 +40,8 @@
         </el-col>
         <el-col :span="10">
           <el-form-item :label="$t('__referrer')" prop="Referrer">
-            <el-select v-model="form.Referrer" filterable value-key="value" :placeholder="$t('__plzChoice')" @change="ddlReferrerChange">
-              <el-option v-for="item in ddlReferrer" :key="item.ID" :label="item.ID+' '+item.Value" :value="item.ID">
+            <el-select v-model="form.Referrer" default-first-option filterable clearable :placeholder="$t('__plzChoice')" @change="ddlReferrerChange">
+              <el-option v-for="item in ddlReferrer" :label="item.ID+' '+item.Value" :key="item.ID" :value="item.ID">
                 <span style="float: left">{{ item.Value }}</span>
                 <span style="float: right; color: #8492a6; font-size: 13px">{{ item.ID }}</span>
               </el-option>
@@ -50,8 +50,8 @@
         </el-col>
         <el-col :span="10">
           <el-form-item :label="$t('__refEmployeeID')">
-            <el-select v-model="form.EmployeeID" filterable value-key="value" :placeholder="$t('__plzChoice')" disabled>
-              <el-option v-for="item in ddlEmployeeID" :key="item.ID" :label="item.ID+' '+item.Value" :value="item.ID">
+            <el-select v-model="form.EmployeeID" default-first-option filterable clearable :placeholder="$t('__plzChoice')" disabled>
+              <el-option v-for="item in ddlEmployeeID" :label="item.ID+' '+item.Value" :key="item.ID" :value="item.ID">
                 <span style="float: left">{{ item.Value }}</span>
                 <span style="float: right; color: #8492a6; font-size: 13px">{{ item.ID }}</span>
               </el-option>
@@ -62,8 +62,8 @@
       <!-- 性別,電話 -->
       <el-form-item :label="$t('__gender')">
         <el-col :span="4">
-          <el-select v-model="form.Gender" value-key="value" :placeholder="$t('__plzChoice')">
-            <el-option v-for="item in ddlGender" :key="item.ID" :label="item.Value" :value="item.ID">
+          <el-select v-model="form.Gender" default-first-option filterable clearable :placeholder="$t('__plzChoice')">
+            <el-option v-for="item in ddlGender" :label="item.ID+' '+item.Value" :key="item.ID" :value="item.ID">
               <span style="float: left">{{ item.Value }}</span>
               <span style="float: right; color: #8492a6; font-size: 13px">{{ item.ID }}</span>
             </el-option>
@@ -109,8 +109,8 @@
         </el-col>
         <el-col :span="8">
           <el-form-item :label="$t('__lunarTime')">
-            <el-select v-model="form.BirthLunarTime" value-key="value" :placeholder="$t('__plzChoice')">
-              <el-option v-for="item in ddlLunarTime" :key="item.ID" :label="item.Value" :value="item.ID">
+            <el-select v-model="form.BirthLunarTime" default-first-option filterable clearable :placeholder="$t('__plzChoice')">
+              <el-option v-for="item in ddlLunarTime" :label="item.ID+' '+item.Value" :key="item.ID" :value="item.ID">
                 <span style="float: left">{{ item.Value + '(' + item.Memo + ')' }}</span>
                 <span style="float: right; color: #8492a6; font-size: 13px">{{ item.ID }}</span>
               </el-option>
@@ -134,8 +134,8 @@
       <!-- 國家etc -->
       <el-form-item :label="$t('__country')">
         <el-col :span="4">
-          <el-select v-model="form.Country" value-key="value" :placeholder="$t('__plzChoice')">
-            <el-option v-for="item in ddlCountry" :key="item.ID" :label="item.Value" :value="item.ID">
+          <el-select v-model="form.Country" default-first-option filterable clearable :placeholder="$t('__plzChoice')">
+            <el-option v-for="item in ddlCountry" :label="item.ID+' '+item.Value" :key="item.ID" :value="item.ID">
               <span style="float: left">{{ item.Value }}</span>
               <span style="float: right; color: #8492a6; font-size: 13px">{{ item.ID }}</span>
             </el-option>
@@ -143,8 +143,8 @@
         </el-col>
         <el-col :span="8">
           <el-form-item :label="$t('__city')">
-            <el-select v-model="form.City" value-key="value" :placeholder="$t('__plzChoice')" @change="ddlCityChange" :disabled="!form.Country">
-              <el-option v-for="item in ddlCity" :key="item.ID" :label="item.Value" :value="item.ID">
+            <el-select v-model="form.City" default-first-option filterable clearable :placeholder="$t('__plzChoice')" @change="ddlCityChange" :disabled="!form.Country">
+              <el-option v-for="item in ddlCity" :label="item.ID+' '+item.Value" :key="item.ID" :value="item.ID">
                 <span style="float: left">{{ item.Value }}</span>
                 <span style="float: right; color: #8492a6; font-size: 13px">{{ item.ID }}</span>
               </el-option>
@@ -153,8 +153,8 @@
         </el-col>
         <el-col :span="12">
           <el-form-item :label="$t('__post')">
-            <el-select v-model="form.Post" value-key="value" :placeholder="$t('__plzChoice')" :disabled="!form.City">
-              <el-option v-for="item in ddlPost" :key="item.ID" :label="item.Value" :value="item.ID">
+            <el-select v-model="form.Post" default-first-option filterable clearable :placeholder="$t('__plzChoice')" :disabled="!form.City">
+              <el-option v-for="item in ddlPost" :label="item.ID+' '+item.Value" :key="item.ID" :value="item.ID">
                 <span style="float: left">{{ item.Value }}</span>
                 <span style="float: right; color: #8492a6; font-size: 13px">{{ item.ID }}</span>
               </el-option>
@@ -172,8 +172,8 @@
       </el-form-item>
       <!-- 狀態 -->
       <el-form-item :label="$t('__status')">
-        <el-select v-model="form.Status" value-key="value" :placeholder="$t('__plzChoice')">
-          <el-option v-for="item in ddlStatus" :key="item.ID" :label="item.Value" :value="item.ID">
+        <el-select v-model="form.Status" default-first-option filterable clearable :placeholder="$t('__plzChoice')">
+          <el-option v-for="item in ddlStatus" :label="item.ID+' '+item.Value" :key="item.ID" :value="item.ID">
             <span style="float: left">{{ item.Value }}</span>
             <span style="float: right; color: #8492a6; font-size: 13px">{{ item.ID }}</span>
           </el-option>
@@ -186,8 +186,8 @@
             <h2>{{$t('__customer')+$t('__agent')}}<i class="el-icon-circle-plus" v-show="activeName===''"></i></h2>
           </template>
           <el-form-item :label="$t('__id')">
-            <el-select v-model="form.AgentID" value-key="value" :placeholder="$t('__placeholderCustomerID')" @change="ddlAgentIDChange">
-                <el-option v-for="item in ddlAgentID" :key="item.ID" :label="item.Value" :value="item.ID">
+            <el-select v-model="form.AgentID" default-first-option filterable clearable :placeholder="$t('__placeholderCustomerID')" @change="ddlAgentIDChange">
+                <el-option v-for="item in ddlAgentID" :label="item.ID+' '+item.Value" :key="item.ID" :value="item.ID">
                   <span style="float: left">{{ item.Value }}</span>
                   <span style="float: right; color: #8492a6; font-size: 13px">{{ item.ID }}</span>
                 </el-option>
@@ -198,8 +198,8 @@
           </el-form-item>
           <el-form-item :label="$t('__country')">
             <el-col :span="4">
-              <el-select v-model="form.AgentCountry" value-key="value" :placeholder="$t('__plzChoice')">
-                <el-option v-for="item in ddlAgentCountry" :key="item.ID" :label="item.Value" :value="item.ID">
+              <el-select v-model="form.AgentCountry" default-first-option filterable clearable :placeholder="$t('__plzChoice')">
+                <el-option v-for="item in ddlAgentCountry" :label="item.ID+' '+item.Value" :key="item.ID" :value="item.ID">
                   <span style="float: left">{{ item.Value }}</span>
                   <span style="float: right; color: #8492a6; font-size: 13px">{{ item.ID }}</span>
                 </el-option>
@@ -207,8 +207,8 @@
             </el-col>
             <el-col :span="8">
               <el-form-item :label="$t('__city')">
-                <el-select v-model="form.AgentCity" value-key="value" :placeholder="$t('__plzChoice')" @change="ddlAgentCityChange">
-                  <el-option v-for="item in ddlAgentCity" :key="item.ID" :label="item.Value" :value="item.ID">
+                <el-select v-model="form.AgentCity" default-first-option filterable clearable :placeholder="$t('__plzChoice')" @change="ddlAgentCityChange">
+                  <el-option v-for="item in ddlAgentCity" :label="item.ID+' '+item.Value" :key="item.ID" :value="item.ID">
                     <span style="float: left">{{ item.Value }}</span>
                     <span style="float: right; color: #8492a6; font-size: 13px">{{ item.ID }}</span>
                   </el-option>
@@ -217,8 +217,8 @@
             </el-col>
             <el-col :span="12">
               <el-form-item :label="$t('__post')">
-                <el-select v-model="form.AgentPost" value-key="value" :placeholder="$t('__plzChoice')">
-                  <el-option v-for="item in ddlAgentPost" :key="item.ID" :label="item.Value" :value="item.ID">
+                <el-select v-model="form.AgentPost" default-first-option filterable clearable :placeholder="$t('__plzChoice')">
+                  <el-option v-for="item in ddlAgentPost" :label="item.ID+' '+item.Value" :key="item.ID" :value="item.ID">
                     <span style="float: left">{{ item.Value }}</span>
                     <span style="float: right; color: #8492a6; font-size: 13px">{{ item.ID }}</span>
                   </el-option>

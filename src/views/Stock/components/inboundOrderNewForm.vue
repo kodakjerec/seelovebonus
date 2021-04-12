@@ -6,20 +6,20 @@
         <el-col :span="2" v-if="dialogType === 'new'">
           {{form.Prefix}}
         </el-col>
-        <el-col :span="5">
+        <el-col :span="4">
           <el-input v-model="form.ID" :placeholder="$t('__afterSaveWillShow')" :disabled="disableForm.ID"></el-input>
         </el-col>
         <el-col :span="6">
           <el-form-item :label="$t('__status')">
-            <el-select v-model="form.Status" value-key="value" disabled>
-              <el-option v-for="item in ddlOrderStatus" :key="item.ID" :label="item.Value" :value="item.ID">
+            <el-select v-model="form.Status" default-first-option filterable clearable disabled>
+              <el-option v-for="item in ddlOrderStatus" :key="item.ID" :label="item.ID+' '+item.Value" :value="item.ID">
                 <span style="float: left">{{ item.Value }}</span>
                 <span style="float: right; color: #8492a6; font-size: 13px">{{ item.ID }}</span>
               </el-option>
             </el-select>
           </el-form-item>
         </el-col>
-        <el-col :span="11">
+        <el-col :span="10">
           <el-form-item :label="$t('__order')+$t('__date')+'：'" prop="OrderDate">
             <el-date-picker
               v-model="form.OrderDate"
@@ -31,12 +31,14 @@
           </el-form-item>
         </el-col>
       </el-form-item>
+      <!-- 總金額 -->
       <el-form-item :label="$t('__total') + $t('__amount')">
         {{formatterMoney(null,null,form.Amount,null)}}
       </el-form-item>
-      <el-form-item :label="$t('__supplier')">
-        <el-select v-model="form.Supplier" value-key="value" :placeholder="$t('__plzChoice')" :disabled="disableForm.OrderDate">
-          <el-option v-for="item in ddlCompanies" :key="item.ID" :label="item.Value" :value="item.ID">
+      <!-- 供應商 -->
+      <el-form-item :label="$t('__supplier')" prop="Supplier">
+        <el-select v-model="form.Supplier" default-first-option filterable clearable :placeholder="$t('__plzChoice')" :disabled="disableForm.OrderDate">
+          <el-option v-for="item in ddlCompanies" :key="item.ID" :label="item.ID+' '+item.Value" :value="item.ID">
             <span style="float: left">{{ item.Value }}</span>
             <span style="float: right; color: #8492a6; font-size: 13px">{{ item.ID }}</span>
           </el-option>
@@ -94,6 +96,7 @@ export default {
       batchInsert: false, // 開啟批次新增
       rules: {
         ID: [{ required: true, message: this.$t('__pleaseInput'), trigger: 'blur' }],
+        Supplier: [{ required: true, message: this.$t('__pleaseInput'), trigger: 'blur' }],
         OrderDate: [{ required: true, message: this.$t('__pleaseInput'), trigger: 'blur' }]
       },
       // 系統目前狀態權限

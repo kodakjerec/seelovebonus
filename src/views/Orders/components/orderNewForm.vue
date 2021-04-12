@@ -32,8 +32,8 @@
         </el-col>
         <el-col :span="6">
           <el-form-item :label="$t('__status')">
-            <el-select v-model="form.Status" value-key="value" disabled>
-              <el-option v-for="item in ddlOrderStatus" :key="item.ID" :label="item.Value" :value="item.ID">
+            <el-select v-model="form.Status" default-first-option filterable clearable disabled>
+              <el-option v-for="item in ddlOrderStatus" :key="item.ID" :label="item.ID+' '+item.Value" :value="item.ID">
                 <span style="float: left">{{ item.Value }}</span>
                 <span style="float: right; color: #8492a6; font-size: 13px">{{ item.ID }}</span>
               </el-option>

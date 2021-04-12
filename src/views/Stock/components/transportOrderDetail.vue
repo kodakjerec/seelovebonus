@@ -17,7 +17,7 @@
       <template slot-scope="scope">
         <el-select
           v-if="buttonsShowUser.new"
-          filterable
+          default-first-option filterable clearable
           v-model="scope.row[scope.column.property]"
           :placeholder="$t('__plzChoice')"
           @change="(value)=>{ddlSubListChange(value, scope.row)}"
@@ -77,7 +77,7 @@
       <template slot-scope="scope">
         <el-select
           v-if="buttonsShowUser.new"
-          filterable
+          default-first-option filterable clearable
           v-model="scope.row[scope.column.property]"
           :placeholder="$t('__plzChoice')"
           @change="(value)=>{qtyChange(value, scope.row)}"

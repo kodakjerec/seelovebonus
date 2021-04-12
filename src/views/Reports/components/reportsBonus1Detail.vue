@@ -22,7 +22,7 @@
       </el-form-item>
       <el-form-item :label="$t('__companies')+$t('__id')">
         <el-col :span="8">
-          <el-select v-model="form.CompanyID" filterable :placeholder="$t('__plzChoice')" @change="ddlCompaniesChange">
+          <el-select v-model="form.CompanyID" default-first-option filterable clearable :placeholder="$t('__plzChoice')" @change="ddlCompaniesChange">
             <el-option v-for="item in ddlCompanies" :key="item.ID" :label="item.ID+' '+item.Value" :value="item.ID">
               <span style="float: left">{{ item.Value }}</span>
               <span style="float: right; color: #8492a6; font-size: 13px">{{ item.ID }}</span>

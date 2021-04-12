@@ -17,7 +17,7 @@
       <template slot-scope="scope">
         <el-select
           v-if="buttonsShowUser.new"
-          filterable
+          default-first-option filterable clearable
           v-model="scope.row[scope.column.property]"
           :placeholder="$t('__plzChoice')"
           @change="(value)=>{ddlSubListChange(value, scope.row)}"
@@ -77,10 +77,12 @@
       <template slot-scope="scope">
         <el-select
           v-if="buttonsShowUser.new"
-          filterable
-          v-model="scope.row[scope.column.property]"
+          default-first-option filterable clearable
+          remote
+          v-model="scope.row.StorageID"
+          :disabled="scope.row.ProductID===''"
+          :remote-method="(value)=>{remoteMethod(value, scope.row)}"
           :placeholder="$t('__plzChoice')"
-          @change="(value)=>{qtyChange(value, scope.row)}"
           style="display:block">
           <el-option v-for="item in ddlStorageID" :key="item.ID" :label="item.ID+' '+item.Value" :value="item.ID">
             <span style="float: left">{{ item.Value }}</span>
@@ -131,7 +133,7 @@ export default {
         Name: '',
         Qty: 0,
         Cost: 0,
-        StorageID: '',
+        StorageID: 'InBoundArea',
         // 以下為前端顯示用, 不會記錄進資料庫
         Status: 'New',
         Amount: 0
@@ -174,9 +176,6 @@ export default {
       this.originDDLSubList = response.data.result
       this.originDDLSubList = this.originDDLSubList.filter(item => item.Inventory === 1)
 
-      let response2 = await this.$api.basic.getDropdownList({ type: 'storageAddress' })
-      this.ddlStorageID = response2.data.result
-
       // 做select group 處理
       // 找出主key
       this.originDDLSubList.forEach(item => {
@@ -192,10 +191,14 @@ export default {
     },
     // 修改狀態, 取得明細
     bringOrderDetail: async function () {
-      let responseDetail = await this.$api.stock.getObject({ type: 'inboundOrderDetail', keyword: this.orderID })
-      this.subList = responseDetail.data.result
+      if (this.orderID === '') {
+        this.handleNew()
+      } else {
+        let responseDetail = await this.$api.stock.getObject({ type: 'inboundOrderDetail', keyword: this.orderID })
+        this.subList = responseDetail.data.result
 
-      this.reCalAmount()
+        this.reCalAmount()
+      }
     },
     checkValidate: async function () {
       let isSuccess = true
@@ -210,7 +213,7 @@ export default {
 
       // 檢查主表單
       this.subList.slice(0).forEach(row => {
-        if (row.ProductID === '' || row.Qty === 0) {
+        if (row.ProductID === '' || row.Qty === 0 || row.StorageID === '') {
           this.$message({
             message: this.$t('__pleaseInput') + ' ' + this.$t('__detail'),
             type: 'error'
@@ -279,6 +282,21 @@ export default {
       return isSuccess
     },
     // ============== 子結構 ===============
+    // 即時查詢可用儲位
+    remoteMethod: async function (value, row) {
+      if (value.length >= 5) {
+        // 強制轉為大寫
+        value = value.toUpperCase()
+
+        let response2 = await this.$api.stock.findStorageID({
+          ProductID: row.ProductID,
+          Purpose: '',
+          Qty: 1,
+          StorageID: value
+        })
+        this.ddlStorageID = response2.data.result
+      }
+    },
     // 新增子結構
     handleNew: function () {
       let newObj = JSON.parse(JSON.stringify(this.subItem))

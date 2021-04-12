@@ -22,7 +22,7 @@
           prop="CustomerID"
           :label="$t('__customer')">
           <template slot-scope="scope">
-            <el-select v-model="scope.row[scope.column.property]" filterable value-key="value" :placeholder="$t('__plzChoice')" :disabled="disableForm.CustomerID">
+            <el-select v-model="scope.row[scope.column.property]" default-first-option filterable clearable :placeholder="$t('__plzChoice')" :disabled="disableForm.CustomerID">
               <el-option v-for="item in ddlCustomer" :key="item.ID" :label="item.ID+' '+item.Value" :value="item.ID">
                 <span style="float: left">{{ item.Value }}</span>
                 <span style="float: right; color: #8492a6; font-size: 13px">{{ item.ID }}</span>

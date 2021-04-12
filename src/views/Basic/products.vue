@@ -3,7 +3,7 @@
     <el-button-group class="defineCSS_ButtonGroup">
       <el-form-item>
         <el-col>
-          <el-select v-model="searchContent.Category1" clearable :placeholder="$t('__plzChoice')" @change="ddlCategory1Change">
+          <el-select v-model="searchContent.Category1" default-first-option filterable clearable :placeholder="$t('__plzChoice')" @change="ddlCategory1Change">
             <el-option v-for="item in ddlCategory1" :key="item.ID" :label="item.ID+' '+item.Value" :value="item.ID">
               <span style="float: left">{{ item.Value }}</span>
               <span style="float: right; color: #8492a6; font-size: 13px">{{ item.ID }}</span>
