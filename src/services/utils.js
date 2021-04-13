@@ -8,7 +8,7 @@ export const seeloveNodeServer = {
   // ip: '192.168.105.125',
   ip: '192.168.2.210',
   // ipHost: 'localhost',
-  port: '7000', // backend server
+  port: '4000', // backend server
   portReportingServices: '3002' // reporting services server
 }
 
