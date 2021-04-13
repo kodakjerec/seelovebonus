@@ -235,7 +235,7 @@ export default {
     },
     // 刪除
     deleteItem: async function () {
-      let answerAction = await messageBoxYesNo(this.$t('__delete') + this.$t('__storageAddress'), this.$t('__delete'))
+      let answerAction = await messageBoxYesNo(this.$t('__delete') + this.$t('__outboundOrder'), this.$t('__delete'))
 
       switch (answerAction) {
         case 'confirm':

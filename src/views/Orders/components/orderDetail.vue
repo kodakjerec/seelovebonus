@@ -29,7 +29,7 @@
             @change="(value)=>{ddlSubListChange(value, scope.row, 1)}"
             style="display:block">
             <el-option-group v-for="group in ddlSubList" :key="group.Category1Name" :label="group.Category1Name">
-              <el-option v-for="item in group.options" :key="item.ProductID" :value="item.ProductID">
+              <el-option v-for="item in group.options" :key="item.ProductID" :label="item.ProductID+' '+item.ProductName" :value="item.ProductID">
                 <!-- 商品明細特別加上價格 -->
                 <span style="float: left">{{ item.ProductName + ' ['+ formatterMoneyUS(null,null,item.Price,null) + ']' }}</span>
                 <span style="float: right; color: #8492a6; font-size: 13px">{{ item.ProductID }}</span>

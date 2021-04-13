@@ -79,6 +79,11 @@
         :label="$t('__orderID')">
       </el-table-column>
       <el-table-column
+      prop="Purpose"
+      :label="$t('__storagePurpose')"
+      width="100">
+      </el-table-column>
+      <el-table-column
         prop="ModifyDate"
         :label="$t('__edit')+$t('__date')"
         :formatter="formatterDateTime">
