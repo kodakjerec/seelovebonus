@@ -187,6 +187,13 @@
     <div slot="footer">
       <el-button @click="cancel">{{$t('__cancel')}}</el-button>
       <el-button type="primary" @click="checkValidate">{{$t('__ok')}}</el-button>
+      <div v-if="operateType==='anza' && anzaOrder.AnzaOrderID">
+        <el-divider>{{$t('__anzaOrder')+$t('__detail')}}</el-divider>
+        <anzaOrderDetail
+          ref='anzaOrderDetail'
+          :projectID="anzaOrder.AnzaOrderID"
+          :storageID="anzaOrder.StorageID"></anzaOrderDetail>
+      </div>
     </div>
   </el-dialog>
 </template>
@@ -194,15 +201,17 @@
 <script>
 import validate from '@/setup/validate'
 import inputCustomer from '@/views/Basic/inputCustomer'
+import anzaOrderDetail from './anzaOrderDetail'
 
 export default {
   name: 'operateAnza',
   components: {
-    inputCustomer
+    inputCustomer,
+    anzaOrderDetail
   },
   props: {
     dialogShow: { type: Boolean, default: false },
-    operateType: { type: String },
+    operateType: { type: String }, // 數值: modify, anza, complete
     fromAnzaOrder: { type: Object }
   },
   data () {
@@ -429,7 +438,14 @@ export default {
         this.ddlStorageID = response2.data.result
       }
     },
-    checkValidate: function () {
+    checkValidate: async function () {
+      // 檢查明細(安座才檢查)
+      if (this.operateType === 'anza') {
+        let isSuccess = false
+        isSuccess = await this.$refs['anzaOrderDetail'].checkValidate()
+        if (!isSuccess) { return }
+      }
+
       // 檢查主表單
       this.$refs['form'].validate((valid) => {
         if (valid) {
@@ -438,6 +454,13 @@ export default {
       })
     },
     save: async function () {
+      // 儲存明細(安座才檢查)
+      if (this.operateType === 'anza') {
+        let isSuccess = false
+        isSuccess = await this.$refs['anzaOrderDetail'].beforeSave()
+        if (!isSuccess) { return }
+      }
+
       let response2 = await this.$api.orders.anzaOperate({ form: this.anzaOrder })
       if (response2.headers['code'] === '200') {
         this.$message({
