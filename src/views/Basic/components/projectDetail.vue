@@ -17,7 +17,7 @@
       <template slot-scope="scope">
         <el-select
           v-model="scope.row[scope.column.property]"
-          filterable
+          default-first-option filterable clearable
           :placeholder="$t('__plzChoice')"
           @change="(value)=>{ddlSubListChange(value, scope.row)}">
           <el-option-group v-for="group in ddlSubList" :key="group.Category1Name" :label="group.Category1Name">
@@ -62,7 +62,7 @@
       :label="$t('__fromStorageID')"
       width="200px">
       <template slot-scope="scope">
-        <el-select v-if="scope.row.Inventory" v-model="scope.row[scope.column.property]" allow-create default-first-option filterable clearable :placeholder="$t('__autofill')">
+        <el-select v-if="scope.row.Inventory" v-model="scope.row[scope.column.property]" default-first-option filterable clearable :placeholder="$t('__autofill')">
           <el-option v-for="item in ddlStorageIDDefaultList" :key="item.ID" :label="item.ID+' '+item.Value" :value="item.ID">
             <span style="float: left">{{ item.Value }}</span>
             <span style="float: right; color: #8492a6; font-size: 13px">{{ item.ID }}</span>
@@ -75,7 +75,7 @@
       :label="$t('__toStorageID')"
       width="200px">
       <template slot-scope="scope">
-        <el-select v-if="scope.row.Inventory" v-model="scope.row[scope.column.property]" allow-create default-first-option filterable clearable :placeholder="$t('__autofill')">
+        <el-select v-if="scope.row.Inventory" v-model="scope.row[scope.column.property]" default-first-option filterable clearable :placeholder="$t('__autofill')">
           <el-option v-for="item in ddlStorageIDDefaultList" :key="item.ID" :label="item.ID+' '+item.Value" :value="item.ID">
             <span style="float: left">{{ item.Value }}</span>
             <span style="float: right; color: #8492a6; font-size: 13px">{{ item.ID }}</span>

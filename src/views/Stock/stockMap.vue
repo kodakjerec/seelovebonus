@@ -7,7 +7,7 @@
           <el-input v-model="searchContent.Layer" disabled></el-input>
         </el-form-item>
         <el-form-item :label="$t('__building')">
-          <el-select v-model="searchContent.Building" value-key="value" :placeholder="$t('__plzChoice')" @change="ddlBuildingChange">
+          <el-select v-model="searchContent.Building" default-first-option filterable clearable :placeholder="$t('__plzChoice')" @change="ddlBuildingChange">
             <el-option v-for="item in ddlBuilding" :key="item.ID" :label="item.ID+' '+item.Value" :value="item.ID">
               <span style="float: left">{{ item.Value+'('+item.Counts+')' }}</span>
               <span style="float: right; color: #8492a6; font-size: 13px">{{ item.ID }}</span>
@@ -15,7 +15,7 @@
           </el-select>
         </el-form-item>
         <el-form-item :label="$t('__floor')">
-          <el-select v-model="searchContent.Floor" value-key="value" :placeholder="$t('__plzChoice')" @change="ddlFloorChange" :disabled="!searchContent.Building">
+          <el-select v-model="searchContent.Floor" default-first-option filterable clearable :placeholder="$t('__plzChoice')" @change="ddlFloorChange" :disabled="!searchContent.Building">
             <el-option v-for="item in ddlFloor" :key="item.ID" :label="item.ID+' '+item.Value" :value="item.ID">
               <span style="float: left">{{ item.Value+'('+item.Counts+')' }}</span>
               <span style="float: right; color: #8492a6; font-size: 13px">{{ item.ID }}</span>
@@ -23,7 +23,7 @@
           </el-select>
         </el-form-item>
         <el-form-item :label="$t('__area')">
-          <el-select v-model="searchContent.Area" value-key="value" :placeholder="$t('__plzChoice')" @change="ddlAreaChange" :disabled="!searchContent.Floor">
+          <el-select v-model="searchContent.Area" default-first-option filterable clearable :placeholder="$t('__plzChoice')" @change="ddlAreaChange" :disabled="!searchContent.Floor">
             <el-option v-for="item in ddlArea" :key="item.ID" :label="item.ID+' '+item.Value" :value="item.ID">
               <span style="float: left">{{ item.Value+'('+item.Counts+')' }}</span>
               <span style="float: right; color: #8492a6; font-size: 13px">{{ item.ID }}</span>

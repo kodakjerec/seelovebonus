@@ -203,10 +203,13 @@ export default {
   __chanyun: '展雲',
   __landCertificate: '權狀',
   __inboundOrder: '入庫單',
+  __outboundOrder: '出貨單',
   __transportOrder: '調撥單',
   __supplier: '供應商',
+  __receiver: '收件者',
   __inventory: '庫存',
   __putOn: '上架',
+  __shipping: '出貨',
   __openEditMode: '開啟修改',
   __fKOrder: '信託指示函',
   __notReceived: '未收款',
@@ -294,5 +297,6 @@ export default {
   __cantUse: '不能使用',
   __valueUsed: ' 已被使用',
   __exceedQtyLimit: '超出數值上限',
-  __100PercentInput100: '100%請輸入"100"'
+  __100PercentInput100: '100%請輸入"100"',
+  __inventoryShortage: '庫存不足'
 }

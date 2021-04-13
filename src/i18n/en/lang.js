@@ -203,10 +203,13 @@ export default {
   __chanyun: 'Chanyun',
   __landCertificate: 'Land Cer.',
   __inboundOrder: 'Inbound Order',
+  __outboundOrder: 'Outbound Order',
   __transportOrder: 'Transport Order',
   __supplier: 'Supplier',
+  __receiver: 'Receiver',
   __inventory: 'Inventory',
   __putOn: 'Put on',
+  __shipping: 'Shipping',
   __openEditMode: 'Editable',
   __fKOrder: 'FK Order',
   __notReceived: 'Not Received',
@@ -294,5 +297,6 @@ export default {
   __cantUse: 'can`t use',
   __valueUsed: ' already used',
   __exceedQtyLimit: 'Value limit exceeded',
-  __100PercentInput100: '100% please enter "100"'
+  __100PercentInput100: '100% please enter "100"',
+  __inventoryShortage: 'Inventory Shortage'
 }

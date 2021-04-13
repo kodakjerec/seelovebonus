@@ -199,6 +199,17 @@ const routes = [
     props: true
   },
   {
+    path: '/Stock/OutboundOrder',
+    name: 'OutboundOrder',
+    component: () => import('@/views/Stock/outboundOrder')
+  },
+  {
+    path: '/Stock/OutboundOrderNewForm',
+    name: 'OutboundOrderNewForm',
+    component: () => import('@/views/Stock/components/outboundOrderNewForm'),
+    props: true
+  },
+  {
     path: '/Stock/TransportOrder',
     name: 'TransportOrder',
     component: () => import('@/views/Stock/transportOrder')

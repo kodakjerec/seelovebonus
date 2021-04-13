@@ -2,8 +2,8 @@
   <el-dialog :title="myTitle" :visible="dialogShow" center width="80vw" top="5vh" @close="cancel">
     <el-form :inline="true">
       <el-form-item :label="$t('__kind')">
-        <el-select v-model="projectID" :placeholder="$t('__plzChoice')" style="display:block" :disabled="isNewPB" @change="(value)=>{ddlPPBListChange(value)}">
-          <el-option v-for="item in ddlPPBList" :key="item.ID" :label="item.Value" :value="item.ID">
+        <el-select v-model="projectID" default-first-option filterable clearable :placeholder="$t('__plzChoice')" style="display:block" :disabled="isNewPB" @change="(value)=>{ddlPPBListChange(value)}">
+          <el-option v-for="item in ddlPPBList" :key="item.ID" :label="item.ID+' '+item.Value" :value="item.ID">
             <span style="float: left">{{ item.Value }}</span>
             <span style="float: right; color: #8492a6; font-size: 13px">{{ item.ID }}</span>
           </el-option>
@@ -27,8 +27,8 @@
         prop="Grade"
         :label="$t('__grade')">
         <template slot-scope="scope">
-          <el-select v-model="scope.row[scope.column.property]" :placeholder="$t('__plzChoice')" @change="(value)=>{ddlSubListChange(value, scope.row)}" style="display:block" :disabled="!buttonsShowUser.save">
-            <el-option v-for="item in ddlSubList" :key="item.ID" :label="item.Value" :value="item.ID">
+          <el-select v-model="scope.row[scope.column.property]" default-first-option filterable clearable :placeholder="$t('__plzChoice')" @change="(value)=>{ddlSubListChange(value, scope.row)}" style="display:block" :disabled="!buttonsShowUser.save">
+            <el-option v-for="item in ddlSubList" :key="item.ID" :label="item.ID+' '+item.Value" :value="item.ID">
               <span style="float: left">{{ item.Value }}</span>
               <span style="float: right; color: #8492a6; font-size: 13px">{{ item.ID }}</span>
             </el-option>

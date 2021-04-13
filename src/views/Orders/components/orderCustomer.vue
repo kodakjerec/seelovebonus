@@ -9,8 +9,7 @@
           <el-select
             v-model="form.CustomerID"
             remote
-            filterable
-            default-first-option
+            default-first-option filterable clearable
             :placeholder="$t('__plzChoice')"
             :remote-method="remoteMethod"
             :loading="loading"
@@ -45,8 +44,8 @@
     <el-form-item :label="$t('__address')">
       <el-col :span="4">
         <el-form-item>
-          <el-select v-model="form.City" value-key="value" :placeholder="$t('__plzChoice')" @change="ddlCityChange" disabled>
-            <el-option v-for="item in ddlCity" :key="item.ID" :label="item.Value" :value="item.ID">
+          <el-select v-model="form.City" default-first-option filterable clearable :placeholder="$t('__plzChoice')" @change="ddlCityChange" disabled>
+            <el-option v-for="item in ddlCity" :key="item.ID" :label="item.ID+' '+item.Value" :value="item.ID">
               <span style="float: left">{{ item.Value }}</span>
               <span style="float: right; color: #8492a6; font-size: 13px">{{ item.ID }}</span>
             </el-option>
@@ -55,8 +54,8 @@
       </el-col>
       <el-col :span="4">
         <el-form-item>
-          <el-select v-model="form.Post" value-key="value" :placeholder="$t('__plzChoice')" disabled>
-            <el-option v-for="item in ddlPost" :key="item.ID" :label="item.Value" :value="item.ID">
+          <el-select v-model="form.Post" default-first-option filterable clearable :placeholder="$t('__plzChoice')" disabled>
+            <el-option v-for="item in ddlPost" :key="item.ID" :label="item.ID+' '+item.Value" :value="item.ID">
               <span style="float: left">{{ item.Value }}</span>
               <span style="float: right; color: #8492a6; font-size: 13px">{{ item.ID }}</span>
             </el-option>

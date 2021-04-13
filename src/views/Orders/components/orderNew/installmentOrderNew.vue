@@ -33,8 +33,8 @@
         :label="$t('__paymentMethod')"
         width="100px">
         <template slot-scope="scope">
-          <el-select v-model="scope.row[scope.column.property]" value-key="value" :placeholder="$t('__plzChoice')" disabled>
-            <el-option v-for="item in ddlPaymentMethod" :key="item.ID" :label="item.Value" :value="item.ID">
+          <el-select v-model="scope.row[scope.column.property]" default-first-option filterable clearable :placeholder="$t('__plzChoice')" disabled>
+            <el-option v-for="item in ddlPaymentMethod" :key="item.ID" :label="item.ID+' '+item.Value" :value="item.ID">
               <span style="float: left">{{ item.Value }}</span>
               <span style="float: right; color: #8492a6; font-size: 13px">{{ item.ID }}</span>
             </el-option>

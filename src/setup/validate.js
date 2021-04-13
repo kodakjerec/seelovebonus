@@ -226,6 +226,8 @@ const validate = {
     if (rows && rows.length > 0) {
       callback(new Error(i18n.t('__id') + ' ' + value + i18n.t('__valueUsed')))
     }
+
+    callback()
   },
   // 驗證專案
   validateProjectID: async (rule, value, callback) => {
@@ -239,6 +241,8 @@ const validate = {
     if (rows && rows.length > 0) {
       callback(new Error(i18n.t('__id') + ' ' + value + i18n.t('__valueUsed')))
     }
+
+    callback()
   },
   // 驗證儲位
   validateStorageID: async (fromProductID, fromPurpose, fromQty, fromStorageID, callback) => {
@@ -283,6 +287,24 @@ const validate = {
     })
 
     return { findCity, findPost, fromAddress }
+  },
+  validateStorageIDNoCallback: async (fromProductID, fromPurpose, fromQty, fromStorageID) => {
+    if (fromStorageID === null) {
+      return new Error(i18n.t('__pleaseInput'))
+    }
+
+    // 2.驗證是否重複
+    let response = await api.stock.checkValidate({
+      ProductID: fromProductID,
+      Purpose: fromPurpose,
+      Qty: fromQty,
+      StorageID: fromStorageID })
+    let rows = response.data.result
+    if (rows && rows.length > 0) {
+      return new Error(i18n.t('__id') + ' ' + fromStorageID + i18n.t('__cantUse'))
+    }
+
+    return ''
   }
 }
 

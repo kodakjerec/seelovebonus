@@ -36,7 +36,7 @@
         {{formatterMoney(null,null,form.Amount,null)}}
       </el-form-item>
       <!-- 供應商 -->
-      <el-form-item :label="$t('__supplier')" prop="Supplier">
+      <el-form-item :label="$t('__receiver')" prop="Supplier">
         <el-select v-model="form.Supplier" default-first-option filterable clearable :placeholder="$t('__plzChoice')" :disabled="disableForm.OrderDate">
           <el-option v-for="item in ddlCompanies" :key="item.ID" :label="item.ID+' '+item.Value" :value="item.ID">
             <span style="float: left">{{ item.Value }}</span>
@@ -51,12 +51,12 @@
       </el-form-item>
     </el-form>
     <!-- 明細 -->
-    <inbound-order-detail
-      ref="inboundOrderDetail"
+    <outbound-order-detail
+      ref="outboundOrderDetail"
       :dialogType="dialogType"
       :buttonsShowUser="buttonsShowUser"
       :orderID="form.ID"
-      @reCalculateDetail="reCalculateDetail"></inbound-order-detail>
+      @reCalculateDetail="reCalculateDetail"></outbound-order-detail>
     <div slot="footer">
       <el-button v-show="buttonsShow.delete && buttonsShowUser.delete" type="danger" @click="deleteItem">{{$t('__delete')}}</el-button>
       <el-button @click="cancel">{{$t('__cancel')}}</el-button>
@@ -68,18 +68,18 @@
 <script>
 import { formatMoney, formatDate } from '@/setup/format.js'
 import { messageBoxYesNo } from '@/services/utils'
-import inboundOrderDetail from './inboundOrderDetail'
+import outboundOrderDetail from './outboundOrderDetail'
 
 export default {
-  name: 'InboundOrderNewForm',
+  name: 'OutboundOrderNewForm',
   components: {
-    inboundOrderDetail
+    outboundOrderDetail
   },
   props: {
     dialogType: { type: String, default: 'new' },
     dialogShow: { type: Boolean, default: false },
-    inboundOrder: { type: Object },
-    parent: { type: String, default: 'InboundOrder' },
+    outboundOrder: { type: Object },
+    parent: { type: String, default: 'OutboundOrder' },
     buttonsShowUser: { type: Object }
   },
   data () {
@@ -90,7 +90,7 @@ export default {
         Status: '1',
         CreateID: this.$store.state.userID,
         Amount: 0,
-        Prefix: 'IB',
+        Prefix: 'OB',
         Memo: ''
       },
       batchInsert: false, // 開啟批次新增
@@ -120,7 +120,7 @@ export default {
   mounted () {
     switch (this.dialogType) {
       case 'new':
-        this.myTitle = this.$t('__new') + this.$t('__inboundOrder')
+        this.myTitle = this.$t('__new') + this.$t('__outboundOrder')
         this.disableForm.ID = true
         let tempDate = new Date()
         this.form.OrderDate = formatDate(tempDate.toISOString().slice(0, 10))
@@ -133,8 +133,8 @@ export default {
         }
         break
       case 'edit':
-        this.myTitle = this.$t('__edit') + this.$t('__inboundOrder')
-        this.form = JSON.parse(JSON.stringify(this.inboundOrder))
+        this.myTitle = this.$t('__edit') + this.$t('__outboundOrder')
+        this.form = JSON.parse(JSON.stringify(this.outboundOrder))
 
         // 帶入原始單據狀態, 開啟或關閉
         let intStatus = parseInt(this.form.Status)
@@ -188,10 +188,9 @@ export default {
     checkValidate: async function () {
       let isSuccess = false
       await this.$refs['form'].validate((valid) => { isSuccess = valid })
-      if (!isSuccess) { return }
 
       // 檢查明細資訊
-      isSuccess = await this.$refs['inboundOrderDetail'].checkValidate()
+      isSuccess = await this.$refs['outboundOrderDetail'].checkValidate()
       if (!isSuccess) { return }
 
       if (isSuccess) {
@@ -207,7 +206,7 @@ export default {
       isSuccess = await this.save(this.dialogType)
       if (isSuccess) {
         saveStep = 'orderDetail'
-        isSuccess = await this.$refs['inboundOrderDetail'].beforeSave()
+        isSuccess = await this.$refs['outboundOrderDetail'].beforeSave()
       }
 
       if (isSuccess) {
@@ -236,7 +235,7 @@ export default {
     },
     // 刪除
     deleteItem: async function () {
-      let answerAction = await messageBoxYesNo(this.$t('__delete') + this.$t('__inboundOrder'), this.$t('__delete'))
+      let answerAction = await messageBoxYesNo(this.$t('__delete') + this.$t('__outboundOrder'), this.$t('__delete'))
 
       switch (answerAction) {
         case 'confirm':
@@ -266,7 +265,7 @@ export default {
       switch (type) {
         case 'new':
         case 'edit':
-          let responseUpdate = await this.$api.stock.inboundOrderUpdate({ form: this.form })
+          let responseUpdate = await this.$api.stock.outboundOrderUpdate({ form: this.form })
           if (responseUpdate.headers['code'] === '200') {
             isSuccess = true
             this.form.ID = responseUpdate.data.result[0].ID
@@ -274,7 +273,7 @@ export default {
           }
           break
         case 'delete':
-          let responseDelete = await this.$api.stock.inboundOrderDelete({ form: this.form })
+          let responseDelete = await this.$api.stock.outboundOrderDelete({ form: this.form })
           if (responseDelete.headers['code'] === '200') {
             isSuccess = true
             this.updateMessage = responseDelete.data.result[0].message

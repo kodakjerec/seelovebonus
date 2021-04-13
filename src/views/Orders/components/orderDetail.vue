@@ -23,13 +23,13 @@
       <template slot-scope="scope">
         <div v-if="buttonsShow.new && buttonsShowUser.new && scope.row.ItemType === 1">
           <el-select
-            filterable
+            default-first-option filterable clearable
             v-model="scope.row[scope.column.property]"
             :placeholder="$t('__plzChoice')"
             @change="(value)=>{ddlSubListChange(value, scope.row, 1)}"
             style="display:block">
             <el-option-group v-for="group in ddlSubList" :key="group.Category1Name" :label="group.Category1Name">
-              <el-option v-for="item in group.options" :key="item.ProductID" :value="item.ProductID">
+              <el-option v-for="item in group.options" :key="item.ProductID" :label="item.ProductID+' '+item.ProductName" :value="item.ProductID">
                 <!-- 商品明細特別加上價格 -->
                 <span style="float: left">{{ item.ProductName + ' ['+ formatterMoneyUS(null,null,item.Price,null) + ']' }}</span>
                 <span style="float: right; color: #8492a6; font-size: 13px">{{ item.ProductID }}</span>
@@ -102,10 +102,7 @@
         <el-select
           v-if="scope.row.Inventory"
           v-model="scope.row[scope.column.property]"
-          allow-create
-          default-first-option
-          filterable
-          clearable
+          default-first-option filterable clearable
           :placeholder="$t('__plzChoice')"
           :disabled="!(buttonsShow.new === 1 && buttonsShowUser.new === 1 && scope.row.disableFromStorageID)">
           <el-option v-for="item in ddlFromStorageIDList[scope.row.Seq]" :key="item.ID" :label="item.ID+' '+item.Value" :value="item.ID">
@@ -124,10 +121,7 @@
         <el-select
           v-if="scope.row.Inventory"
           v-model="scope.row[scope.column.property]"
-          allow-create
-          default-first-option
-          filterable
-          clearable
+          default-first-option filterable clearable
           :placeholder="$t('__plzChoice')"
           :disabled="!(buttonsShow.new === 1 && buttonsShowUser.new === 1 && scope.row.disableToStorageID)">
           <el-option v-for="item in ddlToStorageIDList[scope.row.Seq]" :key="item.ID" :label="item.ID+' '+item.Value" :value="item.ID">

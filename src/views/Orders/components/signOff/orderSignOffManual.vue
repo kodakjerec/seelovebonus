@@ -34,7 +34,7 @@
           label="UserType">
           <template slot-scope="scope">
             <el-select
-              filterable
+              default-first-option filterable clearable
               v-model="scope.row.UserType"
               :placeholder="$t('__plzChoice')"
               @change="(value)=>{ddlUserTypeChange(value, scope.row)}"
@@ -51,7 +51,7 @@
           :label="$t('__groups') + ' or ' + $t('__operator')">
           <template slot-scope="scope">
             <el-select
-              filterable
+              default-first-option filterable clearable
                v-show="scope.row.UserType === 0"
               v-model="scope.row.ID"
               :placeholder="$t('__plzChoice')"
@@ -63,7 +63,7 @@
               </el-option>
             </el-select>
             <el-select
-              filterable
+              default-first-option filterable clearable
               v-show="scope.row.UserType === 1"
               v-model="scope.row.ID"
               :placeholder="$t('__plzChoice')"
