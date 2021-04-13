@@ -71,9 +71,9 @@ export default {
     projectID: function () {
       this.bringProjectDetail()
     },
-    storageID: function (newValue) {
+    storageID: function (newValue, oldValue) {
       this.subList.forEach(row => {
-        if (row.ToStorageID === '') {
+        if (row.ToStorageID === '' || row.ToStorageID === oldValue) {
           row.ToStorageID = newValue
           row.Status = 'Modified'
         }
