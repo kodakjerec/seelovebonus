@@ -456,6 +456,7 @@ export default {
     // 選好儲位編號後連動
     storageIDChange: function (selected) {
       this.anzaOrderSpecificRow.ToStorageID = selected
+      this.anzaOrderSpecificRow.Status = 'Modified'
     },
     checkValidate: async function () {
       // 檢查明細(安座才檢查)
