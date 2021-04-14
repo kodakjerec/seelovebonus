@@ -9,10 +9,10 @@
           <el-select
             remote
             default-first-option filterable clearable
-            @visible-change="checkStorageID"
             v-model="anzaOrder.StorageID"
             :disabled="disableForm.StorageID"
             :remote-method="remoteMethod"
+            @change="storageIDChange"
             :placeholder="$t('__plzChoice')"
             style="display:block">
             <el-option v-for="item in ddlStorageID" :key="item.ID" :label="item.ID+' '+item.Value" :value="item.ID">
@@ -190,9 +190,9 @@
       <div v-if="operateType==='anza' && anzaOrder.AnzaOrderID">
         <el-divider>{{$t('__anzaOrder')+$t('__detail')}}</el-divider>
         <anzaOrderDetail
+          v-if="anzaOrderDetailList.length>0"
           ref='anzaOrderDetail'
-          :projectID="anzaOrder.AnzaOrderID"
-          :storageID="anzaOrder.StorageID"></anzaOrderDetail>
+          :fromList="anzaOrderDetailList"></anzaOrderDetail>
       </div>
     </div>
   </el-dialog>
@@ -247,6 +247,8 @@ export default {
         CompleteDate: '',
         ScheduledDate: ''
       },
+      anzaOrderDetailList: [],
+      anzaOrderSpecificRow: '', // 特別需要關注 移入儲位 的row, 會一併連動anzaOrderDetail
       // 客戶基本資料 -- 抄襲 customerNewForm.vue
       form: {
         ID: '',
@@ -329,16 +331,21 @@ export default {
       this.ddlLunarTime = response
       response = this.$api.local.getDropdownList({ type: 'Gender' })
       this.ddlGender = response
+
+      // 取的明細資訊
+      let response1 = await this.$api.orders.getObject({ type: 'anzaOrderDetail', keyword: this.fromAnzaOrder.AnzaOrderID })
+      this.anzaOrderDetailList = response1.data.result
+      // 取的唯一要入安座儲位的標的物
+      this.anzaOrderDetailList.forEach(row => {
+        if (row.ToStorageID === '') {
+          this.anzaOrderSpecificRow = row
+        }
+      })
       // 需要用到儲位才顯示
       if (!this.disableForm.StorageID) {
-        let response2 = await this.$api.stock.findStorageID({
-          ProductID: this.fromAnzaOrder.ProductID,
-          Purpose: '',
-          Qty: 1,
-          StorageID: this.anzaOrder.StorageID
-        })
-        this.ddlStorageID = response2.data.result
+        this.findStorageIDNow(this.anzaOrderSpecificRow)
       }
+
       response = this.$api.local.getDropdownList({ type: 'District' })
       this.postData = response
       response = this.$api.local.getDropdownList({ type: 'Country' })
@@ -425,18 +432,30 @@ export default {
     // ===== 表單功能 =====
     // 即時查詢可用儲位
     remoteMethod: async function (query) {
-      if (query.length >= 5) {
+      if (query.length >= 3) {
         // 強制轉為大寫
         query = query.toUpperCase()
 
+        this.anzaOrderSpecificRow.ToStorageID = query
+
+        this.findStorageIDNow(this.anzaOrderSpecificRow)
+      }
+    },
+    // 安座單即時查詢庫存(注意要指定ToStorageID)
+    findStorageIDNow: async function (row) {
+      if (row.ProductID) {
         let response2 = await this.$api.stock.findStorageID({
-          ProductID: this.fromAnzaOrder.ProductID,
-          Purpose: '',
-          Qty: 1,
-          StorageID: query
+          ProductID: row.ProductID,
+          Purpose: row.Purpose,
+          Qty: row.Qty,
+          StorageID: row.ToStorageID
         })
         this.ddlStorageID = response2.data.result
       }
+    },
+    // 選好儲位編號後連動
+    storageIDChange: function (selected) {
+      this.anzaOrderSpecificRow.ToStorageID = selected
     },
     checkValidate: async function () {
       // 檢查明細(安座才檢查)

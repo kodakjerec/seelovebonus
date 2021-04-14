@@ -318,15 +318,13 @@ export default {
     },
     findStorageIDNow: async function (row) {
       if (row.ProductID) {
-        if (row.ProductID !== '') {
-          let response2 = await this.$api.stock.findStorageID({
-            ProductID: row.ProductID,
-            Purpose: row.Purpose,
-            Qty: row.Qty,
-            StorageID: row.StorageID
-          })
-          this.ddlStorageID = response2.data.result
-        }
+        let response2 = await this.$api.stock.findStorageID({
+          ProductID: row.ProductID,
+          Purpose: row.Purpose,
+          Qty: row.Qty,
+          StorageID: row.StorageID
+        })
+        this.ddlStorageID = response2.data.result
       }
     },
     // 新增子結構

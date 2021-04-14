@@ -54,8 +54,7 @@ import validate from '@/setup/validate'
 export default {
   name: 'AnzaOrderDetail',
   props: {
-    projectID: { type: String },
-    storageID: { type: String }
+    fromList: { type: Array }
   },
   data () {
     return {
@@ -65,19 +64,6 @@ export default {
       },
       subList: [],
       subListDeleted: []
-    }
-  },
-  watch: {
-    projectID: function () {
-      this.bringProjectDetail()
-    },
-    storageID: function (newValue, oldValue) {
-      this.subList.forEach(row => {
-        if (row.ToStorageID === '' || row.ToStorageID === oldValue) {
-          row.ToStorageID = newValue
-          row.Status = 'Modified'
-        }
-      })
     }
   },
   mounted () {
@@ -93,8 +79,7 @@ export default {
       // 取得所有原始資料
     },
     bringProjectDetail: async function () {
-      let response1 = await this.$api.orders.getObject({ type: 'anzaOrderDetail', keyword: this.projectID })
-      this.subList = response1.data.result
+      this.subList = this.fromList
 
       for (let index = 0; index < this.subList.length; index++) {
         let row = this.subList[index]
