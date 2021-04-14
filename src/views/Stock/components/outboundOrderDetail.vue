@@ -305,7 +305,7 @@ export default {
       return isSuccess
     },
     // ============== 子結構 ===============
-    // 即時查詢可用儲位
+    // 儲位輸入立即查詢
     remoteMethod: async function (value, row) {
       if (value.length >= 3) {
         // 強制轉為大寫
@@ -315,6 +315,7 @@ export default {
         this.findStorageIDNow(row)
       }
     },
+    // 即時查詢可用儲位
     findStorageIDNow: async function (row) {
       if (row.ProductID) {
         if (row.ProductID !== '') {
@@ -325,6 +326,11 @@ export default {
             StorageID: row.StorageID
           })
           this.ddlStorageID = response2.data.result
+          // 預帶第一筆
+          if (this.ddlStorageID.length > 0) {
+            row.StorageID = this.ddlStorageID[0].ID
+            this.storageIDChange(row.StorageID, row)
+          }
         }
       }
     },
