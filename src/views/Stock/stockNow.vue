@@ -56,37 +56,36 @@
           {{$t('__storageAddress')}}{{'(' + $t('__building') + '-' + $t('__floor') + '-' + $t('__area') + ')'}}
         </template>
         <template slot-scope="scope">
-          {{scope.row.BuildingName + '-' + scope.row.FloorName + '-' + scope.row.AreaName}}<br/>
-          {{scope.row.Building + '-' + scope.row.Floor + '-' + scope.row.Area}}
+          {{scope.row.BuildingName + '-' + scope.row.FloorName + '-' + scope.row.AreaName}}
+          <span class="smallConent">{{scope.row.Building + '-' + scope.row.Floor + '-' + scope.row.Area}}</span>
         </template>
       </el-table-column>
       <el-table-column
         :label="$t('__product')">
         <template slot-scope="scope">
-          {{scope.row.ProductID}}<br/>{{scope.row.ProductName}}
+          {{scope.row.ProductID}}
+          <span class="smallContent">{{scope.row.ProductName}}</span>
         </template>
       </el-table-column>
       <el-table-column
         prop="Qty"
-        :label="$t('__qty')">
+        :label="$t('__qty')"
+        width="100">
       </el-table-column>
       <el-table-column
         prop="OrderTypeName"
-        :label="$t('__kind')">
+        :label="$t('__kind')"
+        width="60">
       </el-table-column>
       <el-table-column
         prop="OrderID"
-        :label="$t('__orderID')">
+        :label="$t('__orderID')"
+        width="150">
       </el-table-column>
       <el-table-column
-      prop="Purpose"
-      :label="$t('__storagePurpose')"
-      width="100">
-      </el-table-column>
-      <el-table-column
-        prop="ModifyDate"
-        :label="$t('__edit')+$t('__date')"
-        :formatter="formatterDateTime">
+        prop="Purpose"
+        :label="$t('__storagePurpose')"
+        width="60">
       </el-table-column>
     </el-table>
     <!-- 分頁 -->
@@ -295,5 +294,9 @@ export default {
 .defineCSS_ButtonGroup {
   position: absolute;
   left:10px;
+}
+.smallConent {
+  color: gray;
+  font-size: 0.1vw;
 }
 </style>
