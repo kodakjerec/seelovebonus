@@ -188,6 +188,7 @@ export default {
     checkValidate: async function () {
       let isSuccess = false
       await this.$refs['form'].validate((valid) => { isSuccess = valid })
+      if (!isSuccess) { return }
 
       // 檢查明細資訊
       isSuccess = await this.$refs['outboundOrderDetail'].checkValidate()

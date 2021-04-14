@@ -228,17 +228,11 @@ export default {
         }
 
         let checkValidate = null
-        let checkStorageID = '' // 檢查來源儲位, 存檔後因為移到OutboundArea, 所以改變應該查詢的儲位
-        if (row.Status === 'New') {
-          checkStorageID = row.StorageID
-        } else {
-          checkStorageID = 'OutboundArea'
-        }
         let object = {
           ProductID: row.ProductID,
           Purpose: row.Purpose,
           Qty: 0 - row.Qty,
-          StorageID: checkStorageID
+          StorageID: row.StorageID
         }
         checkValidate = await validate.validateStorageIDNoCallback(object.ProductID, object.Purpose, object.Qty, object.StorageID)
         if (checkValidate !== '') {
