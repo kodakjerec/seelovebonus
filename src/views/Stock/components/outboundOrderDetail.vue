@@ -16,7 +16,11 @@
       :label="$t('__storagePurpose')"
       width="100">
       <template slot-scope="scope">
-        <el-input v-if="buttonsShowUser.new" v-model="scope.row[scope.column.property]" @change="(value)=>{purposeChange(value, scope.row)}"></el-input>
+        <el-input
+          v-if="buttonsShow.new && buttonsShowUser.new"
+          v-model="scope.row[scope.column.property]"
+          @change="(value)=>{purposeChange(value, scope.row)}">
+        </el-input>
         <div v-else>
           {{scope.row[scope.column.property]}}
         </div>
@@ -27,7 +31,7 @@
       :label="$t('__product')+$t('__id')">
       <template slot-scope="scope">
         <el-select
-          v-if="buttonsShowUser.new"
+          v-if="buttonsShow.new && buttonsShowUser.new"
           default-first-option filterable clearable
           v-model="scope.row[scope.column.property]"
           :placeholder="$t('__plzChoice')"
@@ -55,7 +59,7 @@
       :label="$t('__shipping')+$t('__storageAddress')">
       <template slot-scope="scope">
         <el-select
-          v-if="buttonsShowUser.new"
+          v-if="buttonsShow.new && buttonsShowUser.new"
           default-first-option filterable clearable
           remote
           v-model="scope.row.StorageID"
@@ -81,7 +85,7 @@
       <template slot-scope="scope">
         <el-input-number
           :min="1"
-          v-if="buttonsShowUser.new"
+          v-if="buttonsShow.new && buttonsShowUser.new"
           v-model="scope.row[scope.column.property]"
           @change="(currentValue, oldValue)=>{qtyChange(currentValue, oldValue, scope.row)}"></el-input-number>
         <div v-else>
@@ -90,13 +94,13 @@
       </template>
     </el-table-column>
     <el-table-column
-      v-if="buttonsShowUser.new"
+      v-if="buttonsShow.new && buttonsShowUser.new"
       prop="AvailableQty"
       :label="$t('__max')+$t('__qty')"
       width="60">
     </el-table-column>
     <el-table-column
-      v-if="buttonsShowUser.new"
+      v-if="buttonsShow.new && buttonsShowUser.new"
       align="right"
       width="100px">
       <template slot="header">
@@ -124,7 +128,8 @@ export default {
   props: {
     dialogType: { type: String, default: 'new' },
     buttonsShowUser: { type: Object },
-    orderID: { type: String }
+    orderID: { type: String },
+    fromOrderStatus: { type: String }
   },
   data () {
     return {
@@ -143,6 +148,14 @@ export default {
       },
       subList: [],
       subListDeleted: [],
+      // 系統目前狀態權限
+      buttonsShow: {
+        new: 1,
+        edit: 0,
+        save: 1,
+        delete: 0,
+        search: 1
+      },
       // 下拉是選單
       originDDLSubList: [],
       ddlSubList: [],
@@ -164,6 +177,28 @@ export default {
     await this.preLoading()
 
     this.bringOrderDetail()
+
+    // 系統簽核過程權限
+    switch (this.fromOrderStatus) {
+      case '1':
+        this.buttonsShow = {
+          new: 1,
+          edit: 1,
+          save: 1,
+          delete: 1,
+          search: 1
+        }
+        break
+      default:
+        this.buttonsShow = {
+          new: 0,
+          edit: 0,
+          save: 0,
+          delete: 0,
+          search: 0
+        }
+        break
+    }
   },
   methods: {
     formatterMoney: function (row, column, cellValue, index) {
