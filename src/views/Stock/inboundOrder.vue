@@ -16,6 +16,7 @@
         width="160px">
         <template slot="header">
           <el-button
+            v-show="buttonsShowUser.delete"
             type="text"
             size="mini" @click.prevent="openSignOffManual">{{$t('__signOffSettings')}}</el-button>
           <br/>

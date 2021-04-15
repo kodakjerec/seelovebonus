@@ -56,6 +56,7 @@
       :dialogType="dialogType"
       :buttonsShowUser="buttonsShowUser"
       :orderID="form.ID"
+      :fromOrderStatus="form.Status"
       @reCalculateDetail="reCalculateDetail"></inbound-order-detail>
     <div slot="footer">
       <el-button v-show="buttonsShow.delete && buttonsShowUser.delete" type="danger" @click="deleteItem">{{$t('__delete')}}</el-button>
@@ -137,34 +138,40 @@ export default {
         this.form = JSON.parse(JSON.stringify(this.inboundOrder))
 
         // 帶入原始單據狀態, 開啟或關閉
-        let intStatus = parseInt(this.form.Status)
-        if (intStatus === 0) {
-          // 是否允許修改
-          this.disableForm.ID = true
-          this.disableForm.OrderDate = true
-
-          this.buttonsShow = {
-            new: 0,
-            edit: 0,
-            save: 0,
-            delete: 0,
-            search: 0
-          }
-        } else if (intStatus > 0) {
-          // 是否允許修改
-          this.disableForm.ID = true
-
-          if (this.buttonsShowUser.edit === 0) {
+        switch (this.form.Status) {
+          case '0':
+          case '4':
+            // 是否允許修改
+            this.disableForm.ID = true
             this.disableForm.OrderDate = true
-          }
 
-          this.buttonsShow = {
-            new: 1,
-            edit: 1,
-            save: 1,
-            delete: 1,
-            search: 1
-          }
+            this.buttonsShow = {
+              new: 0,
+              edit: 0,
+              save: 0,
+              delete: 0,
+              search: 0
+            }
+            break
+          case '1':
+            this.buttonsShow = {
+              new: 1,
+              edit: 1,
+              save: 1,
+              delete: 1,
+              search: 1
+            }
+            break
+          case '2':
+          case '3':
+            this.buttonsShow = {
+              new: 0,
+              edit: 0,
+              save: 1,
+              delete: 0,
+              search: 1
+            }
+            break
         }
         break
     }
