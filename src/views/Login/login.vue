@@ -9,10 +9,14 @@
     <el-card class="box-card">
       <el-form ref="form" :model="form" :rules="rules" label-width="80px">
         <el-form-item :label="$t('__userId')" prop="UserID">
-          <el-input v-model="form.UserID" autocomplete></el-input>
+          <el-input
+            label="ID"
+            v-model="form.UserID"
+            autocomplete></el-input>
         </el-form-item>
         <el-form-item :label="$t('__pwd')" prop="Password">
           <el-input
+            label="pwd"
             v-model="form.Password"
             show-password
             @keydown.native.enter="keyboardChange"></el-input>
@@ -23,12 +27,14 @@
     <div>
       <br>
       <span>{{$t('__languageSetting')}} </span>
-      <el-switch
+      <el-select
         v-model="language"
-        active-text="中文"
-        inactive-text="English"
-        @change="changeLanguage"
-        />
+        @change="changeLanguage">
+        <el-option v-for="item in languages" :key="item.ID" :label="item.ID+' '+item.Value" :value="item.ID">
+          <span style="float: left">{{ item.Value }}</span>
+          <span style="float: right; color: #8492a6; font-size: 13px">{{ item.ID }}</span>
+        </el-option>
+      </el-select>
     </div>
     <div>{{$t('__version')+'：'+$store.state.version}}</div>
   </div>
@@ -44,7 +50,7 @@ export default {
   name: 'Login',
   data () {
     return {
-      language: true,
+      language: 'zh',
       form: {
         UserID: '',
         Password: ''
@@ -53,7 +59,12 @@ export default {
         UserID: [{ required: true, validator: validate.validateUserIDAndPassword, trigger: 'blur' }],
         Password: [{ required: true, validator: validate.validateUserIDAndPassword, trigger: 'blur' }]
       },
-      lock: false // 避免按著Enter, 重複發送查詢指令
+      lock: false, // 避免按著Enter, 重複發送查詢指令
+      // 下拉是選單
+      languages: [
+        { ID: 'zh', Value: '中文' },
+        { ID: 'en', Value: 'English' }
+      ]
     }
   },
   mounted () {
@@ -64,15 +75,9 @@ export default {
     // 取得語言設定
     if (localStorage.getItem('locale')) {
       i18n.locale = localStorage.getItem('locale')
-      switch (i18n.locale) {
-        case 'en':
-          this.language = false
-          break
-        case 'zh':
-          this.language = true
-          break
-      }
+      this.language = i18n.locale
     } else {
+      this.language = 'zh'
       i18n.locale = 'zh'
       localStorage.setItem('locale', 'zh')
     }
@@ -82,16 +87,8 @@ export default {
   methods: {
     // 變更語言設定
     changeLanguage: function (status) {
-      switch (status) {
-        case false: // 英文
-          i18n.locale = 'en'
-          localStorage.setItem('locale', 'en')
-          break
-        case true: // 中文
-          i18n.locale = 'zh'
-          localStorage.setItem('locale', 'zh')
-          break
-      }
+      i18n.locale = status
+      localStorage.setItem('locale', status)
     },
     // 按下登入
     submit: function () {
