@@ -22,7 +22,11 @@
         align="left"
         width="160px">
         <template slot="header">
-          <el-button type="text" size="mini" @click.prevent="openSignOffManual">{{$t('__signOffSettings')}}</el-button>
+          <el-button
+            v-show="buttonsShowUser.delete"
+            type="text"
+            size="mini"
+            @click.prevent="openSignOffManual">{{$t('__signOffSettings')}}</el-button>
           <br/>{{$t('__batch')+$t('__signOff')}}
           <br/>
           <el-button size="mini" @click.prevent="batchSignOffAgree()">{{$t('__signOffAgree')}}</el-button>
