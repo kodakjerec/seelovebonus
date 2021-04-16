@@ -194,7 +194,7 @@ export default {
     preLoading: async function () {
       let response3 = await this.$api.basic.getDropdownList({ type: 'companies' })
       this.ddlCompanies = response3.data.result
-      let response = this.$api.local.getDropdownList({ type: 'OrderStatus' })
+      let response = this.$api.local.getDropdownList({ type: 'OutboundStatus' })
       this.ddlOrderStatus = response
     },
     // 檢查輸入

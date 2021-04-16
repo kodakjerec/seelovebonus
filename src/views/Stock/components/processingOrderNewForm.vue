@@ -249,7 +249,7 @@ export default {
         item.options = this.originDDLSubList.filter(item2 => item2.Category1Name === item.Category1Name)
       })
 
-      response = this.$api.local.getDropdownList({ type: 'OrderStatus' })
+      response = this.$api.local.getDropdownList({ type: 'ProcessingStatus' })
       this.ddlOrderStatus = response
     },
     // 檢查輸入
