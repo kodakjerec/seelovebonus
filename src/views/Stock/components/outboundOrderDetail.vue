@@ -68,7 +68,7 @@
           @change="(value)=>{storageIDChange(value, scope.row)}"
           :placeholder="$t('__plzChoice')"
           style="display:block">
-          <el-option v-for="item in ddlStorageID" :key="item.ID" :label="item.ID+' '+item.Value" :value="item.ID">
+          <el-option v-for="item in ddlStorageID[scope.row.Seq]" :key="item.ID" :label="item.ID+' '+item.Value" :value="item.ID">
             <span style="float: left">{{ item.Value }}</span>
             <span style="float: right; color: #8492a6; font-size: 13px">{{ item.ID }}</span>
           </el-option>
@@ -148,6 +148,7 @@ export default {
       },
       subList: [],
       subListDeleted: [],
+      inputTimeout: null,
       // 系統目前狀態權限
       buttonsShow: {
         new: 1,
@@ -342,12 +343,15 @@ export default {
     // ============== 子結構 ===============
     // 儲位輸入立即查詢
     remoteMethod: async function (value, row) {
-      if (value.length >= 3) {
+      if (value.length >= 5) {
         // 強制轉為大寫
         value = value.toUpperCase()
         row.StorageID = value
 
-        this.findStorageIDNow(row)
+        clearTimeout(this.inputTimeout)
+        this.inputTimeout = setTimeout(() => {
+          this.findStorageIDNow(row)
+        }, 500)
       }
     },
     // 即時查詢可用儲位
@@ -359,10 +363,10 @@ export default {
           Qty: 0 - row.Qty,
           StorageID: row.StorageID
         })
-        this.ddlStorageID = response2.data.result
+        this.ddlStorageID[row.Seq] = response2.data.result
         // 預帶第一筆
-        if (this.ddlStorageID.length > 0) {
-          row.StorageID = this.ddlStorageID[0].ID
+        if (this.ddlStorageID[row.Seq].length > 0) {
+          row.StorageID = this.ddlStorageID[row.Seq][0].ID
           this.storageIDChange(row.StorageID, row)
         }
       }
@@ -409,7 +413,7 @@ export default {
     },
     // 下拉選擇儲位
     storageIDChange: function (selected, row) {
-      let findObject = this.ddlStorageID.find(item => { return item.ID === selected })
+      let findObject = this.ddlStorageID[row.Seq].find(item => { return item.ID === selected })
       if (findObject) {
         row.AvailableQty = findObject.UsedQty
       }

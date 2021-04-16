@@ -31,18 +31,42 @@
           </el-form-item>
         </el-col>
       </el-form-item>
-      <!-- 總金額 -->
-      <el-form-item :label="$t('__total') + $t('__amount')">
-        {{formatterMoney(null,null,form.Amount,null)}}
-      </el-form-item>
-      <!-- 供應商 -->
-      <el-form-item :label="$t('__receiver')" prop="Supplier">
-        <el-select v-model="form.Supplier" default-first-option filterable clearable :placeholder="$t('__plzChoice')" :disabled="disableForm.OrderDate">
-          <el-option v-for="item in ddlCompanies" :key="item.ID" :label="item.ID+' '+item.Value" :value="item.ID">
-            <span style="float: left">{{ item.Value }}</span>
-            <span style="float: right; color: #8492a6; font-size: 13px">{{ item.ID }}</span>
-          </el-option>
-        </el-select>
+      <!-- 選定BOM商品 -->
+      <el-form-item
+        v-if="buttonsShow.new && buttonsShowUser.new"
+        :label="$t('__storagePurpose')">
+        <el-col :span="2">
+          <el-form-item>
+            <el-input
+              v-model="ProcessingItem.Purpose">
+            </el-input>
+          </el-form-item>
+        </el-col>
+        <el-col :span="8">
+          <el-form-item :label="$t('__processing')+$t('__product')">
+            <el-select
+              default-first-option filterable clearable
+              v-model="ProcessingItem.ProductID"
+              :placeholder="$t('__plzChoice')"
+              style="display:block">
+              <el-option-group v-for="group in ddlSubList" :key="group.Category1Name" :label="group.Category1Name">
+                <el-option v-for="item in group.options" :key="item.ProductID" :label="item.ProductID+' '+item.ProductName" :value="item.ProductID">
+                  <!-- 商品明細特別加上價格 -->
+                  <span style="float: left">{{ item.ProductName }}</span>
+                  <span style="float: right; color: #8492a6; font-size: 13px">{{ item.ProductID }}</span>
+                </el-option>
+              </el-option-group>
+            </el-select>
+          </el-form-item>
+        </el-col>
+        <el-col :span="4">
+          <el-form-item :label="$t('__set')">
+            <el-input-number
+              :min="1"
+              v-model="ProcessingItem.Set">
+            </el-input-number>
+          </el-form-item>
+        </el-col>
       </el-form-item>
       <!-- 備註 -->
       <el-form-item :label="$t('__memo')">
@@ -51,14 +75,17 @@
       </el-form-item>
     </el-form>
     <!-- 明細 -->
-    <outbound-order-detail
-      ref="outboundOrderDetail"
+    <processing-order-detail
+      ref="processingOrderDetail"
       v-if="form.OrderDate"
       :dialogType="dialogType"
       :buttonsShowUser="buttonsShowUser"
       :orderID="form.ID"
       :fromOrderStatus="form.Status"
-      @reCalculateDetail="reCalculateDetail"></outbound-order-detail>
+      :fromProductID="ProcessingItem.ProductID"
+      :fromPurpose="ProcessingItem.Purpose"
+      :fromSet="ProcessingItem.Set"
+      @bringProcessingItem="bringProcessingItem"></processing-order-detail>
     <div slot="footer">
       <el-button v-show="buttonsShow.delete && buttonsShowUser.delete" type="danger" @click="deleteItem">{{$t('__delete')}}</el-button>
       <el-button @click="cancel">{{$t('__cancel')}}</el-button>
@@ -70,18 +97,18 @@
 <script>
 import { formatMoney, formatDate } from '@/setup/format.js'
 import { messageBoxYesNo } from '@/services/utils'
-import outboundOrderDetail from './outboundOrderDetail'
+import processingOrderDetail from './processingOrderDetail'
 
 export default {
-  name: 'OutboundOrderNewForm',
+  name: 'ProcessingOrderNewForm',
   components: {
-    outboundOrderDetail
+    processingOrderDetail
   },
   props: {
     dialogType: { type: String, default: 'new' },
     dialogShow: { type: Boolean, default: false },
-    outboundOrder: { type: Object },
-    parent: { type: String, default: 'OutboundOrder' },
+    processingOrder: { type: Object },
+    parent: { type: String, default: 'ProcessingOrder' },
     buttonsShowUser: { type: Object }
   },
   data () {
@@ -91,15 +118,16 @@ export default {
         OrderDate: '',
         Status: '1',
         CreateID: this.$store.state.userID,
-        Amount: 0,
         Memo: '',
-        Prefix: 'OB',
-        Supplier: ''
+        Prefix: 'PR'
+      },
+      ProcessingItem: {
+        Purpose: '',
+        ProductID: '',
+        Set: 1
       },
       batchInsert: false, // 開啟批次新增
       rules: {
-        ID: [{ required: true, message: this.$t('__pleaseInput'), trigger: 'blur' }],
-        Supplier: [{ required: true, message: this.$t('__pleaseInput'), trigger: 'blur' }],
         OrderDate: [{ required: true, message: this.$t('__pleaseInput'), trigger: 'blur' }]
       },
       // 系統目前狀態權限
@@ -116,19 +144,21 @@ export default {
       },
       myTitle: '',
       // 以下為下拉式選單專用
-      ddlOrderStatus: [],
-      ddlCompanies: []
+      originDDLSubList: [],
+      ddlSubList: [],
+      ddlOrderStatus: []
     }
   },
   mounted () {
     // 不是從上層選單進入, 而是其他不允許路徑
-    if (this.outboundOrder === undefined) {
+    if (this.processingOrder === undefined) {
       this.cancel()
       return
     }
+
     switch (this.dialogType) {
       case 'new':
-        this.myTitle = this.$t('__new') + this.$t('__outboundOrder')
+        this.myTitle = this.$t('__new') + this.$t('__processingOrder')
         this.disableForm.ID = true
         let tempDate = new Date()
         this.form.OrderDate = formatDate(tempDate.toISOString().slice(0, 10))
@@ -141,9 +171,10 @@ export default {
         }
         break
       case 'edit':
-        this.myTitle = this.$t('__edit') + this.$t('__outboundOrder')
-        this.form = JSON.parse(JSON.stringify(this.outboundOrder))
+        this.myTitle = this.$t('__edit') + this.$t('__processingOrder')
+        this.form = JSON.parse(JSON.stringify(this.processingOrder))
 
+        // 帶入原始單據狀態, 開啟或關閉
         switch (this.form.Status) {
           case '0':
           case '4':
@@ -190,11 +221,35 @@ export default {
     formatterMoneyUS: function (row, column, cellValue, index) {
       return formatMoney(cellValue, 'US')
     },
+    // 子=>父: 帶入明細主要商品
+    bringProcessingItem: function (fromItem) {
+      let { Purpose, ProductID, Set } = fromItem
+      this.ProcessingItem.Purpose = Purpose
+      this.ProcessingItem.ProductID = ProductID
+      this.ProcessingItem.Set = Set
+    },
     // 讀取預設資料
     preLoading: async function () {
-      let response3 = await this.$api.basic.getDropdownList({ type: 'companies' })
-      this.ddlCompanies = response3.data.result
-      let response = this.$api.local.getDropdownList({ type: 'OrderStatus' })
+      // 取得所有原始資料
+      let response = await this.$api.orders.getDropdownList({ type: 'productsForOrderDetail' })
+      this.originDDLSubList = response.data.result
+      // 只要扣庫存 & BOM表結構
+      this.originDDLSubList = this.originDDLSubList.filter(item => item.Inventory === 1 && item.BOM === '1')
+
+      // 做select group 處理
+      // 找出主key
+      this.originDDLSubList.forEach(item => {
+        let findObject = this.ddlSubList.find(item2 => { return item2.Category1Name === item.Category1Name })
+        if (findObject === undefined) {
+          this.ddlSubList.push(item)
+        }
+      })
+      // group 分組選項
+      this.ddlSubList.forEach(item => {
+        item.options = this.originDDLSubList.filter(item2 => item2.Category1Name === item.Category1Name)
+      })
+
+      response = this.$api.local.getDropdownList({ type: 'OrderStatus' })
       this.ddlOrderStatus = response
     },
     // 檢查輸入
@@ -203,8 +258,14 @@ export default {
       await this.$refs['form'].validate((valid) => { isSuccess = valid })
       if (!isSuccess) { return }
 
+      // 檢查ProcessingItem
+      if (!this.ProcessingItem.ProductID) {
+        this.$message.error(this.$t('__plzChoice') + this.$t('__processing') + this.$t('__product'), this.$t('__warning'))
+        return
+      }
+
       // 檢查明細資訊
-      isSuccess = await this.$refs['outboundOrderDetail'].checkValidate()
+      isSuccess = await this.$refs['processingOrderDetail'].checkValidate()
       if (!isSuccess) { return }
 
       if (isSuccess) {
@@ -220,7 +281,7 @@ export default {
       isSuccess = await this.save(this.dialogType)
       if (isSuccess) {
         saveStep = 'orderDetail'
-        isSuccess = await this.$refs['outboundOrderDetail'].beforeSave()
+        isSuccess = await this.$refs['processingOrderDetail'].beforeSave()
       }
 
       if (isSuccess) {
@@ -249,7 +310,7 @@ export default {
     },
     // 刪除
     deleteItem: async function () {
-      let answerAction = await messageBoxYesNo(this.$t('__delete') + this.$t('__outboundOrder'), this.$t('__delete'))
+      let answerAction = await messageBoxYesNo(this.$t('__delete') + this.$t('__processingOrder'), this.$t('__delete'))
 
       switch (answerAction) {
         case 'confirm':
@@ -279,7 +340,7 @@ export default {
       switch (type) {
         case 'new':
         case 'edit':
-          let responseUpdate = await this.$api.stock.outboundOrderUpdate({ form: this.form })
+          let responseUpdate = await this.$api.stock.processingOrderUpdate({ form: this.form })
           if (responseUpdate.headers['code'] === '200') {
             isSuccess = true
             this.form.ID = responseUpdate.data.result[0].ID
@@ -287,7 +348,7 @@ export default {
           }
           break
         case 'delete':
-          let responseDelete = await this.$api.stock.outboundOrderDelete({ form: this.form })
+          let responseDelete = await this.$api.stock.processingOrderDelete({ form: this.form })
           if (responseDelete.headers['code'] === '200') {
             isSuccess = true
             this.updateMessage = responseDelete.data.result[0].message
@@ -296,11 +357,6 @@ export default {
       }
 
       return isSuccess
-    },
-    // 子->父: 統計商品明細總價
-    reCalculateDetail: function (object) {
-      const { masterAmount } = object
-      this.form.Amount = masterAmount
     }
   }
 }

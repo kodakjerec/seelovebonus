@@ -74,6 +74,42 @@ export default {
         return data
       })
     },
+    // processing Order
+    processingOrderShow: ({ keyword }) => {
+      let rawData = { keyword }
+      return post('/stock/processingOrderShow', rawData).then(data => {
+        console.log(`%c <<< Response(/rest/stock/processingOrderShow)⤵ `, 'background-color: #E0455D; color: white; font-size: 14px; font-weight: bold;', data)
+        return data
+      })
+    },
+    processingOrderUpdate: ({ form }) => {
+      let rawData = { form }
+      return post('/stock/processingOrderUpdate', rawData).then(data => {
+        console.log(`%c <<< Response(/rest/stock/processingOrderUpdate)⤵ `, 'background-color: #E0455D; color: white; font-size: 14px; font-weight: bold;', data)
+        return data
+      })
+    },
+    processingOrderDelete: ({ form }) => {
+      let rawData = { form }
+      return post('/stock/processingOrderDelete', rawData).then(data => {
+        console.log(`%c <<< Response(/rest/stock/processingOrderDelete)⤵ `, 'background-color: #E0455D; color: white; font-size: 14px; font-weight: bold;', data)
+        return data
+      })
+    },
+    processingOrderDetailUpdate: ({ form }) => {
+      let rawData = { form }
+      return post('/stock/processingOrderDetailUpdate', rawData).then(data => {
+        console.log(`%c <<< Response(/rest/stock/processingOrderDetailUpdate)⤵ `, 'background-color: #E0455D; color: white; font-size: 14px; font-weight: bold;', data)
+        return data
+      })
+    },
+    processingOrderDetailDelete: ({ form }) => {
+      let rawData = { form }
+      return post('/stock/processingOrderDetailDelete', rawData).then(data => {
+        console.log(`%c <<< Response(/rest/stock/processingOrderDetailDelete)⤵ `, 'background-color: #E0455D; color: white; font-size: 14px; font-weight: bold;', data)
+        return data
+      })
+    },
     // stock
     stockNowShow: ({ searchContent, pagination }) => {
       let rawData = { searchContent, pagination }
