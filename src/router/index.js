@@ -205,6 +205,17 @@ const routes = [
     props: true
   },
   {
+    path: '/Stock/ProcessingOrder',
+    name: 'ProcessingOrder',
+    component: () => import('@/views/Stock/processingOrder')
+  },
+  {
+    path: '/Stock/ProcessingOrderNewForm',
+    name: 'ProcessingOrderNewForm',
+    component: () => import('@/views/Stock/components/processingOrderNewForm'),
+    props: true
+  },
+  {
     path: '/Stock/TransportOrder',
     name: 'TransportOrder',
     component: () => import('@/views/Stock/transportOrder')

@@ -53,6 +53,7 @@
     <!-- 明細 -->
     <inbound-order-detail
       ref="inboundOrderDetail"
+      v-if="form.OrderDate"
       :dialogType="dialogType"
       :buttonsShowUser="buttonsShowUser"
       :orderID="form.ID"
@@ -91,8 +92,9 @@ export default {
         Status: '1',
         CreateID: this.$store.state.userID,
         Amount: 0,
+        Memo: '',
         Prefix: 'IB',
-        Memo: ''
+        Supplier: ''
       },
       batchInsert: false, // 開啟批次新增
       rules: {
@@ -119,6 +121,12 @@ export default {
     }
   },
   mounted () {
+    // 不是從上層選單進入, 而是其他不允許路徑
+    if (this.inboundOrder === undefined) {
+      this.cancel()
+      return
+    }
+
     switch (this.dialogType) {
       case 'new':
         this.myTitle = this.$t('__new') + this.$t('__inboundOrder')
