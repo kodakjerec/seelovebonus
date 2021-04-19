@@ -186,7 +186,7 @@ export default {
   __invalidOrder: '作廢訂購單！<br/>有收款資訊、發票紀錄，將無法作廢。',
   __pv: 'PV',
   __filter: '篩選',
-  __totalReport: '總表',
+  __totalReport: '銷售總表',
   __signOff: '簽核',
   __batch: '批次',
   __signOffAgree: '送簽',
