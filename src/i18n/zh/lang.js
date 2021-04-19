@@ -25,7 +25,7 @@ export default {
   __language2: '台灣',
   __languageSetting: '語言設定：',
   __export: '匯出',
-  __inport: '匯入',
+  __import: '匯入',
   __download: '下載',
   __upload: '上傳',
   __users: '使用者',

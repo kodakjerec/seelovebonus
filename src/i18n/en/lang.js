@@ -25,7 +25,7 @@ export default {
   __language2: 'Taiwan',
   __languageSetting: 'LanguageSetting：',
   __export: 'Export',
-  __inport: 'Inport',
+  __import: 'Inport',
   __download: 'Download',
   __upload: 'Upload',
   __users: 'Users',
