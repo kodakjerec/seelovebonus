@@ -101,7 +101,7 @@ export default {
         CompanyID: this.form.CompanyID }
 
       // 紀錄Log
-      this.$api.reports.employeesToExcel({ CompanyID: this.form.CompanyID, columns: this.columns })
+      this.$api.reports.ssrsReports({ reportParams: this.reportParams, reportName: this.reportPath })
     }
   }
 }

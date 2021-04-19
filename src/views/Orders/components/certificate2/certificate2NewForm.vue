@@ -242,7 +242,7 @@ export default {
         keyword: this.form.Certificate2 }
 
       // 紀錄Log
-      this.$api.reports.certificate2ToExcel({ Certificate2: this.form.Certificate2 })
+      this.$api.reports.ssrsReports({ reportParams: this.reportParams, reportName: this.reportPath })
 
       this.form.PrintCount += 1
     },
