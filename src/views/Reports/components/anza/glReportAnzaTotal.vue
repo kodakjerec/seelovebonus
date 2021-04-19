@@ -163,7 +163,7 @@ export default {
         locale: strLocale }
 
       // 紀錄Log
-      this.$api.reports.anzaReportTotal({ reportParams: this.reportParams })
+      this.$api.reports.ssrsReports({ reportParams: this.reportParams, reportName: this.reportPath })
     }
   }
 }

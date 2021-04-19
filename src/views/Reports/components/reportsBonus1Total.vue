@@ -161,7 +161,7 @@ export default {
         CompanyID: this.form.CompanyID }
 
       // 紀錄Log
-      this.$api.reports.bonus1ToExcel({ reportParams: this.reportParams })
+      this.$api.reports.ssrsReports({ reportParams: this.reportParams, reportName: this.reportPath })
     }
   }
 }

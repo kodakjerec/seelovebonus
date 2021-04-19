@@ -87,7 +87,7 @@ export default {
         EndDate: this.form.EndDate }
 
       // 紀錄Log
-      this.$api.reports.fKOrderRpt({ reportParams: this.reportParams })
+      this.$api.reports.ssrsReports({ reportParams: this.reportParams, reportName: this.reportPath })
     }
   }
 }
