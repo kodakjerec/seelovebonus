@@ -118,6 +118,7 @@ export default {
   __defaultCompanyName: '熹樂事業有限公司',
   __defaultDepart: '報件單位',
   __invoice: '發票',
+  __salesReturn: '銷退',
   __default: '預設',
   __orderID: '契約編號',
   __orderPaper: '訂購單',
