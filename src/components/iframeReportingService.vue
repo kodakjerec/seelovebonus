@@ -3,7 +3,6 @@
     <form ref="form" id='frmRender' method="post" :action="urlPath" target="myIframe">
       <input type="hidden" name="rs:Embed" value="true"/>
       <input type="hidden" name="rc:Parameters" value="false" />
-      <input type="hidden" name="rs:Format" :value="format"/>
       <template v-for="(item, keyIndex) in paramList">
         <input type="hidden" :key="keyIndex" :name="item.key" :value="item.value" />
       </template>
@@ -20,8 +19,7 @@ export default {
   name: 'iframeReportingService',
   props: {
     reportPath: { type: String },
-    params: { type: Object },
-    format: { type: String, default: 'HTML5' }
+    params: { type: Object }
   },
   data () {
     return {

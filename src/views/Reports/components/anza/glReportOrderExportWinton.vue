@@ -157,14 +157,11 @@ export default {
           strLocale = '2'
           break
       }
+      let passSearchContent = JSON.parse(JSON.stringify(this.form))
+
       this.reportParams = {
-        StartDate: this.form.StartDate,
-        EndDate: this.form.EndDate,
-        StartID: this.form.StartID,
-        EndID: this.form.EndID,
-        keyword: this.form.keyword,
-        checked1: this.form.checked1,
-        locale: strLocale }
+        locale: strLocale,
+        searchContent: JSON.stringify(passSearchContent) }
 
       // 紀錄Log
       this.$api.reports.ssrsReports({ reportParams: this.reportParams, reportName: this.reportPath })
