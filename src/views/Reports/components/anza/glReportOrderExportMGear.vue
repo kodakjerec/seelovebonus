@@ -191,7 +191,7 @@ export default {
         searchContent: JSON.stringify(passSearchContent) }
 
       // 紀錄Log
-      this.$api.reports.bonus2ToExcel({ reportParams: this.reportParams })
+      this.$api.reports.ssrsReports({ reportParams: this.reportParams, reportName: this.reportPath })
 
       // 儲存內容
       localStorage.setItem('searchHistory:' + this.$route.name, JSON.stringify(this.searchContent))

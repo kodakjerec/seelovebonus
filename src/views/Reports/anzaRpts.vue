@@ -5,19 +5,19 @@
       <el-tab-pane :label="$t('__export')+$t('__salesReport')" name="second"></el-tab-pane>
     </el-tabs>
     <total v-if="activeName==='first'"></total>
-    <wintonExport v-if="activeName==='second'"></wintonExport>
+    <exportWinton v-if="activeName==='second'"></exportWinton>
   </div>
 </template>
 
 <script>
 import total from './components/anza/glReportAnzaTotal'
-import wintonExport from './components/anza/glReportWintonExport'
+import exportWinton from './components/anza/glReportOrderExportWinton'
 
 export default {
   name: 'AnzaRpts',
   components: {
     total,
-    wintonExport
+    exportWinton
   },
   data () {
     return {

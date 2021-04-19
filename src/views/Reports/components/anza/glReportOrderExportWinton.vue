@@ -69,7 +69,7 @@ export default {
         keyword: '',
         checked1: false
       },
-      reportPath: 'reports_gl_anza_Total',
+      reportPath: 'reports_gl_OrderExportWinton',
       reportParams: {},
       // 以下為下拉式選單專用
       ddlCompanies: [],
@@ -163,10 +163,11 @@ export default {
         StartID: this.form.StartID,
         EndID: this.form.EndID,
         keyword: this.form.keyword,
+        checked1: this.form.checked1,
         locale: strLocale }
 
       // 紀錄Log
-      this.$api.reports.anzaReportTotal({ reportParams: this.reportParams })
+      this.$api.reports.ssrsReports({ reportParams: this.reportParams, reportName: this.reportPath })
     }
   }
 }
