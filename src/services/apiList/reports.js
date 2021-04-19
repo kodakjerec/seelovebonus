@@ -1,4 +1,4 @@
-import { post } from '@/services/utils'
+import { post, uploadFile } from '@/services/utils'
 
 export default {
   reports: {
@@ -6,6 +6,13 @@ export default {
       let rawData = { reportParams, reportName }
       return post('/reports/ssrsReports', rawData).then(data => {
         console.log(`%c <<< Response(/rest/reports/ssrsReports)⤵ `, 'background-color: #E0455D; color: white; font-size: 14px; font-weight: bold;', data)
+        return data
+      })
+    },
+    // 轉交給el-upload處理上傳
+    wintonInvoiceUpload: (file) => {
+      return uploadFile('/reports/wintonInvoiceUpload', file).then(data => {
+        console.log(`%c <<< Response(/rest/basic/wintonInvoiceUpload)⤵ `, 'background-color: #E0455D; color: white; font-size: 14px; font-weight: bold;', data)
         return data
       })
     },

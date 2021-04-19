@@ -51,7 +51,7 @@
 import iframeReportingService from '@/components/iframeReportingService'
 
 export default {
-  name: 'GlReportBonus1',
+  name: 'GlReportOrderExportMGear',
   components: {
     iframeReportingService
   },

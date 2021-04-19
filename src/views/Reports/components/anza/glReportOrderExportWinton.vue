@@ -55,7 +55,7 @@
 import iframeReportingService from '@/components/iframeReportingService'
 
 export default {
-  name: 'AnzaReportTotal',
+  name: 'GlReportOrderExportWinton',
   components: {
     iframeReportingService
   },
