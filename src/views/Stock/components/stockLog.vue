@@ -48,7 +48,7 @@ export default {
   },
   methods: {
     formatterDate: function (row, column, cellValue, index) {
-      return formatDateTime(cellValue)
+      return formatDateTime(cellValue).substring(0, 19)
     },
     preLoading: async function () {
       // 取得可以用的選單

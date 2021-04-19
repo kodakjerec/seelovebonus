@@ -43,6 +43,13 @@
       :height="tableHeight"
       style="width: 100%">
       <el-table-column
+        :label="$t('__product')">
+        <template slot-scope="scope">
+          {{scope.row.ProductID}}
+          <span class="smallContent">{{scope.row.ProductName}}</span>
+        </template>
+      </el-table-column>
+      <el-table-column
         :label="$t('__storageAddress')">
         <template slot-scope="scope">
           {{scope.row.StorageID}}
@@ -61,16 +68,9 @@
         </template>
       </el-table-column>
       <el-table-column
-        :label="$t('__product')">
-        <template slot-scope="scope">
-          {{scope.row.ProductID}}
-          <span class="smallContent">{{scope.row.ProductName}}</span>
-        </template>
-      </el-table-column>
-      <el-table-column
         prop="Qty"
         :label="$t('__qty')"
-        width="100">
+        width="80">
       </el-table-column>
       <el-table-column
         prop="OrderTypeName"
@@ -80,12 +80,12 @@
       <el-table-column
         prop="OrderID"
         :label="$t('__orderID')"
-        width="150">
+        width="120">
       </el-table-column>
       <el-table-column
         prop="Purpose"
         :label="$t('__storagePurpose')"
-        width="60">
+        width="80">
       </el-table-column>
     </el-table>
     <!-- 分頁 -->
@@ -230,11 +230,11 @@ export default {
       // table span
       this.tableSpanList = []
       this.results.forEach(row => {
-        let findObject = this.tableSpanList.find(row2 => { return row2.SpanID === row.StorageID })
+        let findObject = this.tableSpanList.find(row2 => { return row2.SpanID === row.ProductID })
         if (findObject === undefined) {
-          let firstIndex = this.results.findIndex(row3 => row3.StorageID === row.StorageID)
+          let firstIndex = this.results.findIndex(row3 => row3.ProductID === row.ProductID)
           this.tableSpanList.push({
-            SpanID: row.StorageID,
+            SpanID: row.ProductID,
             rowIndex: firstIndex,
             Qty: 1
           })
@@ -246,7 +246,7 @@ export default {
     // table span method
     objectSpanMethod: function (row, column, rowIndex, columnIndex) {
       if (row.columnIndex === 0) {
-        let findObject = this.tableSpanList.find(item => { return item.SpanID === row.row.StorageID })
+        let findObject = this.tableSpanList.find(item => { return item.SpanID === row.row.ProductID })
         // 沒找到
         if (findObject === undefined) {
           return [1, 0]
