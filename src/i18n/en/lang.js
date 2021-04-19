@@ -117,6 +117,7 @@ export default {
   __defaultCompanyName: 'See Love Enterprise Co., Ltd.',
   __defaultDepart: 'Depart',
   __invoice: 'Invoice',
+  __salesReturn: 'SalesReturn',
   __default: 'Default',
   __orderID: 'Contract Number',
   __orderPaper: 'Order',

@@ -5,7 +5,7 @@
           <el-input v-model="form.OrderID" disabled></el-input>
       </el-form-item>
       <el-form-item :label="$t('__invoice')+$t('__kind')" prop="InvoiceKind">
-        <el-col :span="6">
+        <el-col :span="8">
           <el-select v-model="form.InvoiceKind" default-first-option filterable clearable :placeholder="$t('__plzChoice')" :disabled="disableForm.InvoiceKind">
             <el-option v-for="item in ddlInvoiceKind" :key="item.ID" :label="item.ID+' '+item.Value" :value="item.ID">
               <span style="float: left">{{ item.Value }}</span>
@@ -13,7 +13,7 @@
             </el-option>
           </el-select>
         </el-col>
-        <el-col :span="10">
+        <el-col :span="8">
           <el-form-item :label="$t('__invoice')+$t('__status')">
             <el-select v-model="form.Status" default-first-option filterable clearable :placeholder="$t('__plzChoice')" :disabled="disableForm.Status">
               <el-option v-for="item in ddlInvoiceStatus" :key="item.ID" :label="item.ID+' '+item.Value" :value="item.ID">
@@ -23,49 +23,7 @@
             </el-select>
           </el-form-item>
         </el-col>
-      </el-form-item>
-      <el-form-item :label="$t('__invoice')+$t('__date')" prop="InvoiceDate">
-        <el-date-picker
-          v-model="form.InvoiceDate"
-          type="date"
-          :placeholder="$t('__plzChoice')+$t('__invoice')+$t('__date')"
-          value-format="yyyy-MM-dd"
-           :disabled="disableForm.InvoiceDate">
-        </el-date-picker>
-      </el-form-item>
-      <el-form-item :label="$t('__invoice')+$t('__number')" prop="InvoiceID">
-        <el-col :span="10">
-          <el-input v-mask="'AA########'" v-model="form.InvoiceID" :disabled="disableForm.InvoiceID"></el-input>
-        </el-col>
-        <el-col :span="14" v-show="form.InvoiceKind === '6'">
-          <el-form-item :label="$t('__randomCode')">
-            <el-input v-model="form.RandomCode" :disabled="disableForm.RandomCode"></el-input>
-          </el-form-item>
-        </el-col>
-      </el-form-item>
-      <el-form-item :label="$t('__title')">
-          <el-input v-model="form.Title" maxlength="40" show-word-limit></el-input>
-      </el-form-item>
-      <el-form-item :label="$t('__uniformNumber')">
-        <el-col :span="10">
-          <el-input v-model="form.UniformNumber" maxlength="8" show-word-limit></el-input>
-        </el-col>
-        <el-col :span="14">
-          <el-form-item :label="$t('__carrierNumber')">
-            <el-input v-model="form.CarrierNumber" maxlength="64" show-word-limit></el-input>
-          </el-form-item>
-        </el-col>
-      </el-form-item>
-      <el-form-item :label="$t('__received')+$t('__operator')" prop="CreateID">
-        <el-col :span="6">
-          <el-select v-model="form.CreateID" default-first-option filterable clearable :placeholder="$t('__plzChoice')" :disabled="disableForm.CreateID">
-            <el-option v-for="item in ddlCreateID" :key="item.ID" :label="item.ID+' '+item.Value" :value="item.ID">
-              <span style="float: left">{{ item.Value }}</span>
-              <span style="float: right; color: #8492a6; font-size: 13px">{{ item.ID }}</span>
-            </el-option>
-          </el-select>
-        </el-col>
-        <el-col :span="10">
+        <el-col :span="8">
           <el-form-item :label="$t('__tax')+$t('__status')">
             <el-select v-model="form.Tax" default-first-option filterable clearable :placeholder="$t('__plzChoice')" :disabled="disableForm.Tax">
               <el-option v-for="item in ddlTax" :key="item.ID" :label="item.ID+' '+item.Value" :value="item.ID">
@@ -76,11 +34,72 @@
           </el-form-item>
         </el-col>
       </el-form-item>
-      <el-form-item :label="$t('__memo')">
-          <el-input v-model="form.Memo" maxlength="200" show-word-limit></el-input>
+      <el-form-item :label="$t('__invoice')+$t('__date')" prop="InvoiceDate">
+        <el-col :span="8">
+          <el-date-picker
+            v-model="form.InvoiceDate"
+            type="date"
+            :placeholder="$t('__plzChoice')+$t('__invoice')+$t('__date')"
+            value-format="yyyy-MM-dd"
+            :disabled="disableForm.InvoiceDate">
+          </el-date-picker>
+        </el-col>
+        <el-col :span="10">
+            <el-form-item :label="$t('__salesReturn')+$t('__date')">
+              <el-date-picker
+                v-model="form.SalesReturnDate"
+                type="date"
+                :placeholder="$t('__plzChoice')+$t('__salesReturn')+$t('__date')"
+                value-format="yyyy-MM-dd"
+                :disabled="disableForm.InvoiceDate">
+              </el-date-picker>
+            </el-form-item>
+        </el-col>
+      </el-form-item>
+      <el-form-item :label="$t('__invoice')+$t('__number')" prop="InvoiceID">
+        <el-col :span="8">
+          <el-input v-mask="'AA########'" v-model="form.InvoiceID" :disabled="disableForm.InvoiceID"></el-input>
+        </el-col>
+        <el-col :span="14" v-show="form.InvoiceKind === '6'">
+          <el-form-item :label="$t('__randomCode')">
+            <el-input v-model="form.RandomCode" :disabled="disableForm.RandomCode"></el-input>
+          </el-form-item>
+        </el-col>
+      </el-form-item>
+      <el-form-item :label="$t('__title')">
+        <el-col :span="8">
+          <el-input v-model="form.Title" maxlength="40" show-word-limit></el-input>
+        </el-col>
+        <el-col :span="8">
+          <el-form-item :label="$t('__uniformNumber')">
+            <el-input v-model="form.UniformNumber" maxlength="8" show-word-limit></el-input>
+          </el-form-item>
+        </el-col>
+        <el-col :span="8">
+          <el-form-item :label="$t('__carrierNumber')">
+            <el-input v-model="form.CarrierNumber" maxlength="64" show-word-limit></el-input>
+          </el-form-item>
+        </el-col>
       </el-form-item>
       <el-form-item :label="$t('__amount')">
+        <el-col :span="4">
           <el-input v-model="form.Amount" disabled></el-input>
+        </el-col>
+        <el-col :span="14">
+          <el-form-item :label="$t('__memo')">
+            <el-input v-model="form.Memo" maxlength="200" show-word-limit></el-input>
+          </el-form-item>
+        </el-col>
+        <el-col :span="6">
+          <el-form-item :label="$t('__received')+$t('__operator')" prop="CreateID">
+            <el-select v-model="form.CreateID" default-first-option filterable clearable :placeholder="$t('__plzChoice')" :disabled="disableForm.CreateID">
+              <el-option v-for="item in ddlCreateID" :key="item.ID" :label="item.ID+' '+item.Value" :value="item.ID">
+                <span style="float: left">{{ item.Value }}</span>
+                <span style="float: right; color: #8492a6; font-size: 13px">{{ item.ID }}</span>
+              </el-option>
+            </el-select>
+          </el-form-item>
+        </el-col>
       </el-form-item>
     </el-form>
     <!-- 發票明細 -->
@@ -165,7 +184,7 @@
           <el-table-column
             prop="Memo"
             :label="$t('__memo')"
-            width="100px">
+            width="100">
           </el-table-column>
         </el-table>
         <div style="color:red" v-show="multipleSelection.length <= 0">{{$t('__pleaseSelectAtLeastOne')+$t('__collectionRecords')}}</div>
@@ -228,7 +247,7 @@ export default {
         RandomCode: null,
         CreateID: this.$store.state.userID,
         Status: '2',
-        SalesReturnDate: null,
+        SalesReturnDate: '',
         // 以下為顯示用部紀錄資料庫
         multipleSelection: [{ name: 'q' }]
       },
@@ -295,7 +314,7 @@ export default {
       case 'edit':
         this.myTitle = this.$t('__edit') + this.$t('__invoice')
         this.disableForm.InvoiceKind = true
-        // this.disableForm.InvoiceDate = true
+        this.disableForm.InvoiceDate = true
         this.disableForm.InvoiceID = true
         this.disableForm.RandomCode = true
         this.disableForm.Status = true
@@ -308,6 +327,7 @@ export default {
             delete: 0,
             search: 0
           }
+          this.disableForm.SalesReturnDate = true
         } else {
           this.buttonsShow = {
             new: 1,
@@ -480,6 +500,10 @@ export default {
     },
     // 作廢發票
     invalidInvoice: async function () {
+      if (!this.form.SalesReturnDate) {
+        this.$message.error(this.$t('__plzChoice') + this.$t('__salesReturn') + this.$t('__date'), this.$t('__invalid'))
+        return
+      }
       let answerAction = await messageBoxYesNo(this.$t('__invalid') + this.$t('__invoice'), this.$t('__invalid'))
 
       switch (answerAction) {
