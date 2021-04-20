@@ -133,11 +133,12 @@ export default {
         this.disableForm.PaymentFrequency = true
         // 使用者禁止存檔時
         if (this.buttonsShowUser.save === 0) {
+          this.disableForm.ScheduledAmount = true
           this.disableForm.PaymentMethod = true
           this.disableForm.ScheduledDate = true
         }
         // 已經有付款時
-        if (this.form.PaidAmount !== 0 || this.form.ScheduledAmount === this.form.PaidAmount) {
+        if (this.form.PaidAmount !== 0) {
           this.disableForm.ScheduledAmount = true
           this.disableForm.PaymentMethod = true
           this.disableForm.ScheduledDate = true
