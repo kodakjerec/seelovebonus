@@ -247,7 +247,7 @@ export default {
         RandomCode: null,
         CreateID: this.$store.state.userID,
         Status: '2',
-        SalesReturnDate: '',
+        SalesReturnDate: null,
         // 以下為顯示用部紀錄資料庫
         multipleSelection: [{ name: 'q' }]
       },

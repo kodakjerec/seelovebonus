@@ -28,7 +28,7 @@
         {{$t('__anzaOperateWarning')}}
       </el-form-item>
       <el-form-item :label="$t('__memo')">
-          <el-input v-model="form.Memo" maxlength="200" show-word-limit></el-input>
+          <el-input v-model="form.Memo" maxlength="200" show-word-limit :disabled="disableForm.ReceivedDate"></el-input>
       </el-form-item>
       <el-form-item :label="$t('__received')+$t('__operator')" prop="ReceivedID">
         <el-col :span="8">
@@ -208,22 +208,14 @@ export default {
         this.disableForm.ReceivedID = true
         this.disableForm.ChequeDate = true
         this.disableForm.selectCollectionRecords = true
-        if (this.form.Status === '0') {
-          this.buttonsShow = {
-            new: 0,
-            edit: 0,
-            save: 0,
-            delete: 0,
-            search: 0
-          }
-        } else {
-          this.buttonsShow = {
-            new: 1,
-            edit: 1,
-            save: 1,
-            delete: 1,
-            search: 1
-          }
+        this.buttonsShow.delete = 1
+        // 使用者禁止存檔時
+        if (this.buttonsShowUser.save === 0) {
+          this.disableForm.ReceivedDate = true
+        }
+        // 已經被綁定發票號碼
+        if (this.form.InvoiceID !== '') {
+          this.disableForm.ReceivedDate = true
         }
         break
     }
