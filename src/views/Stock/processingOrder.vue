@@ -56,8 +56,19 @@
       </el-table-column>
       <el-table-column
         prop="OrderDate"
-        :label="$t('__order')+$t('__date')"
+        :label="$t('__processing')+$t('__date')"
         :formatter="formatterDate">
+      </el-table-column>
+      <el-table-column
+        :label="$t('__processing')+$t('__product')">
+        <template slot-scope="scope">
+          {{scope.row.ProductID+' '+scope.row.Name}}
+        </template>
+      </el-table-column>
+      <el-table-column
+        prop="Set"
+        :label="$t('__set')"
+        width="60">
       </el-table-column>
       <el-table-column
         prop="Memo"

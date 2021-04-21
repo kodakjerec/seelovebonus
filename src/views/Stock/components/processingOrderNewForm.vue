@@ -20,7 +20,7 @@
           </el-form-item>
         </el-col>
         <el-col :span="10">
-          <el-form-item :label="$t('__order')+$t('__date')+'：'" prop="OrderDate">
+          <el-form-item :label="$t('__processing')+$t('__date')+'：'" prop="OrderDate">
             <el-date-picker
               v-model="form.OrderDate"
               type="date"
