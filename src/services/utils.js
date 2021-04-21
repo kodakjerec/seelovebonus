@@ -5,10 +5,10 @@ import i18n from '@/setup/setupLocale'
 import req from './auth' // 把request包裝
 
 export const seeloveNodeServer = {
-  // ip: '192.168.105.125',
-  ip: '192.168.2.210',
+  ip: '192.168.1.104',
+  // ip: '192.168.2.210',
   // ipHost: 'localhost',
-  port: '4000', // backend server
+  port: '3000', // backend server
   portReportingServices: '3002' // reporting services server
 }
 

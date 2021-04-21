@@ -42,7 +42,7 @@ export default {
       let fd = new FormData()
       let file = this.$refs['upload'].uploadFiles[0]
       fd.append('file', file.raw)
-      let response = await this.$api.basic.storageAddressUpload(fd)
+      let response = await this.$api.reports.wintonInvoiceUpload(fd)
       this.$alert('Success: ' + response.data.result.successCount +
       ' Fail: ' + response.data.result.failCount)
 
