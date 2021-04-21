@@ -398,7 +398,7 @@ export default {
           for (let i = 0; i < this.invoiceDetails.length; i++) {
             let item = this.invoiceDetails[i]
             item.InvoiceID = this.form.InvoiceID
-            await this.$api.orders.invoiceDetailNew({ form: item })
+            await this.$api.orders.invoiceDetailUpdate({ form: item })
           }
 
           this.$emit('dialog-save')
@@ -460,14 +460,8 @@ export default {
       let isSuccess = false
       switch (type) {
         case 'new':
-          let responseNew = await this.$api.orders.invoiceHeadNew({ form: this.form })
-          if (responseNew.headers['code'] === '200') {
-            this.$alert(responseNew.data.result[0].message, responseNew.data.result[0].code)
-            isSuccess = true
-          }
-          break
         case 'edit':
-          let responseEdit = await this.$api.orders.invoiceHeadEdit({ form: this.form })
+          let responseEdit = await this.$api.orders.invoiceHeadUpdate({ form: this.form })
           if (responseEdit.headers['code'] === '200') {
             this.$alert(responseEdit.data.result[0].message, responseEdit.data.result[0].code)
             isSuccess = true
