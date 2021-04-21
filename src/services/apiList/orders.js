@@ -178,17 +178,10 @@ export default {
         return data
       })
     },
-    invoiceHeadNew: ({ form }) => {
+    invoiceHeadUpdate: ({ form }) => {
       let rawData = { form }
-      return post('/orders/invoiceHeadNew', rawData).then(data => {
-        console.log(`%c <<< Response(/rest/orders/invoiceHeadNew)⤵ `, 'background-color: #E0455D; color: white; font-size: 14px; font-weight: bold;', data)
-        return data
-      })
-    },
-    invoiceHeadEdit: ({ form }) => {
-      let rawData = { form }
-      return post('/orders/invoiceHeadEdit', rawData).then(data => {
-        console.log(`%c <<< Response(/rest/orders/invoiceHeadEdit)⤵ `, 'background-color: #E0455D; color: white; font-size: 14px; font-weight: bold;', data)
+      return post('/orders/invoiceHeadUpdate', rawData).then(data => {
+        console.log(`%c <<< Response(/rest/orders/invoiceHeadUpdate)⤵ `, 'background-color: #E0455D; color: white; font-size: 14px; font-weight: bold;', data)
         return data
       })
     },
@@ -214,10 +207,10 @@ export default {
       })
     },
     // Invoice Detail
-    invoiceDetailNew: ({ form }) => {
+    invoiceDetailUpdate: ({ form }) => {
       let rawData = { form }
-      return post('/orders/invoiceDetailNew', rawData).then(data => {
-        console.log(`%c <<< Response(/rest/orders/invoiceDetailNew)⤵ `, 'background-color: #E0455D; color: white; font-size: 14px; font-weight: bold;', data)
+      return post('/orders/invoiceDetailUpdate', rawData).then(data => {
+        console.log(`%c <<< Response(/rest/orders/invoiceDetailUpdate)⤵ `, 'background-color: #E0455D; color: white; font-size: 14px; font-weight: bold;', data)
         return data
       })
     },
