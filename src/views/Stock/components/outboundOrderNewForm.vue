@@ -20,11 +20,11 @@
           </el-form-item>
         </el-col>
         <el-col :span="10">
-          <el-form-item :label="$t('__order')+$t('__date')+'：'" prop="OrderDate">
+          <el-form-item :label="$t('__shipping')+$t('__date')+'：'" prop="OrderDate">
             <el-date-picker
               v-model="form.OrderDate"
               type="date"
-              :placeholder="$t('__plzChoice')+$t('__order')+$t('__date')"
+              :placeholder="$t('__plzChoice')+$t('__shipping')+$t('__date')"
               value-format="yyyy-MM-dd"
               :disabled="disableForm.OrderDate">
             </el-date-picker>
@@ -46,8 +46,8 @@
       </el-form-item>
       <!-- 備註 -->
       <el-form-item :label="$t('__memo')">
-          <el-input v-model="form.Memo" type="textarea" rows="2" maxlength="100" show-word-limit
-            :disabled="disableForm.OrderDate"></el-input>
+        <el-input v-model="form.Memo" type="textarea" rows="2" maxlength="100" show-word-limit
+          :disabled="disableForm.OrderDate"></el-input>
       </el-form-item>
     </el-form>
     <!-- 明細 -->

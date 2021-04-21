@@ -48,21 +48,39 @@
       </el-table-column>
       <el-table-column
         prop="StatusName"
-        :label="$t('__status')">
+        :label="$t('__status')"
+        width="100">
       </el-table-column>
       <el-table-column
         prop="ID"
-        :label="$t('__inboundOrder')+$t('__id')">
+        :label="$t('__inboundOrder')+$t('__id')"
+        width="120">
       </el-table-column>
       <el-table-column
         prop="OrderDate"
         :label="$t('__order')+$t('__date')"
-        :formatter="formatterDate">
+        :formatter="formatterDate"
+        width="120">
+      </el-table-column>
+      <el-table-column
+        prop="Supplier"
+        :label="$t('__receiver')">
+        <template slot-scope="scope">
+          {{scope.row[scope.column.property]+' '+scope.row.SupplierName}}
+        </template>
       </el-table-column>
       <el-table-column
         prop="Amount"
         :label="$t('__amount')"
         :formatter="formatterMoney">
+      </el-table-column>
+      <el-table-column
+        prop="commentDetailList"
+        :label="$t('__order')+$t('__product')">
+        <template slot-scope="scope">
+          <span v-html="formatterNewLineToBr(scope.row[scope.column.property])">
+          </span>
+        </template>
       </el-table-column>
       <el-table-column
         prop="Memo"
@@ -92,7 +110,7 @@
 import searchButton from '@/components/searchButton'
 import signOffDialog from '@/views/Orders/components/signOff/signOffDialog'
 import newForm from './components/inboundOrderNewForm'
-import { formatMoney, formatDate } from '@/setup/format.js'
+import { formatMoney, formatDate, newLineToBr } from '@/setup/format.js'
 
 export default {
   name: 'InboundOrderShow',
@@ -132,6 +150,9 @@ export default {
     },
     formatterMoney: function (row, column, cellValue, index) {
       return formatMoney(cellValue)
+    },
+    formatterNewLineToBr: function (cellValue) {
+      return newLineToBr(cellValue)
     },
     // 讀入系統清單
     preLoading: async function () {
