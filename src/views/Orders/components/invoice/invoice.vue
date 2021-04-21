@@ -49,6 +49,7 @@
     :invoiceHead="invoiceHead"
     :fromOrderID="fromOrderID"
     :buttonsShowUser="buttonsShowUser"
+    :fromButtonsShow="buttonsShow"
     @dialog-cancel="dialogCancel"
     @dialog-save="dialogSave"></new-form>
   </el-form>

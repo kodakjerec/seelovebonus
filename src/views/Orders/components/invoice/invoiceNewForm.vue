@@ -68,16 +68,16 @@
       </el-form-item>
       <el-form-item :label="$t('__title')">
         <el-col :span="8">
-          <el-input v-model="form.Title" maxlength="40" show-word-limit></el-input>
+          <el-input v-model="form.Title" maxlength="40" show-word-limit :disabled="disableForm.CreateID"></el-input>
         </el-col>
         <el-col :span="8">
           <el-form-item :label="$t('__uniformNumber')">
-            <el-input v-model="form.UniformNumber" maxlength="8" show-word-limit></el-input>
+            <el-input v-model="form.UniformNumber" maxlength="8" show-word-limit :disabled="disableForm.CreateID"></el-input>
           </el-form-item>
         </el-col>
         <el-col :span="8">
           <el-form-item :label="$t('__carrierNumber')">
-            <el-input v-model="form.CarrierNumber" maxlength="64" show-word-limit></el-input>
+            <el-input v-model="form.CarrierNumber" maxlength="64" show-word-limit :disabled="disableForm.CreateID"></el-input>
           </el-form-item>
         </el-col>
       </el-form-item>
@@ -87,7 +87,7 @@
         </el-col>
         <el-col :span="14">
           <el-form-item :label="$t('__memo')">
-            <el-input v-model="form.Memo" maxlength="200" show-word-limit></el-input>
+            <el-input v-model="form.Memo" maxlength="200" show-word-limit :disabled="disableForm.CreateID"></el-input>
           </el-form-item>
         </el-col>
         <el-col :span="6">
@@ -193,10 +193,10 @@
 
     <div slot="footer">
       <br/>
-      <el-button v-show="buttonsShow.delete && buttonsShowUser.delete" type="danger" @click="delInvoice">{{$t('__delete')}}</el-button>
-      <el-button v-show="buttonsShow.delete && buttonsShowUser.delete" type="danger" @click="invalidInvoice">{{$t('__invalid')}}</el-button>
+      <el-button v-show="fromButtonsShow.delete && buttonsShowUser.delete" type="danger" @click="delInvoice">{{$t('__delete')}}</el-button>
+      <el-button v-show="fromButtonsShow.delete && buttonsShowUser.delete" type="danger" @click="invalidInvoice">{{$t('__invalid')}}</el-button>
       <el-button @click="cancel">{{$t('__cancel')}}</el-button>
-      <el-button v-show="buttonsShow.save && buttonsShowUser.save" type="primary" @click="checkValidate">{{$t('__save')}}</el-button>
+      <el-button v-show="fromButtonsShow.save && buttonsShowUser.save" type="primary" @click="checkValidate">{{$t('__save')}}</el-button>
     </div>
   </el-dialog>
 </template>
@@ -213,7 +213,8 @@ export default {
     dialogShow: { type: Boolean, default: false },
     invoiceHead: { type: Object },
     fromOrderID: { type: String },
-    buttonsShowUser: { type: Object }
+    buttonsShowUser: { type: Object },
+    fromButtonsShow: { type: Object }
   },
   data () {
     let myValidate = async (rule, value, callback) => {
@@ -256,14 +257,6 @@ export default {
         InvoiceDate: [{ required: true, message: this.$t('__pleaseInput'), trigger: 'blur' }],
         InvoiceID: [{ required: true, trigger: 'blur', validator: myValidate }],
         CreateID: [{ required: true, message: this.$t('__pleaseInput'), trigger: 'blur' }]
-      },
-      // 系統目前狀態權限
-      buttonsShow: {
-        new: 1,
-        edit: 0,
-        save: 1,
-        delete: 0,
-        search: 1
       },
       disableForm: {
         InvoiceKind: false,
@@ -319,23 +312,9 @@ export default {
         this.disableForm.RandomCode = true
         this.disableForm.Status = true
         this.disableForm.selectCollectionRecords = true
-        if (this.form.Status === '0') {
-          this.buttonsShow = {
-            new: 0,
-            edit: 0,
-            save: 0,
-            delete: 0,
-            search: 0
-          }
-          this.disableForm.SalesReturnDate = true
-        } else {
-          this.buttonsShow = {
-            new: 1,
-            edit: 1,
-            save: 1,
-            delete: 1,
-            search: 1
-          }
+        if (this.fromButtonsShow.save === 0) {
+          this.disableForm.Tax = true
+          this.disableForm.CreateID = true
         }
         break
     }
@@ -503,7 +482,7 @@ export default {
       switch (answerAction) {
         case 'confirm':
           this.form.Status = '0'
-          this.buttonsShow = {
+          this.fromButtonsShow = {
             new: 0,
             edit: 0,
             save: 0,
@@ -527,7 +506,7 @@ export default {
       switch (answerAction) {
         case 'confirm':
           this.form.Status = '0'
-          this.buttonsShow = {
+          this.fromButtonsShow = {
             new: 0,
             edit: 0,
             save: 0,
