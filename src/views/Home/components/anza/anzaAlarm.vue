@@ -5,36 +5,37 @@
     </div>
     <el-collapse v-model="activeNames">
       <el-collapse-item name="1">
-      <div>
-        <el-button type="danger" v-if="item.alarmAnza" class="caption">{{$t('__notAnza')}}</el-button>
-        <div v-for="(row, keyIndex) in item.alarmAnza" :key="keyIndex" class="text">
-          {{row.AnzaOrderID}}
+        <p></p>
+        <div v-if="item.alarmAnza">
+          <el-badge :value="item.alarmAnza.length">
+            <el-button type="danger">{{$t('__notAnza')}}</el-button>
+          </el-badge>
         </div>
-      </div>
-      <div>
-        <el-button v-if="item.alarmYuanman" class="caption">{{$t('__yuanman')}}</el-button>
-        <div v-for="(row, keyIndex) in item.alarmYuanman" :key="keyIndex" class="text">
-          {{row.AnzaOrderID}}
+        <p></p>
+        <div v-if="item.alarmYuanman">
+          <el-badge :value="item.alarmYuanman.length">
+            <el-button>{{$t('__yuanman')}}</el-button>
+          </el-badge>
         </div>
-      </div>
-      <div>
-        <el-button type="info" v-if="item.alarmRenew" class="caption">{{$t('__anzaRenew')}}</el-button>
-        <div v-for="(row, keyIndex) in item.alarmRenew" :key="keyIndex" class="text">
-          {{row.AnzaOrderID}}
+        <p></p>
+        <div v-if="item.alarmRenew">
+          <el-badge :value="item.alarmRenew.length">
+            <el-button type="info">{{$t('__anzaRenew')}}</el-button>
+          </el-badge>
         </div>
-      </div>
-      <div>
-        <el-button type="info" v-if="item.alarmExtend" class="caption">{{$t('__anzaExtend')}}</el-button>
-        <div v-for="(row, keyIndex) in item.alarmExtend" :key="keyIndex" class="text">
-          {{row.AnzaOrderID}}
+        <p></p>
+        <div v-if="item.alarmExtend">
+          <el-badge :value="item.alarmExtend.length">
+            <el-button type="info">{{$t('__anzaExtend')}}</el-button>
+          </el-badge>
         </div>
-      </div>
-      <div>
-        <el-button v-if="item.alarmTransfer" class="caption">{{$t('__anzaTransfer')}}</el-button>
-        <div v-for="(row, keyIndex) in item.alarmTransfer" :key="keyIndex" class="text">
-          {{row.AnzaOrderID}}
+        <p></p>
+        <div v-if="item.alarmTransfer">
+          <el-badge :value="item.alarmTransfer.length">
+            <el-button>{{$t('__anzaTransfer')}}</el-button>
+          </el-badge>
         </div>
-      </div>
+        <p></p>
       </el-collapse-item>
     </el-collapse>
   </div>
@@ -91,16 +92,6 @@ export default {
 
   .header{
     font-size: 2rem;
-  }
-
-  .caption {
-    font-size: 1.2rem;
-    display: block;
-  }
-
-  .text {
-    font-size: 1.2rem;
-    text-align: justify;
   }
 }
 </style>
