@@ -63,6 +63,7 @@
       :dialog-show="dialogShow"
       :invoiceHead="invoiceHead"
       :buttonsShowUser="buttonsShowUser"
+      :fromButtonsShow="buttonsShow"
       @dialog-cancel="dialogCancel"
       @dialog-save="dialogSave"></new-form>
   </el-form>
@@ -104,6 +105,14 @@ export default {
         edit: 1,
         save: 1,
         delete: 1,
+        search: 1
+      },
+      // 系統目前狀態權限
+      buttonsShow: {
+        new: 1,
+        edit: 0,
+        save: 1,
+        delete: 0,
         search: 1
       }
     }
@@ -176,6 +185,29 @@ export default {
 
       // 權限管理
       this.buttonsShowUser.save = this.buttonsShowUser.edit
+      // 系統簽核過程權限
+      switch (this.invoiceHead.OrderStatus) {
+        case '1':
+        case '2':
+        case '3':
+          this.buttonsShow = {
+            new: 1,
+            edit: 1,
+            save: 1,
+            delete: 1,
+            search: 1
+          }
+          break
+        default:
+          this.buttonsShow = {
+            new: 0,
+            edit: 0,
+            save: 0,
+            delete: 0,
+            search: 0
+          }
+          break
+      }
 
       // 進入修改
       this.dialogType = 'edit'
