@@ -33,7 +33,11 @@
     </el-button-group>
     <el-button-group style="padding-bottom: 5px">
       <el-button class="hideButton" icon="el-icon-more"><!-- 排版用,避免沒按鈕跑版 --></el-button>
-      <search-button @search="search"></search-button>
+      <search-button @search="search">
+        <el-tooltip slot="body" effect="light" :content="$t('__filter')" placement="top-start">
+          <el-button @click.prevent="dialogShowSearchContent = true">{{$t('__filter')}}</el-button>
+        </el-tooltip>
+      </search-button>
     </el-button-group>
     <el-table
       :data="originData"
@@ -106,18 +110,25 @@
       :dialog-show="dialogShow"
       :stock="stock"
       @cancel="dialogCancel()"></new-form>
+    <!-- 進階查詢選項 -->
+    <stock-now-search-content
+      :dialogShow="dialogShowSearchContent"
+      :fromContent="searchContent"
+      @dialog-save="dialogShowSearchContentSave"></stock-now-search-content>
   </el-form>
 </template>
 
 <script>
 import searchButton from '@/components/searchButton'
 import newForm from './components/stockLog'
+import stockNowSearchContent from './components/stockNowSearchContent'
 import { formatDateTime } from '@/setup/format.js'
 export default {
   name: 'StockNow',
   components: {
     searchButton,
-    newForm
+    newForm,
+    stockNowSearchContent
   },
   data () {
     return {
@@ -128,7 +139,8 @@ export default {
         searchKeyWord: '',
         Building: '',
         Floor: '',
-        Area: ''
+        Area: '',
+        ProductID: ''
       },
       tableHeight: (screen.height * 7 / 9), // Table高度
       tableSpanList: [],
@@ -140,6 +152,7 @@ export default {
         totalCount: 20
       },
       dialogShow: false,
+      dialogShowSearchContent: false, // 篩選內容
       // 下拉式選單
       ddlBuilding: [],
       ddlFloorOrigin: [],
@@ -177,6 +190,11 @@ export default {
       } else {
         this.search()
       }
+    },
+    // 關閉進階搜尋
+    dialogShowSearchContentSave: function (fromContent) {
+      this.dialogShowSearchContent = false
+      this.search()
     },
     search: async function (value) {
       if (value !== undefined) {
