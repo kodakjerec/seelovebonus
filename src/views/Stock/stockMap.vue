@@ -258,6 +258,26 @@ export default {
       this.ddlFloorOrigin = response.data.result
       response = await this.$api.basic.getDropdownList({ type: 'area' })
       this.ddlAreaOrigin = response.data.result
+
+      // 帶入預設數值
+      if (localStorage.getItem('searchHistory:' + this.$route.name) !== null) {
+        let oldSearchContent = JSON.parse(localStorage.getItem('searchHistory:' + this.$route.name))
+        this.searchContent.Layer = oldSearchContent.Layer
+        this.searchContent.Building = oldSearchContent.Building
+        // this.ddlBuildingChange()
+        this.searchContent.Floor = oldSearchContent.Floor
+        // this.ddlFloorChange()
+        this.searchContent.Area = oldSearchContent.Area
+        // this.ddlAreaChange()
+        this.searchContent.Column = oldSearchContent.Column
+        this.searchContent.Row = oldSearchContent.Row
+        this.searchContent.Grid = oldSearchContent.Grid
+        this.searchContent.StorageID = oldSearchContent.StorageID
+        this.searchContent.imageUrl = oldSearchContent.imageUrl
+        this.searchContent.BuildingName = oldSearchContent.BuildingName
+        this.searchContent.FloorName = oldSearchContent.FloorName
+        this.searchContent.AreaName = oldSearchContent.AreaName
+      }
     },
     search: async function () {
       // reset
@@ -289,6 +309,10 @@ export default {
         Row: this.searchContent.Row,
         Grid: this.searchContent.Grid,
         StorageID: this.searchContent.StorageID })
+
+      // 儲存內容
+      localStorage.setItem('searchHistory:' + this.$route.name, JSON.stringify(this.searchContent))
+
       let mapData = response1.data.result
 
       let index = 0
