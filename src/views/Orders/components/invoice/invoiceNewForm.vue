@@ -23,16 +23,6 @@
             </el-select>
           </el-form-item>
         </el-col>
-        <el-col :span="8">
-          <el-form-item :label="$t('__tax')+$t('__status')">
-            <el-select v-model="form.Tax" default-first-option filterable clearable :placeholder="$t('__plzChoice')" :disabled="disableForm.Tax">
-              <el-option v-for="item in ddlTax" :key="item.ID" :label="item.ID+' '+item.Value" :value="item.ID">
-                <span style="float: left">{{ item.Value }}</span>
-                <span style="float: right; color: #8492a6; font-size: 13px">{{ item.ID }}</span>
-              </el-option>
-            </el-select>
-          </el-form-item>
-        </el-col>
       </el-form-item>
       <el-form-item :label="$t('__invoice')+$t('__date')" prop="InvoiceDate">
         <el-col :span="8">
@@ -50,8 +40,7 @@
                 v-model="form.SalesReturnDate"
                 type="date"
                 :placeholder="$t('__plzChoice')+$t('__salesReturn')+$t('__date')"
-                value-format="yyyy-MM-dd"
-                :disabled="disableForm.InvoiceDate">
+                value-format="yyyy-MM-dd">
               </el-date-picker>
             </el-form-item>
         </el-col>
@@ -60,7 +49,7 @@
         <el-col :span="8">
           <el-input v-mask="'AA########'" v-model="form.InvoiceID" :disabled="disableForm.InvoiceID"></el-input>
         </el-col>
-        <el-col :span="14" v-show="form.InvoiceKind === '6'">
+        <el-col :span="8">
           <el-form-item :label="$t('__randomCode')">
             <el-input v-model="form.RandomCode" :disabled="disableForm.RandomCode"></el-input>
           </el-form-item>
@@ -81,11 +70,14 @@
           </el-form-item>
         </el-col>
       </el-form-item>
-      <el-form-item :label="$t('__amount')">
+      <el-form-item :label="$t('__amount')+'/'+$t('__tax')">
         <el-col :span="4">
           <el-input v-model="form.Amount" disabled></el-input>
         </el-col>
-        <el-col :span="14">
+        <el-col :span="4">
+          <el-input v-model="form.Tax" disabled></el-input>
+        </el-col>
+        <el-col :span="10">
           <el-form-item :label="$t('__memo')">
             <el-input v-model="form.Memo" maxlength="200" show-word-limit :disabled="disableForm.CreateID"></el-input>
           </el-form-item>
@@ -241,8 +233,8 @@ export default {
         UniformNumber: '',
         Amount: null,
         ReceivedDate: '',
-        InvoiceKind: '1',
-        Tax: '1',
+        InvoiceKind: '2',
+        Tax: null,
         CarrierNumber: null,
         Memo: null,
         RandomCode: null,
@@ -263,7 +255,6 @@ export default {
         InvoiceDate: false,
         InvoiceID: false,
         RandomCode: false,
-        Tax: false,
         Status: false,
         CreateID: false,
         SalesReturnDate: true,
@@ -287,7 +278,6 @@ export default {
       // 以下為下拉式選單專用
       ddlInvoiceKind: [],
       ddlInvoiceStatus: [],
-      ddlTax: [],
       ddlCreateID: []
     }
   },
@@ -313,7 +303,6 @@ export default {
         this.disableForm.Status = true
         this.disableForm.selectCollectionRecords = true
         if (this.fromButtonsShow.save === 0) {
-          this.disableForm.Tax = true
           this.disableForm.CreateID = true
         }
         break
@@ -333,8 +322,6 @@ export default {
       this.ddlInvoiceKind = response
       response = this.$api.local.getDropdownList({ type: 'InvoiceStatus' })
       this.ddlInvoiceStatus = response
-      response = this.$api.local.getDropdownList({ type: 'Tax' })
-      this.ddlTax = response
       let response4 = await this.$api.orders.getDropdownList({ type: 'employee' })
       this.ddlCreateID = response4.data.result
 
@@ -401,10 +388,12 @@ export default {
 
       // reset
       let totalAmount = 0
+      let totalTax = 0
       this.invoiceDetails = []
 
       this.multipleSelection.forEach(item => {
         totalAmount += item.Amount
+        totalTax += item.Tax
 
         if (this.dialogType === 'new') {
           // 統計發票明細
@@ -432,10 +421,12 @@ export default {
           } else {
             findResult.Qty += 1
             findResult.Amount += item.Amount
+            findResult.Tax += item.Tax
           }
         }
       })
       this.form.Amount = totalAmount
+      this.form.Tax = totalTax
     },
     // 取消
     cancel: function () {
