@@ -81,8 +81,8 @@
       </el-table-column>
       <el-table-column
         v-if="buttonsShow.new && buttonsShowUser.new"
-        prop="AvailableQty"
-        :label="$t('__max')+$t('__qty')"
+        prop="MaxSet"
+        :label="$t('__max')+$t('__set')"
         width="60">
       </el-table-column>
     </el-table>
@@ -157,6 +157,14 @@
         prop="Set"
         :label="$t('__set')"
         width="60">
+        <template slot-scope="scope">
+          <span v-if="scope.row.Set<=scope.row.MaxSet">
+          {{scope.row.Set}}
+          </span>
+          <span v-else class="setExceedingMax">
+            {{scope.row.Set}}
+          </span>
+        </template>
       </el-table-column>
       <el-table-column
         prop="Qty"
@@ -165,8 +173,8 @@
       </el-table-column>
       <el-table-column
         v-if="buttonsShow.new && buttonsShowUser.new"
-        prop="AvailableQty"
-        :label="$t('__max')+$t('__qty')"
+        prop="MaxSet"
+        :label="$t('__max')+$t('__set')"
         width="60">
       </el-table-column>
     </el-table>
@@ -202,13 +210,14 @@ export default {
         Set: 0,
         // 以下為前端顯示用, 不會記錄進資料庫
         Status: 'New',
-        AvailableQty: 0
+        AvailableQty: 0,
+        MaxSet: 0
       },
       subList: [],
       subList_0: [],
       subList_1: [],
       subListDeleted: [],
-      inputTimeout: null,
+      inputTimeout: null, // 即時查詢上架儲位, 覆蓋前次查詢專用
       // 系統目前狀態權限
       buttonsShow: {
         new: 1,
@@ -515,6 +524,7 @@ export default {
       let findObject = this.ddlStorageID[row.Seq].find(item => { return item.ID === selected })
       if (findObject) {
         row.AvailableQty = findObject.AvailableQty
+        row.MaxSet = Math.floor(row.AvailableQty / row.SetQty)
       }
       if (row.Status === '') {
         row.Status = 'Modified'
@@ -554,3 +564,10 @@ export default {
   }
 }
 </script>
+
+<style lang="scss" scoped>
+.setExceedingMax {
+  color: red;
+  font-weight: 1000;
+}
+</style>

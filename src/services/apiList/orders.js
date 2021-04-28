@@ -318,6 +318,13 @@ export default {
         return data
       })
     },
+    installmentAlarm: ({ StartDate }) => {
+      let rawData = { StartDate }
+      return post('/orders/installmentAlarm', rawData).then(data => {
+        console.log(`%c <<< Response(/rest/orders/installmentAlarm)⤵ `, 'background-color: #E0455D; color: white; font-size: 14px; font-weight: bold;', data)
+        return data
+      })
+    },
     // Others
     getDropdownList: ({ type, keyword }) => {
       if (!keyword) {

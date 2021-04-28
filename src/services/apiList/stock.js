@@ -111,6 +111,13 @@ export default {
       })
     },
     // stock
+    alarm: () => {
+      let rawData = { }
+      return post('/stock/alarm', rawData).then(data => {
+        console.log(`%c <<< Response(/rest/stock/alarm)⤵ `, 'background-color: #E0455D; color: white; font-size: 14px; font-weight: bold;', data)
+        return data
+      })
+    },
     stockNowShow: ({ searchContent, pagination }) => {
       let rawData = { searchContent, pagination }
       return post('/stock/stockNowShow', rawData).then(data => {
