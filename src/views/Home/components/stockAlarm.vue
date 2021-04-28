@@ -1,12 +1,12 @@
 <template>
   <div class="announcement">
     <div class="header">
-      {{$t('__installment')}}
+      {{$t('__avgQty')}}
     </div>
     <el-collapse v-model="activeNames">
       <el-collapse-item name="1">
         <template slot="title">
-          <span class="captionDate">{{$t('__notReceived')}}</span>
+          <span class="captionDate">{{$t('__inventoryShortage')}}</span>
           <span class="caption">{{items.length}}</span>
         </template>
         <el-table
@@ -16,22 +16,20 @@
           style="width: 100%"
           @row-click="clickAnnouncement">
           <el-table-column
-            prop="OrderID"
-            :label="$t('__orderID')">
+            prop="StorageID"
+            :label="$t('__storageAddress')">
           </el-table-column>
           <el-table-column
-            prop="InstallmentName"
-            :label="$t('__installment')+$t('__name')">
+            :label="$t('__product')">
+            <template slot-scope="scope">
+              {{scope.row.ProductID+' '+scope.row.ProductName}}
+            </template>
           </el-table-column>
           <el-table-column
-            prop="ScheduledDate"
-            :label="$t('__installmentScheduledDate')"
-            :formatter="formatterDate">
-          </el-table-column>
-          <el-table-column
-            prop="ScheduledAmount"
-            :label="$t('__installmentScheduledAmount')"
-            :formatter="formatterMoney">
+            :label="$t('__avgQty')+' '+$t('__qty')">
+            <template slot-scope="scope">
+              {{scope.row.AvgQty+'>'+scope.row.Qty}}
+            </template>
           </el-table-column>
         </el-table>
       </el-collapse-item>
@@ -43,7 +41,7 @@
 import { formatMoney, formatDate } from '@/setup/format.js'
 
 export default {
-  name: 'InstallmentAlarm',
+  name: 'StockAlarm',
   data () {
     return {
       activeNames: [],
@@ -61,13 +59,13 @@ export default {
       return formatMoney(cellValue)
     },
     preLoading: async function () {
-      let responseRecords = await this.$api.orders.installmentAlarm({ StartDate: new Date().toISOString().slice(0, 10) })
+      let responseRecords = await this.$api.stock.alarm()
       this.items = responseRecords.data.result
     },
     // 按下公告
     clickAnnouncement: function () {
       this.$router.push({
-        name: 'Orders'
+        name: 'StockNow'
       })
     }
   }

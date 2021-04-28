@@ -9,36 +9,68 @@
           <span class="captionDate">{{$t('__notAnza')}}</span>
           <span class="caption">{{item.alarmAnza.length}}</span>
         </template>
-        <div v-for="(row, keyIndex) in item.alarmAnza" :key="keyIndex" class="text" @click="clickAnnouncement">
-          {{row.AnzaOrderID}}
-        </div>
+        <el-table
+          :data="item.alarmAnza"
+          stripe
+          border
+          style="width: 100%">
+          <el-table-column
+            prop="AnzaOrderID"
+            :label="$t('__anzaOrder')">
+          </el-table-column>
+          <el-table-column
+            prop="ScheduledDate"
+            :label="$t('__anzaScheduledDate')">
+          </el-table-column>
+        </el-table>
       </el-collapse-item>
-      <el-collapse-item name="1" v-if="item.alarmYuanman">
+      <el-collapse-item name="2" v-if="item.alarmYuanman">
         <template slot="title">
           <span class="captionDate">{{$t('__yuanman')}}</span>
           <span class="caption">{{item.alarmYuanman.length}}</span>
         </template>
-        <div v-for="(row, keyIndex) in item.alarmYuanman" :key="keyIndex" class="text" @click="clickAnnouncement">
-          {{row.AnzaOrderID}}
-        </div>
+        <el-table
+          :data="item.alarmYuanman"
+          stripe
+          border
+          style="width: 100%">
+          <el-table-column
+            prop="AnzaOrderID"
+            :label="$t('__anzaOrder')">
+          </el-table-column>
+        </el-table>
       </el-collapse-item>
-      <el-collapse-item name="1" v-if="item.alarmRenew">
+      <el-collapse-item name="3" v-if="item.alarmRenew">
         <template slot="title">
           <span class="captionDate">{{$t('__anzaRenew')}}</span>
           <span class="caption">{{item.alarmRenew.length}}</span>
         </template>
-        <div v-for="(row, keyIndex) in item.alarmRenew" :key="keyIndex" class="text" @click="clickAnnouncement">
-          {{row.AnzaOrderID}}
-        </div>
+        <el-table
+          :data="item.alarmRenew"
+          stripe
+          border
+          style="width: 100%">
+          <el-table-column
+            prop="AnzaOrderID"
+            :label="$t('__anzaOrder')">
+          </el-table-column>
+        </el-table>
       </el-collapse-item>
-      <el-collapse-item name="1" v-if="item.alarmTransfer">
+      <el-collapse-item name="4" v-if="item.alarmTransfer">
         <template slot="title">
           <span class="captionDate">{{$t('__anzaTransfer')}}</span>
           <span class="caption">{{item.alarmTransfer.length}}</span>
         </template>
-        <div v-for="(row, keyIndex) in item.alarmTransfer" :key="keyIndex" class="text" @click="clickAnnouncement">
-          {{row.AnzaOrderID}}
-        </div>
+        <el-table
+          :data="item.alarmTransfer"
+          stripe
+          border
+          style="width: 100%">
+          <el-table-column
+            prop="AnzaOrderID"
+            :label="$t('__anzaOrder')">
+          </el-table-column>
+        </el-table>
       </el-collapse-item>
     </el-collapse>
   </div>
