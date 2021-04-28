@@ -1,41 +1,44 @@
 <template>
-  <div class="announcement" @click.prevent="clickAnnouncement">
+  <div class="announcement">
     <div class="header">
       {{$t('__anzaOrder')}}
     </div>
     <el-collapse v-model="activeNames">
-      <el-collapse-item name="1">
-        <p></p>
-        <div v-if="item.alarmAnza">
-          <el-badge :value="item.alarmAnza.length">
-            <el-button type="danger">{{$t('__notAnza')}}</el-button>
-          </el-badge>
+      <el-collapse-item name="1" v-if="item.alarmAnza">
+        <template slot="title">
+          <span class="captionDate">{{$t('__notAnza')}}</span>
+          <span class="caption">{{item.alarmAnza.length}}</span>
+        </template>
+        <div v-for="(row, keyIndex) in item.alarmAnza" :key="keyIndex" class="text" @click="clickAnnouncement">
+          {{row.AnzaOrderID}}
         </div>
-        <p></p>
-        <div v-if="item.alarmYuanman">
-          <el-badge :value="item.alarmYuanman.length">
-            <el-button>{{$t('__yuanman')}}</el-button>
-          </el-badge>
+      </el-collapse-item>
+      <el-collapse-item name="1" v-if="item.alarmYuanman">
+        <template slot="title">
+          <span class="captionDate">{{$t('__yuanman')}}</span>
+          <span class="caption">{{item.alarmYuanman.length}}</span>
+        </template>
+        <div v-for="(row, keyIndex) in item.alarmYuanman" :key="keyIndex" class="text" @click="clickAnnouncement">
+          {{row.AnzaOrderID}}
         </div>
-        <p></p>
-        <div v-if="item.alarmRenew">
-          <el-badge :value="item.alarmRenew.length">
-            <el-button type="info">{{$t('__anzaRenew')}}</el-button>
-          </el-badge>
+      </el-collapse-item>
+      <el-collapse-item name="1" v-if="item.alarmRenew">
+        <template slot="title">
+          <span class="captionDate">{{$t('__anzaRenew')}}</span>
+          <span class="caption">{{item.alarmRenew.length}}</span>
+        </template>
+        <div v-for="(row, keyIndex) in item.alarmRenew" :key="keyIndex" class="text" @click="clickAnnouncement">
+          {{row.AnzaOrderID}}
         </div>
-        <p></p>
-        <div v-if="item.alarmExtend">
-          <el-badge :value="item.alarmExtend.length">
-            <el-button type="info">{{$t('__anzaExtend')}}</el-button>
-          </el-badge>
+      </el-collapse-item>
+      <el-collapse-item name="1" v-if="item.alarmTransfer">
+        <template slot="title">
+          <span class="captionDate">{{$t('__anzaTransfer')}}</span>
+          <span class="caption">{{item.alarmTransfer.length}}</span>
+        </template>
+        <div v-for="(row, keyIndex) in item.alarmTransfer" :key="keyIndex" class="text" @click="clickAnnouncement">
+          {{row.AnzaOrderID}}
         </div>
-        <p></p>
-        <div v-if="item.alarmTransfer">
-          <el-badge :value="item.alarmTransfer.length">
-            <el-button>{{$t('__anzaTransfer')}}</el-button>
-          </el-badge>
-        </div>
-        <p></p>
       </el-collapse-item>
     </el-collapse>
   </div>
@@ -46,7 +49,7 @@ export default {
   name: 'AnzaAlarm',
   data () {
     return {
-      activeNames: ['1'],
+      activeNames: [],
       item: {}
     }
   },
@@ -92,6 +95,15 @@ export default {
 
   .header{
     font-size: 2rem;
+  }
+  .captionDate {
+    color: lightcoral;
+  }
+  .caption {
+    font-size: 2rem;
+    font-weight: 1000;
+    padding-left: 1vw;
+    text-align: start;
   }
 }
 </style>

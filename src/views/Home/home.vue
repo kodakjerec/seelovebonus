@@ -1,11 +1,20 @@
 <template>
   <div>
-    <el-col :span="announcemnetWidthList[0]">
-      <announcemnet/>
-    </el-col>
-    <el-col :span="announcemnetWidthList[1]" v-if="showAnza">
-      <anzaAlarm/>
-    </el-col>
+    <div>
+      <template v-for="item in announcemnetWidthList">
+        <el-col :span="item.width" v-if="showAnza && item.name==='anza'" :key="item.name">
+          <anzaAlarm/>
+        </el-col>
+        <el-col :span="item.width" v-if="item.name==='installment'" :key="item.name">
+          <installmentAlarm/>
+        </el-col>
+      </template>
+    </div>
+    <div>
+      <el-col>
+        <announcemnet/>
+      </el-col>
+    </div>
   </div>
 </template>
 
@@ -13,11 +22,13 @@
 import { mapState } from 'vuex'
 import announcemnet from './components/announcement'
 import anzaAlarm from './components/anza/anzaAlarm'
+import installmentAlarm from './components/installmentAlarm'
 export default {
   name: 'home',
   components: {
     announcemnet,
-    anzaAlarm
+    anzaAlarm,
+    installmentAlarm
   },
   data () {
     return {
@@ -53,11 +64,17 @@ export default {
     },
     // 分配公告們寬度
     calculateWidth: function () {
+      // 分期付款
+      this.announcemnetWidthList.push({
+        name: 'installment',
+        width: 10
+      })
       if (this.showAnza) {
-        // 公告
-        this.announcemnetWidthList.push(24 - 3)
         // 安座
-        this.announcemnetWidthList.push(3)
+        this.announcemnetWidthList.push({
+          name: 'anza',
+          width: 3
+        })
       }
     }
   }
