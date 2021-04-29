@@ -263,31 +263,11 @@ const validate = {
     if (callback) { callback() } else { return '' }
   },
   // 輸入 地址, 回傳 { City, Post, Address}
-  addressSeparate: (fromAddress) => {
-    let findCity = ''
-    let findPost = ''
-    let ddlCity = api.local.getDropdownList({ type: 'City' })
-    let postData = api.local.getDropdownList({ type: 'District' })
+  addressSeparate: async (fromAddress) => {
+    let response = await api.basic.getObject({ type: 'addressTranslator', keyword: fromAddress })
+    let row = response.data.result[0]
 
-    // 分離縣市
-    ddlCity.forEach(city => {
-      let findIndex = fromAddress.indexOf(city.Value)
-      if (findIndex > -1) {
-        findCity = city.ID
-        fromAddress = fromAddress.replace(city.Value, '')
-      }
-    })
-
-    // 分離區域
-    postData.forEach(post => {
-      let findIndex = fromAddress.indexOf(post.Value)
-      if (findIndex > -1) {
-        findPost = post.ID
-        fromAddress = fromAddress.replace(post.Value, '')
-      }
-    })
-
-    return { findCity, findPost, fromAddress }
+    return { findCity: row.City, findPost: row.Post, fromAddress: row.Address }
   },
   validateStorageIDNoCallback: async (fromProductID, fromPurpose, fromQty, fromStorageID) => {
     if (fromStorageID === null) {
