@@ -1,5 +1,6 @@
 <template>
   <div id="orderHead">
+    <!-- 導覽選單 -->
     <el-tabs class="tabOrderNewForm" v-model="tabActiveName" @tab-click="tabClick">
       <el-tab-pane :label="$t('__orderID')" name="orderHead"></el-tab-pane>
       <template v-if="dialogType !== 'new'">
@@ -20,8 +21,11 @@
       </template>
       <el-tab-pane :label="$t('__orderNewFormTabsBottom')"></el-tab-pane>
     </el-tabs>
+    <!-- 正文開始 -->
     <div class="tabOrderNewForm_ThenDiv"></div>
-    <h1>{{myTitle}}</h1>
+    <h1>{{myTitle}}
+      <el-tag v-if="orderDetailNotEqualInstallmentDetail" type="danger">{{$t('__orderDetailNotEqualInstallmentDetail')}}</el-tag>
+    </h1>
     <el-form ref="form" :model="form" :rules="rules" label-width="10vw" label-position="right">
       <el-form-item :label="$t('__orderID')">
         <el-col :span="2" v-if="dialogType === 'new'">
@@ -339,6 +343,7 @@ export default {
       myTitle: '',
       projectHead: [],
       updateMessage: '', // 更新資料庫後回傳的訊息
+      orderDetailNotEqualInstallmentDetail: false, // 提醒明細價格與分期付款總額不同, 使用
       // 專案功能顯示(新增專用)(不記錄進資料庫)
       projectFunctions: {
         chanyunOrderID: 0,
@@ -351,6 +356,20 @@ export default {
       ddlProject: [],
       // 頂部導覽
       tabActiveName: 'orderHead'
+    }
+  },
+  watch: {
+    form: {
+      handler: function (newValue) {
+        let orderDetailAmount = this.form.Amount
+        let installmentDetailAmount = this.$refs['installment'].installmentAmount
+        if (orderDetailAmount !== installmentDetailAmount) {
+          this.orderDetailNotEqualInstallmentDetail = true
+        } else {
+          this.orderDetailNotEqualInstallmentDetail = false
+        }
+      },
+      deep: true
     }
   },
   mounted () {
