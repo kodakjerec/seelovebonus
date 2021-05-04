@@ -277,6 +277,7 @@ export default {
   __anzaOperateWarning: 'Drop down to select value, or enter the specified value',
   __installmentBatchEditWarning: 'Change affets all installments(not including received details)',
   __storageAddressNewFormWarning: '(Estimate Qty, the actual saving will skip "4")',
+  __orderDetailNotEqualInstallmentDetail: 'Amount: detail not equals installment',
   // 以下為錯誤處理專用
   __error400: 'Bad Request',
   __error401: 'Unauthorized',

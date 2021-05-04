@@ -53,7 +53,6 @@ export default {
   props: {
     fromOrderID: { type: String },
     projectID: { type: String },
-    projectName: { type: String },
     parentQty: { type: Number },
     parentAmount: { type: Number },
     parentDate: { type: String }
@@ -72,8 +71,8 @@ export default {
         this.reLoading()
       }
     },
-    parentQty: function (newValue) { if (newValue) { this.reCalculateSubList() } },
-    parentAmount: function (newValue) { if (newValue) { this.reCalculateSubList() } },
+    parentQty: function (newValue) { this.reCalculateSubList() },
+    parentAmount: function (newValue) { this.reCalculateSubList() },
     parentDate: function (newValue) { if (newValue) { this.reCalculateSubList() } }
   },
   mounted () {

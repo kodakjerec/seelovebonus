@@ -277,6 +277,7 @@ export default {
   __anzaOperateWarning: '下拉選擇數值或輸入指定位別(5位以上自動搜尋合適位別)',
   __installmentBatchEditWarning: '變更影響所有分期(不含已收款明細)',
   __storageAddressNewFormWarning: '(粗估數量，實際存檔時會略過名稱含"4")',
+  __orderDetailNotEqualInstallmentDetail: '明細總額不等於分期總額',
   // 以下為錯誤處理專用
   __error400: '無法理解請求',
   __error401: '授權失敗，請重新登入',

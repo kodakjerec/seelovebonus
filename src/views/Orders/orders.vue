@@ -73,7 +73,9 @@
           <br/>{{$t('__amount')}}
         </template>
         <template slot-scope="scope">
-          {{formatterDate(null,null,scope.row.OrderDate,null)}}<br/>{{formatterMoney(null,null,scope.row.Amount,null)}}
+          {{formatterDate(null,null,scope.row.OrderDate,null)}}<br/>
+          {{formatterMoney(null,null,scope.row.Amount,null)}}<br/>
+          <el-tag v-if="scope.row.Amount!==scope.row.InstallmentAmount" type="danger">{{$t('__orderDetailNotEqualInstallmentDetail')}}</el-tag>
         </template>
       </el-table-column>
       <!-- 未收款,已收款,發票金額 -->
@@ -82,7 +84,7 @@
           {{$t('__notReceived')}}<br/>{{$t('__haveReceived')}}<br/>{{$t('__invoice')+$t('__amount')}}
         </template>
         <template slot-scope="scope">
-          {{formatterMoneyUS(null,null,scope.row.Amount-scope.row.CollectionsAmount,null)}}<br/>{{formatterMoneyUS(null,null,scope.row.CollectionsAmount,null)}}<br/>{{formatterMoneyUS(null,null,scope.row.InvoicesAmount,null)}}
+          {{formatterMoneyUS(null,null,scope.row.InstallmentAmount-scope.row.CollectionsAmount,null)}}<br/>{{formatterMoneyUS(null,null,scope.row.CollectionsAmount,null)}}<br/>{{formatterMoneyUS(null,null,scope.row.InvoicesAmount,null)}}
         </template>
       </el-table-column>
       <!-- 發票 -->
