@@ -222,7 +222,6 @@
         ref="installmentOrderNew"
         :fromOrderID="form.ID"
         :projectID="form.ProjectID"
-        :projectName="form.FirstItemName"
         :parentQty="form.Qty"
         :parentAmount="form.Amount"
         :parentDate="form.OrderDate"></installment-order-new>
