@@ -7,7 +7,7 @@
           {{form.Prefix}}
         </el-col>
         <el-col :span="4">
-          <el-input v-model="form.ID" :placeholder="$t('__afterSaveWillShow')" :disabled="disableForm.ID"></el-input>
+          <el-input v-model="form.ID" :placeholder="$t('__afterSaveWillShow')" disabled></el-input>
         </el-col>
         <el-col :span="6">
           <el-form-item :label="$t('__status')">
@@ -48,6 +48,7 @@
               default-first-option filterable clearable
               v-model="ProcessingItem.ProductID"
               :placeholder="$t('__plzChoice')"
+              @change="productChange"
               style="display:block">
               <el-option-group v-for="group in ddlSubList" :key="group.Category1Name" :label="group.Category1Name">
                 <el-option v-for="item in group.options" :key="item.ProductID" :label="item.ProductID+' '+item.ProductName" :value="item.ProductID">
@@ -63,7 +64,8 @@
           <el-form-item :label="$t('__set')">
             <el-input-number
               :min="1"
-              v-model="ProcessingItem.Set">
+              v-model="ProcessingItem.Set"
+              @change="setChange">
             </el-input-number>
           </el-form-item>
         </el-col>
@@ -82,7 +84,6 @@
       :buttonsShowUser="buttonsShowUser"
       :orderID="form.ID"
       :fromOrderStatus="form.Status"
-      :fromProductID="ProcessingItem.ProductID"
       :fromPurpose="ProcessingItem.Purpose"
       :fromSet="ProcessingItem.Set"
       @bringProcessingItem="bringProcessingItem"></processing-order-detail>
@@ -139,7 +140,6 @@ export default {
         search: 1
       },
       disableForm: {
-        ID: false,
         OrderDate: false
       },
       myTitle: '',
@@ -159,7 +159,6 @@ export default {
     switch (this.dialogType) {
       case 'new':
         this.myTitle = this.$t('__new') + this.$t('__processingOrder')
-        this.disableForm.ID = true
         let tempDate = new Date()
         this.form.OrderDate = formatDate(tempDate.toISOString().slice(0, 10))
         this.buttonsShow = {
@@ -179,7 +178,6 @@ export default {
           case '0':
           case '4':
             // 是否允許修改
-            this.disableForm.ID = true
             this.disableForm.OrderDate = true
 
             this.buttonsShow = {
@@ -251,6 +249,14 @@ export default {
 
       response = this.$api.local.getDropdownList({ type: 'ProcessingStatus' })
       this.ddlOrderStatus = response
+    },
+    // 變更加工商品
+    productChange: function (value) {
+      this.$refs['processingOrderDetail'].bringProcessingDetail(value)
+    },
+    // 變更組數
+    setChange: function (value) {
+      this.$refs['processingOrderDetail'].setChange(value, null)
     },
     // 檢查輸入
     checkValidate: async function () {

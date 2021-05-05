@@ -12,21 +12,6 @@
       width="60">
     </el-table-column>
     <el-table-column
-      prop="Purpose"
-      :label="$t('__storagePurpose')"
-      width="100">
-      <template slot-scope="scope">
-        <el-input
-          v-if="buttonsShow.new && buttonsShowUser.new"
-          v-model="scope.row[scope.column.property]"
-          @change="(value)=>{purposeChange(value, scope.row)}">
-        </el-input>
-        <div v-else>
-          {{scope.row[scope.column.property]}}
-        </div>
-      </template>
-    </el-table-column>
-    <el-table-column
       prop="ProductID"
       :label="$t('__product')+$t('__id')">
       <template slot-scope="scope">
@@ -55,30 +40,6 @@
       :label="$t('__product')+$t('__name')">
     </el-table-column>
     <el-table-column
-      prop="StorageID"
-      :label="$t('__putOn')+$t('__storageAddress')">
-      <template slot-scope="scope">
-        <el-select
-          v-if="buttonsShow.new && buttonsShowUser.new"
-          default-first-option filterable clearable
-          remote
-          v-model="scope.row.StorageID"
-          :disabled="scope.row.ProductID===''"
-          :remote-method="(value)=>{remoteMethod(value, scope.row)}"
-          @change="(value)=>{storageIDChange(value, scope.row)}"
-          :placeholder="$t('__plzChoice')"
-          style="display:block">
-          <el-option v-for="item in ddlStorageID[scope.row.Seq]" :key="item.ID" :label="item.ID+' '+item.Value" :value="item.ID">
-            <span style="float: left">{{ item.Value }}</span>
-            <span style="float: right; color: #8492a6; font-size: 13px">{{ item.ID }}</span>
-          </el-option>
-        </el-select>
-        <div v-else>
-          {{scope.row[scope.column.property]}}
-        </div>
-      </template>
-    </el-table-column>
-    <el-table-column
       prop="Qty"
       :label="$t('__qty')"
       width="200">
@@ -98,6 +59,45 @@
       prop="AvailableQty"
       :label="$t('__max')+$t('__qty')"
       width="60">
+    </el-table-column>
+    <el-table-column
+      prop="Purpose"
+      :label="$t('__storagePurpose')"
+      width="100">
+      <template slot-scope="scope">
+        <el-input
+          v-if="buttonsShow.new && buttonsShowUser.new"
+          v-model="scope.row[scope.column.property]"
+          @change="(value)=>{purposeChange(value, scope.row)}">
+        </el-input>
+        <div v-else>
+          {{scope.row[scope.column.property]}}
+        </div>
+      </template>
+    </el-table-column>
+    <el-table-column
+      prop="StorageID"
+      :label="$t('__putOn')+$t('__storageAddress')">
+      <template slot-scope="scope">
+        <el-select
+          v-if="buttonsShow.new && buttonsShowUser.new"
+          filterable clearable
+          remote
+          v-model="scope.row.StorageID"
+          :disabled="scope.row.ProductID===''"
+          :remote-method="(value)=>{remoteMethod(value, scope.row)}"
+          @change="(value)=>{storageIDChange(value, scope.row)}"
+          :placeholder="$t('__plzChoice')"
+          style="display:block">
+          <el-option v-for="item in ddlStorageID[scope.row.Seq]" :key="item.ID" :label="item.ID+' '+item.Value" :value="item.ID">
+            <span style="float: left">{{ item.Value }}</span>
+            <span style="float: right; color: #8492a6; font-size: 13px">{{ item.ID }}</span>
+          </el-option>
+        </el-select>
+        <div v-else>
+          {{scope.row[scope.column.property]}}
+        </div>
+      </template>
     </el-table-column>
     <el-table-column
       v-if="buttonsShow.new && buttonsShowUser.new"
@@ -347,28 +347,32 @@ export default {
       if (value.length >= 5) {
         // 強制轉為大寫
         value = value.toUpperCase()
-        row.StorageID = value
 
         clearTimeout(this.inputTimeout)
         this.inputTimeout = setTimeout(() => {
-          this.findStorageIDNow(row)
+          this.findStorageIDNow(row, value)
         }, 500)
       }
     },
     // 即時查詢可用儲位
-    findStorageIDNow: async function (row) {
+    findStorageIDNow: async function (row, storageID) {
+      if (storageID === undefined) {
+        storageID = row.StorageID
+      }
       if (row.ProductID) {
         let response2 = await this.$api.stock.findStorageID({
           ProductID: row.ProductID,
           Purpose: row.Purpose,
           Qty: row.Qty,
-          StorageID: row.StorageID
+          StorageID: storageID
         })
         this.ddlStorageID[row.Seq] = response2.data.result
-        // 預帶第一筆
-        if (this.ddlStorageID[row.Seq].length > 0) {
-          row.StorageID = this.ddlStorageID[row.Seq][0].ID
-          this.storageIDChange(row.StorageID, row)
+        if (storageID) {
+          row.StorageID = storageID
+        } else {
+          if (this.ddlStorageID[row.Seq].length > 0) {
+            row.StorageID = this.ddlStorageID[row.Seq][0].ID
+          }
         }
       }
     },
@@ -405,12 +409,13 @@ export default {
       this.reCalAmount()
     },
     // 下拉式選擇商品
-    ddlSubListChange: function (selected, row) {
+    ddlSubListChange: async function (selected, row) {
       let findSubList = this.originDDLSubList.find(item => item.ProductID === selected)
-      this.fillSubList(row, findSubList)
-
-      // 即時查詢儲位
-      this.findStorageIDNow(row)
+      if (findSubList) {
+        this.fillSubList(row, findSubList)
+        // 即時查詢儲位
+        await this.findStorageIDNow(row)
+      }
     },
     // 下拉選擇儲位
     storageIDChange: function (selected, row) {

@@ -110,6 +110,42 @@ export default {
         return data
       })
     },
+    // transport Order
+    transportOrderShow: ({ keyword }) => {
+      let rawData = { keyword }
+      return post('/stock/transportOrderShow', rawData).then(data => {
+        console.log(`%c <<< Response(/rest/stock/transportOrderShow)⤵ `, 'background-color: #E0455D; color: white; font-size: 14px; font-weight: bold;', data)
+        return data
+      })
+    },
+    transportOrderUpdate: ({ form }) => {
+      let rawData = { form }
+      return post('/stock/transportOrderUpdate', rawData).then(data => {
+        console.log(`%c <<< Response(/rest/stock/transportOrderUpdate)⤵ `, 'background-color: #E0455D; color: white; font-size: 14px; font-weight: bold;', data)
+        return data
+      })
+    },
+    transportOrderDelete: ({ form }) => {
+      let rawData = { form }
+      return post('/stock/transportOrderDelete', rawData).then(data => {
+        console.log(`%c <<< Response(/rest/stock/transportOrderDelete)⤵ `, 'background-color: #E0455D; color: white; font-size: 14px; font-weight: bold;', data)
+        return data
+      })
+    },
+    transportOrderDetailUpdate: ({ form }) => {
+      let rawData = { form }
+      return post('/stock/transportOrderDetailUpdate', rawData).then(data => {
+        console.log(`%c <<< Response(/rest/stock/transportOrderDetailUpdate)⤵ `, 'background-color: #E0455D; color: white; font-size: 14px; font-weight: bold;', data)
+        return data
+      })
+    },
+    transportOrderDetailDelete: ({ form }) => {
+      let rawData = { form }
+      return post('/stock/transportOrderDetailDelete', rawData).then(data => {
+        console.log(`%c <<< Response(/rest/stock/transportOrderDetailDelete)⤵ `, 'background-color: #E0455D; color: white; font-size: 14px; font-weight: bold;', data)
+        return data
+      })
+    },
     // stock
     alarm: () => {
       let rawData = { }

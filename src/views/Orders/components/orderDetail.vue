@@ -482,10 +482,11 @@ export default {
       let findSubList = this.originDDLSubList.find(item => item.ProductID === selected)
 
       // 填入明細
-      this.fillSubList(row, findSubList, ItemType)
-
-      // 建議儲位
-      this.bringDefaultStorageAddress(row)
+      if (findSubList) {
+        this.fillSubList(row, findSubList, ItemType)
+        // 建議儲位
+        this.bringDefaultStorageAddress(row)
+      }
     },
     // 填入選擇商品: 一般商品
     // ItemType: 0-主約 1-附約主品項 2-附約明細商品(不計價)
