@@ -162,7 +162,6 @@ export default {
 
       // 父階層分類, 移除目前設定選項
       let findIndex = this.ddlCategory.findIndex(item => { return item.ID === this.form.Category })
-      console.log(findIndex)
       if (findIndex > -1) {
         this.ddlParentCategory.splice(findIndex, 1)
       }

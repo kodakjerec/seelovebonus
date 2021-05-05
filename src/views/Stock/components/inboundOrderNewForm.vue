@@ -7,7 +7,7 @@
           {{form.Prefix}}
         </el-col>
         <el-col :span="4">
-          <el-input v-model="form.ID" :placeholder="$t('__afterSaveWillShow')" :disabled="disableForm.ID"></el-input>
+          <el-input v-model="form.ID" :placeholder="$t('__afterSaveWillShow')" disabled></el-input>
         </el-col>
         <el-col :span="6">
           <el-form-item :label="$t('__status')">
@@ -111,7 +111,6 @@ export default {
         search: 1
       },
       disableForm: {
-        ID: false,
         OrderDate: false
       },
       myTitle: '',
@@ -130,7 +129,6 @@ export default {
     switch (this.dialogType) {
       case 'new':
         this.myTitle = this.$t('__new') + this.$t('__inboundOrder')
-        this.disableForm.ID = true
         let tempDate = new Date()
         this.form.OrderDate = formatDate(tempDate.toISOString().slice(0, 10))
         this.buttonsShow = {
@@ -150,7 +148,6 @@ export default {
           case '0':
           case '4':
             // 是否允許修改
-            this.disableForm.ID = true
             this.disableForm.OrderDate = true
 
             this.buttonsShow = {

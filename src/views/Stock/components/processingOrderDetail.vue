@@ -15,6 +15,37 @@
         width="60">
       </el-table-column>
       <el-table-column
+        prop="ProductID"
+        :label="$t('__product')+$t('__id')">
+      </el-table-column>
+      <el-table-column
+        prop="Name"
+        :label="$t('__product')+$t('__name')">
+      </el-table-column>
+      <el-table-column
+        prop="SetQty"
+        :label="$t('__setQty')"
+        width="60">
+      </el-table-column>
+      <el-table-column
+        prop="Set"
+        width="60">
+        <template slot="header">
+          <span style="color:red">*</span>{{$t('__set')}}
+        </template>
+      </el-table-column>
+      <el-table-column
+        prop="Qty"
+        :label="$t('__qty')"
+        width="60">
+      </el-table-column>
+      <el-table-column
+        v-if="buttonsShow.new && buttonsShowUser.new"
+        prop="MaxSet"
+        :label="$t('__max')+$t('__set')"
+        width="60">
+      </el-table-column>
+      <el-table-column
         prop="Purpose"
         :label="$t('__storagePurpose')"
         width="100">
@@ -28,14 +59,6 @@
             {{scope.row[scope.column.property]}}
           </div>
         </template>
-      </el-table-column>
-      <el-table-column
-        prop="ProductID"
-        :label="$t('__product')+$t('__id')">
-      </el-table-column>
-      <el-table-column
-        prop="Name"
-        :label="$t('__product')+$t('__name')">
       </el-table-column>
       <el-table-column
         prop="StorageID"
@@ -62,29 +85,6 @@
           </div>
         </template>
       </el-table-column>
-      <el-table-column
-        prop="SetQty"
-        :label="$t('__setQty')"
-        width="60">
-      </el-table-column>
-      <el-table-column
-        prop="Set"
-        width="60">
-        <template slot="header">
-          <span style="color:red">*</span>{{$t('__set')}}
-        </template>
-      </el-table-column>
-      <el-table-column
-        prop="Qty"
-        :label="$t('__qty')"
-        width="60">
-      </el-table-column>
-      <el-table-column
-        v-if="buttonsShow.new && buttonsShowUser.new"
-        prop="MaxSet"
-        :label="$t('__max')+$t('__set')"
-        width="60">
-      </el-table-column>
     </el-table>
     <!-- 原料 -->
     <h2 style="text-align:left">{{$t('__picking')+$t('__detail')}}</h2>
@@ -101,52 +101,12 @@
         width="60">
       </el-table-column>
       <el-table-column
-        prop="Purpose"
-        :label="$t('__storagePurpose')"
-        width="100">
-        <template slot-scope="scope">
-          <el-input
-            v-if="buttonsShow.new && buttonsShowUser.new"
-            v-model="scope.row[scope.column.property]"
-            @change="(value)=>{purposeChange(value, scope.row)}">
-          </el-input>
-          <div v-else>
-            {{scope.row[scope.column.property]}}
-          </div>
-        </template>
-      </el-table-column>
-      <el-table-column
         prop="ProductID"
         :label="$t('__product')+$t('__id')">
       </el-table-column>
       <el-table-column
         prop="Name"
         :label="$t('__product')+$t('__name')">
-      </el-table-column>
-      <el-table-column
-        prop="StorageID"
-        :label="$t('__picking')+$t('__storageAddress')"
-        width="300">
-        <template slot-scope="scope">
-          <el-select
-            v-if="buttonsShow.new && buttonsShowUser.new"
-            default-first-option filterable clearable
-            remote
-            v-model="scope.row.StorageID"
-            :disabled="scope.row.ProductID===''"
-            :remote-method="(value)=>{remoteMethod(value, scope.row)}"
-            @change="(value)=>{storageIDChange(value, scope.row)}"
-            :placeholder="$t('__plzChoice')"
-            style="display:block">
-            <el-option v-for="item in ddlStorageID[scope.row.Seq]" :key="item.ID" :label="item.ID+' '+item.Value" :value="item.ID">
-              <span style="float: left">{{ item.Value }}</span>
-              <span style="float: right; color: #8492a6; font-size: 13px">{{ item.ID }}</span>
-            </el-option>
-          </el-select>
-          <div v-else>
-            {{scope.row[scope.column.property]}}
-          </div>
-        </template>
       </el-table-column>
       <el-table-column
         prop="SetQty"
@@ -177,6 +137,46 @@
         :label="$t('__max')+$t('__set')"
         width="60">
       </el-table-column>
+      <el-table-column
+        prop="Purpose"
+        :label="$t('__storagePurpose')"
+        width="100">
+        <template slot-scope="scope">
+          <el-input
+            v-if="buttonsShow.new && buttonsShowUser.new"
+            v-model="scope.row[scope.column.property]"
+            @change="(value)=>{purposeChange(value, scope.row)}">
+          </el-input>
+          <div v-else>
+            {{scope.row[scope.column.property]}}
+          </div>
+        </template>
+      </el-table-column>
+      <el-table-column
+        prop="StorageID"
+        :label="$t('__picking')+$t('__storageAddress')"
+        width="300">
+        <template slot-scope="scope">
+          <el-select
+            v-if="buttonsShow.new && buttonsShowUser.new"
+            default-first-option filterable clearable
+            remote
+            v-model="scope.row.StorageID"
+            :disabled="scope.row.ProductID===''"
+            :remote-method="(value)=>{remoteMethod(value, scope.row)}"
+            @change="(value)=>{storageIDChange(value, scope.row)}"
+            :placeholder="$t('__plzChoice')"
+            style="display:block">
+            <el-option v-for="item in ddlStorageID[scope.row.Seq]" :key="item.ID" :label="item.ID+' '+item.Value" :value="item.ID">
+              <span style="float: left">{{ item.Value }}</span>
+              <span style="float: right; color: #8492a6; font-size: 13px">{{ item.ID }}</span>
+            </el-option>
+          </el-select>
+          <div v-else>
+            {{scope.row[scope.column.property]}}
+          </div>
+        </template>
+      </el-table-column>
     </el-table>
   </div>
 </template>
@@ -191,7 +191,6 @@ export default {
     buttonsShowUser: { type: Object },
     orderID: { type: String },
     fromOrderStatus: { type: String },
-    fromProductID: { type: String },
     fromPurpose: { type: String },
     fromSet: { type: Number }
   },
@@ -209,7 +208,7 @@ export default {
         SetQty: 0,
         Set: 0,
         // 以下為前端顯示用, 不會記錄進資料庫
-        Status: 'New',
+        Status: '',
         AvailableQty: 0,
         MaxSet: 0
       },
@@ -240,14 +239,6 @@ export default {
           row.OrderID = newValue
         })
       }
-    },
-    fromProductID: function (newValue) {
-      if (newValue) {
-        this.bringProcessingDetail()
-      }
-    },
-    fromSet: function (newValue, oldValue) {
-      this.setChange(newValue, oldValue)
     }
   },
   async mounted () {
@@ -302,6 +293,9 @@ export default {
             returnItem.ProductID = row.ProductID
             returnItem.Set = row.Set
             this.$emit('bringProcessingItem', returnItem)
+            this.subList_1.push(row)
+          } else {
+            this.subList_0.push(row)
           }
         })
       }
@@ -332,10 +326,16 @@ export default {
         }
 
         let checkValidate = null
+        let findQty = 0
+        if (row.Type === 0) {
+          findQty = 0 - row.Qty
+        } else {
+          findQty = row.Qty
+        }
         let object = {
           ProductID: row.ProductID,
           Purpose: row.Purpose,
-          Qty: row.Qty,
+          Qty: findQty,
           StorageID: row.StorageID
         }
         checkValidate = await validate.validateStorageIDNoCallback(object.ProductID, object.Purpose, object.Qty, object.StorageID)
@@ -414,34 +414,54 @@ export default {
       if (value.length >= 5) {
         // 強制轉為大寫
         value = value.toUpperCase()
-        row.StorageID = value
 
         clearTimeout(this.inputTimeout)
         this.inputTimeout = setTimeout(() => {
-          this.findStorageIDNow(row, row.Type)
+          this.findStorageIDNow(row, value)
         }, 500)
       }
     },
     // 即時查詢可用儲位
-    findStorageIDNow: async function (row, Type) {
+    findStorageIDNow_From: async function (row, storageID) {
+      if (storageID === undefined) {
+        storageID = row.StorageID
+      }
       if (row.ProductID) {
-        let findQty = 0
-        if (Type === 0) {
-          findQty = 0 - row.Qty
-        } else {
-          findQty = row.Qty
-        }
         let response2 = await this.$api.stock.findStorageID({
           ProductID: row.ProductID,
           Purpose: row.Purpose,
-          Qty: findQty,
-          StorageID: row.StorageID
+          Qty: 0 - row.Qty,
+          StorageID: storageID
         })
         this.ddlStorageID[row.Seq] = response2.data.result
-        // 預帶第一筆
-        if (this.ddlStorageID[row.Seq].length > 0) {
-          row.StorageID = this.ddlStorageID[row.Seq][0].ID
-          this.storageIDChange(row.StorageID, row)
+        if (storageID) {
+          row.StorageID = storageID
+        } else {
+          if (this.ddlStorageID[row.Seq].length > 0) {
+            row.StorageID = this.ddlStorageID[row.Seq][0].ID
+          }
+        }
+      }
+    },
+    // 即時查詢可用儲位
+    findStorageIDNow_To: async function (row, storageID) {
+      if (storageID === undefined) {
+        storageID = row.StorageID
+      }
+      if (row.ProductID) {
+        let response2 = await this.$api.stock.findStorageID({
+          ProductID: row.ProductID,
+          Purpose: row.Purpose,
+          Qty: row.Qty,
+          StorageID: storageID
+        })
+        this.ddlStorageID[row.Seq] = response2.data.result
+        if (storageID) {
+          row.StorageID = storageID
+        } else {
+          if (this.ddlStorageID[row.Seq].length > 0) {
+            row.StorageID = this.ddlStorageID[row.Seq][0].ID
+          }
         }
       }
     },
@@ -474,7 +494,7 @@ export default {
       this.subList.splice(index, 1)
     },
     // 父=>選擇商品, 帶出明細商品
-    bringProcessingDetail: async function () {
+    bringProcessingDetail: async function (fromProductID) {
       // reset all
       if (this.subList.length > 0) {
         let maxLength = this.subList.length
@@ -487,7 +507,7 @@ export default {
       }
 
       // 填入加工後商品
-      let findSubList = this.originDDLSubList.find(item => item.ProductID === this.fromProductID)
+      let findSubList = this.originDDLSubList.find(item => item.ProductID === fromProductID)
       if (findSubList) {
         this.handleNew()
         let processingType = 1
@@ -495,11 +515,11 @@ export default {
         row.Type = processingType
         this.fillSubList(row, findSubList, 1)
         // 即時查詢儲位
-        await this.findStorageIDNow(row, row.Type)
+        await this.findStorageIDNow_To(row)
       }
 
       // 填入原料
-      let responseBOM = await this.$api.basic.getObject({ type: 'productBOM', keyword: this.fromProductID })
+      let responseBOM = await this.$api.basic.getObject({ type: 'productBOM', keyword: fromProductID })
       let bomList = responseBOM.data.result
       for (let index = 0; index < bomList.length; index++) {
         let bomItem = bomList[index]
@@ -511,7 +531,7 @@ export default {
           row.Type = processingType
           this.fillSubList(row, findSubList2, bomItem.Qty)
           // 即時查詢儲位
-          await this.findStorageIDNow(row, row.Type)
+          await this.findStorageIDNow_From(row)
         }
       }
 

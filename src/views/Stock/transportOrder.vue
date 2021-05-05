@@ -55,13 +55,16 @@
       </el-table-column>
       <el-table-column
         prop="OrderDate"
-        :label="$t('__order')+$t('__date')"
+        :label="$t('__date')"
         :formatter="formatterDate">
       </el-table-column>
       <el-table-column
-        prop="Amount"
-        :label="$t('__amount')"
-        :formatter="formatterMoney">
+        prop="commentDetailList"
+        :label="$t('__shipping')+$t('__product')">
+        <template slot-scope="scope">
+          <span v-html="formatterNewLineToBr(scope.row[scope.column.property])">
+          </span>
+        </template>
       </el-table-column>
       <el-table-column
         prop="Memo"
@@ -91,7 +94,7 @@
 import searchButton from '@/components/searchButton'
 import signOffDialog from '@/views/Orders/components/signOff/signOffDialog'
 import newForm from './components/transportOrderNewForm'
-import { formatMoney, formatDate } from '@/setup/format.js'
+import { formatMoney, formatDate, newLineToBr } from '@/setup/format.js'
 
 export default {
   name: 'TransportOrderShow',
@@ -131,6 +134,9 @@ export default {
     },
     formatterMoney: function (row, column, cellValue, index) {
       return formatMoney(cellValue)
+    },
+    formatterNewLineToBr: function (cellValue) {
+      return newLineToBr(cellValue)
     },
     // 讀入系統清單
     preLoading: async function () {

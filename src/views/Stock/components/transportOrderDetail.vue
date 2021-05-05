@@ -16,7 +16,7 @@
       :label="$t('__product')+$t('__id')">
       <template slot-scope="scope">
         <el-select
-          v-if="buttonsShowUser.new"
+          v-if="buttonsShow.new && buttonsShowUser.new"
           default-first-option filterable clearable
           v-model="scope.row[scope.column.property]"
           :placeholder="$t('__plzChoice')"
@@ -40,19 +40,12 @@
       :label="$t('__product')+$t('__name')">
     </el-table-column>
     <el-table-column
-      prop="Cost"
-      :label="$t('__cost')"
-      :formatter="formatterMoney"
-      width="100px">
-    </el-table-column>
-    <el-table-column
       prop="Qty"
       :label="$t('__qty')"
-      width="200px">
+      width="200">
       <template slot-scope="scope">
         <el-input-number
-          :min="1"
-          v-if="buttonsShowUser.new"
+          v-if="buttonsShow.new && buttonsShowUser.new"
           v-model="scope.row[scope.column.property]"
           @change="(currentValue, oldValue)=>{qtyChange(currentValue, oldValue, scope.row)}"></el-input-number>
         <div v-else>
@@ -61,28 +54,81 @@
       </template>
     </el-table-column>
     <el-table-column
-      prop="UnitName"
-      :label="$t('__unit')"
-      width="60px">
+      v-if="buttonsShow.new && buttonsShowUser.new"
+      prop="AvailableQty"
+      :label="$t('__max')+$t('__qty')"
+      width="60">
+    </el-table-column>
+    <!-- 移出儲位 -->
+    <el-table-column
+      prop="FromPurpose"
+      :label="$t('__picking')+$t('__storagePurpose')"
+      width="100">
+      <template slot-scope="scope">
+        <el-input
+          v-if="buttonsShow.new && buttonsShowUser.new"
+          v-model="scope.row[scope.column.property]"
+          @change="(value)=>{purposeChange(value, scope.row)}">
+        </el-input>
+        <div v-else>
+          {{scope.row[scope.column.property]}}
+        </div>
+      </template>
     </el-table-column>
     <el-table-column
-      prop="Amount"
-      :label="$t('__amount')"
-      :formatter="formatterMoneyUS"
-      width="200px">
-    </el-table-column>
-    <el-table-column
-      prop="StorageID"
-      :label="$t('__storageAddress')">
+      prop="FromStorageID"
+      :label="$t('__fromStorageID')">
       <template slot-scope="scope">
         <el-select
-          v-if="buttonsShowUser.new"
-          default-first-option filterable clearable
-          v-model="scope.row[scope.column.property]"
+          v-if="buttonsShow.new && buttonsShowUser.new"
+          filterable clearable
+          remote
+          v-model="scope.row.FromStorageID"
+          :disabled="scope.row.ProductID===''"
+          :remote-method="(value)=>{remoteMethod_From(value, scope.row)}"
+          @change="(value)=>{storageIDChange(value, scope.row)}"
           :placeholder="$t('__plzChoice')"
-          @change="(value)=>{qtyChange(value, scope.row)}"
           style="display:block">
-          <el-option v-for="item in ddlStorageID" :key="item.ID" :label="item.ID+' '+item.Value" :value="item.ID">
+          <el-option v-for="item in ddlStorageID_From[scope.row.Seq]" :key="item.ID" :label="item.ID+' '+item.Value" :value="item.ID">
+            <span style="float: left">{{ item.Value }}</span>
+            <span style="float: right; color: #8492a6; font-size: 13px">{{ item.ID }}</span>
+          </el-option>
+        </el-select>
+        <div v-else>
+          {{scope.row[scope.column.property]}}
+        </div>
+      </template>
+    </el-table-column>
+    <!-- 移入儲位 -->
+    <el-table-column
+      prop="ToPurpose"
+      :label="$t('__putOn')+$t('__storagePurpose')"
+      width="100">
+      <template slot-scope="scope">
+        <el-input
+          v-if="buttonsShow.new && buttonsShowUser.new"
+          v-model="scope.row[scope.column.property]"
+          @change="(value)=>{purposeChange(value, scope.row)}">
+        </el-input>
+        <div v-else>
+          {{scope.row[scope.column.property]}}
+        </div>
+      </template>
+    </el-table-column>
+    <el-table-column
+      prop="ToStorageID"
+      :label="$t('__toStorageID')">
+      <template slot-scope="scope">
+        <el-select
+          v-if="buttonsShow.new && buttonsShowUser.new"
+          filterable clearable
+          remote
+          v-model="scope.row.ToStorageID"
+          :disabled="scope.row.ProductID===''"
+          :remote-method="(value)=>{remoteMethod_To(value, scope.row)}"
+          :placeholder="$t('__plzChoice')"
+          style="display:block">
+          <el-option v-for="item in ddlStorageID_To[scope.row.Seq]" :key="item.ID" :label="item.ID+' '+item.Value" :value="item.ID">
             <span style="float: left">{{ item.Value }}</span>
             <span style="float: right; color: #8492a6; font-size: 13px">{{ item.ID }}</span>
           </el-option>
@@ -93,18 +139,17 @@
       </template>
     </el-table-column>
     <el-table-column
+      v-if="buttonsShow.new && buttonsShowUser.new"
       align="right"
       width="100px">
       <template slot="header">
         <el-button
-          v-show="buttonsShowUser.new"
           type="primary"
           size="large"
           @click="handleNew()">{{$t('__new')}}</el-button>
       </template>
       <template slot-scope="scope">
         <el-button
-          v-show="buttonsShowUser.new"
           size="mini"
           type="danger"
           @click="handleDelete(scope.$index, scope.row)">{{$t('__delete')}}</el-button>
@@ -113,6 +158,7 @@
   </el-table>
 </template>
 <script>
+import validate from '@/setup/validate'
 import { formatMoney } from '@/setup/format.js'
 
 export default {
@@ -120,7 +166,8 @@ export default {
   props: {
     dialogType: { type: String, default: 'new' },
     buttonsShowUser: { type: Object },
-    orderID: { type: String }
+    orderID: { type: String },
+    fromOrderStatus: { type: String }
   },
   data () {
     return {
@@ -130,18 +177,29 @@ export default {
         ProductID: '',
         Name: '',
         Qty: 0,
-        Cost: 0,
-        StorageID: '',
+        FromStorageID: '',
+        FromPurpose: '',
+        ToStorageID: '',
+        ToPurpose: '',
         // 以下為前端顯示用, 不會記錄進資料庫
-        Status: 'New',
-        Amount: 0
+        Status: 'New'
       },
       subList: [],
       subListDeleted: [],
+      inputTimeout: null,
+      // 系統目前狀態權限
+      buttonsShow: {
+        new: 1,
+        edit: 0,
+        save: 1,
+        delete: 0,
+        search: 1
+      },
       // 下拉是選單
       originDDLSubList: [],
       ddlSubList: [],
-      ddlStorageID: []
+      ddlStorageID_From: [],
+      ddlStorageID_To: []
     }
   },
   watch: {
@@ -159,6 +217,28 @@ export default {
     await this.preLoading()
 
     this.bringOrderDetail()
+
+    // 系統簽核過程權限
+    switch (this.fromOrderStatus) {
+      case '1':
+        this.buttonsShow = {
+          new: 1,
+          edit: 1,
+          save: 1,
+          delete: 1,
+          search: 1
+        }
+        break
+      default:
+        this.buttonsShow = {
+          new: 0,
+          edit: 0,
+          save: 0,
+          delete: 0,
+          search: 0
+        }
+        break
+    }
   },
   methods: {
     formatterMoney: function (row, column, cellValue, index) {
@@ -173,9 +253,6 @@ export default {
       let response = await this.$api.orders.getDropdownList({ type: 'productsForOrderDetail' })
       this.originDDLSubList = response.data.result
       this.originDDLSubList = this.originDDLSubList.filter(item => item.Inventory === 1)
-
-      let response2 = await this.$api.basic.getDropdownList({ type: 'storageAddress' })
-      this.ddlStorageID = response2.data.result
 
       // 做select group 處理
       // 找出主key
@@ -192,10 +269,12 @@ export default {
     },
     // 修改狀態, 取得明細
     bringOrderDetail: async function () {
-      let responseDetail = await this.$api.stock.getObject({ type: 'transportOrderDetail', keyword: this.orderID })
-      this.subList = responseDetail.data.result
-
-      this.reCalAmount()
+      if (this.orderID === '') {
+        this.handleNew()
+      } else {
+        let responseDetail = await this.$api.stock.getObject({ type: 'transportOrderDetail', keyword: this.orderID })
+        this.subList = responseDetail.data.result
+      }
     },
     checkValidate: async function () {
       let isSuccess = true
@@ -209,15 +288,50 @@ export default {
       }
 
       // 檢查主表單
-      this.subList.slice(0).forEach(row => {
-        if (row.ProductID === '' || row.Qty === 0) {
+      for (let index = 0; index < this.subList.length; index++) {
+        let row = this.subList[index]
+        if (row.ProductID === '' || row.Qty === 0 || row.FromStorageID === '' || row.ToStorageID === '') {
           this.$message({
             message: this.$t('__pleaseInput') + ' ' + this.$t('__detail'),
             type: 'error'
           })
           isSuccess = false
+          return isSuccess
         }
-      })
+
+        let checkValidate = null
+        let object = {
+          ProductID: row.ProductID,
+          Purpose: row.FromPurpose,
+          Qty: 0 - row.Qty,
+          StorageID: row.FromStorageID
+        }
+        checkValidate = await validate.validateStorageIDNoCallback(object.ProductID, object.Purpose, object.Qty, object.StorageID)
+        if (checkValidate !== '') {
+          this.$message({
+            message: row.ProductID + ' ' + row.FromStorageID + ' ' + this.$t('__exceedQtyLimit'),
+            type: 'error'
+          })
+          isSuccess = false
+          return isSuccess
+        }
+
+        object = {
+          ProductID: row.ProductID,
+          Purpose: row.ToPurpose,
+          Qty: row.Qty,
+          StorageID: row.ToStorageID
+        }
+        checkValidate = await validate.validateStorageIDNoCallback(object.ProductID, object.Purpose, object.Qty, object.StorageID)
+        if (checkValidate !== '') {
+          this.$message({
+            message: row.ProductID + ' ' + row.ToStorageID + ' ' + this.$t('__exceedQtyLimit'),
+            type: 'error'
+          })
+          isSuccess = false
+          return isSuccess
+        }
+      }
 
       return isSuccess
     },
@@ -298,54 +412,106 @@ export default {
       newObj.ProductID = ''
       newObj.Status = 'New'
       this.subList.push(newObj)
+    },
+    // ============== 子結構 ===============
+    // 儲位輸入立即查詢
+    remoteMethod_From: async function (value, row) {
+      if (value.length >= 3) {
+        // 強制轉為大寫
+        value = value.toUpperCase()
 
-      // 新增商品還沒有填入資料, 不用計算金額
+        clearTimeout(this.inputTimeout)
+        this.inputTimeout = setTimeout(() => {
+          this.findStorageIDNow_From(row, value)
+        }, 500)
+      }
+    },
+    remoteMethod_To: async function (value, row) {
+      if (value.length >= 3) {
+        // 強制轉為大寫
+        value = value.toUpperCase()
+
+        clearTimeout(this.inputTimeout)
+        this.inputTimeout = setTimeout(() => {
+          this.findStorageIDNow_To(row, value)
+        }, 500)
+      }
+    },
+    // 即時查詢可用儲位
+    findStorageIDNow_From: async function (row, storageID) {
+      if (row.ProductID) {
+        let response2 = await this.$api.stock.findStorageID({
+          ProductID: row.ProductID,
+          Purpose: row.FromPurpose,
+          Qty: 0 - row.Qty,
+          StorageID: storageID
+        })
+        this.ddlStorageID_From[row.Seq] = response2.data.result
+        row.FromStorageID = storageID
+      }
+    },
+    // 即時查詢可用儲位
+    findStorageIDNow_To: async function (row, storageID) {
+      if (storageID === undefined) {
+        storageID = row.StorageID
+      }
+      if (row.ProductID) {
+        let response2 = await this.$api.stock.findStorageID({
+          ProductID: row.ProductID,
+          Purpose: row.ToPurpose,
+          Qty: row.Qty,
+          StorageID: storageID
+        })
+        this.ddlStorageID_To[row.Seq] = response2.data.result
+        row.ToStorageID = storageID
+      }
     },
     // 刪除子結構
     handleDelete: function (index, row) {
       row.Status = 'Deleted'
       this.subListDeleted.push(row)
       this.subList.splice(index, 1)
-
-      this.reCalAmount()
     },
     // 下拉式選擇商品
     ddlSubListChange: function (selected, row) {
       let findSubList = this.originDDLSubList.find(item => item.ProductID === selected)
-      this.fillSubList(row, findSubList)
+      if (findSubList) { this.fillSubList(row, findSubList) }
+    },
+    // 下拉選擇儲位
+    storageIDChange: function (selected, row) {
+      let findObject = this.ddlStorageID_From[row.Seq].find(item => { return item.ID === selected })
+      if (findObject) {
+        row.AvailableQty = findObject.AvailableQty
+      }
+      if (row.Status === '') {
+        row.Status = 'Modified'
+      }
+    },
+    // 特殊原因變更
+    purposeChange: function (selected, row) {
+      if (row.Status === '') {
+        row.Status = 'Modified'
+      }
+
+      // 即時查詢儲位
+      this.findStorageIDNow(row)
     },
     // 填入選擇商品: 一般商品
     fillSubList: async function (row, itemDetail) {
       row.ProductID = itemDetail.ProductID
       row.Name = itemDetail.ProductName
       row.Qty = itemDetail.Qty
-      row.Cost = itemDetail.Cost
 
       if (row.Status === '') {
         row.Status = 'Modified'
       }
       this.qtyChange(row.Qty, row.Qty, row)
-      this.reCalAmount()
     },
     // 變更明細商品數量
     qtyChange: function (newValue, row) {
       if (row.Status === '') {
         row.Status = 'Modified'
       }
-
-      this.reCalAmount()
-    },
-    // 重新計算專案總價
-    reCalAmount: function () {
-      let masterAmount = 0; let tempAmount = 0
-      this.subList.forEach(row => {
-        tempAmount = row.Cost * row.Qty
-        row.Amount = tempAmount
-        masterAmount += tempAmount
-      })
-      this.$emit('reCalculateDetail', {
-        masterAmount: masterAmount
-      })
     }
   }
 }

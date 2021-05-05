@@ -7,7 +7,7 @@
           {{form.Prefix}}
         </el-col>
         <el-col :span="5">
-          <el-input v-model="form.ID" :placeholder="$t('__afterSaveWillShow')" :disabled="disableForm.ID"></el-input>
+          <el-input v-model="form.ID" :placeholder="$t('__afterSaveWillShow')" disabled></el-input>
         </el-col>
         <el-col :span="6">
           <el-form-item :label="$t('__status')">
@@ -20,27 +20,16 @@
           </el-form-item>
         </el-col>
         <el-col :span="11">
-          <el-form-item :label="$t('__order')+$t('__date')+'：'" prop="OrderDate">
+          <el-form-item :label="$t('__date')+'：'" prop="OrderDate">
             <el-date-picker
               v-model="form.OrderDate"
               type="date"
-              :placeholder="$t('__plzChoice')+$t('__order')+$t('__date')"
+              :placeholder="$t('__plzChoice')+$t('__date')"
               value-format="yyyy-MM-dd"
               :disabled="disableForm.OrderDate">
             </el-date-picker>
           </el-form-item>
         </el-col>
-      </el-form-item>
-      <el-form-item :label="$t('__total') + $t('__amount')">
-        {{formatterMoney(null,null,form.Amount,null)}}
-      </el-form-item>
-      <el-form-item :label="$t('__supplier')">
-        <el-select v-model="form.Supplier" default-first-option filterable clearable :placeholder="$t('__plzChoice')" :disabled="disableForm.OrderDate">
-          <el-option v-for="item in ddlCompanies" :key="item.ID" :label="item.ID+' '+item.Value" :value="item.ID">
-            <span style="float: left">{{ item.Value }}</span>
-            <span style="float: right; color: #8492a6; font-size: 13px">{{ item.ID }}</span>
-          </el-option>
-        </el-select>
       </el-form-item>
       <!-- 備註 -->
       <el-form-item :label="$t('__memo')">
@@ -54,7 +43,7 @@
       :dialogType="dialogType"
       :buttonsShowUser="buttonsShowUser"
       :orderID="form.ID"
-      @reCalculateDetail="reCalculateDetail"></transport-order-detail>
+      :fromOrderStatus="form.Status"></transport-order-detail>
     <div slot="footer">
       <el-button v-show="buttonsShow.delete && buttonsShowUser.delete" type="danger" @click="deleteItem">{{$t('__delete')}}</el-button>
       <el-button @click="cancel">{{$t('__cancel')}}</el-button>
@@ -87,8 +76,7 @@ export default {
         OrderDate: '',
         Status: '1',
         CreateID: this.$store.state.userID,
-        Amount: 0,
-        Prefix: 'IB',
+        Prefix: 'TR',
         Memo: ''
       },
       batchInsert: false, // 開啟批次新增
@@ -105,20 +93,23 @@ export default {
         search: 1
       },
       disableForm: {
-        ID: false,
         OrderDate: false
       },
       myTitle: '',
       // 以下為下拉式選單專用
-      ddlOrderStatus: [],
-      ddlCompanies: []
+      ddlOrderStatus: []
     }
   },
   mounted () {
+    // 不是從上層選單進入, 而是其他不允許路徑
+    if (this.transportOrder === undefined) {
+      this.cancel()
+      return
+    }
+
     switch (this.dialogType) {
       case 'new':
         this.myTitle = this.$t('__new') + this.$t('__transportOrder')
-        this.disableForm.ID = true
         let tempDate = new Date()
         this.form.OrderDate = formatDate(tempDate.toISOString().slice(0, 10))
         this.buttonsShow = {
@@ -134,34 +125,39 @@ export default {
         this.form = JSON.parse(JSON.stringify(this.transportOrder))
 
         // 帶入原始單據狀態, 開啟或關閉
-        let intStatus = parseInt(this.form.Status)
-        if (intStatus === 0) {
-          // 是否允許修改
-          this.disableForm.ID = true
-          this.disableForm.OrderDate = true
-
-          this.buttonsShow = {
-            new: 0,
-            edit: 0,
-            save: 0,
-            delete: 0,
-            search: 0
-          }
-        } else if (intStatus > 0) {
-          // 是否允許修改
-          this.disableForm.ID = true
-
-          if (this.buttonsShowUser.edit === 0) {
+        switch (this.form.Status) {
+          case '0':
+          case '4':
+            // 是否允許修改
             this.disableForm.OrderDate = true
-          }
 
-          this.buttonsShow = {
-            new: 1,
-            edit: 1,
-            save: 1,
-            delete: 1,
-            search: 1
-          }
+            this.buttonsShow = {
+              new: 0,
+              edit: 0,
+              save: 0,
+              delete: 0,
+              search: 0
+            }
+            break
+          case '1':
+            this.buttonsShow = {
+              new: 1,
+              edit: 1,
+              save: 1,
+              delete: 1,
+              search: 1
+            }
+            break
+          case '2':
+          case '3':
+            this.buttonsShow = {
+              new: 0,
+              edit: 0,
+              save: 1,
+              delete: 0,
+              search: 1
+            }
+            break
         }
         break
     }
@@ -176,9 +172,7 @@ export default {
     },
     // 讀取預設資料
     preLoading: async function () {
-      let response3 = await this.$api.basic.getDropdownList({ type: 'companies' })
-      this.ddlCompanies = response3.data.result
-      let response = this.$api.local.getDropdownList({ type: 'OrderStatus' })
+      let response = this.$api.local.getDropdownList({ type: 'TransportStatus' })
       this.ddlOrderStatus = response
     },
     // 檢查輸入
@@ -232,7 +226,7 @@ export default {
     },
     // 刪除
     deleteItem: async function () {
-      let answerAction = await messageBoxYesNo(this.$t('__delete') + this.$t('__storageAddress'), this.$t('__delete'))
+      let answerAction = await messageBoxYesNo(this.$t('__delete') + this.$t('__transportOrder'), this.$t('__delete'))
 
       switch (answerAction) {
         case 'confirm':
@@ -279,11 +273,6 @@ export default {
       }
 
       return isSuccess
-    },
-    // 子->父: 統計商品明細總價
-    reCalculateDetail: function (object) {
-      const { masterAmount } = object
-      this.form.Amount = masterAmount
     }
   }
 }

@@ -281,15 +281,16 @@ export default {
       }
 
       let findSubList = this.originDDLSubList.find(item => item.ProductID === selected)
-
-      row.Name = findSubList.ProductName
-      row.UnitName = findSubList.UnitName
-      row.Inventory = findSubList.Inventory
-      row.Price = findSubList.Price
-      row.FromStorageID = ''
-      row.ToStorageID = ''
-      row.Purpose = ''
-      this.priceChange(row.Price, 0, row)
+      if (findSubList) {
+        row.Name = findSubList.ProductName
+        row.UnitName = findSubList.UnitName
+        row.Inventory = findSubList.Inventory
+        row.Price = findSubList.Price
+        row.FromStorageID = ''
+        row.ToStorageID = ''
+        row.Purpose = ''
+        this.priceChange(row.Price, 0, row)
+      }
     },
     // 更改儲位
     storageChange: function (row) {
