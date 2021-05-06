@@ -23,7 +23,7 @@ export default {
   __english: '英文',
   __language1: '越南',
   __language2: '台灣',
-  __languageSetting: '語言設定：',
+  __languageSetting: '語言設定',
   __export: '匯出',
   __import: '匯入',
   __download: '下載',
@@ -252,6 +252,7 @@ export default {
   __hide: '隱藏',
   __show: '顯示',
   __menu: '選單',
+  __darkMode: '深色模式',
   // 請在上方新增字串
   // 以下為長字串提醒
   __collectioRecordsDeleteNo: '無法刪除收款資訊，請檢查 ',
@@ -309,5 +310,6 @@ export default {
   __valueUsed: ' 已被使用',
   __exceedQtyLimit: '超出數值上限',
   __100PercentInput100: '100%請輸入"100"',
-  __inventoryShortage: '庫存不足'
+  __inventoryShortage: '庫存不足',
+  __pleaseRestartDarkMode: '請重新整理以變更深色模式<br/>Windows: F5<br/>Mac: ⌘+R'
 }

@@ -7,7 +7,7 @@
     :alt="'logo'"
     ></el-image>
     <el-card class="box-card">
-      <el-form ref="form" :model="form" :rules="rules" label-width="80px">
+      <el-form ref="form" :model="form" :rules="rules" label-width="10vw" label-position="right">
         <el-form-item :label="$t('__userId')" prop="UserID">
           <el-input
             label="ID"
@@ -24,19 +24,26 @@
       </el-form>
       <el-button class="submitButton" type="primary" @click.native="submit">{{$t('__login')}}</el-button>
     </el-card>
+    <br/>
+    <!-- 語言 -->
+    <span>{{this.$t('__languageSetting')+'：'}}</span>
+    <el-select
+      v-model="language"
+      @change="changeLanguage">
+      <el-option v-for="item in languages" :key="item.ID" :label="item.ID+' '+item.Value" :value="item.ID">
+        <span style="float: left">{{ item.Value }}</span>
+        <span style="float: right; color: #8492a6; font-size: 13px">{{ item.ID }}</span>
+      </el-option>
+    </el-select>
+    <!-- 深色模式 -->
     <div>
-      <br>
-      <span>{{$t('__languageSetting')}} </span>
-      <el-select
-        v-model="language"
-        @change="changeLanguage">
-        <el-option v-for="item in languages" :key="item.ID" :label="item.ID+' '+item.Value" :value="item.ID">
-          <span style="float: left">{{ item.Value }}</span>
-          <span style="float: right; color: #8492a6; font-size: 13px">{{ item.ID }}</span>
-        </el-option>
-      </el-select>
+      <span>{{$t('__darkMode')+'：'}}</span>
+      <el-switch v-model="darkMode" @change="darkModeChange"></el-switch>
     </div>
-    <div>{{$t('__version')+'：'+$store.state.version}}</div>
+    <!-- 版本號 -->
+    <div>
+      <span>{{this.$t('__version')+'：'+$store.state.version}}</span>
+    </div>
   </div>
 </template>
 
@@ -60,6 +67,7 @@ export default {
         Password: [{ required: true, validator: validate.validateUserIDAndPassword, trigger: 'blur' }]
       },
       lock: false, // 避免按著Enter, 重複發送查詢指令
+      darkMode: false, // 是否開啟darkMode
       // 下拉是選單
       languages: [
         { ID: 'zh', Value: '中文' },
@@ -81,6 +89,9 @@ export default {
       i18n.locale = 'zh'
       localStorage.setItem('locale', 'zh')
     }
+
+    // 取得darkmode
+    this.darkMode = JSON.parse(localStorage.getItem('darkMode'))
 
     this.checkVersion()
   },
@@ -164,6 +175,11 @@ export default {
     // 按下Enter檢核登入
     keyboardChange: function () {
       this.submit()
+    },
+    // 切換 darkmode
+    darkModeChange: function () {
+      localStorage.setItem('darkMode', JSON.stringify(this.darkMode))
+      errorMessage(this.$t('__pleaseRestartDarkMode'))
     }
   }
 }
