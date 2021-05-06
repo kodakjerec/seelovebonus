@@ -1,0 +1,46 @@
+
+/* icon font path, required */
+$--font-path: '~element-ui/lib/theme-chalk/fonts';
+
+
+/* Color
+-------------------------- */
+/// color|1|Background Color|4
+$--color-white: #000000 !default;
+/// color|1|Background Color|4
+$--color-black: #FFFFFF !default;
+/// color|1|Font Color|2
+$--color-text-primary: #FFFFFF !default;
+/// color|1|Font Color|2
+$--color-text-regular: #FFFFFF !default;
+/// color|1|Font Color|2
+$--color-text-placeholder: #FFFFFF !default;
+
+// Background
+/// color|1|Background Color|4
+$--background-color-base:mix($--color-white, $--color-black, 70%) !default;
+
+// Table
+// 標題列特殊顏色
+div.el-table__header-wrapper > table > thead > tr > th {
+  background-color: mix($--color-white, $--color-black, 60%);
+  color: $--color-black;
+}
+// 偶數列, 特殊顏色
+.el-table--enable-row-hover .el-table__body tr.el-table__row.el-table__row--striped {
+  > td {
+    background-color: mix($--color-white, $--color-black, 90%);
+  }
+}
+.el-table--enable-row-hover .el-table__body tr.el-table__row--striped:hover {
+  > td {
+  background-color: $--background-color-base;
+  }
+}
+
+body {
+  background-color: $--color-white;
+  color: $--color-black;
+}
+
+@import "~element-ui/packages/theme-chalk/src/index";

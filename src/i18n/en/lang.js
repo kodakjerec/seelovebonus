@@ -23,7 +23,7 @@ export default {
   __english: 'English',
   __language1: 'Vietnam',
   __language2: 'Taiwan',
-  __languageSetting: 'LanguageSetting：',
+  __languageSetting: 'LanguageSetting',
   __export: 'Export',
   __import: 'Inport',
   __download: 'Download',
@@ -252,6 +252,7 @@ export default {
   __hide: 'Hide',
   __show: 'Show',
   __menu: 'Menu',
+  __darkMode: 'Dark Mode',
   // 請在上方新增字串
   // 以下為 警告
   __warning: 'Warning',
@@ -297,5 +298,6 @@ export default {
   __valueUsed: ' already used',
   __exceedQtyLimit: 'Value limit exceeded',
   __100PercentInput100: '100% please enter "100"',
-  __inventoryShortage: 'Inventory Shortage'
+  __inventoryShortage: 'Inventory Shortage',
+  __pleaseRestartDarkMode: 'Please refresh to change dark mode<br/>Windows: F5<br/>Mac: ⌘+R'
 }
