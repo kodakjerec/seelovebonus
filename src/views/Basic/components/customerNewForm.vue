@@ -588,7 +588,6 @@ export default {
     addressChange: async function () {
       let value = this.form.Address
       let { findCity, findPost, fromAddress } = await validate.addressSeparate(value)
-      console.log(findCity, findPost, fromAddress)
       if (!this.form.City) {
         this.form.City = findCity
         this.ddlCityChange()

@@ -71,24 +71,3 @@ export default {
   }
 }
 </script>
-<style lang="scss" scoped>
-.announcement {
-  background-color: lightgray;
-  border-radius: 4px;
-  border: 1px solid lightgray;
-  margin: 5px 5px 5px 5px;
-
-  .header{
-    font-size: 2rem;
-  }
-  .captionDate {
-    color: lightcoral;
-  }
-  .caption {
-    font-size: 2rem;
-    font-weight: 1000;
-    padding-left: 1vw;
-    text-align: start;
-  }
-}
-</style>

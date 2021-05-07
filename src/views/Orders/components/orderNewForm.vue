@@ -1,7 +1,7 @@
 <template>
   <div id="orderHead">
     <!-- 導覽選單 -->
-    <el-tabs class="tabOrderNewForm" v-model="tabActiveName" @tab-click="tabClick">
+    <el-tabs :class="[darkMode? 'tabOrderNewForm_DarkMode': 'tabOrderNewForm']" v-model="tabActiveName" @tab-click="tabClick">
       <el-tab-pane :label="$t('__orderID')" name="orderHead"></el-tab-pane>
       <template v-if="dialogType !== 'new'">
         <el-tab-pane :label="$t('__orderCustomer')" name="orderCustomer"></el-tab-pane>
@@ -344,6 +344,7 @@ export default {
       projectHead: [],
       updateMessage: '', // 更新資料庫後回傳的訊息
       orderDetailNotEqualInstallmentDetail: false, // 提醒明細價格與分期付款總額不同, 使用
+      darkMode: false, // 是否開啟darkMode
       // 專案功能顯示(新增專用)(不記錄進資料庫)
       projectFunctions: {
         chanyunOrderID: 0,
@@ -378,6 +379,9 @@ export default {
       this.cancel()
       return
     }
+
+    // 取得darkmode
+    this.darkMode = JSON.parse(localStorage.getItem('darkMode'))
 
     switch (this.dialogType) {
       case 'new':
@@ -830,6 +834,13 @@ export default {
   top: 30px;
   left: 0px;
   background-color: white;
+  z-index: 1;
+}
+.tabOrderNewForm_DarkMode {
+  position: fixed;
+  top: 30px;
+  left: 0px;
+  background-color: black;
   z-index: 1;
 }
 .tabOrderNewForm_ThenDiv {
