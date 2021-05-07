@@ -585,9 +585,9 @@ export default {
       }
     },
     // 地址自動帶出
-    addressChange: function () {
+    addressChange: async function () {
       let value = this.form.Address
-      let { findCity, findPost, fromAddress } = validate.addressSeparate(value)
+      let { findCity, findPost, fromAddress } = await validate.addressSeparate(value)
       if (!this.form.City) {
         this.form.City = findCity
         this.ddlCityChange()
