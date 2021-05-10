@@ -3,6 +3,7 @@ import store from '@/store/index'
 import router from '@/router/index'
 import i18n from '@/setup/setupLocale'
 import req from './auth' // 把request包裝
+import crypto from '@/services/crypto' // 加解密
 
 export const seeloveNodeServer = {
   // ip: '192.168.1.104',
@@ -27,6 +28,44 @@ export const post = async (url, reqData = {}) => {
   let combineURL = 'http://' + seeloveNodeServer.ip + ':' + seeloveNodeServer.port + url
   return req('post', combineURL, reqData)
     .then(response => {
+      if (showLoadingCounter) { store.dispatch('decreaseLoadingCounter') }
+      return response
+    })
+    .catch((error) => {
+      if (showLoadingCounter) { store.dispatch('decreaseLoadingCounter') }
+      let { response } = error
+      if (response === undefined) {
+        response = {
+          status: 404,
+          data: error
+        }
+      }
+      console.log(`%c 💩💩💩 API發生例外錯誤 💩💩💩${((response && response.status) ? `status code [${response.status}]` : '')}`, 'color: #BB2E29; font-size: 14px; font-weight: bold;')
+      return Promise.reject(error)
+    })
+}
+export const postEncrypt = async (url, reqData = {}) => {
+  // debug
+  console.log('%c >>> Request(' + url + ')⤵ ', 'background-color: blue; color: white; font-size: 14px; font-weight: bold;', reqData)
+
+  // 加密
+  reqData = { c: crypto.encrypt(JSON.stringify(reqData)) }
+
+  // 檢查是否需要顯示LoadingMask
+  let showLoadingCounter = true
+  if (urlNoMask.find(item => { return item === url }) !== undefined) {
+    showLoadingCounter = false
+  }
+
+  if (showLoadingCounter) { store.dispatch('increaseLoadingCounter') }
+  let combineURL = 'http://' + seeloveNodeServer.ip + ':' + seeloveNodeServer.port + url
+  return req('postEncrypt', combineURL, reqData)
+    .then(response => {
+      // 解密
+      response.data = JSON.parse(crypto.decrypt(response.data))
+      // debug
+      console.log('%c <<< Response(' + url + ')⤵ ', 'background-color: red; color: white; font-size: 14px; font-weight: bold;', response.data)
+
       if (showLoadingCounter) { store.dispatch('decreaseLoadingCounter') }
       return response
     })
