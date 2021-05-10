@@ -238,6 +238,7 @@ export default {
     dialogShow: { type: Boolean, default: false },
     fromCustomer: { type: Object },
     buttonsShowUser: { type: Object },
+    // 新增客戶需要額外參數時用到, 目前有:安座
     fromData: { type: Object,
       default () {
         return {}

@@ -27,12 +27,12 @@ div.el-table__header-wrapper > table > thead > tr > th {
   color: $--color-black;
 }
 // 偶數列, 特殊顏色
-.el-table--enable-row-hover .el-table__body tr.el-table__row.el-table__row--striped {
+.el-table--striped .el-table__body tr.el-table__row.el-table__row--striped {
   > td {
     background-color: mix($--color-white, $--color-black, 90%);
   }
 }
-.el-table--enable-row-hover .el-table__body tr.el-table__row--striped:hover {
+.el-table--striped .el-table__body tr.el-table__row--striped:hover {
   > td {
   background-color: $--background-color-base;
   }

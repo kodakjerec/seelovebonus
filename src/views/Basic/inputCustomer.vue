@@ -25,7 +25,7 @@
     v-if="dialogShow"
     :dialog-type="dialogType"
     :dialog-show="dialogShow"
-    :customer="customer"
+    :fromCustomer="customer"
     :buttonsShowUser="buttonsShowUser"
     :fromData="fromData"
     @dialog-cancel="dialogCancel"

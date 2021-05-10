@@ -363,11 +363,13 @@ export default {
     form: {
       handler: function (newValue) {
         let orderDetailAmount = this.form.Amount
-        let installmentDetailAmount = this.$refs['installment'].installmentAmount
-        if (orderDetailAmount !== installmentDetailAmount) {
-          this.orderDetailNotEqualInstallmentDetail = true
-        } else {
-          this.orderDetailNotEqualInstallmentDetail = false
+        if (this.$refs['installment']) {
+          let installmentDetailAmount = this.$refs['installment'].installmentAmount
+          if (orderDetailAmount !== installmentDetailAmount) {
+            this.orderDetailNotEqualInstallmentDetail = true
+          } else {
+            this.orderDetailNotEqualInstallmentDetail = false
+          }
         }
       },
       deep: true

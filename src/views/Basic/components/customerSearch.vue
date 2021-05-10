@@ -74,6 +74,7 @@
         :data="results"
         stripe
         border
+        :height="tableHeight"
         style="width: 100%">
         <el-table-column
           prop="ID"
@@ -164,6 +165,7 @@ export default {
         BirthLunarEnd: '',
         LunarTime: ''
       },
+      tableHeight: (screen.height * 7 / 9), // Table高度
       originData: [],
       results: [],
       CustomerID: '',
