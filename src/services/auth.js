@@ -102,6 +102,12 @@ export default function (method, url, data = null) {
   method = method.toLowerCase()
   if (method === 'post') {
     return axios.post(url, data)
+  } else if (method === 'postencrypt') {
+    return axios.post(url, data, {
+      headers: {
+        'encrypt': 1
+      }
+    })
   } else if (method === 'get') {
     return axios.get(url, { params: data })
   } else if (method === 'getfile') {
