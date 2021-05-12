@@ -158,6 +158,8 @@ export default {
         if (dbChar !== nowChar) {
           if (parseInt(dbChar, 10) > parseInt(nowChar, 10)) {
             errorMessage(this.$t('__versionError') + '<br/><h1>New:' + dbVersion + '</h1>' + '<br/>Now:' + this.$store.state.version, this.$t('__warning'))
+          } else {
+            return
           }
         }
       }

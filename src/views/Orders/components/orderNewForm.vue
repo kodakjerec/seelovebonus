@@ -18,7 +18,7 @@
         <el-tab-pane v-if="projectFunctions.newCertificate2.Available" :label="$t('__certificate2')" name="certificate2OrderNew"></el-tab-pane>
         <el-tab-pane v-if="form.ProjectID" :label="$t('__installment')" name="installmentOrderNew"></el-tab-pane>
       </template>
-      <el-tab-pane :label="$t('__orderNewFormTabsBottom')"></el-tab-pane>
+      <el-tab-pane :label="$t('__orderNewFormTabsBottom')" name="footer"></el-tab-pane>
     </el-tabs>
     <div class="tabOrderNewForm_ThenDiv"></div>
     <h1>{{myTitle}}</h1>
@@ -57,13 +57,6 @@
           <el-input v-model="form.Memo" type="textarea" rows="2" maxlength="100" show-word-limit
             :disabled="disableForm.OrderDate"></el-input>
       </el-form-item>
-      <!-- 專案特殊功能 -->
-      <order-functions
-        ref="orderFunctions"
-        :dialogType="dialogType"
-        :fromOrderID="form.ID"
-        :buttonsShowUser="buttonsShowUser"
-        :projectFunctions="projectFunctions"></order-functions>
       <!-- 選擇專案 -->
       <el-table
         :data="projectHead"
@@ -228,7 +221,7 @@
         :parentDate="form.OrderDate"></installment-order-new>
     </template>
     <!-- 底部操作按鈕 -->
-    <div slot="footer">
+    <div slot="footer" id="footer">
       <br/>
       <el-button v-show="buttonsShow.delete && buttonsShowUser.delete && form.Status < '2'" type="danger" @click="deleteOrder">{{$t('__delete')}}</el-button>
       <el-button v-show="buttonsShow.delete && buttonsShowUser.delete" type="danger" @click="invalidOrder">{{$t('__invalid')}}</el-button>
@@ -255,7 +248,6 @@ import orderStampArea from './orderStampArea'
 import anzaOrderList from './anza/anzaOrderList'
 import certificate1 from './certificate1/certificate1'
 import certificate2 from './certificate2/certificate2'
-import orderFunctions from './orderFunctions'
 // 其他
 import { formatMoney, formatDate } from '@/setup/format.js'
 import { messageBoxYesNo } from '@/services/utils'
@@ -279,8 +271,7 @@ export default {
     // 訂單變動內容
     certificate1,
     certificate2,
-    anzaOrderList,
-    orderFunctions
+    anzaOrderList
   },
   props: {
     dialogType: { type: String, default: 'new' },
@@ -549,10 +540,6 @@ export default {
             isSuccess = await this.$refs['certificate2OrderNew'].checkValidate()
             if (!isSuccess) { return }
           }
-          if (this.projectFunctions) {
-            isSuccess = await this.$refs['orderFunctions'].checkValidate()
-            if (!isSuccess) { return }
-          }
           if (this.projectFunctions.newAnzaOrder.Available) {
             isSuccess = await this.$refs['anzaOrderNew'].checkValidate()
             if (!isSuccess) { return }
@@ -614,12 +601,6 @@ export default {
               isSuccess = await this.$refs['certificate2OrderNew'].beforeSave() // 新增訂單才會出現
             }
           }
-          if (this.projectFunctions) {
-            if (isSuccess) {
-              saveStep = 'orderFunctions'
-              isSuccess = await this.$refs['orderFunctions'].beforeSave()
-            }
-          }
           if (this.projectFunctions.newAnzaOrder.Available) {
             if (isSuccess) {
               saveStep = 'anzaOrderNew'
@@ -653,13 +634,6 @@ export default {
           if (isSuccess) {
             saveStep = 'orderCustomer'
             isSuccess = await this.$refs['orderCustomer'].beforeSave()
-          }
-
-          if (isSuccess) {
-            if (this.projectFunctions) {
-              saveStep = 'orderFunctions'
-              isSuccess = await this.$refs['orderFunctions'].beforeSave()
-            }
           }
           if (isSuccess) {
             this.$alert(this.updateMessage, 200, {
