@@ -1,4 +1,4 @@
-import { getFile, postEncrypt, uploadFile } from '@/services/utils'
+import { postEncrypt, getFile, uploadFile } from '@/services/utils'
 
 export default {
   basic: {
@@ -84,8 +84,8 @@ export default {
       })
     },
     // product
-    productsShow: ({ keyword }) => {
-      let rawData = { keyword }
+    productsShow: ({ searchContent }) => {
+      let rawData = { searchContent }
       return postEncrypt('/basic/productsShow', rawData).then(data => {
         return data
       })
@@ -168,6 +168,19 @@ export default {
     projectDetailDelete: ({ form }) => {
       let rawData = { form }
       return postEncrypt('/basic/projectDetailDelete', rawData).then(data => {
+        return data
+      })
+    },
+    // project AnzaOrder Detail
+    projectAnzaOrderDetailUpdate: ({ form }) => {
+      let rawData = { form }
+      return postEncrypt('/basic/projectAnzaOrderDetailUpdate', rawData).then(data => {
+        return data
+      })
+    },
+    projectAnzaOrderDetailDelete: ({ form }) => {
+      let rawData = { form }
+      return postEncrypt('/basic/projectAnzaOrderDetailDelete', rawData).then(data => {
         return data
       })
     },
@@ -263,6 +276,25 @@ export default {
     // 轉交給el-upload處理上傳
     storageAddressUpload: (file) => {
       return uploadFile('/basic/storageAddressUpload', file).then(data => {
+        return data
+      })
+    },
+    // bank Accounts
+    bankAccountUpdate: ({ form }) => {
+      let rawData = { form }
+      return postEncrypt('/basic/bankAccountUpdate', rawData).then(data => {
+        return data
+      })
+    },
+    bankAccountShow: ({ form }) => {
+      let rawData = { form }
+      return postEncrypt('/basic/bankAccountShow', rawData).then(data => {
+        return data
+      })
+    },
+    bankAccountDelete: ({ form }) => {
+      let rawData = { form }
+      return postEncrypt('/basic/bankAccountDelete', rawData).then(data => {
         return data
       })
     },

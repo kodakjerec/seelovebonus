@@ -6,7 +6,7 @@
         <el-col :span="2" v-if="dialogType === 'new'">
           {{form.Prefix}}
         </el-col>
-        <el-col :span="5">
+        <el-col :span="4">
           <el-input v-model="form.ID" :placeholder="$t('__afterSaveWillShow')" disabled></el-input>
         </el-col>
         <el-col :span="6">
@@ -19,31 +19,46 @@
             </el-select>
           </el-form-item>
         </el-col>
-        <el-col :span="11">
-          <el-form-item :label="$t('__date')+'：'" prop="OrderDate">
+        <el-col :span="10">
+          <el-form-item :label="$t('__shipping')+$t('__date')+'：'" prop="OrderDate">
             <el-date-picker
               v-model="form.OrderDate"
               type="date"
-              :placeholder="$t('__plzChoice')+$t('__date')"
+              :placeholder="$t('__plzChoice')+$t('__shipping')+$t('__date')"
               value-format="yyyy-MM-dd"
               :disabled="disableForm.OrderDate">
             </el-date-picker>
           </el-form-item>
         </el-col>
       </el-form-item>
+      <!-- 總金額 -->
+      <el-form-item :label="$t('__total') + $t('__amount')">
+        {{formatterMoney(null,null,form.Amount,null)}}
+      </el-form-item>
+      <!-- 供應商 -->
+      <el-form-item :label="$t('__receiver')" prop="Supplier">
+        <el-select v-model="form.Supplier" default-first-option filterable clearable :placeholder="$t('__plzChoice')" :disabled="disableForm.OrderDate">
+          <el-option v-for="item in ddlCompanies" :key="item.ID" :label="item.ID+' '+item.Value" :value="item.ID">
+            <span style="float: left">{{ item.Value }}</span>
+            <span style="float: right; color: #8492a6; font-size: 13px">{{ item.ID }}</span>
+          </el-option>
+        </el-select>
+      </el-form-item>
       <!-- 備註 -->
       <el-form-item :label="$t('__memo')">
-          <el-input v-model="form.Memo" type="textarea" rows="2" maxlength="100" show-word-limit
-            :disabled="disableForm.OrderDate"></el-input>
+        <el-input v-model="form.Memo" type="textarea" rows="2" maxlength="100" show-word-limit
+          :disabled="disableForm.OrderDate"></el-input>
       </el-form-item>
     </el-form>
     <!-- 明細 -->
-    <transport-order-detail
-      ref="transportOrderDetail"
+    <outbound-order-detail
+      ref="outboundOrderDetail"
+      v-if="form.OrderDate"
       :dialogType="dialogType"
       :buttonsShowUser="buttonsShowUser"
       :orderID="form.ID"
-      :fromOrderStatus="form.Status"></transport-order-detail>
+      :fromOrderStatus="form.Status"
+      @reCalculateDetail="reCalculateDetail"></outbound-order-detail>
     <div slot="footer">
       <el-button v-show="buttonsShow.delete && buttonsShowUser.delete" type="danger" @click="deleteItem">{{$t('__delete')}}</el-button>
       <el-button @click="cancel">{{$t('__cancel')}}</el-button>
@@ -55,18 +70,18 @@
 <script>
 import { formatMoney, formatDate } from '@/setup/format.js'
 import { messageBoxYesNo } from '@/services/utils'
-import transportOrderDetail from './transportOrderDetail'
+import outboundOrderDetail from './outboundOrderDetail'
 
 export default {
-  name: 'TransportOrderNewForm',
+  name: 'OutboundOrderNewForm',
   components: {
-    transportOrderDetail
+    outboundOrderDetail
   },
   props: {
     dialogType: { type: String, default: 'new' },
     dialogShow: { type: Boolean, default: false },
-    transportOrder: { type: Object },
-    parent: { type: String, default: 'TransportOrder' },
+    outboundOrder: { type: Object },
+    parent: { type: String, default: 'OutboundOrder' },
     buttonsShowUser: { type: Object }
   },
   data () {
@@ -76,12 +91,15 @@ export default {
         OrderDate: '',
         Status: '1',
         CreateID: this.$store.state.userID,
-        Prefix: 'TR',
-        Memo: ''
+        Amount: 0,
+        Memo: '',
+        Prefix: 'OB',
+        Supplier: ''
       },
       batchInsert: false, // 開啟批次新增
       rules: {
         ID: [{ required: true, message: this.$t('__pleaseInput'), trigger: 'blur' }],
+        Supplier: [{ required: true, message: this.$t('__pleaseInput'), trigger: 'blur' }],
         OrderDate: [{ required: true, message: this.$t('__pleaseInput'), trigger: 'blur' }]
       },
       // 系統目前狀態權限
@@ -97,19 +115,19 @@ export default {
       },
       myTitle: '',
       // 以下為下拉式選單專用
-      ddlOrderStatus: []
+      ddlOrderStatus: [],
+      ddlCompanies: []
     }
   },
   mounted () {
     // 不是從上層選單進入, 而是其他不允許路徑
-    if (this.transportOrder === undefined) {
+    if (this.outboundOrder === undefined) {
       this.cancel()
       return
     }
-
     switch (this.dialogType) {
       case 'new':
-        this.myTitle = this.$t('__new') + this.$t('__transportOrder')
+        this.myTitle = this.$t('__new') + this.$t('__outboundOrder')
         let tempDate = new Date()
         this.form.OrderDate = formatDate(tempDate.toISOString().slice(0, 10))
         this.buttonsShow = {
@@ -121,10 +139,9 @@ export default {
         }
         break
       case 'edit':
-        this.myTitle = this.$t('__edit') + this.$t('__transportOrder')
-        this.form = JSON.parse(JSON.stringify(this.transportOrder))
+        this.myTitle = this.$t('__edit') + this.$t('__outboundOrder')
+        this.form = JSON.parse(JSON.stringify(this.outboundOrder))
 
-        // 帶入原始單據狀態, 開啟或關閉
         switch (this.form.Status) {
           case '0':
           case '4':
@@ -172,16 +189,19 @@ export default {
     },
     // 讀取預設資料
     preLoading: async function () {
-      let response = this.$api.local.getDropdownList({ type: 'TransportStatus' })
+      let response3 = await this.$api.basic.getDropdownList({ type: 'companies' })
+      this.ddlCompanies = response3.data.result
+      let response = this.$api.local.getDropdownList({ type: 'OutboundStatus' })
       this.ddlOrderStatus = response
     },
     // 檢查輸入
     checkValidate: async function () {
       let isSuccess = false
       await this.$refs['form'].validate((valid) => { isSuccess = valid })
+      if (!isSuccess) { return }
 
       // 檢查明細資訊
-      isSuccess = await this.$refs['transportOrderDetail'].checkValidate()
+      isSuccess = await this.$refs['outboundOrderDetail'].checkValidate()
       if (!isSuccess) { return }
 
       if (isSuccess) {
@@ -197,7 +217,7 @@ export default {
       isSuccess = await this.save(this.dialogType)
       if (isSuccess) {
         saveStep = 'orderDetail'
-        isSuccess = await this.$refs['transportOrderDetail'].beforeSave()
+        isSuccess = await this.$refs['outboundOrderDetail'].beforeSave()
       }
 
       if (isSuccess) {
@@ -226,7 +246,7 @@ export default {
     },
     // 刪除
     deleteItem: async function () {
-      let answerAction = await messageBoxYesNo(this.$t('__delete') + this.$t('__transportOrder'), this.$t('__delete'))
+      let answerAction = await messageBoxYesNo(this.$t('__delete') + this.$t('__outboundOrder'), this.$t('__delete'))
 
       switch (answerAction) {
         case 'confirm':
@@ -256,7 +276,7 @@ export default {
       switch (type) {
         case 'new':
         case 'edit':
-          let responseUpdate = await this.$api.stock.transportOrderUpdate({ form: this.form })
+          let responseUpdate = await this.$api.stock.outboundOrderUpdate({ form: this.form })
           if (responseUpdate.headers['code'] === '200') {
             isSuccess = true
             this.form.ID = responseUpdate.data.result[0].ID
@@ -264,7 +284,7 @@ export default {
           }
           break
         case 'delete':
-          let responseDelete = await this.$api.stock.transportOrderDelete({ form: this.form })
+          let responseDelete = await this.$api.stock.outboundOrderDelete({ form: this.form })
           if (responseDelete.headers['code'] === '200') {
             isSuccess = true
             this.updateMessage = responseDelete.data.result[0].message
@@ -273,6 +293,11 @@ export default {
       }
 
       return isSuccess
+    },
+    // 子->父: 統計商品明細總價
+    reCalculateDetail: function (object) {
+      const { masterAmount } = object
+      this.form.Amount = masterAmount
     }
   }
 }

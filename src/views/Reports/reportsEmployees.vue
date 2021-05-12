@@ -5,7 +5,7 @@
       <el-tab-pane :label="$t('__print')" name="first">
         <el-form :inline="true" ref="form" :model="form">
           <el-form-item :label="$t('__companies')+$t('__id')">
-            <el-select v-model="form.CompanyID" filterable :placeholder="$t('__plzChoice')">
+            <el-select v-model="form.CompanyID" default-first-option filterable clearable :placeholder="$t('__plzChoice')">
               <el-option v-for="item in ddlCompanies" :key="item.ID" :label="item.ID+' '+item.Value" :value="item.ID">
                 <span style="float: left">{{ item.Value }}</span>
                 <span style="float: right; color: #8492a6; font-size: 13px">{{ item.ID }}</span>
@@ -101,7 +101,7 @@ export default {
         CompanyID: this.form.CompanyID }
 
       // 紀錄Log
-      this.$api.reports.employeesToExcel({ CompanyID: this.form.CompanyID, columns: this.columns })
+      this.$api.reports.ssrsReports({ reportParams: this.reportParams, reportName: this.reportPath })
     }
   }
 }

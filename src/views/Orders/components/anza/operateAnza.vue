@@ -7,9 +7,7 @@
       <el-form-item v-if="!disableForm.StorageID" :label="$t('__anzaStorageID')" prop="StorageID">
         <el-col :span="8">
           <el-select
-            allow-create
-            default-first-option
-            filterable
+            default-first-option filterable clearable
             @visible-change="checkStorageID"
             v-model="anzaOrder.StorageID"
             :disabled="disableForm.StorageID"
@@ -77,8 +75,8 @@
       <!-- 性別 -->
       <el-form-item :label="$t('__gender')">
         <el-col :span="4">
-          <el-select v-model="form.Gender" value-key="value" :placeholder="$t('__plzChoice')" disabled>
-            <el-option v-for="item in ddlGender" :key="item.ID" :label="item.Value" :value="item.ID">
+          <el-select v-model="form.Gender" default-first-option filterable clearable :placeholder="$t('__plzChoice')" disabled>
+            <el-option v-for="item in ddlGender" :key="item.ID" :label="item.ID+' '+item.Value" :value="item.ID">
               <span style="float: left">{{ item.Value }}</span>
               <span style="float: right; color: #8492a6; font-size: 13px">{{ item.ID }}</span>
             </el-option>
@@ -124,8 +122,8 @@
         </el-col>
         <el-col :span="8">
           <el-form-item :label="$t('__lunarTime')">
-            <el-select v-model="form.BirthLunarTime" value-key="value" :placeholder="$t('__plzChoice')" disabled>
-              <el-option v-for="item in ddlLunarTime" :key="item.ID" :label="item.Value" :value="item.ID">
+            <el-select v-model="form.BirthLunarTime" default-first-option filterable clearable :placeholder="$t('__plzChoice')" disabled>
+              <el-option v-for="item in ddlLunarTime" :key="item.ID" :label="item.ID+' '+item.Value" :value="item.ID">
                 <span style="float: left">{{ item.Value + '(' + item.Memo + ')' }}</span>
                 <span style="float: right; color: #8492a6; font-size: 13px">{{ item.ID }}</span>
               </el-option>
@@ -149,8 +147,8 @@
       <!-- 國家etc -->
       <el-form-item :label="$t('__country')">
         <el-col :span="4">
-          <el-select v-model="form.Country" value-key="value" :placeholder="$t('__plzChoice')" disabled>
-            <el-option v-for="item in ddlCountry" :key="item.ID" :label="item.Value" :value="item.ID">
+          <el-select v-model="form.Country" default-first-option filterable clearable :placeholder="$t('__plzChoice')" disabled>
+            <el-option v-for="item in ddlCountry" :key="item.ID" :label="item.ID+' '+item.Value" :value="item.ID">
               <span style="float: left">{{ item.Value }}</span>
               <span style="float: right; color: #8492a6; font-size: 13px">{{ item.ID }}</span>
             </el-option>
@@ -158,8 +156,8 @@
         </el-col>
         <el-col :span="8">
           <el-form-item :label="$t('__city')">
-            <el-select v-model="form.City" value-key="value" :placeholder="$t('__plzChoice')" disabled>
-              <el-option v-for="item in ddlCity" :key="item.ID" :label="item.Value" :value="item.ID">
+            <el-select v-model="form.City" default-first-option filterable clearable :placeholder="$t('__plzChoice')" disabled>
+              <el-option v-for="item in ddlCity" :key="item.ID" :label="item.ID+' '+item.Value" :value="item.ID">
                 <span style="float: left">{{ item.Value }}</span>
                 <span style="float: right; color: #8492a6; font-size: 13px">{{ item.ID }}</span>
               </el-option>
@@ -168,8 +166,8 @@
         </el-col>
         <el-col :span="12">
           <el-form-item :label="$t('__post')">
-            <el-select v-model="form.Post" value-key="value" :placeholder="$t('__plzChoice')" disabled>
-              <el-option v-for="item in ddlPost" :key="item.ID" :label="item.Value" :value="item.ID">
+            <el-select v-model="form.Post" default-first-option filterable clearable :placeholder="$t('__plzChoice')" disabled>
+              <el-option v-for="item in ddlPost" :key="item.ID" :label="item.ID+' '+item.Value" :value="item.ID">
                 <span style="float: left">{{ item.Value }}</span>
                 <span style="float: right; color: #8492a6; font-size: 13px">{{ item.ID }}</span>
               </el-option>
@@ -328,7 +326,8 @@ export default {
         let response2 = await this.$api.stock.findStorageID({
           ProductID: this.fromAnzaOrder.ProductID,
           Purpose: '',
-          Qty: 1
+          Qty: 1,
+          StorageID: ''
         })
         this.ddlStorageID = response2.data.result
       }

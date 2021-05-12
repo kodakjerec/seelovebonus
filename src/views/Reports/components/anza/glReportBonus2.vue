@@ -29,7 +29,7 @@
       </el-form-item>
       <el-form-item :label="$t('__companies')+$t('__id')">
         <el-col :span="8">
-          <el-select v-model="searchContent.CompanyID" filterable :placeholder="$t('__plzChoice')" @change="ddlCompaniesChange">
+          <el-select v-model="searchContent.CompanyID" default-first-option filterable clearable :placeholder="$t('__plzChoice')" @change="ddlCompaniesChange">
             <el-option v-for="item in ddlCompanies" :key="item.ID" :label="item.ID+' '+item.Value" :value="item.ID">
               <span style="float: left">{{ item.Value }}</span>
               <span style="float: right; color: #8492a6; font-size: 13px">{{ item.ID }}</span>
@@ -197,7 +197,7 @@ export default {
         EndDate: this.searchContent.EndDate }
 
       // 紀錄Log
-      this.$api.reports.bonus2ToExcel({ reportParams: this.reportParams })
+      this.$api.reports.ssrsReports({ reportParams: this.reportParams, reportName: this.reportPath })
 
       // 儲存內容
       localStorage.setItem('searchHistory:' + this.$route.name, JSON.stringify(this.searchContent))

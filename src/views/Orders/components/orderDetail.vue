@@ -23,13 +23,13 @@
       <template slot-scope="scope">
         <div v-if="buttonsShow.new && buttonsShowUser.new && scope.row.ItemType === 1">
           <el-select
-            filterable
+            default-first-option filterable clearable
             v-model="scope.row[scope.column.property]"
             :placeholder="$t('__plzChoice')"
             @change="(value)=>{ddlSubListChange(value, scope.row, 1)}"
             style="display:block">
             <el-option-group v-for="group in ddlSubList" :key="group.Category1Name" :label="group.Category1Name">
-              <el-option v-for="item in group.options" :key="item.ProductID" :value="item.ProductID">
+              <el-option v-for="item in group.options" :key="item.ProductID" :label="item.ProductID+' '+item.ProductName" :value="item.ProductID">
                 <!-- 商品明細特別加上價格 -->
                 <span style="float: left">{{ item.ProductName + ' ['+ formatterMoneyUS(null,null,item.Price,null) + ']' }}</span>
                 <span style="float: right; color: #8492a6; font-size: 13px">{{ item.ProductID }}</span>
@@ -102,10 +102,7 @@
         <el-select
           v-if="scope.row.Inventory"
           v-model="scope.row[scope.column.property]"
-          allow-create
-          default-first-option
-          filterable
-          clearable
+          default-first-option filterable clearable
           :placeholder="$t('__plzChoice')"
           :disabled="!(buttonsShow.new === 1 && buttonsShowUser.new === 1 && scope.row.disableFromStorageID)">
           <el-option v-for="item in ddlFromStorageIDList[scope.row.Seq]" :key="item.ID" :label="item.ID+' '+item.Value" :value="item.ID">
@@ -124,10 +121,7 @@
         <el-select
           v-if="scope.row.Inventory"
           v-model="scope.row[scope.column.property]"
-          allow-create
-          default-first-option
-          filterable
-          clearable
+          default-first-option filterable clearable
           :placeholder="$t('__plzChoice')"
           :disabled="!(buttonsShow.new === 1 && buttonsShowUser.new === 1 && scope.row.disableToStorageID)">
           <el-option v-for="item in ddlToStorageIDList[scope.row.Seq]" :key="item.ID" :label="item.ID+' '+item.Value" :value="item.ID">
@@ -488,10 +482,11 @@ export default {
       let findSubList = this.originDDLSubList.find(item => item.ProductID === selected)
 
       // 填入明細
-      this.fillSubList(row, findSubList, ItemType)
-
-      // 建議儲位
-      this.bringDefaultStorageAddress(row)
+      if (findSubList) {
+        this.fillSubList(row, findSubList, ItemType)
+        // 建議儲位
+        this.bringDefaultStorageAddress(row)
+      }
     },
     // 填入選擇商品: 一般商品
     // ItemType: 0-主約 1-附約主品項 2-附約明細商品(不計價)
@@ -580,6 +575,9 @@ export default {
     },
     // 帶入預設儲位
     bringDefaultStorageAddress: async function (row) {
+      if (row.Inventory === 0) {
+        return
+      }
       // 取得建議儲位
       // reset
       this.ddlFromStorageIDList[row.Seq] = []
@@ -587,7 +585,7 @@ export default {
       // get
       // fromStorageID
       if (row.FromStorageID === '') {
-        let response = await this.$api.stock.findStorageID({ ProductID: row.ProductID, Purpose: row.Purpose, Qty: 0 - row.Qty })
+        let response = await this.$api.stock.findStorageID({ ProductID: row.ProductID, Purpose: row.Purpose, Qty: 0 - row.Qty, StorageID: '' })
         let result = response.data.result
         if (result.length > 0) {
           this.ddlFromStorageIDList[row.Seq] = result
@@ -597,7 +595,7 @@ export default {
       // ToStorageID
 
       if (row.ToStorageID === '') {
-        let response = await this.$api.stock.findStorageID({ ProductID: row.ProductID, Purpose: row.Purpose, Qty: row.Qty })
+        let response = await this.$api.stock.findStorageID({ ProductID: row.ProductID, Purpose: row.Purpose, Qty: row.Qty, StorageID: '' })
         let result = response.data.result
         if (result.length > 0) {
           this.ddlToStorageIDList[row.Seq] = result

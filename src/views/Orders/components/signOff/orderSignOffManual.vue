@@ -29,12 +29,13 @@
         stripe
         border
         style="width: 100%">
+        <!-- UserType -->
         <el-table-column
           prop="UserType"
           label="UserType">
           <template slot-scope="scope">
             <el-select
-              filterable
+              default-first-option filterable clearable
               v-model="scope.row.UserType"
               :placeholder="$t('__plzChoice')"
               @change="(value)=>{ddlUserTypeChange(value, scope.row)}"
@@ -46,12 +47,13 @@
             </el-select>
           </template>
         </el-table-column>
+        <!-- 群組 or 人員 ID -->
         <el-table-column
           prop="ID"
           :label="$t('__groups') + ' or ' + $t('__operator')">
           <template slot-scope="scope">
             <el-select
-              filterable
+              default-first-option filterable clearable
                v-show="scope.row.UserType === 0"
               v-model="scope.row.ID"
               :placeholder="$t('__plzChoice')"
@@ -63,7 +65,7 @@
               </el-option>
             </el-select>
             <el-select
-              filterable
+              default-first-option filterable clearable
               v-show="scope.row.UserType === 1"
               v-model="scope.row.ID"
               :placeholder="$t('__plzChoice')"
@@ -141,8 +143,10 @@ export default {
       let responsePermission = await this.$api.signOff.getObject({ type: 'signOffPermission', keyword: this.orderType })
       this.permissions = responsePermission.data.result
       this.steps.forEach(item => {
-        item.Status = ''
         item.subList = this.permissions.filter(sub => { return sub.ParentSeq === item.Seq })
+        item.subList.forEach(item2 => {
+          item2.Status = ''
+        })
       })
 
       let resGroups = await this.$api.settings.getDropdownList({ type: 'groupsList' })

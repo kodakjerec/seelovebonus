@@ -4,7 +4,7 @@
       <el-form-item :label="$t('__systemSettingsCategory')" prop="Category">
         <el-select
           v-model="form.Category"
-          filterable
+          default-first-option filterable clearable
           :disabled="disableForm.Category"
           :placeholder="$t('__plzChoice')">
           <el-option v-for="item in ddlCategory" :key="item.ID" :label="item.ID+' '+item.Value" :value="item.ID">
@@ -16,7 +16,7 @@
       <el-form-item :label="$t('__systemSettingsParentCategory')">
         <el-select
           v-model="form.ParentCategory"
-          filterable
+          default-first-option filterable clearable
           :placeholder="$t('__plzChoice')"
           @change="selectChange">
           <el-option v-for="item in ddlParentCategory" :key="item.ID" :label="item.ID+' '+item.Value" :value="item.ID">
@@ -26,8 +26,8 @@
         </el-select>
       </el-form-item>
       <el-form-item :label="$t('__systemSettingsParentID')">
-        <el-select v-model="form.ParentID" :disabled="disableForm.ParentID" :placeholder="$t('__plzChoice')">
-          <el-option v-for="item in ddlParentID" :key="item.ID" :label="item.Value" :value="item.ID">
+        <el-select v-model="form.ParentID" default-first-option filterable clearable :disabled="disableForm.ParentID" :placeholder="$t('__plzChoice')">
+          <el-option v-for="item in ddlParentID" :key="item.ID" :label="item.ID+' '+item.Value" :value="item.ID">
             <span style="float: left">{{ item.Value }}</span>
             <span style="float: right; color: #8492a6; font-size: 13px">{{ item.ID }}</span>
           </el-option>
@@ -40,8 +40,8 @@
         <el-input v-model="form.Value" maxlength="20" show-word-limit></el-input>
       </el-form-item>
       <el-form-item :label="$t('__systemSettingsLanguage')" prop="Language">
-        <el-select v-model="form.Language" :disabled="disableForm.Language" :placeholder="$t('__plzChoice')">
-          <el-option v-for="item in ddlLanguages" :key="item.ID" :label="item.Value" :value="item.ID">
+        <el-select v-model="form.Language" default-first-option filterable clearable :disabled="disableForm.Language" :placeholder="$t('__plzChoice')">
+          <el-option v-for="item in ddlLanguages" :key="item.ID" :label="item.ID+' '+item.Value" :value="item.ID">
             <span style="float: left">{{ item.Value }}</span>
             <span style="float: right; color: #8492a6; font-size: 13px">{{ item.ID }}</span>
           </el-option>
@@ -162,7 +162,6 @@ export default {
 
       // 父階層分類, 移除目前設定選項
       let findIndex = this.ddlCategory.findIndex(item => { return item.ID === this.form.Category })
-      console.log(findIndex)
       if (findIndex > -1) {
         this.ddlParentCategory.splice(findIndex, 1)
       }

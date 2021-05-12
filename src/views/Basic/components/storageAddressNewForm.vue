@@ -16,18 +16,18 @@
       <template v-if="dialogType === 'new' && batchInsert === true">
         <el-form-item :label="$t('__column')">
           <el-col :span="6">
-            <el-input v-model="form.RowStart" @change="batchInsertChange"></el-input>
+            <el-input v-model="form.ColumnStart" @change="batchInsertChange"></el-input>
           </el-col>
           <el-col :span="6">
             <el-form-item :label="$t('__row')">
-              <el-input-number v-model="form.ColumnStart" :min="1" :max="99" @change="batchInsertChange"></el-input-number>
-              <el-input-number v-model="form.ColumnEnd" :min="1" :max="99" @change="batchInsertChange"></el-input-number>
+              <el-input-number v-model="form.RowStart" :min="1" :max="99" @change="batchInsertChange"></el-input-number>
+              <el-input-number v-model="form.RowEnd" :min="1" :max="99" @change="batchInsertChange"></el-input-number>
             </el-form-item>
           </el-col>
           <el-col :span="6">
             <el-form-item :label="$t('__grid')">
-              <el-input-number v-model="form.LocationStart" :min="1" :max="99" @change="batchInsertChange"></el-input-number>
-              <el-input-number v-model="form.LocationEnd" :min="1" :max="99" @change="batchInsertChange"></el-input-number>
+              <el-input-number v-model="form.GridStart" :min="1" :max="99" @change="batchInsertChange"></el-input-number>
+              <el-input-number v-model="form.GridEnd" :min="1" :max="99" @change="batchInsertChange"></el-input-number>
             </el-form-item>
           </el-col>
         </el-form-item>
@@ -49,19 +49,19 @@
         <template slot="label">
           {{$t('__limit')}}{{$t('__itemCategory')}}<br/><span style="color: red">{{$t('__noChoiceNoLimit')}}</span>
         </template>
-        <el-select v-model="form.Category1" filterable :placeholder="$t('__plzChoice')" @change="ddlCategory1Change" >
+        <el-select v-model="form.Category1" default-first-option filterable clearable :placeholder="$t('__plzChoice')" @change="ddlCategory1Change" >
           <el-option v-for="item in ddlCategory1" :key="item.ID" :label="item.ID+' '+item.Value" :value="item.ID">
             <span style="float: left">{{ item.Value }}</span>
             <span style="float: right; color: #8492a6; font-size: 13px">{{ item.ID }}</span>
           </el-option>
         </el-select>
-        <el-select v-model="form.Category2" filterable :placeholder="$t('__plzChoice')" @change="ddlCategory2Change" >
+        <el-select v-model="form.Category2" default-first-option filterable clearable :placeholder="$t('__plzChoice')" @change="ddlCategory2Change" >
           <el-option v-for="item in ddlCategory2" :key="item.ID" :label="item.ID+' '+item.Value" :value="item.ID">
             <span style="float: left">{{ item.Value }}</span>
             <span style="float: right; color: #8492a6; font-size: 13px">{{ item.ID }}</span>
           </el-option>
         </el-select>
-        <el-select v-model="form.Category3" filterable :placeholder="$t('__plzChoice')">
+        <el-select v-model="form.Category3" default-first-option filterable clearable :placeholder="$t('__plzChoice')">
           <el-option v-for="item in ddlCategory3" :key="item.ID" :label="item.ID+' '+item.Value" :value="item.ID">
             <span style="float: left">{{ item.Value }}</span>
             <span style="float: right; color: #8492a6; font-size: 13px">{{ item.ID }}</span>
@@ -73,20 +73,20 @@
           {{$t('__storageAddress')}}{{'(' + $t('__building') + '-' + $t('__floor') + '-' + $t('__area') + ')'}}
         </template>
         <el-form-item prop="Building">
-          <el-select v-model="form.Building" value-key="value" :placeholder="$t('__plzChoice')" @change="ddlBuildingChange">
-            <el-option v-for="item in ddlBuilding" :key="item.ID" :label="item.Value" :value="item.ID">
+          <el-select v-model="form.Building" default-first-option filterable clearable :placeholder="$t('__plzChoice')" @change="ddlBuildingChange">
+            <el-option v-for="item in ddlBuilding" :key="item.ID" :label="item.ID+' '+item.Value" :value="item.ID">
               <span style="float: left">{{ item.Value }}</span>
               <span style="float: right; color: #8492a6; font-size: 13px">{{ item.ID }}</span>
             </el-option>
           </el-select>
-          <el-select v-model="form.Floor" value-key="value" :placeholder="$t('__plzChoice')" @change="ddlFloorChange">
-            <el-option v-for="item in ddlFloor" :key="item.ID" :label="item.Value" :value="item.ID">
+          <el-select v-model="form.Floor" default-first-option filterable clearable :placeholder="$t('__plzChoice')" @change="ddlFloorChange">
+            <el-option v-for="item in ddlFloor" :key="item.ID" :label="item.ID+' '+item.Value" :value="item.ID">
               <span style="float: left">{{ item.Value }}</span>
               <span style="float: right; color: #8492a6; font-size: 13px">{{ item.ID }}</span>
             </el-option>
           </el-select>
-          <el-select v-model="form.Area" value-key="value" :placeholder="$t('__plzChoice')">
-            <el-option v-for="item in ddlArea" :key="item.ID" :label="item.Value" :value="item.ID">
+          <el-select v-model="form.Area" default-first-option filterable clearable :placeholder="$t('__plzChoice')">
+            <el-option v-for="item in ddlArea" :key="item.ID" :label="item.ID+' '+item.Value" :value="item.ID">
               <span style="float: left">{{ item.Value }}</span>
               <span style="float: right; color: #8492a6; font-size: 13px">{{ item.ID }}</span>
             </el-option>
@@ -108,8 +108,8 @@
       <el-form-item :label="$t('__status')">
         <el-col :span="6">
           <el-form-item>
-            <el-select v-model="form.Status" value-key="value" :placeholder="$t('__plzChoice')">
-              <el-option v-for="item in ddlStatus" :key="item.ID" :label="item.Value" :value="item.ID">
+            <el-select v-model="form.Status" default-first-option filterable clearable :placeholder="$t('__plzChoice')">
+              <el-option v-for="item in ddlStatus" :key="item.ID" :label="item.ID+' '+item.Value" :value="item.ID">
                 <span style="float: left">{{ item.Value }}</span>
                 <span style="float: right; color: #8492a6; font-size: 13px">{{ item.ID }}</span>
               </el-option>
@@ -118,8 +118,8 @@
         </el-col>
         <el-col :span="8">
           <el-form-item :label="$t('__kind')">
-            <el-select v-model="form.StorageType" value-key="value" :placeholder="$t('__plzChoice')">
-              <el-option v-for="item in ddlStorageType" :key="item.ID" :label="item.Value" :value="item.ID">
+            <el-select v-model="form.StorageType" default-first-option filterable clearable :placeholder="$t('__plzChoice')">
+              <el-option v-for="item in ddlStorageType" :key="item.ID" :label="item.ID+' '+item.Value" :value="item.ID">
                 <span style="float: left">{{ item.Value }}</span>
                 <span style="float: right; color: #8492a6; font-size: 13px">{{ item.ID }}</span>
               </el-option>
@@ -169,11 +169,11 @@ export default {
         Status: '1',
         StorageType: '1',
         // 批次新增用, 不會記錄進資料庫
-        RowStart: '01A',
-        ColumnStart: 1,
-        ColumnEnd: 15,
-        LocationStart: 1,
-        LocationEnd: 15,
+        ColumnStart: '01A',
+        RowStart: 1,
+        RowEnd: 15,
+        GridStart: 1,
+        GridEnd: 15,
         GuessResult: ''
       },
       batchInsert: false, // 開啟批次新增
@@ -356,15 +356,15 @@ export default {
       let locationTotal = 0
 
       locationB = this.form.ID
-      locationB += this.form.RowStart
-      locationB += this.form.ColumnStart < 10 ? '0' + this.form.ColumnStart : this.form.ColumnStart
-      locationB += this.form.LocationStart < 10 ? '0' + this.form.LocationStart : this.form.LocationStart
+      locationB += this.form.ColumnStart
+      locationB += this.form.RowStart < 10 ? '0' + this.form.RowStart : this.form.RowStart
+      locationB += this.form.GridStart < 10 ? '0' + this.form.GridStart : this.form.GridStart
       locationE = this.form.ID
-      locationE += this.form.RowStart
-      locationE += this.form.ColumnEnd < 10 ? '0' + this.form.ColumnEnd : this.form.ColumnEnd
-      locationE += this.form.LocationEnd < 10 ? '0' + this.form.LocationEnd : this.form.LocationEnd
+      locationE += this.form.ColumnStart
+      locationE += this.form.RowEnd < 10 ? '0' + this.form.RowEnd : this.form.RowEnd
+      locationE += this.form.GridEnd < 10 ? '0' + this.form.GridEnd : this.form.GridEnd
 
-      locationTotal = 1 * (this.form.ColumnEnd - this.form.ColumnStart + 1) * (this.form.LocationEnd - this.form.LocationStart + 1)
+      locationTotal = 1 * (this.form.RowEnd - this.form.RowStart + 1) * (this.form.GridEnd - this.form.GridStart + 1)
 
       this.form.GuessResult = this.$t('__storageAddress') + 'Start: ' + locationB + ' ~ ' + locationE + ', ' + this.$t('__total') + this.$t('__qty') + ': ' + locationTotal
     }

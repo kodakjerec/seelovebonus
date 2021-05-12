@@ -1,8 +1,21 @@
 <template>
   <el-form>
+    <el-button-group class="defineCSS_ButtonGroup">
+      <el-form-item>
+        <el-col>
+          <el-select v-model="searchContent.Category1" default-first-option filterable clearable :placeholder="$t('__plzChoice')" @change="ddlCategory1Change">
+            <el-option v-for="item in ddlCategory1" :key="item.ID" :label="item.ID+' '+item.Value" :value="item.ID">
+              <span style="float: left">{{ item.Value }}</span>
+              <span style="float: right; color: #8492a6; font-size: 13px">{{ item.ID }}</span>
+            </el-option>
+          </el-select>
+        </el-col>
+      </el-form-item>
+    </el-button-group>
     <el-button-group style="padding-bottom: 5px">
       <el-button v-show="buttonsShowUser.new" type="primary" icon="el-icon-plus" @click.prevent="showForm('new')">{{$t('__new')}}</el-button>
-    <search-button @search="search"></search-button>
+      <el-button class="hideButton" icon="el-icon-more"><!-- 排版用,避免沒按鈕跑版 --></el-button>
+      <search-button @search="search"></search-button>
     </el-button-group>
     <el-table
       :data="productsShow"
@@ -12,11 +25,11 @@
       @row-click="handleClick"
       :row-class-name="tableRowClassName"
       style="width: 100%">
-      <el-table-column :label="$t('__itemCategory')" prop="Category1Name" min-width="30px">
+      <el-table-column :label="$t('__itemCategory')" prop="Category1Name" width="100">
       </el-table-column>
-      <el-table-column prop="Category2Name" min-width="30px">
+      <el-table-column prop="Category2Name" width="100">
       </el-table-column>
-      <el-table-column prop="Category3Name" min-width="30px">
+      <el-table-column prop="Category3Name" width="100">
       </el-table-column>
       <el-table-column
         prop="ID"
@@ -47,13 +60,10 @@
         :formatter="formatterMoney">
       </el-table-column>
       <el-table-column
-        prop="AccountingID"
-        :label="$t('__accounting')+$t('__id')">
-      </el-table-column>
-      <el-table-column
-        width="60px">
+        width="70">
         <template slot-scope="scope">
-          <el-tag effect="plain" v-if="scope.row.BOM === '1'">BOM</el-tag>
+          <el-tag size="mini" effect="plain" v-if="scope.row.BOM === '1'">BOM</el-tag>
+          <el-tag size="mini" effect="plain" v-if="scope.row.Inventory === 1">{{$t('__inventory')}}</el-tag>
         </template>
       </el-table-column>
     </el-table>
@@ -86,7 +96,10 @@ export default {
       productsShow: [],
       tableSpanList: [],
       product: {},
-      searchKeyWord: '',
+      searchContent: {
+        searchKeyWord: '',
+        Category1: ''
+      },
       // 使用者能看到的權限
       buttonsShowUser: {
         new: 1,
@@ -94,7 +107,9 @@ export default {
         save: 1,
         delete: 1,
         search: 1
-      }
+      },
+      // 下拉式選單
+      ddlCategory1: []
     }
   },
   mounted () {
@@ -113,6 +128,9 @@ export default {
     },
     // 讀入系統清單
     preLoading: async function () {
+      let response = this.$api.local.getDropdownList({ type: 'ItemCategory1' })
+      this.ddlCategory1 = response
+
       // 顯示專用
       this.search('')
     },
@@ -126,9 +144,8 @@ export default {
     },
     handleClick: async function (row, column, event) {
       // 取得可以用的選單
-      let responseRow = await this.$api.basic.getObject({ type: 'product', keyword: row.ID })
-      this.product = responseRow.data.result[0]
-
+      let response = await this.$api.basic.getObject({ type: 'product', keyword: row.ID })
+      this.product = response.data.result[0]
       // 權限管理
       this.buttonsShowUser.save = this.buttonsShowUser.edit
 
@@ -153,8 +170,10 @@ export default {
     },
     // 搜尋
     search: async function (value) {
-      this.searchKeyWord = value
-      let response2 = await this.$api.basic.productsShow({ keyword: this.searchKeyWord })
+      if (value) {
+        this.searchContent.searchKeyWord = value
+      }
+      let response2 = await this.$api.basic.productsShow({ searchContent: JSON.stringify(this.searchContent) })
       this.productsShow = response2.data.result
 
       // table span
@@ -191,7 +210,18 @@ export default {
           }
         }
       }
+    },
+    // 篩選大類
+    ddlCategory1Change: function () {
+      this.search()
     }
   }
 }
 </script>
+
+<style lang="scss" scoped>
+.defineCSS_ButtonGroup {
+  position: absolute;
+  left:10px;
+}
+</style>

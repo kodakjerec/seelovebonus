@@ -154,21 +154,21 @@ export default {
         return data
       })
     },
-    invoiceHeadNew: ({ form }) => {
+    invoiceHeadUpdate: ({ form }) => {
       let rawData = { form }
-      return postEncrypt('/orders/invoiceHeadNew', rawData).then(data => {
-        return data
-      })
-    },
-    invoiceHeadEdit: ({ form }) => {
-      let rawData = { form }
-      return postEncrypt('/orders/invoiceHeadEdit', rawData).then(data => {
+      return postEncrypt('/orders/invoiceHeadUpdate', rawData).then(data => {
         return data
       })
     },
     invoiceHeadInvalid: ({ form }) => {
       let rawData = { form }
       return postEncrypt('/orders/invoiceHeadInvalid', rawData).then(data => {
+        return data
+      })
+    },
+    invoiceHeadDelete: ({ form }) => {
+      let rawData = { form }
+      return postEncrypt('/orders/invoiceHeadDelete', rawData).then(data => {
         return data
       })
     },
@@ -179,9 +179,9 @@ export default {
       })
     },
     // Invoice Detail
-    invoiceDetailNew: ({ form }) => {
+    invoiceDetailUpdate: ({ form }) => {
       let rawData = { form }
-      return postEncrypt('/orders/invoiceDetailNew', rawData).then(data => {
+      return postEncrypt('/orders/invoiceDetailUpdate', rawData).then(data => {
         return data
       })
     },
@@ -268,13 +268,18 @@ export default {
         return data
       })
     },
+    installmentAlarm: ({ StartDate }) => {
+      let rawData = { StartDate }
+      return postEncrypt('/orders/installmentAlarm', rawData).then(data => {
+        return data
+      })
+    },
     // Others
     getDropdownList: ({ type, keyword }) => {
       if (!keyword) {
         keyword = ''
       }
       let rawData = { type, keyword }
-      console.log('%c >>> getDropdownList: ', 'background-color: blue; color: white; font-size: 14px; font-weight: bold;', rawData)
       return postEncrypt('/orders/getDropdownList', rawData).then(data => {
         return data
       })
@@ -284,7 +289,6 @@ export default {
         keyword = ''
       }
       let rawData = { type, keyword }
-      console.log('%c >>> getObject: ', 'background-color: blue; color: white; font-size: 14px; font-weight: bold;', rawData)
       return postEncrypt('/orders/getObject', rawData).then(data => {
         return data
       })

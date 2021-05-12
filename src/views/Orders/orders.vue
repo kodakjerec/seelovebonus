@@ -22,7 +22,11 @@
         align="left"
         width="160px">
         <template slot="header">
-          <el-button type="text" size="mini" @click.prevent="openSignOffManual">{{$t('__signOffSettings')}}</el-button>
+          <el-button
+            v-show="buttonsShowUser.delete"
+            type="text"
+            size="mini"
+            @click.prevent="openSignOffManual">{{$t('__signOffSettings')}}</el-button>
           <br/>{{$t('__batch')+$t('__signOff')}}
           <br/>
           <el-button size="mini" @click.prevent="batchSignOffAgree()">{{$t('__signOffAgree')}}</el-button>
@@ -66,7 +70,9 @@
           <br/>{{$t('__amount')}}
         </template>
         <template slot-scope="scope">
-          {{formatterDate(null,null,scope.row.OrderDate,null)}}<br/>{{formatterMoney(null,null,scope.row.Amount,null)}}
+          {{formatterDate(null,null,scope.row.OrderDate,null)}}<br/>
+          {{formatterMoney(null,null,scope.row.Amount,null)}}<br/>
+          <el-tag v-if="scope.row.Amount!==scope.row.InstallmentAmount" type="danger">{{$t('__orderDetailNotEqualInstallmentDetail')}}</el-tag>
         </template>
       </el-table-column>
       <el-table-column>
@@ -74,7 +80,7 @@
           {{$t('__notReceived')}}<br/>{{$t('__haveReceived')}}<br/>{{$t('__invoice')+$t('__amount')}}
         </template>
         <template slot-scope="scope">
-          {{formatterMoneyUS(null,null,scope.row.Amount-scope.row.CollectionsAmount,null)}}<br/>{{formatterMoneyUS(null,null,scope.row.CollectionsAmount,null)}}<br/>{{formatterMoneyUS(null,null,scope.row.InvoicesAmount,null)}}
+          {{formatterMoneyUS(null,null,scope.row.InstallmentAmount-scope.row.CollectionsAmount,null)}}<br/>{{formatterMoneyUS(null,null,scope.row.CollectionsAmount,null)}}<br/>{{formatterMoneyUS(null,null,scope.row.InvoicesAmount,null)}}
         </template>
       </el-table-column>
       <el-table-column

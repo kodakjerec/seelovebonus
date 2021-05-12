@@ -5,8 +5,8 @@
           <el-input v-model="form.OrderID" :disabled="disableForm.OrderID"></el-input>
       </el-form-item>
       <el-form-item :label="$t('__certificate1Prefix')">
-        <el-select v-model="form.Prefix" value-key="value" :placeholder="$t('__plzChoice')" :disabled="disableForm.Prefix">
-          <el-option v-for="item in ddlPrefix" :key="item.ID" :label="item.Value" :value="item.ID">
+        <el-select v-model="form.Prefix" default-first-option filterable clearable :placeholder="$t('__plzChoice')" :disabled="disableForm.Prefix">
+          <el-option v-for="item in ddlPrefix" :key="item.ID" :label="item.ID+' '+item.Value" :value="item.ID">
             <span style="float: left">{{ item.Value }}</span>
             <span style="float: right; color: #8492a6; font-size: 13px">{{ item.ID }}</span>
           </el-option>
@@ -20,8 +20,8 @@
           <el-input-number v-model="form.PrintCount" :disabled="disableForm.PrintCount"></el-input-number>
       </el-form-item>
       <el-form-item :label="$t('__status')">
-        <el-select v-model="form.Status" value-key="value" :placeholder="$t('__plzChoice')" :disabled="disableForm.Status">
-          <el-option v-for="item in ddlStatus" :key="item.ID" :label="item.Value" :value="item.ID">
+        <el-select v-model="form.Status" default-first-option filterable clearable :placeholder="$t('__plzChoice')" :disabled="disableForm.Status">
+          <el-option v-for="item in ddlStatus" :key="item.ID" :label="item.ID+' '+item.Value" :value="item.ID">
             <span style="float: left">{{ item.Value }}</span>
             <span style="float: right; color: #8492a6; font-size: 13px">{{ item.ID }}</span>
           </el-option>
@@ -35,8 +35,8 @@
           </el-date-picker>
       </el-form-item>
       <el-form-item label="Duration">
-        <el-select v-model="form.ReportDuration" :placeholder="$t('__plzChoice')" :disabled="disableForm.Status">
-          <el-option v-for="item in ddlReportDuration" :key="item.ID" :label="item.Value" :value="item.ID">
+        <el-select v-model="form.ReportDuration" default-first-option filterable clearable :placeholder="$t('__plzChoice')" :disabled="disableForm.Status">
+          <el-option v-for="item in ddlReportDuration" :key="item.ID" :label="item.ID+' '+item.Value" :value="item.ID">
             <span style="float: left">{{ item.Value }}</span>
             <span style="float: right; color: #8492a6; font-size: 13px">{{ item.ID }}</span>
           </el-option>
@@ -259,7 +259,7 @@ export default {
         reportDuration: this.form.ReportDuration }
 
       // 紀錄Log
-      this.$api.reports.certificate1ToExcel({ Certificate1: this.form.Certificate1 })
+      this.$api.reports.ssrsReports({ reportParams: this.reportParams, reportName: this.reportPath })
 
       this.form.PrintCount += 1
     },

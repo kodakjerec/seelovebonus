@@ -9,7 +9,7 @@
       </el-form-item>
       <el-form-item :label="$t('__accounting')+$t('__id')" prop="AccountingID">
         <el-col :span="10">
-          <el-select v-model="form.AccountingID" filterable value-key="value" :placeholder="$t('__plzChoice')">
+          <el-select v-model="form.AccountingID" default-first-option filterable clearable :placeholder="$t('__plzChoice')">
             <el-option v-for="item in ddlAccounting" :key="item.ID" :label="item.ID+' '+item.Value" :value="item.ID">
               <span style="float: left">{{ item.Value }}</span>
               <span style="float: right; color: #8492a6; font-size: 13px">{{ item.ID }}</span>
@@ -28,8 +28,8 @@
         </el-col>
         <el-col :span="14">
           <el-form-item :label="$t('__unit')" prop="Unit">
-            <el-select v-model="form.Unit" value-key="value" :placeholder="$t('__plzChoice')">
-              <el-option v-for="item in ddlUnit" :key="item.ID" :label="item.Value" :value="item.ID">
+            <el-select v-model="form.Unit" default-first-option filterable clearable :placeholder="$t('__plzChoice')">
+              <el-option v-for="item in ddlUnit" :key="item.ID" :label="item.ID+' '+item.Value" :value="item.ID">
                 <span style="float: left">{{ item.Value }}</span>
                 <span style="float: right; color: #8492a6; font-size: 13px">{{ item.ID }}</span>
               </el-option>
@@ -76,8 +76,8 @@
         </el-col>
       </el-form-item>
       <el-form-item :label="$t('__status')">
-        <el-select v-model="form.Status" value-key="value" :placeholder="$t('__plzChoice')">
-          <el-option v-for="item in ddlStatus" :key="item.ID" :label="item.Value" :value="item.ID">
+        <el-select v-model="form.Status" default-first-option filterable clearable :placeholder="$t('__plzChoice')">
+          <el-option v-for="item in ddlStatus" :key="item.ID" :label="item.ID+' '+item.Value" :value="item.ID">
             <span style="float: left">{{ item.Value }}</span>
             <span style="float: right; color: #8492a6; font-size: 13px">{{ item.ID }}</span>
           </el-option>
@@ -85,8 +85,8 @@
          {{$t('__inventory')}}<el-switch v-model="form.Inventory" active-text="ON" inactive-text="OFF" :active-value="1" :inactive-value="0"></el-switch>
       </el-form-item>
       <el-form-item :label="$t('__bom')">
-        <el-select v-model="form.BOM" value-key="value" :placeholder="$t('__plzChoice')" disabled>
-          <el-option v-for="item in ddlBOM" :key="item.ID" :label="item.Value" :value="item.ID">
+        <el-select v-model="form.BOM" default-first-option filterable clearable :placeholder="$t('__plzChoice')" disabled>
+          <el-option v-for="item in ddlBOM" :key="item.ID" :label="item.ID+' '+item.Value" :value="item.ID">
             <span style="float: left">{{ item.Value }}</span>
             <span style="float: right; color: #8492a6; font-size: 13px">{{ item.ID }}</span>
           </el-option>

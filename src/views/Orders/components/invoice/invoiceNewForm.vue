@@ -5,18 +5,18 @@
           <el-input v-model="form.OrderID" disabled></el-input>
       </el-form-item>
       <el-form-item :label="$t('__invoice')+$t('__kind')" prop="InvoiceKind">
-        <el-col :span="6">
-          <el-select v-model="form.InvoiceKind" value-key="value" :placeholder="$t('__plzChoice')" :disabled="disableForm.InvoiceKind">
-            <el-option v-for="item in ddlInvoiceKind" :key="item.ID" :label="item.Value" :value="item.ID">
+        <el-col :span="8">
+          <el-select v-model="form.InvoiceKind" default-first-option filterable clearable :placeholder="$t('__plzChoice')" :disabled="disableForm.InvoiceKind">
+            <el-option v-for="item in ddlInvoiceKind" :key="item.ID" :label="item.ID+' '+item.Value" :value="item.ID">
               <span style="float: left">{{ item.Value }}</span>
               <span style="float: right; color: #8492a6; font-size: 13px">{{ item.ID }}</span>
             </el-option>
           </el-select>
         </el-col>
-        <el-col :span="10">
+        <el-col :span="8">
           <el-form-item :label="$t('__invoice')+$t('__status')">
-            <el-select v-model="form.Status" value-key="value" :placeholder="$t('__plzChoice')" :disabled="disableForm.Status">
-              <el-option v-for="item in ddlInvoiceStatus" :key="item.ID" :label="item.Value" :value="item.ID">
+            <el-select v-model="form.Status" default-first-option filterable clearable :placeholder="$t('__plzChoice')" :disabled="disableForm.Status">
+              <el-option v-for="item in ddlInvoiceStatus" :key="item.ID" :label="item.ID+' '+item.Value" :value="item.ID">
                 <span style="float: left">{{ item.Value }}</span>
                 <span style="float: right; color: #8492a6; font-size: 13px">{{ item.ID }}</span>
               </el-option>
@@ -25,62 +25,73 @@
         </el-col>
       </el-form-item>
       <el-form-item :label="$t('__invoice')+$t('__date')" prop="InvoiceDate">
-        <el-date-picker
-          v-model="form.InvoiceDate"
-          type="date"
-          :placeholder="$t('__plzChoice')+$t('__invoice')+$t('__date')"
-          value-format="yyyy-MM-dd"
-           :disabled="disableForm.InvoiceDate">
-        </el-date-picker>
+        <el-col :span="8">
+          <el-date-picker
+            v-model="form.InvoiceDate"
+            type="date"
+            :placeholder="$t('__plzChoice')+$t('__invoice')+$t('__date')"
+            value-format="yyyy-MM-dd"
+            :disabled="disableForm.InvoiceDate">
+          </el-date-picker>
+        </el-col>
+        <el-col :span="10">
+            <el-form-item :label="$t('__salesReturn')+$t('__date')">
+              <el-date-picker
+                v-model="form.SalesReturnDate"
+                type="date"
+                :placeholder="$t('__plzChoice')+$t('__salesReturn')+$t('__date')"
+                value-format="yyyy-MM-dd">
+              </el-date-picker>
+            </el-form-item>
+        </el-col>
       </el-form-item>
       <el-form-item :label="$t('__invoice')+$t('__number')" prop="InvoiceID">
-        <el-col :span="10">
+        <el-col :span="8">
           <el-input v-mask="'AA########'" v-model="form.InvoiceID" :disabled="disableForm.InvoiceID"></el-input>
         </el-col>
-        <el-col :span="14" v-show="form.InvoiceKind === '6'">
+        <el-col :span="8">
           <el-form-item :label="$t('__randomCode')">
             <el-input v-model="form.RandomCode" :disabled="disableForm.RandomCode"></el-input>
           </el-form-item>
         </el-col>
       </el-form-item>
       <el-form-item :label="$t('__title')">
-          <el-input v-model="form.Title" maxlength="40" show-word-limit></el-input>
-      </el-form-item>
-      <el-form-item :label="$t('__uniformNumber')">
-        <el-col :span="10">
-          <el-input v-model="form.UniformNumber" maxlength="8" show-word-limit></el-input>
+        <el-col :span="8">
+          <el-input v-model="form.Title" maxlength="40" show-word-limit :disabled="disableForm.CreateID"></el-input>
         </el-col>
-        <el-col :span="14">
+        <el-col :span="8">
+          <el-form-item :label="$t('__uniformNumber')">
+            <el-input v-model="form.UniformNumber" maxlength="8" show-word-limit :disabled="disableForm.CreateID"></el-input>
+          </el-form-item>
+        </el-col>
+        <el-col :span="8">
           <el-form-item :label="$t('__carrierNumber')">
-            <el-input v-model="form.CarrierNumber" maxlength="64" show-word-limit></el-input>
+            <el-input v-model="form.CarrierNumber" maxlength="64" show-word-limit :disabled="disableForm.CreateID"></el-input>
           </el-form-item>
         </el-col>
       </el-form-item>
-      <el-form-item :label="$t('__received')+$t('__operator')" prop="CreateID">
-        <el-col :span="6">
-          <el-select v-model="form.CreateID" value-key="value" :placeholder="$t('__plzChoice')" :disabled="disableForm.CreateID">
-            <el-option v-for="item in ddlCreateID" :key="item.ID" :label="item.Value" :value="item.ID">
-              <span style="float: left">{{ item.Value }}</span>
-              <span style="float: right; color: #8492a6; font-size: 13px">{{ item.ID }}</span>
-            </el-option>
-          </el-select>
+      <el-form-item :label="$t('__amount')+'/'+$t('__tax')">
+        <el-col :span="4">
+          <el-input v-model="form.Amount" disabled></el-input>
+        </el-col>
+        <el-col :span="4">
+          <el-input v-model="form.Tax" disabled></el-input>
         </el-col>
         <el-col :span="10">
-          <el-form-item :label="$t('__tax')+$t('__status')">
-            <el-select v-model="form.Tax" value-key="value" :placeholder="$t('__plzChoice')" :disabled="disableForm.Tax">
-              <el-option v-for="item in ddlTax" :key="item.ID" :label="item.Value" :value="item.ID">
+          <el-form-item :label="$t('__memo')">
+            <el-input v-model="form.Memo" maxlength="200" show-word-limit :disabled="disableForm.CreateID"></el-input>
+          </el-form-item>
+        </el-col>
+        <el-col :span="6">
+          <el-form-item :label="$t('__received')+$t('__operator')" prop="CreateID">
+            <el-select v-model="form.CreateID" default-first-option filterable clearable :placeholder="$t('__plzChoice')" :disabled="disableForm.CreateID">
+              <el-option v-for="item in ddlCreateID" :key="item.ID" :label="item.ID+' '+item.Value" :value="item.ID">
                 <span style="float: left">{{ item.Value }}</span>
                 <span style="float: right; color: #8492a6; font-size: 13px">{{ item.ID }}</span>
               </el-option>
             </el-select>
           </el-form-item>
         </el-col>
-      </el-form-item>
-      <el-form-item :label="$t('__memo')">
-          <el-input v-model="form.Memo" maxlength="200" show-word-limit></el-input>
-      </el-form-item>
-      <el-form-item :label="$t('__amount')">
-          <el-input v-model="form.Amount" disabled></el-input>
       </el-form-item>
     </el-form>
     <!-- 發票明細 -->
@@ -165,7 +176,7 @@
           <el-table-column
             prop="Memo"
             :label="$t('__memo')"
-            width="100px">
+            width="100">
           </el-table-column>
         </el-table>
         <div style="color:red" v-show="multipleSelection.length <= 0">{{$t('__pleaseSelectAtLeastOne')+$t('__collectionRecords')}}</div>
@@ -174,9 +185,10 @@
 
     <div slot="footer">
       <br/>
-      <el-button v-show="buttonsShow.delete && buttonsShowUser.delete" type="danger" @click="delInvoice">{{$t('__invalid')+$t('__invoice')}}</el-button>
+      <el-button v-show="fromButtonsShow.delete && buttonsShowUser.delete" type="danger" @click="delInvoice">{{$t('__delete')}}</el-button>
+      <el-button v-show="fromButtonsShow.delete && buttonsShowUser.delete" type="danger" @click="invalidInvoice">{{$t('__invalid')}}</el-button>
       <el-button @click="cancel">{{$t('__cancel')}}</el-button>
-      <el-button v-show="buttonsShow.save && buttonsShowUser.save" type="primary" @click="checkValidate">{{$t('__save')}}</el-button>
+      <el-button v-show="fromButtonsShow.save && buttonsShowUser.save" type="primary" @click="checkValidate">{{$t('__save')}}</el-button>
     </div>
   </el-dialog>
 </template>
@@ -193,7 +205,8 @@ export default {
     dialogShow: { type: Boolean, default: false },
     invoiceHead: { type: Object },
     fromOrderID: { type: String },
-    buttonsShowUser: { type: Object }
+    buttonsShowUser: { type: Object },
+    fromButtonsShow: { type: Object }
   },
   data () {
     let myValidate = async (rule, value, callback) => {
@@ -220,8 +233,8 @@ export default {
         UniformNumber: '',
         Amount: null,
         ReceivedDate: '',
-        InvoiceKind: '1',
-        Tax: '1',
+        InvoiceKind: '2',
+        Tax: null,
         CarrierNumber: null,
         Memo: null,
         RandomCode: null,
@@ -237,20 +250,11 @@ export default {
         InvoiceID: [{ required: true, trigger: 'blur', validator: myValidate }],
         CreateID: [{ required: true, message: this.$t('__pleaseInput'), trigger: 'blur' }]
       },
-      // 系統目前狀態權限
-      buttonsShow: {
-        new: 1,
-        edit: 0,
-        save: 1,
-        delete: 0,
-        search: 1
-      },
       disableForm: {
         InvoiceKind: false,
         InvoiceDate: false,
         InvoiceID: false,
         RandomCode: false,
-        Tax: false,
         Status: false,
         CreateID: false,
         SalesReturnDate: true,
@@ -274,7 +278,6 @@ export default {
       // 以下為下拉式選單專用
       ddlInvoiceKind: [],
       ddlInvoiceStatus: [],
-      ddlTax: [],
       ddlCreateID: []
     }
   },
@@ -294,27 +297,13 @@ export default {
       case 'edit':
         this.myTitle = this.$t('__edit') + this.$t('__invoice')
         this.disableForm.InvoiceKind = true
-        // this.disableForm.InvoiceDate = true
+        this.disableForm.InvoiceDate = true
         this.disableForm.InvoiceID = true
         this.disableForm.RandomCode = true
         this.disableForm.Status = true
         this.disableForm.selectCollectionRecords = true
-        if (this.form.Status === '0') {
-          this.buttonsShow = {
-            new: 0,
-            edit: 0,
-            save: 0,
-            delete: 0,
-            search: 0
-          }
-        } else {
-          this.buttonsShow = {
-            new: 1,
-            edit: 1,
-            save: 1,
-            delete: 1,
-            search: 1
-          }
+        if (this.fromButtonsShow.save === 0) {
+          this.disableForm.CreateID = true
         }
         break
     }
@@ -333,8 +322,6 @@ export default {
       this.ddlInvoiceKind = response
       response = this.$api.local.getDropdownList({ type: 'InvoiceStatus' })
       this.ddlInvoiceStatus = response
-      response = this.$api.local.getDropdownList({ type: 'Tax' })
-      this.ddlTax = response
       let response4 = await this.$api.orders.getDropdownList({ type: 'employee' })
       this.ddlCreateID = response4.data.result
 
@@ -384,7 +371,7 @@ export default {
           for (let i = 0; i < this.invoiceDetails.length; i++) {
             let item = this.invoiceDetails[i]
             item.InvoiceID = this.form.InvoiceID
-            await this.$api.orders.invoiceDetailNew({ form: item })
+            await this.$api.orders.invoiceDetailUpdate({ form: item })
           }
 
           this.$emit('dialog-save')
@@ -401,10 +388,12 @@ export default {
 
       // reset
       let totalAmount = 0
+      let totalTax = 0
       this.invoiceDetails = []
 
       this.multipleSelection.forEach(item => {
         totalAmount += item.Amount
+        totalTax += item.Tax
 
         if (this.dialogType === 'new') {
           // 統計發票明細
@@ -432,10 +421,12 @@ export default {
           } else {
             findResult.Qty += 1
             findResult.Amount += item.Amount
+            findResult.Tax += item.Tax
           }
         }
       })
       this.form.Amount = totalAmount
+      this.form.Tax = totalTax
     },
     // 取消
     cancel: function () {
@@ -446,23 +437,24 @@ export default {
       let isSuccess = false
       switch (type) {
         case 'new':
-          let responseNew = await this.$api.orders.invoiceHeadNew({ form: this.form })
-          if (responseNew.headers['code'] === '200') {
-            this.$alert(responseNew.data.result[0].message, responseNew.data.result[0].code)
-            isSuccess = true
-          }
-          break
         case 'edit':
-          let responseEdit = await this.$api.orders.invoiceHeadEdit({ form: this.form })
+          let responseEdit = await this.$api.orders.invoiceHeadUpdate({ form: this.form })
           if (responseEdit.headers['code'] === '200') {
             this.$alert(responseEdit.data.result[0].message, responseEdit.data.result[0].code)
             isSuccess = true
           }
           break
-        case 'delete':
+        case 'invalid':
           let responseInvalid = await this.$api.orders.invoiceHeadInvalid({ form: this.form })
           if (responseInvalid.headers['code'] === '200') {
             this.$alert(responseInvalid.data.result[0].message, responseInvalid.data.result[0].code)
+            isSuccess = true
+          }
+          break
+        case 'delete':
+          let responseDelete = await this.$api.orders.invoiceHeadDelete({ form: this.form })
+          if (responseDelete.headers['code'] === '200') {
+            this.$alert(responseDelete.data.result[0].message, responseDelete.data.result[0].code)
             isSuccess = true
           }
           break
@@ -471,13 +463,41 @@ export default {
       return isSuccess
     },
     // 作廢發票
-    delInvoice: async function () {
+    invalidInvoice: async function () {
+      if (!this.form.SalesReturnDate) {
+        this.$message.error(this.$t('__plzChoice') + this.$t('__salesReturn') + this.$t('__date'), this.$t('__invalid'))
+        return
+      }
       let answerAction = await messageBoxYesNo(this.$t('__invalid') + this.$t('__invoice'), this.$t('__invalid'))
 
       switch (answerAction) {
         case 'confirm':
           this.form.Status = '0'
-          this.buttonsShow = {
+          this.fromButtonsShow = {
+            new: 0,
+            edit: 0,
+            save: 0,
+            delete: 0,
+            search: 0
+          }
+          await this.save('invalid')
+
+          this.$emit('dialog-save')
+          break
+        case 'cancel':
+          break
+        case 'close':
+          break
+      }
+    },
+    // 刪除發票
+    delInvoice: async function () {
+      let answerAction = await messageBoxYesNo(this.$t('__delete') + this.$t('__invoice'), this.$t('__delete'))
+
+      switch (answerAction) {
+        case 'confirm':
+          this.form.Status = '0'
+          this.fromButtonsShow = {
             new: 0,
             edit: 0,
             save: 0,

@@ -98,6 +98,7 @@ export default {
       dialogShowBatchEdit: false,
       installmentShow: [],
       installment: {},
+      installmentAmount: 0, // 提醒明細價格與分期付款總額不同, 使用
       activeName: '',
       // 系統目前狀態權限
       buttonsShow: {
@@ -136,6 +137,11 @@ export default {
       if (this.installmentShow && this.installmentShow.length > 0) {
         this.activeName = '1'
       }
+
+      // 統計明細總額
+      this.installmentShow.forEach(row => {
+        this.installmentAmount += row.ScheduledAmount
+      })
 
       // 系統簽核過程權限
       switch (this.fromOrderStatus) {

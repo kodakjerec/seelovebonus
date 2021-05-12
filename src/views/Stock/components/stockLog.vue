@@ -11,12 +11,16 @@
         <el-table-column prop="OldQty" :label="$t('__before') + $t('__qty')" width="100px"></el-table-column>
         <el-table-column prop="Qty" :label="$t('__qty')" width="100px"></el-table-column>
         <el-table-column prop="StockQty" :label="$t('__after') + $t('__qty')" width="100px"></el-table-column>
-        <el-table-column prop="OrderType" :label="$t('__kind')"></el-table-column>
+        <el-table-column :label="$t('__kind')">
+          <template slot-scope="scope">
+            {{scope.row.OrderTypeName+scope.row.InOutName}}
+          </template>
+        </el-table-column>
         <el-table-column prop="OrderID" :label="$t('__orderID')"></el-table-column>
         <el-table-column prop="CreateDate" :label="$t('__createDate')" :formatter="formatterDate"></el-table-column>
         <el-table-column prop="FromStorageID" :label="$t('__fromStorageID')"></el-table-column>
         <el-table-column prop="ToStorageID" :label="$t('__toStorageID')"></el-table-column>
-        <el-table-column prop="Purpose" label="Purpose"></el-table-column>
+        <el-table-column prop="Purpose" :label="$t('__memo')"></el-table-column>
       </el-table>
     </el-form>
     <div slot="footer">
@@ -44,7 +48,7 @@ export default {
   },
   methods: {
     formatterDate: function (row, column, cellValue, index) {
-      return formatDateTime(cellValue)
+      return formatDateTime(cellValue).substring(0, 19)
     },
     preLoading: async function () {
       // 取得可以用的選單

@@ -33,15 +33,114 @@ export default {
         return data
       })
     },
+    // outbound Order
+    outboundOrderShow: ({ keyword }) => {
+      let rawData = { keyword }
+      return postEncrypt('/stock/outboundOrderShow', rawData).then(data => {
+        return data
+      })
+    },
+    outboundOrderUpdate: ({ form }) => {
+      let rawData = { form }
+      return postEncrypt('/stock/outboundOrderUpdate', rawData).then(data => {
+        return data
+      })
+    },
+    outboundOrderDelete: ({ form }) => {
+      let rawData = { form }
+      return postEncrypt('/stock/outboundOrderDelete', rawData).then(data => {
+        return data
+      })
+    },
+    outboundOrderDetailUpdate: ({ form }) => {
+      let rawData = { form }
+      return postEncrypt('/stock/outboundOrderDetailUpdate', rawData).then(data => {
+        return data
+      })
+    },
+    outboundOrderDetailDelete: ({ form }) => {
+      let rawData = { form }
+      return postEncrypt('/stock/outboundOrderDetailDelete', rawData).then(data => {
+        return data
+      })
+    },
+    // processing Order
+    processingOrderShow: ({ keyword }) => {
+      let rawData = { keyword }
+      return postEncrypt('/stock/processingOrderShow', rawData).then(data => {
+        return data
+      })
+    },
+    processingOrderUpdate: ({ form }) => {
+      let rawData = { form }
+      return postEncrypt('/stock/processingOrderUpdate', rawData).then(data => {
+        return data
+      })
+    },
+    processingOrderDelete: ({ form }) => {
+      let rawData = { form }
+      return postEncrypt('/stock/processingOrderDelete', rawData).then(data => {
+        return data
+      })
+    },
+    processingOrderDetailUpdate: ({ form }) => {
+      let rawData = { form }
+      return postEncrypt('/stock/processingOrderDetailUpdate', rawData).then(data => {
+        return data
+      })
+    },
+    processingOrderDetailDelete: ({ form }) => {
+      let rawData = { form }
+      return postEncrypt('/stock/processingOrderDetailDelete', rawData).then(data => {
+        return data
+      })
+    },
+    // transport Order
+    transportOrderShow: ({ keyword }) => {
+      let rawData = { keyword }
+      return postEncrypt('/stock/transportOrderShow', rawData).then(data => {
+        return data
+      })
+    },
+    transportOrderUpdate: ({ form }) => {
+      let rawData = { form }
+      return postEncrypt('/stock/transportOrderUpdate', rawData).then(data => {
+        return data
+      })
+    },
+    transportOrderDelete: ({ form }) => {
+      let rawData = { form }
+      return postEncrypt('/stock/transportOrderDelete', rawData).then(data => {
+        return data
+      })
+    },
+    transportOrderDetailUpdate: ({ form }) => {
+      let rawData = { form }
+      return postEncrypt('/stock/transportOrderDetailUpdate', rawData).then(data => {
+        return data
+      })
+    },
+    transportOrderDetailDelete: ({ form }) => {
+      let rawData = { form }
+      return postEncrypt('/stock/transportOrderDetailDelete', rawData).then(data => {
+        return data
+      })
+    },
     // stock
+    alarm: () => {
+      let rawData = { }
+      return postEncrypt('/stock/alarm', rawData).then(data => {
+        return data
+      })
+    },
     stockNowShow: ({ searchContent, pagination }) => {
       let rawData = { searchContent, pagination }
       return postEncrypt('/stock/stockNowShow', rawData).then(data => {
         return data
       })
     },
-    findStorageID: ({ ProductID, Purpose, Qty }) => {
-      let rawData = { ProductID, Purpose, Qty }
+    findStorageID: ({ ProductID, Purpose, Qty, StorageID }) => {
+      let rawData = { ProductID, Purpose, Qty, StorageID }
       return postEncrypt('/stock/findStorageID', rawData).then(data => {
         return data
       })
@@ -77,7 +176,6 @@ export default {
         keyword = ''
       }
       let rawData = { type, keyword }
-      console.log('%c >>> getDropdownList: ', 'background-color: blue; color: white; font-size: 14px; font-weight: bold;', rawData)
       return postEncrypt('/stock/getDropdownList', rawData).then(data => {
         return data
       })
@@ -87,7 +185,6 @@ export default {
         keyword = ''
       }
       let rawData = { type, keyword }
-      console.log('%c >>> getObject: ', 'background-color: blue; color: white; font-size: 14px; font-weight: bold;', rawData)
       return postEncrypt('/stock/getObject', rawData).then(data => {
         return data
       })

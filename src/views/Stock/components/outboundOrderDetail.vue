@@ -9,7 +9,7 @@
     <el-table-column
       prop="Seq"
       :label="$t('__seq')"
-      width="60">
+      width="60px">
     </el-table-column>
     <el-table-column
       prop="ProductID"
@@ -42,7 +42,7 @@
     <el-table-column
       prop="Qty"
       :label="$t('__qty')"
-      width="200">
+      width="200px">
       <template slot-scope="scope">
         <el-input-number
           :min="1"
@@ -77,11 +77,11 @@
     </el-table-column>
     <el-table-column
       prop="StorageID"
-      :label="$t('__putOn')+$t('__storageAddress')">
+      :label="$t('__shipping')+$t('__storageAddress')">
       <template slot-scope="scope">
         <el-select
           v-if="buttonsShow.new && buttonsShowUser.new"
-          filterable clearable
+          default-first-option filterable clearable
           remote
           v-model="scope.row.StorageID"
           :disabled="scope.row.ProductID===''"
@@ -124,7 +124,7 @@ import validate from '@/setup/validate'
 import { formatMoney } from '@/setup/format.js'
 
 export default {
-  name: 'inboundOrderDetail',
+  name: 'outboundOrderDetail',
   props: {
     dialogType: { type: String, default: 'new' },
     buttonsShowUser: { type: Object },
@@ -233,7 +233,7 @@ export default {
       if (this.orderID === '') {
         this.handleNew()
       } else {
-        let responseDetail = await this.$api.stock.getObject({ type: 'inboundOrderDetail', keyword: this.orderID })
+        let responseDetail = await this.$api.stock.getObject({ type: 'outboundOrderDetail', keyword: this.orderID })
         this.subList = responseDetail.data.result
 
         this.reCalAmount()
@@ -248,7 +248,6 @@ export default {
           type: 'error'
         })
         isSuccess = false
-        return isSuccess
       }
 
       // 檢查主表單
@@ -268,13 +267,13 @@ export default {
         let object = {
           ProductID: row.ProductID,
           Purpose: row.Purpose,
-          Qty: row.Qty,
+          Qty: 0 - row.Qty,
           StorageID: row.StorageID
         }
         checkValidate = await validate.validateStorageIDNoCallback(object.ProductID, object.Purpose, object.Qty, object.StorageID)
         if (checkValidate !== '') {
           this.$message({
-            message: row.ProductID + ' ' + row.StorageID + ' ' + this.$t('__exceedQtyLimit'),
+            message: row.ProductID + ' ' + row.StorageID + ' ' + this.$t('__inventoryShortage'),
             type: 'error'
           })
           isSuccess = false
@@ -326,13 +325,13 @@ export default {
       switch (type) {
         case 'new':
         case 'edit':
-          let responseEdit = await this.$api.stock.inboundOrderDetailUpdate({ form: row })
+          let responseEdit = await this.$api.stock.outboundOrderDetailUpdate({ form: row })
           if (responseEdit.headers['code'] === '200') {
             isSuccess = true
           }
           break
         case 'delete':
-          let responseDelete = await this.$api.stock.inboundOrderDetailDelete({ form: row })
+          let responseDelete = await this.$api.stock.outboundOrderDetailDelete({ form: row })
           if (responseDelete.headers['code'] === '200') {
             isSuccess = true
           }
@@ -363,7 +362,7 @@ export default {
         let response2 = await this.$api.stock.findStorageID({
           ProductID: row.ProductID,
           Purpose: row.Purpose,
-          Qty: row.Qty,
+          Qty: 0 - row.Qty,
           StorageID: storageID
         })
         this.ddlStorageID[row.Seq] = response2.data.result
@@ -421,8 +420,9 @@ export default {
     storageIDChange: function (selected, row) {
       let findObject = this.ddlStorageID[row.Seq].find(item => { return item.ID === selected })
       if (findObject) {
-        row.AvailableQty = findObject.AvailableQty
+        row.AvailableQty = findObject.UsedQty
       }
+
       if (row.Status === '') {
         row.Status = 'Modified'
       }

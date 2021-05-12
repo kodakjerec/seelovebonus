@@ -10,8 +10,8 @@
       <!-- 性別 -->
       <el-form-item :label="$t('__gender')">
         <el-col :span="4">
-          <el-select v-model="form.Gender" clearable value-key="value" :placeholder="$t('__plzChoice')">
-            <el-option v-for="item in ddlGender" :key="item.ID" :label="item.Value" :value="item.ID">
+          <el-select v-model="form.Gender" default-first-option filterable clearable :placeholder="$t('__plzChoice')">
+            <el-option v-for="item in ddlGender" :label="item.ID+' '+item.Value" :key="item.ID" :value="item.ID">
               <span style="float: left">{{ item.Value }}</span>
               <span style="float: right; color: #8492a6; font-size: 13px">{{ item.ID }}</span>
             </el-option>
@@ -58,8 +58,8 @@
         </el-col>
       </el-form-item>
       <el-form-item :label="$t('__lunarTime')">
-        <el-select clearable v-model="form.BirthLunarTime" value-key="value" :placeholder="$t('__plzChoice')">
-          <el-option v-for="item in ddlLunarTime" :key="item.ID" :label="item.Value" :value="item.ID">
+        <el-select v-model="form.BirthLunarTime" default-first-option filterable clearable :placeholder="$t('__plzChoice')">
+          <el-option v-for="item in ddlLunarTime" :label="item.ID+' '+item.Value" :key="item.ID" :value="item.ID">
             <span style="float: left">{{ item.Value + '(' + item.Memo + ')' }}</span>
             <span style="float: right; color: #8492a6; font-size: 13px">{{ item.ID }}</span>
           </el-option>
@@ -74,6 +74,7 @@
         :data="results"
         stripe
         border
+        :height="tableHeight"
         style="width: 100%">
         <el-table-column
           prop="ID"
@@ -164,6 +165,7 @@ export default {
         BirthLunarEnd: '',
         LunarTime: ''
       },
+      tableHeight: (screen.height * 7 / 9), // Table高度
       originData: [],
       results: [],
       CustomerID: '',

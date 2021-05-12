@@ -2,6 +2,7 @@
   <el-dialog :visible="dialogShow" center width="80vw" top="5vh" @close="cancel">
     <el-upload
       ref="upload"
+      drag
       :action="'123'"
       :limit="1"
       :show-file-list="false"
@@ -9,6 +10,7 @@
       :http-request="handleUpload"
       :multiple="false"
       style="float:left">
+      <i class="el-icon-upload"></i><br/>
       <el-button>{{$t('__upload')+$t('__edit')+' file'}}</el-button>
     </el-upload>
     <el-button @click.prevent="storageAddressExportExcel" >{{$t('__download')+' Sample file'}}</el-button>

@@ -6,7 +6,7 @@
       <search-button @search="search"></search-button>
     </el-button-group>
     <el-table
-      :data="transportOrderShow"
+      :data="outboundOrderShow"
       stripe
       border
       @row-click="handleClick"
@@ -49,16 +49,31 @@
       </el-table-column>
       <el-table-column
         prop="StatusName"
-        :label="$t('__status')">
+        :label="$t('__status')"
+        width="100">
       </el-table-column>
       <el-table-column
         prop="ID"
-        :label="$t('__transportOrder')+$t('__id')">
+        :label="$t('__outboundOrder')+$t('__id')"
+        width="120">
       </el-table-column>
       <el-table-column
         prop="OrderDate"
-        :label="$t('__date')"
-        :formatter="formatterDate">
+        :label="$t('__shipping')+$t('__date')"
+        :formatter="formatterDate"
+        width="120">
+      </el-table-column>
+      <el-table-column
+        prop="Supplier"
+        :label="$t('__receiver')">
+        <template slot-scope="scope">
+          {{scope.row[scope.column.property]+' '+scope.row.SupplierName}}
+        </template>
+      </el-table-column>
+      <el-table-column
+        prop="Amount"
+        :label="$t('__amount')"
+        :formatter="formatterMoney">
       </el-table-column>
       <el-table-column
         prop="commentDetailList"
@@ -77,7 +92,7 @@
     v-if="dialogShow"
     :dialog-type="dialogType"
     :dialog-show="dialogShow"
-    :transportOrder="transportOrder"
+    :outboundOrder="outboundOrder"
     :buttonsShowUser="buttonsShowUser"
     @dialog-cancel="dialogCancel"
     @dialog-save="dialogSave"></new-form>
@@ -95,11 +110,11 @@
 <script>
 import searchButton from '@/components/searchButton'
 import signOffDialog from '@/views/Orders/components/signOff/signOffDialog'
-import newForm from './components/transportOrderNewForm'
+import newForm from './components/outboundOrderNewForm'
 import { formatMoney, formatDate, newLineToBr } from '@/setup/format.js'
 
 export default {
-  name: 'TransportOrderShow',
+  name: 'OutboundOrderShow',
   components: {
     searchButton,
     signOffDialog,
@@ -109,8 +124,8 @@ export default {
     return {
       dialogType: 'new',
       dialogShow: false,
-      transportOrderShow: [],
-      transportOrder: {},
+      outboundOrderShow: [],
+      outboundOrder: {},
       searchKeyWord: '',
       // 使用者能看到的權限
       buttonsShowUser: {
@@ -160,8 +175,8 @@ export default {
     },
     handleClick: async function (row, column, event) {
       // 取得可以用的選單
-      let responseRow = await this.$api.stock.getObject({ type: 'transportOrder', keyword: row.ID })
-      this.transportOrder = responseRow.data.result[0]
+      let responseRow = await this.$api.stock.getObject({ type: 'outboundOrder', keyword: row.ID })
+      this.outboundOrder = responseRow.data.result[0]
 
       // 簽核管理
       if (row.StatusSignOff === 0) {
@@ -175,11 +190,11 @@ export default {
 
       // 進入修改
       this.$router.push({
-        name: 'TransportOrderNewForm',
+        name: 'OutboundOrderNewForm',
         params: {
           dialogType: 'edit',
-          transportOrder: this.transportOrder,
-          parent: 'TransportOrder',
+          outboundOrder: this.outboundOrder,
+          parent: 'OutboundOrder',
           buttonsShowUser: this.buttonsShowUser
         }
       })
@@ -190,11 +205,11 @@ export default {
       this.buttonsShowUser.save = this.buttonsShowUser.new
 
       this.$router.push({
-        name: 'TransportOrderNewForm',
+        name: 'OutboundOrderNewForm',
         params: {
           dialogType: 'new',
-          transportOrder: this.transportOrder,
-          parent: 'TransportOrder',
+          outboundOrder: this.outboundOrder,
+          parent: 'OutboundOrder',
           buttonsShowUser: this.buttonsShowUser
         }
       })
@@ -211,15 +226,15 @@ export default {
       if (value !== undefined) {
         this.searchKeyWord = value
       }
-      let response2 = await this.$api.stock.transportOrderShow({ keyword: this.searchKeyWord })
-      this.transportOrderShow = response2.data.result
+      let response2 = await this.$api.stock.outboundOrderShow({ keyword: this.searchKeyWord })
+      this.outboundOrderShow = response2.data.result
     },
     // 簽核相關
     // 送簽
     signOffAgree: function (index, row) {
       this.signOffList.push({
         OrderID: row.ID,
-        Type: 'transport',
+        Type: 'outbound',
         Prefix: row.Prefix,
         Status: row.Status
       })
@@ -230,7 +245,7 @@ export default {
     signOffDeny: function (index, row) {
       this.signOffList.push({
         OrderID: row.ID,
-        Type: 'transport',
+        Type: 'outbound',
         Prefix: row.Prefix,
         Status: row.Status
       })
@@ -239,12 +254,12 @@ export default {
     },
     // 批次送簽
     batchSignOffAgree: function () {
-      this.transportOrderShow
+      this.outboundOrderShow
         .filter(row => { return row.StatusSignOff === 1 })
         .forEach(row => {
           this.signOffList.push({
             OrderID: row.ID,
-            Type: 'transport',
+            Type: 'outbound',
             Prefix: row.Prefix,
             Status: row.Status
           })
@@ -254,12 +269,12 @@ export default {
     },
     // 批次否決
     batchSignOffDeny: function () {
-      this.transportOrderShow
+      this.outboundOrderShow
         .filter(row => { return row.StatusSignOff === 1 })
         .forEach(row => {
           this.signOffList.push({
             OrderID: row.ID,
-            Type: 'transport',
+            Type: 'outbound',
             Prefix: row.Prefix,
             Status: row.Status
           })
@@ -283,8 +298,8 @@ export default {
       this.$router.push({
         name: 'OrderSignOffManual',
         params: {
-          orderType: 'transport',
-          parent: 'TransportOrder'
+          orderType: 'outbound',
+          parent: 'OutboundOrder'
         }
       })
     },
@@ -294,7 +309,7 @@ export default {
         name: 'OrderSignOffLog',
         params: {
           ID: row.ID,
-          parent: 'TransportOrder'
+          parent: 'OutboundOrder'
         }
       })
     }

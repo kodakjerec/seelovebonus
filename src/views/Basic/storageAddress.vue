@@ -4,8 +4,8 @@
       <el-form-item :label="$t('__building') + '-' + $t('__floor') + '-' + $t('__area')">
         <!-- Building -->
         <el-col :span="6">
-          <el-select v-model="searchContent.Building" value-key="value" :placeholder="$t('__plzChoice')" @change="ddlBuildingChange">
-            <el-option v-for="item in ddlBuilding" :key="item.ID" :label="item.Value" :value="item.ID">
+          <el-select v-model="searchContent.Building" default-first-option filterable clearable :placeholder="$t('__plzChoice')" @change="ddlBuildingChange">
+            <el-option v-for="item in ddlBuilding" :key="item.ID" :label="item.ID+' '+item.Value" :value="item.ID">
               <span style="float: left">{{ item.Value+'('+item.Counts+')' }}</span>
               <span style="float: right; color: #8492a6; font-size: 13px">{{ item.ID }}</span>
             </el-option>
@@ -13,8 +13,8 @@
         </el-col>
         <!-- Floor -->
         <el-col :span="6">
-          <el-select v-model="searchContent.Floor" value-key="value" :placeholder="$t('__plzChoice')" @change="ddlFloorChange">
-            <el-option v-for="item in ddlFloor" :key="item.ID" :label="item.Value" :value="item.ID">
+          <el-select v-model="searchContent.Floor" default-first-option filterable clearable :placeholder="$t('__plzChoice')" @change="ddlFloorChange" :disabled="!searchContent.Building">
+            <el-option v-for="item in ddlFloor" :key="item.ID" :label="item.ID+' '+item.Value" :value="item.ID">
               <span style="float: left">{{ item.Value+'('+item.Counts+')' }}</span>
               <span style="float: right; color: #8492a6; font-size: 13px">{{ item.ID }}</span>
             </el-option>
@@ -22,8 +22,8 @@
         </el-col>
         <!-- Area -->
         <el-col :span="6">
-          <el-select v-model="searchContent.Area" value-key="value" :placeholder="$t('__plzChoice')" @change="ddlAreaChange">
-            <el-option v-for="item in ddlArea" :key="item.ID" :label="item.Value" :value="item.ID">
+          <el-select v-model="searchContent.Area" default-first-option filterable clearable :placeholder="$t('__plzChoice')" @change="ddlAreaChange" :disabled="!searchContent.Floor">
+            <el-option v-for="item in ddlArea" :key="item.ID" :label="item.ID+' '+item.Value" :value="item.ID">
               <span style="float: left">{{ item.Value+'('+item.Counts+')' }}</span>
               <span style="float: right; color: #8492a6; font-size: 13px">{{ item.ID }}</span>
             </el-option>
@@ -34,6 +34,7 @@
     <el-button-group style="padding-bottom: 5px">
       <el-button v-show="buttonsShowUser.new" type="primary" icon="el-icon-plus" @click.prevent="showForm('new')">{{$t('__new')}}</el-button>
       <el-button v-show="buttonsShowUser.new" @click.prevent="dialogShowUpload=true">{{$t('__upload')+$t('__download')}}</el-button>
+      <el-button class="hideButton" icon="el-icon-more"><!-- 排版用,避免沒按鈕跑版 --></el-button>
       <search-button @search="search"></search-button>
     </el-button-group>
     <el-table
@@ -75,6 +76,10 @@
       <el-table-column
         prop="MaxQty"
         :label="$t('__max') + $t('__inventory')">
+      </el-table-column>
+      <el-table-column
+        prop="StatusName"
+        :label="$t('__status')">
       </el-table-column>
       <el-table-column
         prop="Memo"
@@ -269,20 +274,13 @@ export default {
       this.ddlFloor = this.ddlFloorOrigin.filter(item => { return item.ParentID === this.searchContent.Building })
       if (isRefresh) {
         this.searchContent.Floor = ''
-        if (this.ddlFloor.length > 0) {
-          this.searchContent.Floor = this.ddlFloor[0].ID
-        }
-        this.ddlFloorChange()
+        this.searchContent.Area = ''
       }
     },
     ddlFloorChange: function (isRefresh = true) {
       this.ddlArea = this.ddlAreaOrigin.filter(item => { return item.ParentID === this.searchContent.Floor })
       if (isRefresh) {
         this.searchContent.Area = ''
-        if (this.ddlArea.length > 0) {
-          this.searchContent.Area = this.ddlArea[0].ID
-        }
-        this.ddlAreaChange()
       }
     },
     ddlAreaChange: function (isRefresh = true) {

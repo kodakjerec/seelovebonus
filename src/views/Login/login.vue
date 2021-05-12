@@ -7,12 +7,16 @@
     :alt="'logo'"
     ></el-image>
     <el-card class="box-card">
-      <el-form ref="form" :model="form" :rules="rules" label-width="80px">
+      <el-form ref="form" :model="form" :rules="rules" label-width="10vw" label-position="right">
         <el-form-item :label="$t('__userId')" prop="UserID">
-          <el-input v-model="form.UserID" autocomplete></el-input>
+          <el-input
+            label="ID"
+            v-model="form.UserID"
+            autocomplete></el-input>
         </el-form-item>
         <el-form-item :label="$t('__pwd')" prop="Password">
           <el-input
+            label="pwd"
             v-model="form.Password"
             show-password
             @keydown.native.enter="keyboardChange"></el-input>
@@ -20,17 +24,26 @@
       </el-form>
       <el-button class="submitButton" type="primary" @click.native="submit">{{$t('__login')}}</el-button>
     </el-card>
+    <br/>
+    <!-- 語言 -->
+    <span>{{this.$t('__languageSetting')+'：'}}</span>
+    <el-select
+      v-model="language"
+      @change="changeLanguage">
+      <el-option v-for="item in languages" :key="item.ID" :label="item.ID+' '+item.Value" :value="item.ID">
+        <span style="float: left">{{ item.Value }}</span>
+        <span style="float: right; color: #8492a6; font-size: 13px">{{ item.ID }}</span>
+      </el-option>
+    </el-select>
+    <!-- 深色模式 -->
     <div>
-      <br>
-      <span>{{$t('__languageSetting')}} </span>
-      <el-switch
-        v-model="language"
-        active-text="中文"
-        inactive-text="English"
-        @change="changeLanguage"
-        />
+      <span>{{$t('__darkMode')+'：'}}</span>
+      <el-switch v-model="darkMode" @change="darkModeChange"></el-switch>
     </div>
-    <div>{{$t('__version')+'：'+$store.state.version}}</div>
+    <!-- 版本號 -->
+    <div>
+      <span>{{this.$t('__version')+'：'+$store.state.version}}</span>
+    </div>
   </div>
 </template>
 
@@ -44,7 +57,7 @@ export default {
   name: 'Login',
   data () {
     return {
-      language: true,
+      language: 'zh',
       form: {
         UserID: '',
         Password: ''
@@ -53,7 +66,13 @@ export default {
         UserID: [{ required: true, validator: validate.validateUserIDAndPassword, trigger: 'blur' }],
         Password: [{ required: true, validator: validate.validateUserIDAndPassword, trigger: 'blur' }]
       },
-      lock: false // 避免按著Enter, 重複發送查詢指令
+      lock: false, // 避免按著Enter, 重複發送查詢指令
+      darkMode: false, // 是否開啟darkMode
+      // 下拉是選單
+      languages: [
+        { ID: 'zh', Value: '中文' },
+        { ID: 'en', Value: 'English' }
+      ]
     }
   },
   mounted () {
@@ -64,34 +83,23 @@ export default {
     // 取得語言設定
     if (localStorage.getItem('locale')) {
       i18n.locale = localStorage.getItem('locale')
-      switch (i18n.locale) {
-        case 'en':
-          this.language = false
-          break
-        case 'zh':
-          this.language = true
-          break
-      }
+      this.language = i18n.locale
     } else {
+      this.language = 'zh'
       i18n.locale = 'zh'
       localStorage.setItem('locale', 'zh')
     }
+
+    // 取得darkmode
+    this.darkMode = JSON.parse(localStorage.getItem('darkMode'))
 
     this.checkVersion()
   },
   methods: {
     // 變更語言設定
     changeLanguage: function (status) {
-      switch (status) {
-        case false: // 英文
-          i18n.locale = 'en'
-          localStorage.setItem('locale', 'en')
-          break
-        case true: // 中文
-          i18n.locale = 'zh'
-          localStorage.setItem('locale', 'zh')
-          break
-      }
+      i18n.locale = status
+      localStorage.setItem('locale', status)
     },
     // 按下登入
     submit: function () {
@@ -167,6 +175,11 @@ export default {
     // 按下Enter檢核登入
     keyboardChange: function () {
       this.submit()
+    },
+    // 切換 darkmode
+    darkModeChange: function () {
+      localStorage.setItem('darkMode', JSON.stringify(this.darkMode))
+      errorMessage(this.$t('__pleaseRestartDarkMode'))
     }
   }
 }

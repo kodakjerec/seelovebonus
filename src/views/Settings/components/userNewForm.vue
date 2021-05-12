@@ -15,24 +15,24 @@
         @dialog-cancel="dialogCancel"
         @dialog-save="dialogSave"></new-form>
       <el-form-item :label="$t('__groups')" prop="GroupID">
-        <el-select v-model="form.GroupID" value-key="value" :placeholder="$t('__plzChoice')">
-          <el-option v-for="item in ddlGroup" :key="item.ID" :label="item.Value" :value="item.ID">
+        <el-select v-model="form.GroupID" default-first-option filterable clearable :placeholder="$t('__plzChoice')">
+          <el-option v-for="item in ddlGroup" :key="item.ID" :label="item.ID+' '+item.Value" :value="item.ID">
             <span style="float: left">{{ item.Value }}</span>
             <span style="float: right; color: #8492a6; font-size: 13px">{{ item.ID }}</span>
           </el-option>
         </el-select>
       </el-form-item>
       <el-form-item :label="$t('__refEmployeeIDForUser')" prop="refEmployeeID">
-        <el-select v-model="form.refEmployeeID" value-key="value" :placeholder="$t('__plzChoice')">
-          <el-option v-for="item in ddlEmployee" :key="item.ID" :label="item.Value" :value="item.ID">
+        <el-select v-model="form.refEmployeeID" default-first-option filterable clearable :placeholder="$t('__plzChoice')">
+          <el-option v-for="item in ddlEmployee" :key="item.ID" :label="item.ID+' '+item.Value" :value="item.ID">
             <span style="float: left">{{ item.Value }}</span>
             <span style="float: right; color: #8492a6; font-size: 13px">{{ item.ID }}</span>
           </el-option>
         </el-select>
       </el-form-item>
       <el-form-item :label="$t('__status')">
-        <el-select v-model="form.Status" value-key="value" :placeholder="$t('__plzChoice')">
-          <el-option v-for="item in ddlStatus" :key="item.ID" :label="item.Value" :value="item.ID">
+        <el-select v-model="form.Status" default-first-option filterable clearable :placeholder="$t('__plzChoice')">
+          <el-option v-for="item in ddlStatus" :key="item.ID" :label="item.ID+' '+item.Value" :value="item.ID">
             <span style="float: left">{{ item.Value }}</span>
             <span style="float: right; color: #8492a6; font-size: 13px">{{ item.ID }}</span>
           </el-option>

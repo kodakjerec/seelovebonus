@@ -22,20 +22,20 @@
           </el-date-picker>
         </el-col>
         <el-col :span="8">
-          <el-form-item :label="$t('__installmentScheduledAmount')">
-            {{formatterMoney(form.ScheduledAmount)}}
+          <el-form-item :label="$t('__received')+$t('__date')">
+            <el-date-picker
+              v-model="form.ReceivedDate"
+              type="date"
+              value-format="yyyy-MM-dd"
+              :placeholder="$t('__cantUse')"
+              disabled>
+            </el-date-picker>
           </el-form-item>
         </el-col>
       </el-form-item>
-      <el-form-item :label="$t('__received')+$t('__date')">
+      <el-form-item :label="$t('__installmentScheduledAmount')">
         <el-col :span="8">
-          <el-date-picker
-            v-model="form.ReceivedDate"
-            type="date"
-            value-format="yyyy-MM-dd"
-            :placeholder="$t('__cantUse')"
-            disabled>
-          </el-date-picker>
+          <el-input-number v-model="form.ScheduledAmount" :min="0" :disabled="disableForm.ScheduledAmount"></el-input-number>
         </el-col>
         <el-col :span="8">
           <el-form-item :label="$t('__paidAmount')">
@@ -45,8 +45,8 @@
       </el-form-item>
       <el-form-item :label="$t('__paymentMethod')" prop="PaymentMethod">
         <el-col :span="8">
-          <el-select v-model="form.PaymentMethod" value-key="value" :placeholder="$t('__plzChoice')" :disabled="disableForm.PaymentMethod">
-            <el-option v-for="item in ddlPaymentMethod" :key="item.ID" :label="item.Value" :value="item.ID">
+          <el-select v-model="form.PaymentMethod" default-first-option filterable clearable :placeholder="$t('__plzChoice')" :disabled="disableForm.PaymentMethod">
+            <el-option v-for="item in ddlPaymentMethod" :key="item.ID" :label="item.ID+' '+item.Value" :value="item.ID">
               <span style="float: left">{{ item.Value }}</span>
               <span style="float: right; color: #8492a6; font-size: 13px">{{ item.ID }}</span>
             </el-option>
@@ -54,8 +54,8 @@
         </el-col>
         <el-col :span="8">
           <el-form-item :label="$t('__installmentPaymentFrequency')">
-            <el-select v-model="form.PaymentFrequency" value-key="value" :placeholder="$t('__plzChoice')" :disabled="disableForm.PaymentFrequency">
-              <el-option v-for="item in ddlPaymentFrequency" :key="item.ID" :label="item.Value" :value="item.ID">
+            <el-select v-model="form.PaymentFrequency" default-first-option filterable clearable :placeholder="$t('__plzChoice')" :disabled="disableForm.PaymentFrequency">
+              <el-option v-for="item in ddlPaymentFrequency" :key="item.ID" :label="item.ID+' '+item.Value" :value="item.ID">
                 <span style="float: left">{{ item.Value }}</span>
                 <span style="float: right; color: #8492a6; font-size: 13px">{{ item.ID }}</span>
               </el-option>
@@ -64,7 +64,7 @@
         </el-col>
       </el-form-item>
       <el-form-item :label="$t('__memo')">
-          <el-input v-model="form.Memo" maxlength="100" show-word-limit></el-input>
+          <el-input v-model="form.Memo" maxlength="100" show-word-limit :disabled="disableForm.ScheduledDate"></el-input>
       </el-form-item>
     </el-form>
     <div slot="footer">
@@ -108,7 +108,9 @@ export default {
       disableForm: {
         InstallmentName: false,
         ScheduledAmount: false,
-        PaymentFrequency: false
+        PaymentFrequency: false,
+        PaymentMethod: false,
+        ScheduledDate: false
       },
       myTitle: '',
       // 以下為下拉式選單專用
@@ -128,8 +130,19 @@ export default {
       case 'edit':
         this.myTitle = this.$t('__edit') + this.$t('__installment')
         this.disableForm.InstallmentName = true
-        this.disableForm.ScheduledAmount = true
         this.disableForm.PaymentFrequency = true
+        // 使用者禁止存檔時
+        if (this.buttonsShowUser.save === 0) {
+          this.disableForm.ScheduledAmount = true
+          this.disableForm.PaymentMethod = true
+          this.disableForm.ScheduledDate = true
+        }
+        // 已經有付款時
+        if (this.form.PaidAmount !== 0) {
+          this.disableForm.ScheduledAmount = true
+          this.disableForm.PaymentMethod = true
+          this.disableForm.ScheduledDate = true
+        }
         break
     }
     this.preLoading()

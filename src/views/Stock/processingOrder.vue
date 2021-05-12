@@ -6,7 +6,7 @@
       <search-button @search="search"></search-button>
     </el-button-group>
     <el-table
-      :data="transportOrderShow"
+      :data="processingOrderShow"
       stripe
       border
       @row-click="handleClick"
@@ -53,20 +53,23 @@
       </el-table-column>
       <el-table-column
         prop="ID"
-        :label="$t('__transportOrder')+$t('__id')">
+        :label="$t('__processingOrder')+$t('__id')">
       </el-table-column>
       <el-table-column
         prop="OrderDate"
-        :label="$t('__date')"
+        :label="$t('__processing')+$t('__date')"
         :formatter="formatterDate">
       </el-table-column>
       <el-table-column
-        prop="commentDetailList"
-        :label="$t('__shipping')+$t('__product')">
+        :label="$t('__processing')+$t('__product')">
         <template slot-scope="scope">
-          <span v-html="formatterNewLineToBr(scope.row[scope.column.property])">
-          </span>
+          {{scope.row.ProductID+' '+scope.row.Name}}
         </template>
+      </el-table-column>
+      <el-table-column
+        prop="Set"
+        :label="$t('__set')"
+        width="60">
       </el-table-column>
       <el-table-column
         prop="Memo"
@@ -77,7 +80,7 @@
     v-if="dialogShow"
     :dialog-type="dialogType"
     :dialog-show="dialogShow"
-    :transportOrder="transportOrder"
+    :processingOrder="processingOrder"
     :buttonsShowUser="buttonsShowUser"
     @dialog-cancel="dialogCancel"
     @dialog-save="dialogSave"></new-form>
@@ -95,11 +98,11 @@
 <script>
 import searchButton from '@/components/searchButton'
 import signOffDialog from '@/views/Orders/components/signOff/signOffDialog'
-import newForm from './components/transportOrderNewForm'
-import { formatMoney, formatDate, newLineToBr } from '@/setup/format.js'
+import newForm from './components/processingOrderNewForm'
+import { formatDate } from '@/setup/format.js'
 
 export default {
-  name: 'TransportOrderShow',
+  name: 'ProcessingOrderShow',
   components: {
     searchButton,
     signOffDialog,
@@ -109,8 +112,8 @@ export default {
     return {
       dialogType: 'new',
       dialogShow: false,
-      transportOrderShow: [],
-      transportOrder: {},
+      processingOrderShow: [],
+      processingOrder: {},
       searchKeyWord: '',
       // 使用者能看到的權限
       buttonsShowUser: {
@@ -134,12 +137,6 @@ export default {
     formatterDate: function (row, column, cellValue, index) {
       return formatDate(cellValue)
     },
-    formatterMoney: function (row, column, cellValue, index) {
-      return formatMoney(cellValue)
-    },
-    formatterNewLineToBr: function (cellValue) {
-      return newLineToBr(cellValue)
-    },
     // 讀入系統清單
     preLoading: async function () {
       this.search('')
@@ -160,8 +157,8 @@ export default {
     },
     handleClick: async function (row, column, event) {
       // 取得可以用的選單
-      let responseRow = await this.$api.stock.getObject({ type: 'transportOrder', keyword: row.ID })
-      this.transportOrder = responseRow.data.result[0]
+      let responseRow = await this.$api.stock.getObject({ type: 'processingOrder', keyword: row.ID })
+      this.processingOrder = responseRow.data.result[0]
 
       // 簽核管理
       if (row.StatusSignOff === 0) {
@@ -175,11 +172,11 @@ export default {
 
       // 進入修改
       this.$router.push({
-        name: 'TransportOrderNewForm',
+        name: 'ProcessingOrderNewForm',
         params: {
           dialogType: 'edit',
-          transportOrder: this.transportOrder,
-          parent: 'TransportOrder',
+          processingOrder: this.processingOrder,
+          parent: 'ProcessingOrder',
           buttonsShowUser: this.buttonsShowUser
         }
       })
@@ -190,11 +187,11 @@ export default {
       this.buttonsShowUser.save = this.buttonsShowUser.new
 
       this.$router.push({
-        name: 'TransportOrderNewForm',
+        name: 'ProcessingOrderNewForm',
         params: {
           dialogType: 'new',
-          transportOrder: this.transportOrder,
-          parent: 'TransportOrder',
+          processingOrder: this.processingOrder,
+          parent: 'ProcessingOrder',
           buttonsShowUser: this.buttonsShowUser
         }
       })
@@ -211,15 +208,15 @@ export default {
       if (value !== undefined) {
         this.searchKeyWord = value
       }
-      let response2 = await this.$api.stock.transportOrderShow({ keyword: this.searchKeyWord })
-      this.transportOrderShow = response2.data.result
+      let response2 = await this.$api.stock.processingOrderShow({ keyword: this.searchKeyWord })
+      this.processingOrderShow = response2.data.result
     },
     // 簽核相關
     // 送簽
     signOffAgree: function (index, row) {
       this.signOffList.push({
         OrderID: row.ID,
-        Type: 'transport',
+        Type: 'processing',
         Prefix: row.Prefix,
         Status: row.Status
       })
@@ -230,7 +227,7 @@ export default {
     signOffDeny: function (index, row) {
       this.signOffList.push({
         OrderID: row.ID,
-        Type: 'transport',
+        Type: 'processing',
         Prefix: row.Prefix,
         Status: row.Status
       })
@@ -239,12 +236,12 @@ export default {
     },
     // 批次送簽
     batchSignOffAgree: function () {
-      this.transportOrderShow
+      this.processingOrderShow
         .filter(row => { return row.StatusSignOff === 1 })
         .forEach(row => {
           this.signOffList.push({
             OrderID: row.ID,
-            Type: 'transport',
+            Type: 'processing',
             Prefix: row.Prefix,
             Status: row.Status
           })
@@ -254,12 +251,12 @@ export default {
     },
     // 批次否決
     batchSignOffDeny: function () {
-      this.transportOrderShow
+      this.processingOrderShow
         .filter(row => { return row.StatusSignOff === 1 })
         .forEach(row => {
           this.signOffList.push({
             OrderID: row.ID,
-            Type: 'transport',
+            Type: 'processing',
             Prefix: row.Prefix,
             Status: row.Status
           })
@@ -283,8 +280,8 @@ export default {
       this.$router.push({
         name: 'OrderSignOffManual',
         params: {
-          orderType: 'transport',
-          parent: 'TransportOrder'
+          orderType: 'processing',
+          parent: 'ProcessingOrder'
         }
       })
     },
@@ -294,7 +291,7 @@ export default {
         name: 'OrderSignOffLog',
         params: {
           ID: row.ID,
-          parent: 'TransportOrder'
+          parent: 'ProcessingOrder'
         }
       })
     }

@@ -2,8 +2,8 @@
   <el-dialog :title="myTitle" :visible="dialogShow" center width="80vw" top="5vh" @close="cancel">
     <el-form ref="form" :model="form" :rules="rules" label-width="10vw" label-position="right">
       <el-form-item :label="$t('__paymentMethod')" prop="PaymentMethod">
-        <el-select v-model="form.PaymentMethod" value-key="value" :placeholder="$t('__plzChoice')" :disabled="disableForm.PaymentMethod">
-          <el-option v-for="item in ddlPaymentMethod" :key="item.ID" :label="item.Value" :value="item.ID">
+        <el-select v-model="form.PaymentMethod" default-first-option filterable clearable :placeholder="$t('__plzChoice')" :disabled="disableForm.PaymentMethod">
+          <el-option v-for="item in ddlPaymentMethod" :key="item.ID" :label="item.ID+' '+item.Value" :value="item.ID">
             <span style="float: left">{{ item.Value }}</span>
             <span style="float: right; color: #8492a6; font-size: 13px">{{ item.ID }}</span>
           </el-option>
@@ -16,13 +16,11 @@
       <method5 ref="method5" v-if="form.PaymentMethod === '5'" :form="form" :disableForm="disableForm" :ddlBankID="ddlBankID"></method5>
       <el-form-item :label="$t('__invoice')+$t('__name')">
         <el-select
-          allow-create
-          default-first-option
-          filterable
-          v-model="form.InvoiceName" value-key="value"
+          default-first-option filterable clearable
+          v-model="form.InvoiceName"
           :placeholder="$t('__plzChoice')"
           :disabled="disableForm.ReceivedID">
-          <el-option v-for="item in ddlInvoiceName" :key="item.ID" :label="item.Value" :value="item.ID">
+          <el-option v-for="item in ddlInvoiceName" :key="item.ID" :label="item.ID+' '+item.Value" :value="item.ID">
             <span style="float: left">{{ item.Value }}</span>
             <span style="float: right; color: #8492a6; font-size: 13px">{{ item.ID }}</span>
           </el-option>
@@ -30,12 +28,12 @@
         {{$t('__anzaOperateWarning')}}
       </el-form-item>
       <el-form-item :label="$t('__memo')">
-          <el-input v-model="form.Memo" maxlength="200" show-word-limit></el-input>
+          <el-input v-model="form.Memo" maxlength="200" show-word-limit :disabled="disableForm.ReceivedDate"></el-input>
       </el-form-item>
       <el-form-item :label="$t('__received')+$t('__operator')" prop="ReceivedID">
         <el-col :span="8">
-        <el-select v-model="form.ReceivedID" value-key="value" :placeholder="$t('__plzChoice')" :disabled="disableForm.ReceivedID">
-          <el-option v-for="item in ddlCreateID" :key="item.ID" :label="item.Value" :value="item.ID">
+        <el-select v-model="form.ReceivedID" default-first-option filterable clearable :placeholder="$t('__plzChoice')" :disabled="disableForm.ReceivedID">
+          <el-option v-for="item in ddlCreateID" :key="item.ID" :label="item.ID+' '+item.Value" :value="item.ID">
             <span style="float: left">{{ item.Value }}</span>
             <span style="float: right; color: #8492a6; font-size: 13px">{{ item.ID }}</span>
           </el-option>
@@ -210,22 +208,14 @@ export default {
         this.disableForm.ReceivedID = true
         this.disableForm.ChequeDate = true
         this.disableForm.selectCollectionRecords = true
-        if (this.form.Status === '0') {
-          this.buttonsShow = {
-            new: 0,
-            edit: 0,
-            save: 0,
-            delete: 0,
-            search: 0
-          }
-        } else {
-          this.buttonsShow = {
-            new: 1,
-            edit: 1,
-            save: 1,
-            delete: 1,
-            search: 1
-          }
+        this.buttonsShow.delete = 1
+        // 使用者禁止存檔時
+        if (this.buttonsShowUser.save === 0) {
+          this.disableForm.ReceivedDate = true
+        }
+        // 已經被綁定發票號碼
+        if (this.form.InvoiceID !== '') {
+          this.disableForm.ReceivedDate = true
         }
         break
     }
