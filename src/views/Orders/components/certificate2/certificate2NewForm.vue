@@ -16,7 +16,7 @@
           <el-input-number v-model="form.PrintCount" :disabled="disableForm.PrintCount"></el-input-number>
       </el-form-item>
       <el-form-item :label="$t('__status')">
-        <el-select v-model="form.Status" default-first-option filterable clearable :placeholder="$t('__plzChoice')" :disabled="disableForm.Status">
+        <el-select v-model="form.Status" default-first-option filterable clearable :placeholder="$t('__plzChoice')" :disabled="!buttonsShowUser.edit">
           <el-option v-for="item in ddlStatus" :key="item.ID" :label="item.ID+' '+item.Value" :value="item.ID">
             <span style="float: left">{{ item.Value }}</span>
             <span style="float: right; color: #8492a6; font-size: 13px">{{ item.ID }}</span>
@@ -25,6 +25,7 @@
       </el-form-item>
       <el-form-item :label="$t('__issuanceDate')">
           <el-date-picker
+            :disabled="!buttonsShowUser.edit"
             v-model="form.IssuanceDate"
             type="date"
             value-format="yyyy-MM-dd">

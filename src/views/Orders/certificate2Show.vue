@@ -13,21 +13,33 @@
       @row-click="handleClick"
       :row-class-name="tableRowClassName"
       style="width: 100%">
-      <template  v-for="column in columns">
         <el-table-column
-          v-if="column.formatter === 'date'"
-          :key="column.key"
-          :prop="column.key"
-          :label="column.header"
+          prop="OrderID"
+          :label="$t('__orderID')">
+        </el-table-column>
+        <el-table-column
+          prop="Certificate2"
+          :label="$t('__certificate2')">
+        </el-table-column>
+        <el-table-column
+          :label="$t('__chanyun') + this.$t('__landCertificate')">
+          <template slot-scope="scope">
+            {{scope.row.chanyunOrderID}}<br/>{{scope.row.chanyunCer}}
+          </template>
+        </el-table-column>
+        <el-table-column
+          prop="PrintCount"
+          :label="$t('__printCount')">
+        </el-table-column>
+        <el-table-column
+          prop="StatusName"
+          :label="$t('__status')">
+        </el-table-column>
+        <el-table-column
+          prop="IssuanceDate"
+          :label="$t('__issuanceDate')"
           :formatter="formatterDate">
         </el-table-column>
-        <el-table-column
-          v-else
-          :key="column.key"
-          :prop="column.key"
-          :label="column.header">
-        </el-table-column>
-      </template>
     </el-table>
     <el-pagination
       background

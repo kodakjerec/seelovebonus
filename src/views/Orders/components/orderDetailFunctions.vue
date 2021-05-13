@@ -29,6 +29,19 @@
       </el-table-column>
       <el-table-column
         prop="Value2"
+        :label="$t('__chanyunOrderID')">
+        <template slot-scope="scope">
+          <el-input
+            v-if="buttonsShowUser.new"
+            v-model="scope.row[scope.column.property]" :placeholder="$t('__pleaseInput')">
+          </el-input>
+          <div v-else>
+            {{scope.row[scope.column.property]}}
+          </div>
+        </template>
+      </el-table-column>
+      <el-table-column
+        prop="Value3"
         :label="$t('__chanyun')+$t('__landCertificate')">
         <template slot-scope="scope">
           <el-input
@@ -61,6 +74,8 @@ export default {
         Seq: 0,
         Value1: '',
         Value2: '',
+        Value3: '',
+        Value4: '',
         // 前端顯示用, 不會紀錄進資料庫
         Status: ''
       },
@@ -178,7 +193,7 @@ export default {
         isSuccess = true
 
         this.subList.forEach(row => {
-          if (row.Value1 === '' || row.Value2 === '') {
+          if (row.Value1 === '' || row.Value2 === '' || row.Value3 === '') {
             this.$message({
               message: this.$t('__pleaseInput') + ' ' + this.$t('__project') + this.$t('__extend') + this.$t('__function'),
               type: 'error'
