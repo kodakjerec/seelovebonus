@@ -36,7 +36,6 @@
               </el-option>
             </el-option-group>
           </el-select>
-          <br/>{{scope.row.Name}}
         </div>
         <div v-else>
           {{scope.row[scope.column.property]}}<br/>{{scope.row.Name}}
@@ -157,6 +156,7 @@
       <template slot-scope="scope">
         <order-detail-functions
           :ref="'orderDetailFunctions' + scope.row.Seq"
+          :buttonsShow="buttonsShow"
           :buttonsShowUser="buttonsShowUser"
           :orderDetail="scope.row"
           :productFunctionsList="productFunctionsList">
@@ -172,7 +172,7 @@
 
 <script>
 import { formatMoney } from '@/setup/format.js'
-import orderDetailFunctions from './orderDetailFunctions'
+import orderDetailFunctions from './detailFunctions/orderDetailFunctions'
 import openEditMode from '@/components/openEditMode'
 
 export default {
@@ -213,7 +213,8 @@ export default {
         Inventory: false,
         // 商品特殊功能顯示(不記錄進資料庫)
         showExpandFunctions: 0,
-        chglandCertificate: 0
+        chglandCertificate: 0,
+        transferCustomer: 0
       },
       subList: [],
       subListDeleted: [],
@@ -336,7 +337,8 @@ export default {
 
       // 檢查主表單
       this.subList.slice(0).forEach(row => {
-        if (row.chglandCertificate === 1) {
+        if (this.$refs['orderDetailFunctions' + row.Seq]) {
+          isSuccess = false
           isSuccess = this.$refs['orderDetailFunctions' + row.Seq].checkValidate()
         } else {
           isSuccess = true
@@ -381,22 +383,18 @@ export default {
           continue
         }
 
+        // 檢查額外功能存檔
+        if (this.$refs['orderDetailFunctions' + row.Seq]) {
+          isSuccess = this.$refs['orderDetailFunctions' + row.Seq].beforeSave()
+          if (!isSuccess) { return isSuccess }
+        }
+
         // 開始更新
         switch (row.Status) {
           case 'New':
-          // 檢查額外功能存檔
-            if (row.showExpandFunctions === 1) {
-              isSuccess = this.$refs['orderDetailFunctions' + row.Seq].beforeSave()
-              if (!isSuccess) { return isSuccess }
-            }
             isSuccess = await this.save('new', row)
             break
           case 'Modified':
-            // 檢查額外功能存檔
-            if (row.showExpandFunctions === 1) {
-              isSuccess = this.$refs['orderDetailFunctions' + row.Seq].beforeSave()
-              if (!isSuccess) { return isSuccess }
-            }
             isSuccess = await this.save('edit', row)
             break
           case 'Deleted':

@@ -2,30 +2,49 @@
   <el-dialog :title="myTitle" :visible="dialogShow" center width="80vw" top="5vh" @close="cancel">
     <el-form ref="form" :model="form" :rules="rules" label-width="10vw" label-position="right">
       <el-form-item :label="$t('__orderID')">
+        <el-col :span="4">
           <el-input v-model="form.OrderID" :disabled="disableForm.OrderID"></el-input>
-      </el-form-item>
-      <el-form-item :label="$t('__certificate1Prefix')">
-        <el-select v-model="form.Prefix" default-first-option filterable clearable :placeholder="$t('__plzChoice')" :disabled="disableForm.Prefix">
-          <el-option v-for="item in ddlPrefix" :key="item.ID" :label="item.ID+' '+item.Value" :value="item.ID">
-            <span style="float: left">{{ item.Value }}</span>
-            <span style="float: right; color: #8492a6; font-size: 13px">{{ item.ID }}</span>
-          </el-option>
-        </el-select>
-        <span>{{form.Prefix}}</span>
+        </el-col>
+        <el-col :span="8">
+          <el-form-item :label="$t('__ref')+$t('__function')">
+            <el-input v-model="form.refTypeName" disabled></el-input>
+          </el-form-item>
+        </el-col>
+        <el-col :span="8">
+          <el-form-item :label="$t('__ref')+$t('__orderID')">
+            <el-input v-model="form.refOrderID" disabled></el-input>
+          </el-form-item>
+        </el-col>
       </el-form-item>
       <el-form-item :label="$t('__certificate1')">
-        <el-input v-model="form.Certificate1" :placeholder="$t('__afterSaveWillShow')" :disabled="disableForm.Certificate1"></el-input>
-      </el-form-item>
-      <el-form-item :label="$t('__printCount')">
-          <el-input-number v-model="form.PrintCount" :disabled="disableForm.PrintCount"></el-input-number>
+        <el-col :span="4">
+          <el-input v-model="form.Certificate1" :placeholder="$t('__afterSaveWillShow')" :disabled="disableForm.Certificate1"></el-input>
+        </el-col>
+        <el-col :span="12">
+          <el-form-item :label="$t('__certificate1Prefix')">
+            <el-select v-model="form.Prefix" default-first-option filterable clearable :placeholder="$t('__plzChoice')" :disabled="disableForm.Prefix">
+              <el-option v-for="item in ddlPrefix" :key="item.ID" :label="item.ID+' '+item.Value" :value="item.ID">
+                <span style="float: left">{{ item.Value }}</span>
+                <span style="float: right; color: #8492a6; font-size: 13px">{{ item.ID }}</span>
+              </el-option>
+            </el-select>
+          </el-form-item>
+        </el-col>
       </el-form-item>
       <el-form-item :label="$t('__status')">
-        <el-select v-model="form.Status" default-first-option filterable clearable :placeholder="$t('__plzChoice')" :disabled="!buttonsShowUser.edit">
-          <el-option v-for="item in ddlStatus" :key="item.ID" :label="item.ID+' '+item.Value" :value="item.ID">
-            <span style="float: left">{{ item.Value }}</span>
-            <span style="float: right; color: #8492a6; font-size: 13px">{{ item.ID }}</span>
-          </el-option>
-        </el-select>
+        <el-col :span="4">
+          <el-select v-model="form.Status" default-first-option filterable clearable :placeholder="$t('__plzChoice')" :disabled="!buttonsShowUser.edit">
+            <el-option v-for="item in ddlStatus" :key="item.ID" :label="item.ID+' '+item.Value" :value="item.ID">
+              <span style="float: left">{{ item.Value }}</span>
+              <span style="float: right; color: #8492a6; font-size: 13px">{{ item.ID }}</span>
+            </el-option>
+          </el-select>
+        </el-col>
+        <el-col :span="8">
+          <el-form-item :label="$t('__printCount')">
+              <el-input-number v-model="form.PrintCount" :disabled="disableForm.PrintCount"></el-input-number>
+          </el-form-item>
+        </el-col>
       </el-form-item>
       <el-form-item :label="$t('__issuanceDate')">
           <el-date-picker
@@ -155,6 +174,12 @@ export default {
         }
         break
     }
+
+    // 已經被其他單據交換過, 禁止操作
+    if (this.form.refType !== '') {
+      this.buttonsShow.delete = 0
+    }
+
     this.preLoading()
   },
   methods: {

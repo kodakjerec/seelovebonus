@@ -150,16 +150,16 @@
       <!-- 供奉憑證 -->
       <certificate1
         id="certificate1"
-        :buttonsShow="buttonsShow"
         :buttonsShowUser="buttonsShowUser"
         :fromOrderID="form.ID"
+        :fromOrderStatus="form.Status"
         :isShow="projectFunctions.newCertificate1.Available"></certificate1>
       <!-- 換狀證明 -->
       <certificate2
         id="certificate2"
-        :buttonsShow="buttonsShow"
         :buttonsShowUser="buttonsShowUser"
         :fromOrderID="form.ID"
+        :fromOrderStatus="form.Status"
         :isShow="projectFunctions.newCertificate2.Available"></certificate2>
       <!-- 分期付款 -->
       <installment

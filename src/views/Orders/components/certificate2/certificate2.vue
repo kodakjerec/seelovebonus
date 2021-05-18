@@ -21,8 +21,10 @@
             :label="$t('__certificate2')">
           </el-table-column>
           <el-table-column
-            prop="chanyunCer"
-            :label="$t('__chanyun') + $t('__landCertificate')">
+            :label="$t('__customer')">
+            <template slot-scope="scope">
+              {{scope.row.CustomerID+' '+scope.row.CustomerName}}
+            </template>
           </el-table-column>
           <el-table-column
             prop="PrintCount"
@@ -36,6 +38,16 @@
             prop="IssuanceDate"
             :label="$t('__issuanceDate')"
             :formatter="formatterDate">
+          </el-table-column>
+          <el-table-column
+            :label="$t('__ref')+$t('__function')">
+            <template slot-scope="scope">
+              {{scope.row.refTypeName}}<br/>{{scope.row.chanyunOrderID+' '+scope.row.chanyunCer}}
+            </template>
+          </el-table-column>
+          <el-table-column
+            prop="refOrderID"
+            :label="$t('__ref')+$t('__orderID')">
           </el-table-column>
         </el-table>
       </el-collapse-item>
@@ -62,9 +74,9 @@ export default {
     newForm
   },
   props: {
-    buttonsShow: { type: Object },
     buttonsShowUser: { type: Object },
     fromOrderID: { type: String },
+    fromOrderStatus: { type: String },
     isShow: { type: Number }
   },
   data () {
@@ -73,7 +85,15 @@ export default {
       dialogShow: false,
       certificate2Show: [],
       certificate2: {},
-      activeName: ''
+      activeName: '',
+      // 系統目前狀態權限
+      buttonsShow: {
+        new: 1,
+        edit: 0,
+        save: 1,
+        delete: 0,
+        search: 1
+      }
     }
   },
   watch: {
@@ -102,6 +122,28 @@ export default {
       this.certificate2Show = responseRecords.data.result
       if (this.certificate2Show && this.certificate2Show.length > 0) {
         this.activeName = '1'
+      }
+
+      // 系統簽核過程權限
+      switch (this.fromOrderStatus) {
+        case '1':
+          this.buttonsShow = {
+            new: 1,
+            edit: 1,
+            save: 1,
+            delete: 1,
+            search: 1
+          }
+          break
+        default:
+          this.buttonsShow = {
+            new: 0,
+            edit: 0,
+            save: 0,
+            delete: 0,
+            search: 0
+          }
+          break
       }
     },
     handleClick: async function (row, column, event) {
