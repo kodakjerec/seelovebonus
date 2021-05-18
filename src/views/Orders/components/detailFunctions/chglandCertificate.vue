@@ -10,7 +10,7 @@
       :label="$t('__certificate2')">
       <template slot-scope="scope">
         <el-select
-          v-if="buttonsShowUser.new"
+          v-if="buttonsShowUser.new && buttonsShow.new"
           default-first-option filterable clearable
           v-model="scope.row[scope.column.property]"
           :placeholder="$t('__plzChoice')"
@@ -31,7 +31,7 @@
       :label="$t('__chanyunOrderID')">
       <template slot-scope="scope">
         <el-input
-          v-if="buttonsShowUser.new"
+          v-if="buttonsShowUser.new && buttonsShow.new"
           v-model="scope.row[scope.column.property]" :placeholder="$t('__pleaseInput')"
           @change="value=>{rowChange(row)}">
         </el-input>
@@ -45,7 +45,7 @@
       :label="$t('__chanyun')+$t('__landCertificate')">
       <template slot-scope="scope">
         <el-input
-          v-if="buttonsShowUser.new"
+          v-if="buttonsShowUser.new && buttonsShow.new"
           v-model="scope.row[scope.column.property]" :placeholder="$t('__pleaseInput')"
           @change="value=>{rowChange(row)}">
         </el-input>
@@ -62,6 +62,7 @@ export default {
   name: 'chglandCertificate',
   props: {
     subList: { type: Array },
+    buttonsShow: { type: Object },
     buttonsShowUser: { type: Object }
   },
   data () {

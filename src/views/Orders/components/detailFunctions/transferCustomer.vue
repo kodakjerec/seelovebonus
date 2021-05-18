@@ -9,7 +9,7 @@
       :label="$t('__certificate1')">
       <template slot-scope="scope">
         <el-select
-          v-if="buttonsShowUser.new"
+          v-if="buttonsShowUser.new && buttonsShow.new"
           default-first-option filterable clearable
           v-model="scope.row[scope.column.property]"
           :placeholder="$t('__plzChoice')"
@@ -29,7 +29,7 @@
       :label="$t('__certificate2')">
       <template slot-scope="scope">
         <el-select
-          v-if="buttonsShowUser.new"
+          v-if="buttonsShowUser.new && buttonsShow.new"
           default-first-option filterable clearable
           v-model="scope.row[scope.column.property]"
           :placeholder="$t('__plzChoice')"
@@ -49,7 +49,7 @@
       :label="$t('__new')+$t('__customer')">
       <template slot-scope="scope">
         <el-select
-          v-if="buttonsShowUser.new"
+          v-if="buttonsShowUser.new && buttonsShow.new"
           v-model="scope.row[scope.column.property]"
           remote
           default-first-option filterable clearable
@@ -74,6 +74,7 @@ export default {
   name: 'transferCustomer',
   props: {
     subList: { type: Array },
+    buttonsShow: { type: Object },
     buttonsShowUser: { type: Object }
   },
   data () {

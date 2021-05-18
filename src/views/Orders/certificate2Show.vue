@@ -38,14 +38,14 @@
           :formatter="formatterDate">
         </el-table-column>
         <el-table-column
-          :label="$t('__edit')+$t('__function')">
+          :label="$t('__ref')+$t('__function')">
           <template slot-scope="scope">
             {{scope.row.refTypeName}}<br/>{{scope.row.chanyunOrderID+' '+scope.row.chanyunCer}}
           </template>
         </el-table-column>
         <el-table-column
           prop="refOrderID"
-          :label="$t('__edit')+$t('__orderID')">
+          :label="$t('__ref')+$t('__orderID')">
         </el-table-column>
     </el-table>
     <el-pagination

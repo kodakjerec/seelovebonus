@@ -156,6 +156,7 @@
       <template slot-scope="scope">
         <order-detail-functions
           :ref="'orderDetailFunctions' + scope.row.Seq"
+          :buttonsShow="buttonsShow"
           :buttonsShowUser="buttonsShowUser"
           :orderDetail="scope.row"
           :productFunctionsList="productFunctionsList">

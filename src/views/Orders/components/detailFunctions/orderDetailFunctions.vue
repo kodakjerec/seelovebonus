@@ -5,12 +5,14 @@
       ref="chglandCertificate"
       v-if="orderDetail.chglandCertificate === 1"
       :subList="subList"
+      :buttonsShow="buttonsShow"
       :buttonsShowUser="buttonsShowUser"></part1>
     <!-- 換狀證明過戶 -->
     <part2
       ref="transferCustomer"
       v-if="orderDetail.transferCustomer === 1"
       :subList="subList"
+      :buttonsShow="buttonsShow"
       :buttonsShowUser="buttonsShowUser"></part2>
   </div>
 </template>
@@ -26,6 +28,7 @@ export default {
   },
   props: {
     orderDetail: { type: Object },
+    buttonsShow: { type: Object },
     buttonsShowUser: { type: Object },
     productFunctionsList: { type: Array }
   },
