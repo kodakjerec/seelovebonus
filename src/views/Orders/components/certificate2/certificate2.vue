@@ -21,8 +21,10 @@
             :label="$t('__certificate2')">
           </el-table-column>
           <el-table-column
-            prop="chanyunCer"
-            :label="$t('__chanyun') + $t('__landCertificate')">
+            :label="$t('__customer')">
+            <template slot-scope="scope">
+              {{scope.row.CustomerID+' '+scope.row.CustomerName}}
+            </template>
           </el-table-column>
           <el-table-column
             prop="PrintCount"
@@ -36,6 +38,16 @@
             prop="IssuanceDate"
             :label="$t('__issuanceDate')"
             :formatter="formatterDate">
+          </el-table-column>
+          <el-table-column
+            :label="$t('__edit')+$t('__function')">
+            <template slot-scope="scope">
+              {{scope.row.refTypeName}}<br/>{{scope.row.chanyunOrderID+' '+scope.row.chanyunCer}}
+            </template>
+          </el-table-column>
+          <el-table-column
+            prop="refOrderID"
+            :label="$t('__edit')+$t('__orderID')">
           </el-table-column>
         </el-table>
       </el-collapse-item>

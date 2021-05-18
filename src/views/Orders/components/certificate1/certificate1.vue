@@ -21,6 +21,12 @@
             :label="$t('__certificate1')">
           </el-table-column>
           <el-table-column
+            :label="$t('__customer')">
+            <template slot-scope="scope">
+              {{scope.row.CustomerID+' '+scope.row.CustomerName}}
+            </template>
+          </el-table-column>
+          <el-table-column
             prop="PrintCount"
             :label="$t('__printCount')">
           </el-table-column>
@@ -32,6 +38,14 @@
             prop="IssuanceDate"
             :label="$t('__issuanceDate')"
             :formatter="formatterDate">
+          </el-table-column>
+          <el-table-column
+            prop="refTypeName"
+            :label="$t('__edit')+$t('__function')">
+          </el-table-column>
+          <el-table-column
+            prop="refOrderID"
+            :label="$t('__edit')+$t('__orderID')">
           </el-table-column>
         </el-table>
       </el-collapse-item>
