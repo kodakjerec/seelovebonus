@@ -61,13 +61,6 @@
           <el-input v-model="form.Memo" type="textarea" rows="2" maxlength="100" show-word-limit
             :disabled="disableForm.OrderDate"></el-input>
       </el-form-item>
-      <!-- 專案特殊功能 -->
-      <order-functions
-        ref="orderFunctions"
-        :dialogType="dialogType"
-        :fromOrderID="form.ID"
-        :buttonsShowUser="buttonsShowUser"
-        :projectFunctions="projectFunctions"></order-functions>
       <!-- 選擇專案 -->
       <el-table
         :data="projectHead"
@@ -157,16 +150,16 @@
       <!-- 供奉憑證 -->
       <certificate1
         id="certificate1"
-        :buttonsShow="buttonsShow"
         :buttonsShowUser="buttonsShowUser"
         :fromOrderID="form.ID"
+        :fromOrderStatus="form.Status"
         :isShow="projectFunctions.newCertificate1.Available"></certificate1>
       <!-- 換狀證明 -->
       <certificate2
         id="certificate2"
-        :buttonsShow="buttonsShow"
         :buttonsShowUser="buttonsShowUser"
         :fromOrderID="form.ID"
+        :fromOrderStatus="form.Status"
         :isShow="projectFunctions.newCertificate2.Available"></certificate2>
       <!-- 分期付款 -->
       <installment
@@ -258,7 +251,6 @@ import orderStampArea from './orderStampArea'
 import anzaOrderList from './anza/anzaOrderList'
 import certificate1 from './certificate1/certificate1'
 import certificate2 from './certificate2/certificate2'
-import orderFunctions from './orderFunctions'
 // 其他
 import { formatMoney, formatDate } from '@/setup/format.js'
 import { messageBoxYesNo } from '@/services/utils'
@@ -282,8 +274,7 @@ export default {
     // 訂單變動內容
     certificate1,
     certificate2,
-    anzaOrderList,
-    orderFunctions
+    anzaOrderList
   },
   props: {
     dialogType: { type: String, default: 'new' },
@@ -565,10 +556,6 @@ export default {
             isSuccess = await this.$refs['certificate2OrderNew'].checkValidate()
             if (!isSuccess) { return }
           }
-          if (this.projectFunctions) {
-            isSuccess = await this.$refs['orderFunctions'].checkValidate()
-            if (!isSuccess) { return }
-          }
           if (this.projectFunctions.newAnzaOrder.Available) {
             isSuccess = await this.$refs['anzaOrderNew'].checkValidate()
             if (!isSuccess) { return }
@@ -630,12 +617,6 @@ export default {
               isSuccess = await this.$refs['certificate2OrderNew'].beforeSave() // 新增訂單才會出現
             }
           }
-          if (this.projectFunctions) {
-            if (isSuccess) {
-              saveStep = 'orderFunctions'
-              isSuccess = await this.$refs['orderFunctions'].beforeSave()
-            }
-          }
           if (this.projectFunctions.newAnzaOrder.Available) {
             if (isSuccess) {
               saveStep = 'anzaOrderNew'
@@ -669,13 +650,6 @@ export default {
           if (isSuccess) {
             saveStep = 'orderCustomer'
             isSuccess = await this.$refs['orderCustomer'].beforeSave()
-          }
-
-          if (isSuccess) {
-            if (this.projectFunctions) {
-              saveStep = 'orderFunctions'
-              isSuccess = await this.$refs['orderFunctions'].beforeSave()
-            }
           }
           if (isSuccess) {
             this.$alert(this.updateMessage, 200, {

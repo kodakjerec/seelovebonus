@@ -13,21 +13,40 @@
       @row-click="handleClick"
       :row-class-name="tableRowClassName"
       style="width: 100%">
-      <template  v-for="column in columns">
         <el-table-column
-          v-if="column.formatter === 'date'"
-          :key="column.key"
-          :prop="column.key"
-          :label="column.header"
+          prop="Certificate2"
+          :label="$t('__certificate2')"
+          width="150">
+        </el-table-column>
+        <el-table-column
+          prop="OrderID"
+          :label="$t('__orderID')"
+          width="120">
+        </el-table-column>
+        <el-table-column
+          prop="PrintCount"
+          :label="$t('__printCount')"
+          width="100">
+        </el-table-column>
+        <el-table-column
+          prop="StatusName"
+          :label="$t('__status')">
+        </el-table-column>
+        <el-table-column
+          prop="IssuanceDate"
+          :label="$t('__issuanceDate')"
           :formatter="formatterDate">
         </el-table-column>
         <el-table-column
-          v-else
-          :key="column.key"
-          :prop="column.key"
-          :label="column.header">
+          :label="$t('__ref')+$t('__function')">
+          <template slot-scope="scope">
+            {{scope.row.refTypeName}}<br/>{{scope.row.chanyunOrderID+' '+scope.row.chanyunCer}}
+          </template>
         </el-table-column>
-      </template>
+        <el-table-column
+          prop="refOrderID"
+          :label="$t('__ref')+$t('__orderID')">
+        </el-table-column>
     </el-table>
     <el-pagination
       background
@@ -64,39 +83,6 @@ export default {
   },
   data () {
     return {
-      columns: [
-        {
-          header: this.$t('__orderID'),
-          key: 'OrderID',
-          width: 10
-        },
-        {
-          header: this.$t('__certificate2'),
-          key: 'Certificate2',
-          width: 10
-        },
-        {
-          header: this.$t('__chanyun') + this.$t('__landCertificate'),
-          key: 'chanyunCer',
-          width: 10
-        },
-        {
-          header: this.$t('__printCount'),
-          key: 'PrintCount',
-          width: 10
-        },
-        {
-          header: this.$t('__status'),
-          key: 'StatusName',
-          width: 10
-        },
-        {
-          header: this.$t('__issuanceDate'),
-          key: 'IssuanceDate',
-          width: 30,
-          formatter: 'date'
-        }
-      ],
       dialogType: 'new',
       dialogShow: false,
       originData: [],
@@ -112,7 +98,7 @@ export default {
         pageSize: 20
       },
       sortable: {
-        orderBy: 'desc', // 排序方式
+        orderBy: 'asc', // 排序方式
         orderByValue: 'ID' // 預設排序欄位
       },
       // 使用者能看到的權限
@@ -234,11 +220,11 @@ export default {
       // table span
       this.tableSpanList = []
       this.results.forEach(row => {
-        let findObject = this.tableSpanList.find(row2 => { return row2.SpanID === row.OrderID })
+        let findObject = this.tableSpanList.find(row2 => { return row2.SpanID === row.Certificate2 })
         if (findObject === undefined) {
-          let firstIndex = this.results.findIndex(row3 => row3.OrderID === row.OrderID)
+          let firstIndex = this.results.findIndex(row3 => row3.Certificate2 === row.Certificate2)
           this.tableSpanList.push({
-            SpanID: row.OrderID,
+            SpanID: row.Certificate2,
             rowIndex: firstIndex,
             Qty: 1
           })
@@ -250,7 +236,7 @@ export default {
     // table span method
     objectSpanMethod: function (row, column, rowIndex, columnIndex) {
       if (row.columnIndex === 0) {
-        let findObject = this.tableSpanList.find(item => { return item.SpanID === row.row.OrderID })
+        let findObject = this.tableSpanList.find(item => { return item.SpanID === row.row.Certificate2 })
         // 沒找到
         if (findObject === undefined) {
           return [1, 0]

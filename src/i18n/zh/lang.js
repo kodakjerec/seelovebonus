@@ -47,6 +47,7 @@ export default {
   __lunarCalendar: '農曆',
   __convert: '換算',
   __gender: '性別',
+  __ref: '參考',
   __refKind: '業務代表種類',
   __referrer: '業務代表',
   __refEmployeeID: '業務輔導部',

@@ -218,9 +218,11 @@ export default {
         let isSuccess = false
         isSuccess = await this.$refs['projectDetail'].beforeSave()
         if (!isSuccess) { return }
-        isSuccess = false
-        isSuccess = await this.$refs['projectAnzaOrderDetail'].beforeSave()
-        if (!isSuccess) { return }
+        if (this.projectFunctionForAnza && this.projectFunctionForAnza.Available === 1) {
+          isSuccess = false
+          isSuccess = await this.$refs['projectAnzaOrderDetail'].beforeSave()
+          if (!isSuccess) { return }
+        }
       }
 
       // 強制轉為大寫

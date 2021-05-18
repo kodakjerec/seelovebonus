@@ -1,54 +1,34 @@
 <template>
-  <el-form>
-    <el-table
-      v-show="orderDetail.showExpandFunctions === 1"
-      :data="subList"
-      stripe
-      border
-      style="width: 100%">
-      <el-table-column
-        prop="Value1"
-        :label="$t('__certificate2')">
-        <template slot-scope="scope">
-          <el-select
-            v-if="buttonsShowUser.new"
-            default-first-option filterable clearable
-            v-model="scope.row[scope.column.property]"
-            :placeholder="$t('__plzChoice')"
-            @change="(value)=>{ddlCertificate2Change(value, scope.row)}"
-            style="display:block">
-            <el-option v-for="item in ddlCertificate2" :key="item.ID" :label="item.ID+' '+item.Value" :value="item.ID">
-              <span style="float: left">{{ item.Value }}</span>
-              <span style="float: right; color: #8492a6; font-size: 13px">{{ item.ID }}</span>
-            </el-option>
-          </el-select>
-          <div v-else>
-            {{scope.row[scope.column.property]}}
-          </div>
-        </template>
-      </el-table-column>
-      <el-table-column
-        prop="Value2"
-        :label="$t('__chanyun')+$t('__landCertificate')">
-        <template slot-scope="scope">
-          <el-input
-            v-if="buttonsShowUser.new"
-            v-model="scope.row[scope.column.property]" :placeholder="$t('__pleaseInput')">
-          </el-input>
-          <div v-else>
-            {{scope.row[scope.column.property]}}
-          </div>
-        </template>
-      </el-table-column>
-    </el-table>
-  </el-form>
+  <div v-if="orderDetail.showExpandFunctions === 1">
+    <!-- 換狀證明交換展雲權狀-->
+    <part1
+      ref="chglandCertificate"
+      v-if="orderDetail.chglandCertificate === 1"
+      :subList="subList"
+      :buttonsShow="buttonsShow"
+      :buttonsShowUser="buttonsShowUser"></part1>
+    <!-- 換狀證明過戶 -->
+    <part2
+      ref="transferCustomer"
+      v-if="orderDetail.transferCustomer === 1"
+      :subList="subList"
+      :buttonsShow="buttonsShow"
+      :buttonsShowUser="buttonsShowUser"></part2>
+  </div>
 </template>
 
 <script>
+import part1 from './chglandCertificate'
+import part2 from './transferCustomer'
 export default {
   name: 'orderDetailFunctions',
+  components: {
+    part1,
+    part2
+  },
   props: {
     orderDetail: { type: Object },
+    buttonsShow: { type: Object },
     buttonsShowUser: { type: Object },
     productFunctionsList: { type: Array }
   },
@@ -61,13 +41,13 @@ export default {
         Seq: 0,
         Value1: '',
         Value2: '',
+        Value3: '',
+        Value4: '',
         // 前端顯示用, 不會紀錄進資料庫
         Status: ''
       },
       subList: [],
-      subListDeleted: [],
-      // 下拉是選單
-      ddlCertificate2: []
+      subListDeleted: []
     }
   },
   watch: {
@@ -89,21 +69,11 @@ export default {
     }
   },
   mounted () {
-    this.preLoading()
     this.bringDetail()
   },
   methods: {
-    preLoading: async function () {
-      if (this.buttonsShowUser.new === 1) {
-        if (this.orderDetail.chglandCertificate === 1) {
-        // 取得所有原始資料
-          let response = await this.$api.orders.getDropdownList({ type: 'certificate2ChgLandCertificate' })
-          this.ddlCertificate2 = response.data.result
-        }
-      }
-    },
     // 帶入資料
-    bringDetail: async function () {
+    bringDetail: function () {
       this.subList = []
       this.subListDeleted = []
 
@@ -111,15 +81,13 @@ export default {
       this.productFunctionsList.forEach(row => {
         // 找出這筆商品所屬的所有特殊功能
         if (row.DetailSeq === this.orderDetail.Seq) {
-          if (row.Function === 'chglandCertificate') {
-            // 如果數量做過調整, 超出上限的證明編號要轉換為刪除
-            if ((this.subList.length + 1) <= this.orderDetail.Qty) {
-              row.Status = ''
-              this.subList.push(row)
-            } else {
-              row.Status = 'Deleted'
-              this.subListDeleted.push(row)
-            }
+          // 如果數量做過調整, 超出上限的證明編號要轉換為刪除
+          if ((this.subList.length + 1) <= this.orderDetail.Qty) {
+            row.Status = ''
+            this.subList.push(row)
+          } else {
+            row.Status = 'Deleted'
+            this.subListDeleted.push(row)
           }
         }
       })
@@ -128,7 +96,7 @@ export default {
         展雲換狀
       */
       // 新資料
-      if (this.orderDetail.chglandCertificate === 1) {
+      if (this.orderDetail.showExpandFunctions === 1) {
         let index = 0
         let loopMax = (this.orderDetail.Qty - this.subList.length)
         while (index < loopMax) {
@@ -142,8 +110,6 @@ export default {
             let highestSeq = Math.max(...amounts)
             nextSeq = highestSeq + 1
           }
-
-          newObj.Function = 'chglandCertificate'
           newObj.Seq = nextSeq
           newObj.Status = 'New'
 
@@ -151,21 +117,17 @@ export default {
           index++
         }
       }
-    },
-    // 檢察權狀是否重複
-    ddlCertificate2Change: function (value, row) {
-      let findDuplication = this.subList.find(item => { return item.Value1 === value && item.Seq !== row.Seq })
 
-      // 沒有重複
-      if (findDuplication !== undefined) {
-        this.$message({
-          message: value + ' ' + this.$t('__valueUsed'),
-          type: 'error'
+      // 帶入各組特殊資料
+      if (this.$refs['chglandCertificate']) {
+        this.subList.forEach(row => {
+          row.Function = 'chglandCertificate'
         })
-        row.Value1 = ''
-        if (row.Status === '') {
-          row.Status = 'Modified'
-        }
+      }
+      if (this.$refs['transferCustomer']) {
+        this.subList.forEach(row => {
+          row.Function = 'transferCustomer'
+        })
       }
     },
     checkValidate: function () {
@@ -174,19 +136,11 @@ export default {
       /*
         展雲換狀
       */
-      if (this.orderDetail.chglandCertificate === 1) {
-        isSuccess = true
-
-        this.subList.forEach(row => {
-          if (row.Value1 === '' || row.Value2 === '') {
-            this.$message({
-              message: this.$t('__pleaseInput') + ' ' + this.$t('__project') + this.$t('__extend') + this.$t('__function'),
-              type: 'error'
-            })
-            isSuccess = false
-            return isSuccess
-          }
-        })
+      if (this.$refs['chglandCertificate']) {
+        isSuccess = this.$refs['chglandCertificate'].checkValidate()
+      }
+      if (this.$refs['transferCustomer']) {
+        isSuccess = this.$refs['transferCustomer'].checkValidate()
       }
 
       return isSuccess
@@ -229,11 +183,6 @@ export default {
       let isSuccess = false
       switch (type) {
         case 'new':
-          let responseNew = await this.$api.orders.orderDetailFunctionsUpdate({ form: row })
-          if (responseNew.headers['code'] === '200') {
-            isSuccess = true
-          }
-          break
         case 'edit':
           let responseEdit = await this.$api.orders.orderDetailFunctionsUpdate({ form: row })
           if (responseEdit.headers['code'] === '200') {

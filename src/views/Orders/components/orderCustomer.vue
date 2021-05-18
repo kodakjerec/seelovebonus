@@ -170,6 +170,7 @@ export default {
     preLoading: async function () {
       let response = await this.$api.basic.getDropdownList({ type: 'customers' })
       this.ddlCustomerBefore = response.data.result
+      this.remoteMethod('')
 
       response = this.$api.local.getDropdownList({ type: 'District' })
       this.postData = response
