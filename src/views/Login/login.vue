@@ -1,50 +1,56 @@
 <template>
-  <div>
-    <el-image
-    class="imageBlock"
-    :src="require('@/assets/logo.png')"
-    :fit="'contain'"
-    :alt="'logo'"
-    ></el-image>
-    <el-card class="box-card">
-      <el-form ref="form" :model="form" :rules="rules" label-width="10vw" label-position="right">
-        <el-form-item :label="$t('__userId')" prop="UserID">
-          <el-input
-            label="ID"
-            v-model="form.UserID"
-            autocomplete></el-input>
-        </el-form-item>
-        <el-form-item :label="$t('__pwd')" prop="Password">
-          <el-input
-            label="pwd"
-            v-model="form.Password"
-            show-password
-            @keydown.native.enter="keyboardChange"></el-input>
-        </el-form-item>
-      </el-form>
-      <el-button class="submitButton" type="primary" @click.native="submit">{{$t('__login')}}</el-button>
-    </el-card>
-    <br/>
-    <!-- 語言 -->
-    <span>{{this.$t('__languageSetting')+'：'}}</span>
-    <el-select
-      v-model="language"
-      @change="changeLanguage">
-      <el-option v-for="item in languages" :key="item.ID" :label="item.ID+' '+item.Value" :value="item.ID">
-        <span style="float: left">{{ item.Value }}</span>
-        <span style="float: right; color: #8492a6; font-size: 13px">{{ item.ID }}</span>
-      </el-option>
-    </el-select>
-    <!-- 深色模式 -->
-    <div>
-      <span>{{$t('__darkMode')+'：'}}</span>
-      <el-switch v-model="darkMode" @change="darkModeChange"></el-switch>
-    </div>
-    <!-- 版本號 -->
-    <div>
-      <span>{{this.$t('__version')+'：'+$store.state.version}}</span>
-    </div>
-  </div>
+  <el-row>
+    <el-col :span="8">
+      <el-col>
+        <announcemnet/>
+      </el-col>
+    </el-col>
+    <el-col :span="16">
+      <el-card class="box-card">
+        <el-form ref="form" :model="form" :rules="rules" label-width="10vw" label-position="right">
+          <el-image
+          :src="require('@/assets/logo.png')"
+          :fit="'contain'"
+          :alt="'logo'"
+          ></el-image>
+          <el-form-item :label="$t('__userId')" prop="UserID">
+            <el-input
+              label="ID"
+              v-model="form.UserID"
+              autocomplete></el-input>
+          </el-form-item>
+          <el-form-item :label="$t('__pwd')" prop="Password">
+            <el-input
+              label="pwd"
+              v-model="form.Password"
+              show-password
+              @keydown.native.enter="keyboardChange"></el-input>
+          </el-form-item>
+        </el-form>
+        <el-button class="submitButton" type="primary" @click.native="submit">{{$t('__login')}}</el-button>
+      </el-card>
+      <br/>
+      <!-- 語言 -->
+      <span>{{this.$t('__languageSetting')+'：'}}</span>
+      <el-select
+        v-model="language"
+        @change="changeLanguage">
+        <el-option v-for="item in languages" :key="item.ID" :label="item.ID+' '+item.Value" :value="item.ID">
+          <span style="float: left">{{ item.Value }}</span>
+          <span style="float: right; color: #8492a6; font-size: 13px">{{ item.ID }}</span>
+        </el-option>
+      </el-select>
+      <!-- 深色模式 -->
+      <div>
+        <span>{{$t('__darkMode')+'：'}}</span>
+        <el-switch v-model="darkMode" @change="darkModeChange"></el-switch>
+      </div>
+      <!-- 版本號 -->
+      <div>
+        <span>{{this.$t('__version')+'：'+$store.state.version}}</span>
+      </div>
+    </el-col>
+  </el-row>
 </template>
 
 <script>
@@ -52,9 +58,13 @@ import router from '@/router'
 import i18n from '@/setup/setupLocale'
 import validate from '@/setup/validate.js'
 import { errorMessage } from '@/services/utils'
+import announcemnet from './components/announcement'
 
 export default {
   name: 'Login',
+  components: {
+    announcemnet
+  },
   data () {
     return {
       language: 'zh',
@@ -185,12 +195,9 @@ export default {
 }
 </script>
 <style lang="scss" scoped>
-.imageBlock{
-  width:60%
-}
 .box-card {
-  width: 80%;
-  margin-left: 10%;
+  width: 95%;
+  margin-left: 2.5%;
 
   .submitButton {
     width:100%
