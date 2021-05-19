@@ -38,6 +38,16 @@ export default {
       return postEncrypt('/login/version', rawData).then(data => {
         return data
       })
+    },
+    // others
+    getDropdownList: ({ type, keyword }) => {
+      if (!keyword) {
+        keyword = ''
+      }
+      let rawData = { type, keyword }
+      return postEncrypt('/login/getDropdownList', rawData).then(data => {
+        return data
+      })
     }
   }
 }

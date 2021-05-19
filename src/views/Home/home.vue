@@ -13,24 +13,17 @@
         </el-col>
       </template>
     </div>
-    <div>
-      <el-col>
-        <announcemnet/>
-      </el-col>
-    </div>
   </div>
 </template>
 
 <script>
 import { mapState } from 'vuex'
-import announcemnet from './components/announcement'
 import anzaAlarm from './components/anza/anzaAlarm'
 import stockAlarm from './components/stockAlarm'
 import installmentAlarm from './components/installmentAlarm'
 export default {
   name: 'home',
   components: {
-    announcemnet,
     anzaAlarm,
     stockAlarm,
     installmentAlarm
