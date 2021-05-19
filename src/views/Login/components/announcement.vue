@@ -36,7 +36,7 @@ export default {
       return formatDate(cellValue)
     },
     preLoading: async function () {
-      let responseRecords = await this.$api.settings.getDropdownList({ type: 'announcement' })
+      let responseRecords = await this.$api.login.getDropdownList({ type: 'announcement' })
       this.list = responseRecords.data.result
       if (this.list.length > 0) {
         // 替換\n => <br/>
