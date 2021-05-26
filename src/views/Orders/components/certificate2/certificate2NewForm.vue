@@ -22,18 +22,18 @@
         </el-col>
         <el-col :span="8">
           <el-form-item :label="$t('__customer')">
-            {{form.CustomerID+'_'+form.CustomerName}}
+            {{form.CustomerID+' '+form.CustomerName}}
           </el-form-item>
         </el-col>
         <el-col :span="8">
           <el-form-item :label="$t('__chanyun')+$t('__landCertificate')">
-            {{form.chanyunOrderID+'_'+form.chanyunCer}}
+            {{form.chanyunOrderID+' '+form.chanyunCer}}
           </el-form-item>
         </el-col>
       </el-form-item>
       <el-form-item :label="$t('__status')">
         <el-col :span="4">
-          <el-select v-model="form.Status" default-first-option filterable clearable :placeholder="$t('__plzChoice')" :disabled="!buttonsShowUser.edit">
+          <el-select v-model="form.Status" default-first-option filterable clearable :placeholder="$t('__plzChoice')" :disabled="!buttonsShow.edit">
             <el-option v-for="item in ddlStatus" :key="item.ID" :label="item.ID+' '+item.Value" :value="item.ID">
               <span style="float: left">{{ item.Value }}</span>
               <span style="float: right; color: #8492a6; font-size: 13px">{{ item.ID }}</span>
