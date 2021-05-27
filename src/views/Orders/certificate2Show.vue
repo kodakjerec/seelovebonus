@@ -24,6 +24,13 @@
           width="120">
         </el-table-column>
         <el-table-column
+          :label="$t('__customer')"
+          width="200">
+          <template slot-scope="scope">
+            {{scope.row.CustomerID+' '+scope.row.CustomerName}}
+          </template>
+        </el-table-column>
+        <el-table-column
           prop="PrintCount"
           :label="$t('__printCount')"
           width="100">
