@@ -312,13 +312,11 @@ export default {
     },
     // 父視窗: 變更客戶代號
     parentCustomerChange: async function () {
-      // 如果是來自安座單的操作, 不更改CustomerID(續約, 展延, 繼承)
+      // 如果是來自安座單的操作, 不更改CustomerID
       switch (this.fromType) {
         case 'anzaRenew':
         case 'anzaExtend':
-          return
         case 'anzaTransfer':
-          break
         case 'anzaInherit':
           return
         default:
