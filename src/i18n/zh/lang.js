@@ -254,6 +254,8 @@ export default {
   __show: '顯示',
   __menu: '選單',
   __darkMode: '深色模式',
+  __choose: '選擇',
+  __complete: '完成',
   // 請在上方新增字串
   // 以下為長字串提醒
   __collectioRecordsDeleteNo: '無法刪除收款資訊，請檢查 ',
