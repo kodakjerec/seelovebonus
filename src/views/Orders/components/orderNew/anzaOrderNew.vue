@@ -252,9 +252,9 @@ export default {
     parentAnzaData: {
       handler: function (newValue) {
         this.form.FromStorageID = newValue.FromStorageID
-        this.parentCustomerChange()
-        this.parentQtyChange()
-        this.reCalDate(this.subList)
+        if (this.form.CustomerID !== newValue.CustomerID) {
+          this.parentCustomerChange()
+        }
       },
       deep: true
     },
@@ -312,19 +312,6 @@ export default {
     },
     // 父視窗: 變更客戶代號
     parentCustomerChange: async function () {
-      // 如果是來自安座單的操作, 不更改CustomerID(續約, 展延, 繼承)
-      switch (this.fromType) {
-        case 'anzaRenew':
-        case 'anzaExtend':
-          return
-        case 'anzaTransfer':
-          break
-        case 'anzaInherit':
-          return
-        default:
-          break
-      }
-
       // 如果都沒有資料, 先新增
       if (this.subList.length === 0) {
         this.handleNew()
@@ -333,11 +320,11 @@ export default {
       // 帶入客戶資訊
       for (let i = 0; i < this.subList.length; i++) {
         let row = this.subList[i]
-        if (i === 0) {
+        if (!row.CustomerID) {
           row.CustomerID = this.parentAnzaData.CustomerID
+          await this.bringCustomerData(row)
+          this.subList[i] = row
         }
-        await this.bringCustomerData(row)
-        this.subList[i] = row
       }
     },
     // 父視窗: 變更日期
@@ -573,19 +560,17 @@ export default {
 
       for (let index = 0; index < this.subList.length; index++) {
         let row = this.subList[index]
+        // 填入資訊
+        if (!row.FromStorageID) {
+          row.FromStorageID = this.form.FromStorageID
+        }
+        row.OrderID = this.form.OrderID
 
         // 沒有名稱 或 沒有數量, 跳過
         if (row.CustomerID === '' || row.qty <= 0) {
           continue
         }
-
-        // 填入資訊
-        row.OrderID = this.form.OrderID
-        row.FromStorageID = this.form.FromStorageID
-
-        for (let i = 0; i < row.qty; i++) {
-          await this.save(row)
-        }
+        await this.save(row)
       }
 
       return true
