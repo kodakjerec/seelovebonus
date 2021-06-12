@@ -254,6 +254,10 @@ export default {
   __show: 'Show',
   __menu: 'Menu',
   __darkMode: 'Dark Mode',
+  __choose: 'Choose',
+  __complete: 'Complete',
+  __next: 'Next',
+  __prev: 'Prev',
   // 請在上方新增字串
   // 以下為長字串提醒
   __collectioRecordsDeleteNo: 'Can\'t delete record, please check ',
@@ -293,6 +297,7 @@ export default {
   __versionError: 'Version Update, Please refresh web<br/>Windows: F5<br/>Mac: ⌘+R',
   __denyEditNoPermission: 'Can\'t edit, No permission',
   // 以下為驗證專用
+  __plzCheckAgain: 'Please Check Again',
   __plzChoice: 'Please Choice',
   __pleaseInputUserID: 'Please Input UserID',
   __pleaseInputPassword: 'Please Input Password',

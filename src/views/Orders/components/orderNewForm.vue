@@ -366,7 +366,7 @@ export default {
       deep: true
     }
   },
-  mounted () {
+  async mounted () {
     // 不是從上層選單進入, 而是其他不允許路徑
     if (this.order === undefined) {
       this.cancel()
@@ -443,7 +443,7 @@ export default {
             }
             break
         }
-        this.bringProject()
+        await this.bringProject()
         break
     }
     this.projectHead.push(this.form)

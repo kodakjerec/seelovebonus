@@ -1,50 +1,59 @@
 <template>
-  <div>
+  <div id="orderHead">
     <h1>{{myTitle}}</h1>
+    <el-steps :active="nowStep" align-center process-status="finish" finish-status="success">
+      <el-step :title="$t('__choose')+$t('__order')+$t('__date')" description="Select OrderID"></el-step>
+      <el-step :title="$t('__new')+$t('__product')" description="Add Extension item"></el-step>
+      <el-step :title="$t('__choose')+$t('__customer')" description="Select Customer"></el-step>
+      <el-step :title="$t('__complete')" description="Complete"></el-step>
+    </el-steps>
     <el-form ref="form" :model="form" :rules="rules" label-width="10vw" label-position="right">
-      <el-form-item :label="$t('__orderID')">
-        <el-col :span="2" v-if="dialogType === 'new'">
-          {{form.Prefix}}
-        </el-col>
-        <el-col :span="5">
-          <el-input v-model="form.ID" :placeholder="$t('__afterSaveWillShow')" :disabled="disableForm.ID"></el-input>
-        </el-col>
-        <el-col :span="6">
-          <el-form-item :label="$t('__status')">
-            <el-select v-model="form.Status" default-first-option filterable clearable disabled>
-              <el-option v-for="item in ddlOrderStatus" :key="item.ID" :label="item.ID+' '+item.Value" :value="item.ID">
-                <span style="float: left">{{ item.Value }}</span>
-                <span style="float: right; color: #8492a6; font-size: 13px">{{ item.ID }}</span>
-              </el-option>
-            </el-select>
-          </el-form-item>
-        </el-col>
-        <el-col :span="11">
-          <el-form-item :label="$t('__order')+$t('__date')+'：'" prop="OrderDate">
-            <el-date-picker
-              v-model="form.OrderDate"
-              type="date"
-              :placeholder="$t('__plzChoice')+$t('__order')+$t('__date')"
-              value-format="yyyy-MM-dd"
-              :disabled="disableForm.OrderDate">
-            </el-date-picker>
-          </el-form-item>
-        </el-col>
-      </el-form-item>
-      <!-- 備註 -->
-      <el-form-item :label="$t('__memo')">
-          <el-input v-model="form.Memo" type="textarea" rows="2" maxlength="100" show-word-limit
-            :disabled="disableForm.OrderDate"></el-input>
-      </el-form-item>
-      <!-- 專案特殊功能 -->
-      <order-functions
-        ref="orderFunctions"
-        :dialogType="dialogType"
-        :fromOrderID="form.ID"
-        :buttonsShowUser="buttonsShowUser"
-        :projectFunctions="projectFunctions"></order-functions>
+      <div v-show="nowStep===0 || nowStep===3">
+        <el-form-item :label="$t('__orderID')">
+          <el-col :span="2" v-if="dialogType === 'new'">
+            {{form.Prefix}}
+          </el-col>
+          <el-col :span="5">
+            <el-input v-model="form.ID" :placeholder="$t('__afterSaveWillShow')" :disabled="disableForm.ID"></el-input>
+          </el-col>
+          <el-col :span="6">
+            <el-form-item :label="$t('__status')">
+              <el-select v-model="form.Status" default-first-option filterable clearable disabled>
+                <el-option v-for="item in ddlOrderStatus" :key="item.ID" :label="item.ID+' '+item.Value" :value="item.ID">
+                  <span style="float: left">{{ item.Value }}</span>
+                  <span style="float: right; color: #8492a6; font-size: 13px">{{ item.ID }}</span>
+                </el-option>
+              </el-select>
+            </el-form-item>
+          </el-col>
+          <el-col :span="11">
+            <el-form-item :label="$t('__order')+$t('__date')+'：'" prop="OrderDate">
+              <el-date-picker
+                v-model="form.OrderDate"
+                type="date"
+                :placeholder="$t('__plzChoice')+$t('__order')+$t('__date')"
+                value-format="yyyy-MM-dd"
+                :disabled="disableForm.OrderDate">
+              </el-date-picker>
+            </el-form-item>
+          </el-col>
+        </el-form-item>
+        <!-- 備註 -->
+        <el-form-item :label="$t('__memo')">
+            <el-input v-model="form.Memo" type="textarea" rows="2" maxlength="100" show-word-limit
+              :disabled="disableForm.OrderDate"></el-input>
+        </el-form-item>
+        <!-- 專案特殊功能 -->
+        <order-functions
+          ref="orderFunctions"
+          :dialogType="dialogType"
+          :fromOrderID="form.ID"
+          :buttonsShowUser="buttonsShowUser"
+          :projectFunctions="projectFunctions"></order-functions>
+      </div>
       <!-- 選擇專案 -->
       <el-table
+        v-show="nowStep===1 || nowStep===3"
         :data="projectHead"
         stripe
         border
@@ -85,7 +94,7 @@
           width="210px">
           <template slot-scope="scope">
             <el-form-item prop="Qty" label-width="0px">
-              <el-input-number :min="1" v-model="scope.row[scope.column.property]" :disabled="disableForm.Qty"></el-input-number>
+              <el-input-number :min="1" v-model="scope.row[scope.column.property]" disabled></el-input-number>
             </el-form-item>
           </template>
         </el-table-column>
@@ -104,6 +113,7 @@
     </el-form>
     <!-- 專案明細 -->
     <order-detail
+      v-show="nowStep===1 || nowStep===3"
       ref="orderDetail"
       :dialogType="dialogType"
       :buttonsShowUser="buttonsShowUser"
@@ -114,42 +124,40 @@
       @reCalculateDetail="reCalculateDetail"></order-detail>
     <!-- 訂購者資料 -->
     <order-customer
+      v-show="nowStep===2 || nowStep===3"
       id="orderCustomer"
       ref="orderCustomer"
-      v-if="form.ProjectID"
       :dialogType="dialogType"
       :buttonsShowUser="buttonsShowUser"
       :fromOrderID="form.ID"
       :fromOrderStatus="form.Status"
       @customer-change="customerChange"></order-customer>
-    <template>
-      <!-- 新增訂單專用 -->
-      <anza-order-new
-        v-show="projectFunctions.newAnzaOrder.Available"
-        id="anzaOrderNew"
-        ref="anzaOrderNew"
-        :fromOrderID="form.ID"
-        :parentOrderDate="form.OrderDate"
-        :parentQty="form.Qty"
-        :parentAnzaData="form.anzaForNew"></anza-order-new>
-      <installment-order-new
-        v-show="form.ProjectID"
-        id="installmentOrderNew"
-        ref="installmentOrderNew"
-        :fromOrderID="form.ID"
-        :projectID="form.ProjectID"
-        :projectName="form.FirstItemName"
-        :parentQty="form.Qty"
-        :parentAmount="form.Amount"
-        :parentDate="form.OrderDate"></installment-order-new>
-    </template>
+    <!-- 新增訂單專用 -->
+    <anza-order-new
+      v-show="nowStep===2 || nowStep===3"
+      id="anzaOrderNew"
+      ref="anzaOrderNew"
+      :fromOrderID="form.ID"
+      :parentOrderDate="form.OrderDate"
+      :parentQty="form.Qty"
+      :parentAnzaData="form.anzaForNew"></anza-order-new>
+    <installment-order-new
+      v-show="nowStep===1 || nowStep===3"
+      id="installmentOrderNew"
+      ref="installmentOrderNew"
+      :fromOrderID="form.ID"
+      :projectID="form.ProjectID"
+      :projectName="form.FirstItemName"
+      :parentQty="form.Qty"
+      :parentAmount="form.Amount"
+      :parentDate="form.OrderDate"></installment-order-new>
     <!-- 底部操作按鈕 -->
     <div slot="footer">
       <br/>
-      <el-button v-show="buttonsShow.delete && buttonsShowUser.delete && form.Status < '2'" type="danger" @click="deleteOrder">{{$t('__delete')}}</el-button>
-      <el-button v-show="buttonsShow.delete && buttonsShowUser.delete" type="danger" @click="invalidOrder">{{$t('__invalid')}}</el-button>
+      <el-button v-if="nowStep>0" @click="goPrevious">{{$t('__prev')}}</el-button>
       <el-button @click="cancel">{{$t('__cancel')}}</el-button>
-      <el-button v-show="buttonsShow.save && buttonsShowUser.save" type="primary" @click="checkValidate">{{$t('__save')}}</el-button>
+      <el-button v-if="nowStep<3" type="primary" @click="checkValidate">{{$t('__next')}}</el-button>
+      <el-button v-else type="primary" @click="checkValidate">{{$t('__save')}}</el-button>
     </div>
   </div>
 </template>
@@ -165,7 +173,6 @@ import orderCustomer from '@/views/Orders/components/orderCustomer'
 import orderFunctions from '@/views/Orders/components/orderFunctions'
 // 其他
 import { formatMoney, formatDate } from '@/setup/format.js'
-import { messageBoxYesNo } from '@/services/utils'
 import validate from '@/setup/validate'
 
 export default {
@@ -236,6 +243,7 @@ export default {
         CreateID: false
       },
       myTitle: '',
+      nowStep: 0,
       projectHead: [],
       updateMessage: '', // 更新資料庫後回傳的訊息
       // 專案功能顯示(新增專用)(不記錄進資料庫)
@@ -247,7 +255,9 @@ export default {
       },
       // 以下為下拉式選單專用
       ddlOrderStatus: [],
-      ddlProject: []
+      ddlProject: [],
+      // 頂部導覽
+      tabActiveName: 'orderHead'
     }
   },
   async mounted () {
@@ -258,19 +268,6 @@ export default {
     }
 
     switch (this.dialogType) {
-      case 'new':
-        this.disableForm.ID = true
-        this.disableForm.CreateID = true
-        let tempDate = new Date()
-        this.form.OrderDate = formatDate(tempDate.toISOString().slice(0, 10))
-        this.buttonsShow = {
-          new: 1,
-          edit: 0,
-          save: 1,
-          delete: 0,
-          search: 1
-        }
-        break
       case 'edit':
         this.myTitle = this.$t('__edit') + this.$t('__orderPaper')
         this.form.ID = this.order.ID
@@ -285,40 +282,43 @@ export default {
         this.form.Memo = this.order.Memo
 
         // 帶入原始單據狀態, 開啟或關閉
-        let intStatus = parseInt(this.form.Status)
-        if (intStatus === 0) {
-          // 是否允許修改
-          this.disableForm.ID = true
-          this.disableForm.ProjectID = true
-          this.disableForm.Qty = true
-          this.disableForm.CreateID = true
-          this.disableForm.OrderDate = true
-
-          this.buttonsShow = {
-            new: 0,
-            edit: 0,
-            save: 0,
-            delete: 0,
-            search: 0
-          }
-        } else if (intStatus > 0) {
-          // 是否允許修改
-          this.disableForm.ID = true
-          this.disableForm.ProjectID = true
-          this.disableForm.CreateID = true
-
-          if (this.buttonsShowUser.edit === 0) {
-            this.disableForm.OrderDate = true
+        switch (this.form.Status) {
+          case '0':
+          case '5':
+            // 是否允許修改
+            this.disableForm.ID = true
+            this.disableForm.ProjectID = true
             this.disableForm.Qty = true
-          }
+            this.disableForm.CreateID = true
+            this.disableForm.OrderDate = true
 
-          this.buttonsShow = {
-            new: 1,
-            edit: 1,
-            save: 1,
-            delete: 1,
-            search: 1
-          }
+            this.buttonsShow = {
+              new: 0,
+              edit: 0,
+              save: 0,
+              delete: 0,
+              search: 0
+            }
+            break
+          default:
+            // 是否允許修改
+            this.disableForm.ID = true
+            this.disableForm.ProjectID = true
+            this.disableForm.CreateID = true
+
+            if (this.buttonsShowUser.edit === 0) {
+              this.disableForm.OrderDate = true
+              this.disableForm.Qty = true
+            }
+
+            this.buttonsShow = {
+              new: 1,
+              edit: 1,
+              save: 1,
+              delete: 1,
+              search: 1
+            }
+            break
         }
         await this.bringProject()
         break
@@ -425,35 +425,64 @@ export default {
     // 檢查輸入
     checkValidate: async function () {
       let isSuccess = false
-      // 檢查主表單
-      await this.$refs['form'].validate((valid) => { isSuccess = valid })
-
-      // 新增訂單才會使用到
-      switch (this.dialogType) {
-        case 'new':
+      switch (this.nowStep) {
+        case 0:
+          // 檢查主表單
+          await this.$refs['form'].validate((valid) => { isSuccess = valid })
+          break
+        case 1:
           // 檢查其他附加功能
           if (this.projectFunctions) {
             isSuccess = await this.$refs['orderFunctions'].checkValidate()
-            if (!isSuccess) { return }
+            if (!isSuccess) {
+              this.checkFail()
+              return
+            }
           }
           if (this.projectFunctions.newAnzaOrder.Available) {
             isSuccess = await this.$refs['anzaOrderNew'].checkValidate()
-            if (!isSuccess) { return }
+            if (!isSuccess) {
+              this.checkFail()
+              return
+            }
           }
+          // 檢查明細資訊
+          isSuccess = await this.$refs['orderDetail'].checkValidate()
+          if (!isSuccess) {
+            this.checkFail()
+            return
+          }
+          break
+        case 2:
+          // 檢查客戶資訊
+          isSuccess = await this.$refs['orderCustomer'].checkValidate()
+          if (!isSuccess) {
+            this.checkFail()
+            return
+          }
+          break
+        case 3:
+          isSuccess = true
           break
       }
 
-      // 檢查客戶資訊
-      isSuccess = await this.$refs['orderCustomer'].checkValidate()
-      if (!isSuccess) { return }
-      // 檢查明細資訊
-      isSuccess = await this.$refs['orderDetail'].checkValidate()
-      if (!isSuccess) { return }
-
       if (isSuccess) {
-        this.beforeSave()
-        return true
+        switch (this.nowStep) {
+          case 0:
+          case 1:
+          case 2:
+            this.nowStep++
+            this.tabClick({ name: this.tabActiveName }, null)
+            break
+          case 3:
+            this.beforeSave()
+            break
+        }
       }
+    },
+    checkFail: function () {
+      this.$message(this.$t('__plzCheckAgain'))
+      this.tabClick({ name: this.tabActiveName }, null)
     },
     // 存檔前準備
     beforeSave: async function () {
@@ -467,96 +496,55 @@ export default {
       let isSuccess = false
       let saveStep = 'order'
 
-      switch (this.dialogType) {
-        case 'new':
-          saveStep = 'order'
-          isSuccess = await this.save(this.dialogType)
-
-          if (isSuccess) {
-            saveStep = 'orderDetail'
-            isSuccess = await this.$refs['orderDetail'].beforeSave()
-          }
-          if (isSuccess) {
-            saveStep = 'orderCustomer'
-            isSuccess = await this.$refs['orderCustomer'].beforeSave()
-          }
-          if (isSuccess) {
-            saveStep = 'installmentOrderNew'
-            isSuccess = await this.$refs['installmentOrderNew'].beforeSave()
-          }
-          // 檢查其他附加功能
-          if (this.projectFunctions) {
-            if (isSuccess) {
-              saveStep = 'orderFunctions'
-              isSuccess = await this.$refs['orderFunctions'].beforeSave()
-            }
-          }
-          if (this.projectFunctions.newAnzaOrder.Available) {
-            if (isSuccess) {
-              saveStep = 'anzaOrderNew'
-              isSuccess = await this.$refs['anzaOrderNew'].beforeSave()
-            }
-          }
-
-          if (isSuccess) {
-            this.$alert(this.updateMessage, 200, {
-              callback: () => {
-                this.$router.replace({
-                  name: this.parent,
-                  params: {
-                    returnType: 'save'
-                  }
-                })
-              }
-            })
-          } else {
-            this.$alert(this.$t('__uploadFail') + ' Step: ' + saveStep)
-          }
-          break
-        case 'edit':
-          isSuccess = false
-          saveStep = 'order'
-          isSuccess = await this.save(this.dialogType)
-          if (isSuccess) {
-            saveStep = 'orderDetail'
-            isSuccess = await this.$refs['orderDetail'].beforeSave()
-          }
-          if (isSuccess) {
-            saveStep = 'orderCustomer'
-            isSuccess = await this.$refs['orderCustomer'].beforeSave()
-          }
-
-          // 檢查其他附加功能
-          if (isSuccess) {
-            if (this.projectFunctions) {
-              saveStep = 'orderFunctions'
-              isSuccess = await this.$refs['orderFunctions'].beforeSave()
-            }
-          }
-          if (isSuccess) {
-            if (this.projectFunctions) {
-              saveStep = 'anzaOrderNew'
-              isSuccess = await this.$refs['anzaOrderNew'].beforeSave()
-            }
-          }
-
-          // 全部完成
-          if (isSuccess) {
-            this.$alert(this.updateMessage, 200, {
-              callback: () => {
-                this.$router.replace({
-                  name: this.parent,
-                  params: {
-                    returnType: 'save'
-                  }
-                })
-              }
-            })
-          } else {
-            this.$alert(this.$t('__uploadFail') + ' Step: ' + saveStep)
-          }
-          break
+      isSuccess = false
+      saveStep = 'order'
+      isSuccess = await this.save(this.dialogType)
+      if (isSuccess) {
+        saveStep = 'orderDetail'
+        isSuccess = await this.$refs['orderDetail'].beforeSave()
       }
+      if (isSuccess) {
+        saveStep = 'orderCustomer'
+        isSuccess = await this.$refs['orderCustomer'].beforeSave()
+      }
+      if (isSuccess) {
+        saveStep = 'installmentOrderNew'
+        isSuccess = await this.$refs['installmentOrderNew'].beforeSave()
+      }
+
+      // 檢查其他附加功能
+      if (this.projectFunctions) {
+        if (isSuccess) {
+          saveStep = 'orderFunctions'
+          isSuccess = await this.$refs['orderFunctions'].beforeSave()
+        }
+      }
+      if (this.projectFunctions.newAnzaOrder.Available) {
+        if (isSuccess) {
+          saveStep = 'anzaOrderNew'
+          isSuccess = await this.$refs['anzaOrderNew'].beforeSave()
+        }
+      }
+
+      // 全部完成
+      if (isSuccess) {
+        this.$alert(this.updateMessage, 200, {
+          callback: () => {
+            this.$router.replace({
+              name: this.parent,
+              params: {
+                returnType: 'save'
+              }
+            })
+          }
+        })
+      } else {
+        this.$alert(this.$t('__uploadFail') + ' Step: ' + saveStep)
+      }
+    },
+    // 上一步
+    goPrevious: function () {
+      this.nowStep--
     },
     // 取消
     cancel: function () {
@@ -606,58 +594,6 @@ export default {
       }
 
       return isSuccess
-    },
-    // 刪除
-    deleteOrder: async function () {
-      let answerAction = await messageBoxYesNo(this.$t('__deleteOrder'), this.$t('__delete'))
-
-      switch (answerAction) {
-        case 'confirm':
-          let isSuccessEdit = await this.save('delete')
-          if (isSuccessEdit) {
-            this.$alert(this.updateMessage, 200, {
-              callback: () => {
-                this.$router.push({
-                  name: this.parent,
-                  params: {
-                    returnType: 'save'
-                  }
-                })
-              }
-            })
-          }
-          break
-        case 'cancel':
-          break
-        case 'close':
-          break
-      }
-    },
-    // 作廢
-    invalidOrder: async function () {
-      let answerAction = await messageBoxYesNo(this.$t('__invalidOrder'), this.$t('__invalid'))
-
-      switch (answerAction) {
-        case 'confirm':
-          let isSuccessEdit = await this.save('invalid')
-          if (isSuccessEdit) {
-            this.$alert(this.updateMessage, 200, {
-              callback: () => {
-                this.$router.push({
-                  name: this.parent,
-                  params: {
-                    returnType: 'save'
-                  }
-                })
-              }
-            })
-          }
-          break
-        case 'cancel':
-          break
-        case 'close':
-          break
-      }
     },
     // 子->父: 統計商品明細總價
     reCalculateDetail: function (object) {
@@ -750,6 +686,18 @@ export default {
         // 代入舊的安座單清單
         await this.$refs['anzaOrderNew'].parentAssginData('subList', this.$attrs.fromParams.fromAnzaList)
       }
+    },
+    // ===== 頂部導覽 =====
+    tabClick: function (tab, event) {
+      this.tabActiveName = tab.name
+      let item = document.querySelector('#' + this.tabActiveName)
+      // item.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'start' })
+
+      window.scrollTo({
+        top: item.offsetTop - 80,
+        left: 0,
+        behavior: 'smooth'
+      })
     }
   }
 }
