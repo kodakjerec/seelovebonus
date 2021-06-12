@@ -256,6 +256,8 @@ export default {
   __darkMode: '深色模式',
   __choose: '選擇',
   __complete: '完成',
+  __next: '下一步',
+  __prev: '上一步',
   // 請在上方新增字串
   // 以下為長字串提醒
   __collectioRecordsDeleteNo: '無法刪除收款資訊，請檢查 ',
@@ -295,6 +297,7 @@ export default {
   __versionError: '版本更新，請重新整理網頁<br/>Windows: F5<br/>Mac: ⌘+R',
   __denyEditNoPermission: '禁止修改，權限不足',
   // 以下為驗證專用
+  __plzCheckAgain: '請再次檢查',
   __plzChoice: '請選擇',
   __pleaseInputUserID: '請輸入帳號',
   __pleaseInputPassword: '請輸入密碼',

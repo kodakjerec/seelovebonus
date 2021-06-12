@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div id="orderHead">
     <h1>{{myTitle}}</h1>
     <el-steps :active="nowStep" align-center process-status="finish" finish-status="success">
       <el-step :title="$t('__choose')+$t('__order')+$t('__date')" description="Select OrderID"></el-step>
@@ -154,8 +154,10 @@
     <!-- 底部操作按鈕 -->
     <div slot="footer">
       <br/>
+      <el-button v-if="nowStep>0" @click="goPrevious">{{$t('__prev')}}</el-button>
       <el-button @click="cancel">{{$t('__cancel')}}</el-button>
-      <el-button v-show="buttonsShow.save && buttonsShowUser.save" type="primary" @click="checkValidate">{{$t('__save')}}</el-button>
+      <el-button v-if="nowStep<3" type="primary" @click="checkValidate">{{$t('__next')}}</el-button>
+      <el-button v-else type="primary" @click="checkValidate">{{$t('__save')}}</el-button>
     </div>
   </div>
 </template>
@@ -253,7 +255,9 @@ export default {
       },
       // 以下為下拉式選單專用
       ddlOrderStatus: [],
-      ddlProject: []
+      ddlProject: [],
+      // 頂部導覽
+      tabActiveName: 'orderHead'
     }
   },
   async mounted () {
@@ -427,28 +431,35 @@ export default {
           await this.$refs['form'].validate((valid) => { isSuccess = valid })
           break
         case 1:
-          // 新增訂單才會使用到
-          switch (this.dialogType) {
-            case 'new':
-              // 檢查其他附加功能
-              if (this.projectFunctions) {
-                isSuccess = await this.$refs['orderFunctions'].checkValidate()
-                if (!isSuccess) { return }
-              }
-              if (this.projectFunctions.newAnzaOrder.Available) {
-                isSuccess = await this.$refs['anzaOrderNew'].checkValidate()
-                if (!isSuccess) { return }
-              }
-              break
+          // 檢查其他附加功能
+          if (this.projectFunctions) {
+            isSuccess = await this.$refs['orderFunctions'].checkValidate()
+            if (!isSuccess) {
+              this.checkFail()
+              return
+            }
+          }
+          if (this.projectFunctions.newAnzaOrder.Available) {
+            isSuccess = await this.$refs['anzaOrderNew'].checkValidate()
+            if (!isSuccess) {
+              this.checkFail()
+              return
+            }
           }
           // 檢查明細資訊
           isSuccess = await this.$refs['orderDetail'].checkValidate()
-          if (!isSuccess) { return }
+          if (!isSuccess) {
+            this.checkFail()
+            return
+          }
           break
         case 2:
           // 檢查客戶資訊
           isSuccess = await this.$refs['orderCustomer'].checkValidate()
-          if (!isSuccess) { return }
+          if (!isSuccess) {
+            this.checkFail()
+            return
+          }
           break
         case 3:
           isSuccess = true
@@ -461,12 +472,17 @@ export default {
           case 1:
           case 2:
             this.nowStep++
+            this.tabClick({ name: this.tabActiveName }, null)
             break
           case 3:
             this.beforeSave()
             break
         }
       }
+    },
+    checkFail: function () {
+      this.$message(this.$t('__plzCheckAgain'))
+      this.tabClick({ name: this.tabActiveName }, null)
     },
     // 存檔前準備
     beforeSave: async function () {
@@ -525,6 +541,10 @@ export default {
       } else {
         this.$alert(this.$t('__uploadFail') + ' Step: ' + saveStep)
       }
+    },
+    // 上一步
+    goPrevious: function () {
+      this.nowStep--
     },
     // 取消
     cancel: function () {
@@ -666,6 +686,18 @@ export default {
         // 代入舊的安座單清單
         await this.$refs['anzaOrderNew'].parentAssginData('subList', this.$attrs.fromParams.fromAnzaList)
       }
+    },
+    // ===== 頂部導覽 =====
+    tabClick: function (tab, event) {
+      this.tabActiveName = tab.name
+      let item = document.querySelector('#' + this.tabActiveName)
+      // item.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'start' })
+
+      window.scrollTo({
+        top: item.offsetTop - 80,
+        left: 0,
+        behavior: 'smooth'
+      })
     }
   }
 }
