@@ -99,16 +99,18 @@
           <el-form-item>
             <el-date-picker
               v-model="form.Birth"
+              @change="solarToLunar"
               type="date"
               :placeholder="$t('__plzChoice')+$t('__birth')"
               value-format="yyyy-MM-dd">
             </el-date-picker>
           </el-form-item>
         </el-col>
-        <!-- <el-col :span="8">
+        <el-col :span="8">
           <el-form-item :label="$t('__lunarDate')+'('+$t('__lunarCalendar')+')'">
             <el-date-picker
               v-model="form.BirthLunarDate"
+              @change="lunarToSolar"
               type="date"
               :placeholder="$t('__plzChoice')+$t('__lunarDate')+'('+$t('__lunarCalendar')+')'"
               value-format="yyyy-MM-dd">
@@ -116,7 +118,7 @@
           </el-form-item>
         </el-col>
         <el-col :span="2">
-          <el-checkbox v-model="form.BirthLunarLeap" :true-label="1" :false-label="0">閏月</el-checkbox>
+          <el-checkbox v-model="form.BirthLunarLeap" @change="lunarToSolar" :true-label="1" :false-label="0">閏月</el-checkbox>
         </el-col>
         <el-col :span="8">
           <el-form-item :label="$t('__lunarTime')">
@@ -127,7 +129,20 @@
               </el-option>
             </el-select>
           </el-form-item>
-        </el-col> -->
+        </el-col>
+      </el-form-item>
+      <!-- 換算日期 -->
+      <el-form-item :label="$t('__convert')+$t('__lunarCalendar')">
+        <el-col :span="4">
+          <el-form-item>
+            <el-input v-model="form.CalcBirthLunarDate" disabled></el-input>
+          </el-form-item>
+        </el-col>
+        <el-col :span="10">
+          <el-form-item :label="$t('__convert')+$t('__solarCalendar')">
+            <el-input v-model="form.CalcBirth" disabled></el-input>
+          </el-form-item>
+        </el-col>
       </el-form-item>
       <!-- 國家etc -->
       <el-form-item :label="$t('__country')">
