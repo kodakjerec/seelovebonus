@@ -254,6 +254,8 @@ export default {
   __show: 'Show',
   __menu: 'Menu',
   __darkMode: 'Dark Mode',
+  __choose: 'Choose',
+  __complete: 'Complete',
   // 請在上方新增字串
   // 以下為長字串提醒
   __collectioRecordsDeleteNo: 'Can\'t delete record, please check ',
