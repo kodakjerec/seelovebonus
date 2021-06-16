@@ -258,6 +258,7 @@ export default {
   __complete: '完成',
   __next: '下一步',
   __prev: '上一步',
+  __orderTransfer: '過戶',
   // 請在上方新增字串
   // 以下為長字串提醒
   __collectioRecordsDeleteNo: '無法刪除收款資訊，請檢查 ',

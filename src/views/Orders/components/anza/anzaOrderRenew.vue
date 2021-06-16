@@ -2,10 +2,10 @@
   <div id="orderHead">
     <h1>{{myTitle}}</h1>
     <el-steps :active="nowStep" align-center process-status="finish" finish-status="success">
-      <el-step :title="$t('__choose')+$t('__order')+$t('__date')" description="Select OrderID"></el-step>
-      <el-step :title="$t('__new')+$t('__product')" description="Add Extension item"></el-step>
-      <el-step :title="$t('__choose')+$t('__customer')" description="Select Customer"></el-step>
-      <el-step :title="$t('__complete')" description="Complete"></el-step>
+      <el-step :title="$t('__choose')+' '+$t('__order')+$t('__date')"></el-step>
+      <el-step :title="$t('__new')+' '+$t('__product')"></el-step>
+      <el-step :title="$t('__choose')+' '+$t('__customer')"></el-step>
+      <el-step :title="$t('__complete')"></el-step>
     </el-steps>
     <el-form ref="form" :model="form" :rules="rules" label-width="10vw" label-position="right">
       <div v-show="nowStep===0 || nowStep===3">
@@ -14,7 +14,7 @@
             {{form.Prefix}}
           </el-col>
           <el-col :span="5">
-            <el-input v-model="form.ID" :placeholder="$t('__afterSaveWillShow')" :disabled="disableForm.ID"></el-input>
+            <el-input v-model="form.ID" :placeholder="$t('__afterSaveWillShow')" disabled></el-input>
           </el-col>
           <el-col :span="6">
             <el-form-item :label="$t('__status')">
@@ -32,16 +32,14 @@
                 v-model="form.OrderDate"
                 type="date"
                 :placeholder="$t('__plzChoice')+$t('__order')+$t('__date')"
-                value-format="yyyy-MM-dd"
-                :disabled="disableForm.OrderDate">
+                value-format="yyyy-MM-dd">
               </el-date-picker>
             </el-form-item>
           </el-col>
         </el-form-item>
         <!-- 備註 -->
         <el-form-item :label="$t('__memo')">
-            <el-input v-model="form.Memo" type="textarea" rows="2" maxlength="100" show-word-limit
-              :disabled="disableForm.OrderDate"></el-input>
+          <el-input v-model="form.Memo" type="textarea" rows="2" maxlength="100" show-word-limit></el-input>
         </el-form-item>
         <!-- 專案特殊功能 -->
         <order-functions
@@ -69,7 +67,7 @@
                 :placeholder="$t('__plzChoice')"
                 @change="(value)=>{ddlProjectChange(value, scope.row)}"
                 style="display:block"
-                :disabled="disableForm.ProjectID">
+                disabled>
                 <el-option v-for="item in ddlProject" :key="item.ID" :label="item.ID+' '+item.Value" :value="item.ID">
                   <span style="float: left">{{ item.Value }}</span>
                   <span style="float: right; color: #8492a6; font-size: 13px">{{ item.ID }}</span>
@@ -235,13 +233,6 @@ export default {
         delete: 0,
         search: 1
       },
-      disableForm: {
-        ID: false,
-        ProjectID: false,
-        Qty: false,
-        OrderDate: false,
-        CreateID: false
-      },
       myTitle: '',
       nowStep: 0,
       projectHead: [],
@@ -286,11 +277,6 @@ export default {
           case '0':
           case '5':
             // 是否允許修改
-            this.disableForm.ID = true
-            this.disableForm.ProjectID = true
-            this.disableForm.Qty = true
-            this.disableForm.CreateID = true
-            this.disableForm.OrderDate = true
 
             this.buttonsShow = {
               new: 0,
@@ -302,14 +288,6 @@ export default {
             break
           default:
             // 是否允許修改
-            this.disableForm.ID = true
-            this.disableForm.ProjectID = true
-            this.disableForm.CreateID = true
-
-            if (this.buttonsShowUser.edit === 0) {
-              this.disableForm.OrderDate = true
-              this.disableForm.Qty = true
-            }
 
             this.buttonsShow = {
               new: 1,
