@@ -101,6 +101,12 @@ const routes = [
     component: () => import('@/views/Orders/components/orderTransfer/orderTransfer'),
     props: true
   },
+  {
+    path: '/Orders/OrderTransfer/Step1',
+    name: 'OrderTransferStep1',
+    component: () => import('@/views/Orders/components/orderTransfer/orderTransferStep1'),
+    props: true
+  },
   // Orders -> SignOff
   {
     path: '/Orders/OrderSignOffManual',

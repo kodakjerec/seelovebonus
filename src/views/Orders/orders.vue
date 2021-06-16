@@ -486,8 +486,7 @@ export default {
         name: 'OrderTransfer',
         params: {
           dialogType: 'edit',
-          parent: 'Orders',
-          buttonsShowUser: this.buttonsShowUser
+          parent: 'Orders'
         }
       })
     }
