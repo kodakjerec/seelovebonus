@@ -258,6 +258,7 @@ export default {
   __complete: 'Complete',
   __next: 'Next',
   __prev: 'Prev',
+  __orderTransfer: 'Transfer',
   // 請在上方新增字串
   // 以下為長字串提醒
   __collectioRecordsDeleteNo: 'Can\'t delete record, please check ',

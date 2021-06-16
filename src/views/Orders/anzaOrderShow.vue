@@ -23,48 +23,46 @@
             {{$t('__orderID')}}
             <table-sort-arrow :prop="'OrderID'" :sortable="sortable"></table-sort-arrow>
           </template>
-          <template slot-scope="scope">
+          <el-button-group slot-scope="scope">
             <div style="font-weight:1000">{{scope.row[scope.column.property]}}</div>
             <div>{{scope.row.ProjectName}}</div>
-            <el-button-group>
-              <el-button
-                v-if="buttonsShowUser.edit && scope.row.FlagRenew === 1"
-                size="mini" type="info"
-                @click.native.stop="operateRenew(scope.$index, scope.row, 'anzaRenew')">{{$t('__anzaRenew')}}</el-button>
-              <el-button
-                v-if="buttonsShowUser.edit && scope.row.FlagExtend === 1"
-                size="mini" type="info"
-                @click.native.stop="operateRenew(scope.$index, scope.row, 'anzaExtend')">{{$t('__anzaExtend')}}</el-button>
-              <el-button
-                v-if="buttonsShowUser.edit && scope.row.FlagTransfer === 1"
-                size="mini"
-                @click.native.stop="operateRenew(scope.$index, scope.row, 'anzaTransfer')">{{$t('__anzaTransfer')}}</el-button>
-              <el-button
-                v-if="buttonsShowUser.edit"
-                size="mini"
-                @click.native.stop="operateRenew(scope.$index, scope.row, 'anzaInherit')">{{$t('__anzaInherit')}}</el-button>
-            </el-button-group>
-          </template>
+            <el-button
+              v-if="buttonsShowUser.edit && scope.row.FlagRenew === 1"
+              size="mini" type="info"
+              @click.native.stop="operateRenew(scope.$index, scope.row, 'anzaRenew')">{{$t('__anzaRenew')}}</el-button>
+            <el-button
+              v-if="buttonsShowUser.edit && scope.row.FlagExtend === 1"
+              size="mini" type="info"
+              @click.native.stop="operateRenew(scope.$index, scope.row, 'anzaExtend')">{{$t('__anzaExtend')}}</el-button>
+            <el-button
+              v-if="buttonsShowUser.edit && scope.row.FlagTransfer === 1"
+              size="mini"
+              @click.native.stop="operateRenew(scope.$index, scope.row, 'anzaTransfer')">{{$t('__anzaTransfer')}}</el-button>
+            <el-button
+              v-if="buttonsShowUser.edit"
+              size="mini"
+              @click.native.stop="operateRenew(scope.$index, scope.row, 'anzaInherit')">{{$t('__anzaInherit')}}</el-button>
+          </el-button-group>
         </el-table-column>
-        <el-table-column
+        <!-- <el-table-column
           width="130px">
           <template slot-scope="scope">
           <div v-for="item in scope.row.OrderIDList" :key="item.Seq">
               {{item.OrderID}}<template v-if="item.ModifyType!==''">{{'('+item.ModifyType+')'}}</template>
             </div>
           </template>
-        </el-table-column>
+        </el-table-column> -->
         <!-- 安座作業 -->
         <el-table-column
-          width="160px">
+          width="100">
           <template slot="header">
             <el-button
             type="text"
             size="mini" @click.prevent="openSignOffManual">{{$t('__anzaOperation')}}</el-button>
           </template>
-          <template slot-scope="scope">
+          <el-button-group slot-scope="scope">
             <el-button
-              v-if="buttonsShowUser.edit && scope.row.canAnza === 1"
+              v-if="buttonsShowUser.edit"
               size="mini"
               @click.native.stop="operateModify(scope.$index, scope.row)">{{$t('__edit')}}</el-button>
             <el-button
@@ -75,11 +73,10 @@
               v-if="buttonsShowUser.edit && scope.row.Status === '2'"
               size="mini"
               @click.native.stop="operateComplete(scope.$index, scope.row)">{{$t('__yuanman')}}</el-button>
-          </template>
+            </el-button-group>
         </el-table-column>
         <el-table-column
-          prop="AnzaOrderID"
-          width="100px">
+          prop="AnzaOrderID">
           <template slot="header">
             {{$t('__anzaOrder')}}
             <table-sort-arrow :prop="'AnzaOrderID'" :sortable="sortable"></table-sort-arrow>
