@@ -5,8 +5,8 @@
       <el-step :title="$t('__choose')+' '+$t('__orderID')"></el-step>
       <el-step :title="$t('__new')+' '+$t('__product')"></el-step>
       <el-step :title="$t('__choose')+' '+$t('__customer')"></el-step>
-      <el-step :title="$t('__choose')+' '+$t('__certificate1')"></el-step>
-      <el-step :title="$t('__choose')+' '+$t('__certificate2')"></el-step>
+      <el-step :title="$t('__certificate1')"></el-step>
+      <el-step :title="$t('__certificate2')"></el-step>
       <el-step :title="$t('__complete')"></el-step>
     </el-steps>
     <el-form ref="form" :model="form" :rules="rules" label-width="10vw" label-position="right">
@@ -134,15 +134,30 @@
       :fromOrderID="form.ID"
       :fromOrderStatus="form.Status"
       @customer-change="customerChange"></order-customer>
-    <!-- 新增訂單專用 -->
-    <anza-order-new
+    <!-- 安座單 -->
+    <anza-order-list
       v-show="nowStep===2 || nowStep===5"
-      id="anzaOrderNew"
-      ref="anzaOrderNew"
+      id="anzaOrderList"
       :fromOrderID="form.ID"
-      :parentOrderDate="form.OrderDate"
-      :parentQty="form.Qty"
-      :parentAnzaData="form.anzaForNew"></anza-order-new>
+      :isShow="projectFunctions.newAnzaOrder.Available">
+    </anza-order-list>
+    <!-- 供奉憑證 -->
+    <certificate1-order-transfer
+      v-show="nowStep===3 || nowStep===5"
+      id="certificate1"
+      :buttonsShowUser="buttonsShowUser"
+      :fromOrderID="form.ID"
+      :fromOrderStatus="form.Status"
+      :isShow="projectFunctions.newCertificate1.Available"></certificate1-order-transfer>
+    <!-- 換狀證明 -->
+    <certificate2-order-transfer
+      v-show="nowStep===4 || nowStep===5"
+      id="certificate2"
+      :buttonsShowUser="buttonsShowUser"
+      :fromOrderID="form.ID"
+      :fromOrderStatus="form.Status"
+      :isShow="projectFunctions.newCertificate2.Available"></certificate2-order-transfer>
+    <!-- 分期付款 -->
     <installment-order-new
       v-show="nowStep===1 || nowStep===5"
       id="installmentOrderNew"
@@ -153,6 +168,7 @@
       :parentQty="form.Qty"
       :parentAmount="form.Amount"
       :parentDate="form.OrderDate"></installment-order-new>
+
     <!-- 底部操作按鈕 -->
     <div slot="footer">
       <br/>
@@ -165,14 +181,16 @@
 </template>
 
 <script>
+import anzaOrderList from '../anza/anzaOrderList'
 // 新增訂單才有
-import anzaOrderNew from '@/views/Orders/components/orderNew/anzaOrderNew'
 import installmentOrderNew from '@/views/Orders/components/orderNew/installmentOrderNew'
 // 訂單固定內容
 import orderDetail from '@/views/Orders/components/orderDetail'
 import orderCustomer from '@/views/Orders/components/orderCustomer'
 // 訂單變動內容
 import orderFunctions from '@/views/Orders/components/orderFunctions'
+import certificate1OrderTransfer from './certificate1OrderTransfer'
+import certificate2OrderTransfer from './certificate2OrderTransfer'
 // 其他
 import { formatMoney } from '@/setup/format.js'
 import validate from '@/setup/validate'
@@ -181,12 +199,14 @@ export default {
   name: 'OrderTransferStep1',
   components: {
     // 新增訂單才有
-    anzaOrderNew,
+    anzaOrderList,
     installmentOrderNew,
     // 訂單固定內容
     orderDetail,
     orderCustomer,
     // 訂單變動內容
+    certificate1OrderTransfer,
+    certificate2OrderTransfer,
     orderFunctions
   },
   props: {
@@ -302,10 +322,6 @@ export default {
     this.projectHead.push(this.form)
 
     await this.preLoading()
-
-    // 過戶單特殊操作
-    await this.$refs['orderCustomer'].parentAssginData('CustomerID', '')
-    await this.$refs['orderCustomer'].parentAssginData('ModifyType', this.myTitle)
   },
   methods: {
     formatterMoney: function (row, column, cellValue, index) {
@@ -412,19 +428,17 @@ export default {
               return
             }
           }
-          if (this.projectFunctions.newAnzaOrder.Available) {
-            isSuccess = await this.$refs['anzaOrderNew'].checkValidate()
-            if (!isSuccess) {
-              this.checkFail()
-              return
-            }
-          }
           // 檢查明細資訊
           isSuccess = await this.$refs['orderDetail'].checkValidate()
           if (!isSuccess) {
             this.checkFail()
             return
           }
+
+          // 下一步檢查
+          // 過戶單特殊操作
+          await this.$refs['orderCustomer'].parentAssginData('CustomerID', '')
+          await this.$refs['orderCustomer'].parentAssginData('ModifyType', this.myTitle)
           break
         case 2:
           // 檢查客戶資訊
@@ -435,6 +449,8 @@ export default {
           }
           break
         case 3:
+        case 4:
+        case 5:
           isSuccess = true
           break
       }
@@ -444,10 +460,12 @@ export default {
           case 0:
           case 1:
           case 2:
+          case 3:
+          case 4:
             this.nowStep++
             this.tabClick({ name: this.tabActiveName }, null)
             break
-          case 3:
+          case 5:
             this.beforeSave()
             break
         }
@@ -494,9 +512,17 @@ export default {
       }
       if (this.projectFunctions.newAnzaOrder.Available) {
         if (isSuccess) {
-          saveStep = 'anzaOrderNew'
-          isSuccess = await this.$refs['anzaOrderNew'].beforeSave()
+          saveStep = 'anzaOrderList'
+          isSuccess = await this.$refs['anzaOrderList'].beforeSave()
         }
+      }
+
+      // 過戶單特有
+      // 供奉憑證: 停用舊單據，重新給予號碼
+      // 換狀證明: 變更持有人
+      if (isSuccess) {
+        saveStep = 'orderTransfer'
+        isSuccess = await this.save(saveStep)
       }
 
       // 全部完成
@@ -532,7 +558,7 @@ export default {
     save: async function (type) {
       let isSuccess = false
       switch (type) {
-        case 'new':
+        case 'new': // 新增
           let responseNew = await this.$api.orders.orderNew({ form: this.form })
           if (responseNew.headers['code'] === '200') {
             isSuccess = true
@@ -541,7 +567,7 @@ export default {
             this.updateMessage = responseNew.data.result[0].message
           }
           break
-        case 'edit':
+        case 'edit': // 修改
           let responseEdit = await this.$api.orders.orderEdit({ form: this.form })
           if (responseEdit.headers['code'] === '200') {
             isSuccess = true
@@ -550,18 +576,25 @@ export default {
             this.updateMessage = responseEdit.data.result[0].message
           }
           break
-        case 'delete':
+        case 'delete': // 刪除
           let responseDelete = await this.$api.orders.orderDelete({ form: this.form })
           if (responseDelete.headers['code'] === '200') {
             isSuccess = true
             this.updateMessage = responseDelete.data.result[0].message
           }
           break
-        case 'invalid':
+        case 'invalid': // 作廢
           let responseInvalid = await this.$api.orders.orderInvalid({ form: this.form })
           if (responseInvalid.headers['code'] === '200') {
             isSuccess = true
             this.updateMessage = responseInvalid.data.result[0].message
+          }
+          break
+        case 'orderTransfer': // 過戶
+          let responseOrderTransfer = await this.$api.orders.orderTransfer({ form: this.form })
+          if (responseOrderTransfer.headers['code'] === '200') {
+            isSuccess = true
+            this.updateMessage = responseOrderTransfer.data.result[0].message
           }
           break
       }
