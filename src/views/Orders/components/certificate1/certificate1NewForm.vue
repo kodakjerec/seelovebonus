@@ -160,7 +160,7 @@ export default {
             new: 0,
             edit: 0,
             save: 0,
-            delete: 1,
+            delete: 0,
             search: 0
           }
         } else {
@@ -176,7 +176,7 @@ export default {
     }
 
     // 已經被其他單據交換過, 禁止操作
-    if (this.form.refType !== '') {
+    if (this.form.refType) {
       this.buttonsShow.delete = 0
     }
 
@@ -238,11 +238,8 @@ export default {
           break
         case 'retakeID':
           // 停用舊單據
-          this.form.Status = '0'
-          await this.$api.orders.orderCertificate1Edit({ form: this.form })
           // 新增單據
-          this.form.Status = '1'
-          let responseRetakeID = await this.$api.orders.orderCertificate1New({ form: this.form })
+          let responseRetakeID = await this.$api.orders.orderCertificate1RetakeID({ form: this.form })
           if (responseRetakeID.headers['code'] === '200') {
             this.$alert(responseRetakeID.data.result[0].message, responseRetakeID.data.result[0].code)
             isSuccess = true

@@ -285,6 +285,8 @@ export default {
   __installmentBatchEditWarning: '變更影響所有分期(不含已收款明細)',
   __storageAddressNewFormWarning: '(粗估數量，實際存檔時會略過名稱含"4")',
   __orderDetailNotEqualInstallmentDetail: '明細總額不等於分期總額',
+  __certificate1OrderNewWarning: '未停用憑證，會給予等數量的新憑證號碼',
+  __certificate2OrderNewWarning: '所有證明，會更換持有人身分為訂購者',
   // 以下為錯誤處理專用
   __error400: '無法理解請求',
   __error401: '授權失敗，請重新登入',

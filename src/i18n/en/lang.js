@@ -285,6 +285,8 @@ export default {
   __installmentBatchEditWarning: 'Change affets all installments(not including received details)',
   __storageAddressNewFormWarning: '(Estimate Qty, the actual saving will skip "4")',
   __orderDetailNotEqualInstallmentDetail: 'Amount: detail not equals installment',
+  __certificate1OrderNewWarning: 'The certificates not deactivated, equal number of new certificates will be given',
+  __certificate2OrderNewWarning: 'All certificates, will replace holder as the orderer',
   // 以下為錯誤處理專用
   __error400: 'Bad Request',
   __error401: 'Unauthorized',

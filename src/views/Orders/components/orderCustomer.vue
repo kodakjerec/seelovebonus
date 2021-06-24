@@ -319,7 +319,7 @@ export default {
 
       return isSuccess
     },
-    // 父視窗: 變更任意資料, 目前只有安座單會用到
+    // 父視窗: 變更任意資料, 使用單據: 安座單, 過戶單
     parentAssginData: async function (type, fromObject) {
       switch (type) {
         case 'CustomerID':

@@ -254,6 +254,8 @@ export default {
         this.form.FromStorageID = newValue.FromStorageID
         if (this.form.CustomerID !== newValue.CustomerID) {
           this.parentCustomerChange()
+          this.parentQtyChange()
+          this.reCalDate(this.subList)
         }
       },
       deep: true

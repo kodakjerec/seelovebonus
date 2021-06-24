@@ -39,6 +39,12 @@ export default {
         return data
       })
     },
+    orderTransfer: ({ form }) => {
+      let rawData = { form }
+      return postEncrypt('/orders/orderTransfer', rawData).then(data => {
+        return data
+      })
+    },
     // Order Customer
     orderCustomerNew: ({ form }) => {
       let rawData = { form }
@@ -87,7 +93,6 @@ export default {
     },
     orderCertificate1New: ({ form }) => {
       let rawData = { form }
-
       return postEncrypt('/orders/orderCertificate1New', rawData).then(data => {
         return data
       })
@@ -119,6 +124,12 @@ export default {
     orderCertificate2Delete: ({ form }) => {
       let rawData = { form }
       return postEncrypt('/orders/orderCertificate2Delete', rawData).then(data => {
+        return data
+      })
+    },
+    orderCertificate1RetakeID: ({ form }) => {
+      let rawData = { form }
+      return postEncrypt('/orders/orderCertificate1RetakeID', rawData).then(data => {
         return data
       })
     },
