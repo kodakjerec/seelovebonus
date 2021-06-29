@@ -354,6 +354,7 @@ export default {
           return isSuccess
         }
 
+        // 有使用庫存才檢查
         if (row.Inventory === 1) {
           if (row.FromStorageID === '' || row.ToStorageID === '') {
             this.$message({

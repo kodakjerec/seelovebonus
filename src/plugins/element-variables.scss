@@ -85,8 +85,14 @@ $--input-focus-fill: yellow !default;
 
 /* Button
 -------------------------- */
+// 查詢畫面上方, 避免沒有功能跑版的隱藏按鈕
 button.el-button.hideButton.el-button--default {
   visibility: hidden;
+}
+// 查詢畫面左方, 功能按鈕
+.defineCSS_LeftButtons {
+  position: absolute;
+  left:10px;
 }
 
 // 日期選擇套件, 強迫寬度縮小

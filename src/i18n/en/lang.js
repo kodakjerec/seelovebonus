@@ -259,6 +259,7 @@ export default {
   __next: 'Next',
   __prev: 'Prev',
   __orderTransfer: 'Transfer',
+  __anzaChangeStorage: 'anza-ChgStorage',
   // 請在上方新增字串
   // 以下為長字串提醒
   __collectioRecordsDeleteNo: 'Can\'t delete record, please check ',

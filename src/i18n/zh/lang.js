@@ -259,6 +259,7 @@ export default {
   __next: '下一步',
   __prev: '上一步',
   __orderTransfer: '過戶',
+  __anzaChangeStorage: '已安座異動',
   // 請在上方新增字串
   // 以下為長字串提醒
   __collectioRecordsDeleteNo: '無法刪除收款資訊，請檢查 ',
