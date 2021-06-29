@@ -7,10 +7,12 @@
       <el-form-item v-if="!disableForm.StorageID" :label="$t('__anzaStorageID')" prop="StorageID">
         <el-col :span="8">
           <el-select
+            remote
             default-first-option filterable clearable
-            @visible-change="checkStorageID"
             v-model="anzaOrder.StorageID"
             :disabled="disableForm.StorageID"
+            :remote-method="remoteMethod"
+            @change="storageIDChange"
             :placeholder="$t('__plzChoice')"
             style="display:block">
             <el-option v-for="item in ddlStorageID" :key="item.ID" :label="item.ID+' '+item.Value" :value="item.ID">
@@ -19,6 +21,8 @@
             </el-option>
           </el-select>
         </el-col>
+        <i v-show="storageIDCheck==='success'" style="color:green" class='el-icon-success'></i>
+        <i v-show="storageIDCheck==='error'" style="color:red" class='el-icon-error'></i>
         {{$t('__anzaOperateWarning')}}
       </el-form-item>
       <!-- 申請安座日 -->
@@ -183,6 +187,13 @@
     <div slot="footer">
       <el-button @click="cancel">{{$t('__cancel')}}</el-button>
       <el-button type="primary" @click="checkValidate">{{$t('__ok')}}</el-button>
+      <div v-if="operateType==='anza' && anzaOrder.AnzaOrderID">
+        <el-divider>{{$t('__anzaOrder')+$t('__detail')}}</el-divider>
+        <anzaOrderDetail
+          v-if="anzaOrderDetailList.length>0"
+          ref='anzaOrderDetail'
+          :fromList="anzaOrderDetailList"></anzaOrderDetail>
+      </div>
     </div>
   </el-dialog>
 </template>
@@ -190,15 +201,17 @@
 <script>
 import validate from '@/setup/validate'
 import inputCustomer from '@/views/Basic/inputCustomer'
+import anzaOrderDetail from './anzaOrderDetail'
 
 export default {
   name: 'operateAnza',
   components: {
-    inputCustomer
+    inputCustomer,
+    anzaOrderDetail
   },
   props: {
     dialogShow: { type: Boolean, default: false },
-    operateType: { type: String },
+    operateType: { type: String }, // 數值: modify, anza, complete
     fromAnzaOrder: { type: Object }
   },
   data () {
@@ -234,17 +247,13 @@ export default {
         CompleteDate: '',
         ScheduledDate: ''
       },
+      anzaOrderDetailList: [],
+      anzaOrderSpecificRow: '', // 特別需要關注 移入儲位 的row, 會一併連動anzaOrderDetail
       // 客戶基本資料 -- 抄襲 customerNewForm.vue
       form: {
         ID: '',
         Name: '',
         NameEnglish: '',
-        AgentID: '',
-        AgentName: '',
-        AgentCountry: '2',
-        AgentCity: null,
-        AgentPost: null,
-        AgentAddress: '',
         TelHome: '',
         TelMobile: '',
         Country: '2',
@@ -276,6 +285,7 @@ export default {
       },
       myTitle: '',
       postData: [],
+      storageIDCheck: '', // 驗證儲位正確性
       // 下拉是選單
       ddlStorageID: [],
       ddlLunarTime: [],
@@ -321,16 +331,21 @@ export default {
       this.ddlLunarTime = response
       response = this.$api.local.getDropdownList({ type: 'Gender' })
       this.ddlGender = response
+
+      // 取的明細資訊
+      let response1 = await this.$api.orders.getObject({ type: 'anzaOrderDetail', keyword: this.fromAnzaOrder.AnzaOrderID })
+      this.anzaOrderDetailList = response1.data.result
+      // 取的唯一要入安座儲位的標的物
+      this.anzaOrderDetailList.forEach(row => {
+        if (row.ToStorageID === '') {
+          this.anzaOrderSpecificRow = row
+        }
+      })
       // 需要用到儲位才顯示
       if (!this.disableForm.StorageID) {
-        let response2 = await this.$api.stock.findStorageID({
-          ProductID: this.fromAnzaOrder.ProductID,
-          Purpose: '',
-          Qty: 1,
-          StorageID: ''
-        })
-        this.ddlStorageID = response2.data.result
+        this.findStorageIDNow(this.anzaOrderSpecificRow)
       }
+
       response = this.$api.local.getDropdownList({ type: 'District' })
       this.postData = response
       response = this.$api.local.getDropdownList({ type: 'Country' })
@@ -368,12 +383,6 @@ export default {
       this.form.ID = fromCustomer.ID
       this.form.Name = fromCustomer.Name
       this.form.NameEnglish = fromCustomer.NameEnglish
-      this.form.AgentID = fromCustomer.AgentID
-      this.form.AgentName = fromCustomer.AgentName
-      this.form.AgentCountry = fromCustomer.AgentCountry
-      this.form.AgentCity = fromCustomer.AgentCity
-      this.form.AgentPost = fromCustomer.AgentPost
-      this.form.AgentAddress = fromCustomer.AgentAddress
       this.form.TelHome = fromCustomer.TelHome
       this.form.TelMobile = fromCustomer.TelMobile
       this.form.Country = fromCustomer.Country
@@ -421,16 +430,42 @@ export default {
       }
     },
     // ===== 表單功能 =====
-    // 檢查輸入正確性
-    checkStorageID: function (event) {
-      // 強制轉為大寫
-      this.anzaOrder.StorageID = this.anzaOrder.StorageID.toUpperCase()
+    // 即時查詢可用儲位
+    remoteMethod: async function (query) {
+      if (query.length >= 3) {
+        // 強制轉為大寫
+        query = query.toUpperCase()
 
-      if (event === false) {
-        this.$refs['form'].validate((valid) => {})
+        this.anzaOrderSpecificRow.ToStorageID = query
+
+        this.findStorageIDNow(this.anzaOrderSpecificRow)
       }
     },
-    checkValidate: function () {
+    // 安座單即時查詢庫存(注意要指定ToStorageID)
+    findStorageIDNow: async function (row) {
+      if (row.ProductID) {
+        let response2 = await this.$api.stock.findStorageID({
+          ProductID: row.ProductID,
+          Purpose: row.Purpose,
+          Qty: row.Qty,
+          StorageID: row.ToStorageID
+        })
+        this.ddlStorageID = response2.data.result
+      }
+    },
+    // 選好儲位編號後連動
+    storageIDChange: function (selected) {
+      this.anzaOrderSpecificRow.ToStorageID = selected
+      this.anzaOrderSpecificRow.Status = 'Modified'
+    },
+    checkValidate: async function () {
+      // 檢查明細(安座才檢查)
+      if (this.operateType === 'anza') {
+        let isSuccess = false
+        isSuccess = await this.$refs['anzaOrderDetail'].checkValidate()
+        if (!isSuccess) { return }
+      }
+
       // 檢查主表單
       this.$refs['form'].validate((valid) => {
         if (valid) {
@@ -439,6 +474,13 @@ export default {
       })
     },
     save: async function () {
+      // 儲存明細(安座才檢查)
+      if (this.operateType === 'anza') {
+        let isSuccess = false
+        isSuccess = await this.$refs['anzaOrderDetail'].beforeSave()
+        if (!isSuccess) { return }
+      }
+
       let response2 = await this.$api.orders.anzaOperate({ form: this.anzaOrder })
       if (response2.headers['code'] === '200') {
         this.$message({
