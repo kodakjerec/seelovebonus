@@ -21,6 +21,12 @@ $--color-text-placeholder: #FFFFFF !default;
 $--background-color-base:mix($--color-white, $--color-black, 70%) !default;
 
 // Table
+// 停用單據的row, 灰色表示
+div.el-table__body-wrapper.is-scrolling-none > table > tbody > tr.el-table__row.disabled-row > td {
+  background: darkgray;
+  color: black;
+}
+
 // 標題列特殊顏色
 div.el-table__header-wrapper > table > thead > tr > th {
   background-color: mix($--color-white, $--color-black, 60%);
