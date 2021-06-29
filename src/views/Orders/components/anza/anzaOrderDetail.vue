@@ -118,30 +118,33 @@ export default {
           }
 
           // 檢查庫存餘額是否足夠
-          let checkValidate = null
+          // 明細狀態為 新增/修改 才檢查
+          if (row.Status === 'New' || row.Status === 'Modified') {
+            let checkValidate = null
 
-          // 移出
-          checkValidate = await validate.validateStorageID(row.ProductID, row.Purpose, 0 - row.Qty, row.FromStorageID, null)
+            // 移出
+            checkValidate = await validate.validateStorageIDNoCallback(row.ProductID, row.Purpose, 0 - row.Qty, row.FromStorageID)
 
-          if (checkValidate !== '') {
-            this.$message({
-              message: this.$t('__fromStorageID') + this.$t('__inventoryShortage'),
-              type: 'error'
-            })
-            isSuccess = false
-            return isSuccess
-          }
+            if (checkValidate !== '') {
+              this.$message({
+                message: this.$t('__fromStorageID') + this.$t('__inventoryShortage'),
+                type: 'error'
+              })
+              isSuccess = false
+              return isSuccess
+            }
 
-          // 移入
-          checkValidate = await validate.validateStorageID(row.ProductID, row.Purpose, row.Qty, row.ToStorageID, null)
+            // 移入
+            checkValidate = await validate.validateStorageIDNoCallback(row.ProductID, row.Purpose, row.Qty, row.ToStorageID)
 
-          if (checkValidate !== '') {
-            this.$message({
-              message: this.$t('__tofromStorageID') + this.$t('__inventoryShortage'),
-              type: 'error'
-            })
-            isSuccess = false
-            return isSuccess
+            if (checkValidate !== '') {
+              this.$message({
+                message: this.$t('__tofromStorageID') + this.$t('__inventoryShortage'),
+                type: 'error'
+              })
+              isSuccess = false
+              return isSuccess
+            }
           }
         }
 
