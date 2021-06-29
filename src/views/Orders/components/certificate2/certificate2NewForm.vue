@@ -147,7 +147,7 @@ export default {
             new: 0,
             edit: 0,
             save: 0,
-            delete: 1,
+            delete: 0,
             search: 0
           }
         } else {
@@ -161,7 +161,7 @@ export default {
         }
 
         // 已經被其他單據交換過, 禁止操作
-        if (this.form.refType !== '') {
+        if (this.form.refType) {
           this.buttonsShow.delete = 0
         }
         break

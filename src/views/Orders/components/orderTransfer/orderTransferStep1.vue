@@ -2,13 +2,16 @@
   <div id="orderHead">
     <h1>{{myTitle}}</h1>
     <el-steps :active="nowStep" align-center process-status="finish" finish-status="success">
-      <el-step :title="$t('__choose')+' '+$t('__order')+$t('__date')"></el-step>
+      <el-step :title="$t('__choose')+' '+$t('__orderID')"></el-step>
       <el-step :title="$t('__new')+' '+$t('__product')"></el-step>
       <el-step :title="$t('__choose')+' '+$t('__customer')"></el-step>
+      <el-step :title="$t('__certificate1')"></el-step>
+      <el-step :title="$t('__certificate2')"></el-step>
       <el-step :title="$t('__complete')"></el-step>
     </el-steps>
     <el-form ref="form" :model="form" :rules="rules" label-width="10vw" label-position="right">
-      <div v-show="nowStep===0 || nowStep===3">
+      <!-- 契約主約內容 -->
+      <div v-show="nowStep===0 || nowStep===5">
         <el-form-item :label="$t('__orderID')">
           <el-col :span="2" v-if="dialogType === 'new'">
             {{form.Prefix}}
@@ -32,7 +35,8 @@
                 v-model="form.OrderDate"
                 type="date"
                 :placeholder="$t('__plzChoice')+$t('__order')+$t('__date')"
-                value-format="yyyy-MM-dd">
+                value-format="yyyy-MM-dd"
+                disabled>
               </el-date-picker>
             </el-form-item>
           </el-col>
@@ -51,7 +55,7 @@
       </div>
       <!-- 選擇專案 -->
       <el-table
-        v-show="nowStep===1 || nowStep===3"
+        v-show="nowStep===1 || nowStep===5"
         :data="projectHead"
         stripe
         border
@@ -111,7 +115,7 @@
     </el-form>
     <!-- 專案明細 -->
     <order-detail
-      v-show="nowStep===1 || nowStep===3"
+      v-show="nowStep===1 || nowStep===5"
       ref="orderDetail"
       :dialogType="dialogType"
       :buttonsShowUser="buttonsShowUser"
@@ -122,7 +126,7 @@
       @reCalculateDetail="reCalculateDetail"></order-detail>
     <!-- 訂購者資料 -->
     <order-customer
-      v-show="nowStep===2 || nowStep===3"
+      v-show="nowStep===2 || nowStep===5"
       id="orderCustomer"
       ref="orderCustomer"
       :dialogType="dialogType"
@@ -130,17 +134,32 @@
       :fromOrderID="form.ID"
       :fromOrderStatus="form.Status"
       @customer-change="customerChange"></order-customer>
-    <!-- 新增訂單專用 -->
-    <anza-order-new
-      v-show="nowStep===2 || nowStep===3"
-      id="anzaOrderNew"
-      ref="anzaOrderNew"
+    <!-- 安座單 -->
+    <anza-order-list
+      v-show="nowStep===2 || nowStep===5"
+      id="anzaOrderList"
       :fromOrderID="form.ID"
-      :parentOrderDate="form.OrderDate"
-      :parentQty="form.Qty"
-      :parentAnzaData="form.anzaForNew"></anza-order-new>
+      :isShow="projectFunctions.newAnzaOrder.Available">
+    </anza-order-list>
+    <!-- 供奉憑證 -->
+    <certificate1-order-transfer
+      v-show="nowStep===3 || nowStep===5"
+      id="certificate1"
+      :buttonsShowUser="buttonsShowUser"
+      :fromOrderID="form.ID"
+      :fromOrderStatus="form.Status"
+      :isShow="projectFunctions.newCertificate1.Available"></certificate1-order-transfer>
+    <!-- 換狀證明 -->
+    <certificate2-order-transfer
+      v-show="nowStep===4 || nowStep===5"
+      id="certificate2"
+      :buttonsShowUser="buttonsShowUser"
+      :fromOrderID="form.ID"
+      :fromOrderStatus="form.Status"
+      :isShow="projectFunctions.newCertificate2.Available"></certificate2-order-transfer>
+    <!-- 分期付款 -->
     <installment-order-new
-      v-show="nowStep===1 || nowStep===3"
+      v-show="nowStep===1 || nowStep===5"
       id="installmentOrderNew"
       ref="installmentOrderNew"
       :fromOrderID="form.ID"
@@ -149,46 +168,51 @@
       :parentQty="form.Qty"
       :parentAmount="form.Amount"
       :parentDate="form.OrderDate"></installment-order-new>
+
     <!-- 底部操作按鈕 -->
     <div slot="footer">
       <br/>
       <el-button v-if="nowStep>0" @click="goPrevious">{{$t('__prev')}}</el-button>
       <el-button @click="cancel">{{$t('__cancel')}}</el-button>
-      <el-button v-if="nowStep<3" type="primary" @click="checkValidate">{{$t('__next')}}</el-button>
+      <el-button v-if="nowStep<5" type="primary" @click="checkValidate">{{$t('__next')}}</el-button>
       <el-button v-else type="primary" @click="checkValidate">{{$t('__save')}}</el-button>
     </div>
   </div>
 </template>
 
 <script>
+import anzaOrderList from '../anza/anzaOrderList'
 // 新增訂單才有
-import anzaOrderNew from '@/views/Orders/components/orderNew/anzaOrderNew'
 import installmentOrderNew from '@/views/Orders/components/orderNew/installmentOrderNew'
 // 訂單固定內容
 import orderDetail from '@/views/Orders/components/orderDetail'
 import orderCustomer from '@/views/Orders/components/orderCustomer'
 // 訂單變動內容
 import orderFunctions from '@/views/Orders/components/orderFunctions'
+import certificate1OrderTransfer from './certificate1OrderTransfer'
+import certificate2OrderTransfer from './certificate2OrderTransfer'
 // 其他
-import { formatMoney, formatDate } from '@/setup/format.js'
+import { formatMoney } from '@/setup/format.js'
 import validate from '@/setup/validate'
 
 export default {
-  name: 'AnzaOrderRenew',
+  name: 'OrderTransferStep1',
   components: {
     // 新增訂單才有
-    anzaOrderNew,
+    anzaOrderList,
     installmentOrderNew,
     // 訂單固定內容
     orderDetail,
     orderCustomer,
     // 訂單變動內容
+    certificate1OrderTransfer,
+    certificate2OrderTransfer,
     orderFunctions
   },
   props: {
     dialogType: { type: String, default: 'new' },
     order: { type: Object },
-    parent: { type: String, default: 'AnzaOrderShow' },
+    parent: { type: String, default: 'Orders' },
     buttonsShowUser: { type: Object,
       default () {
         return {}
@@ -233,7 +257,7 @@ export default {
         delete: 0,
         search: 1
       },
-      myTitle: '',
+      myTitle: this.$t('__orderTransfer'),
       nowStep: 0,
       projectHead: [],
       updateMessage: '', // 更新資料庫後回傳的訊息
@@ -247,20 +271,14 @@ export default {
       // 以下為下拉式選單專用
       ddlOrderStatus: [],
       ddlProject: [],
+      ddlOrderID: [],
       // 頂部導覽
       tabActiveName: 'orderHead'
     }
   },
   async mounted () {
-    // 不是從上層選單進入, 而是其他不允許路徑
-    if (this.order === undefined) {
-      this.cancel()
-      return
-    }
-
     switch (this.dialogType) {
       case 'edit':
-        this.myTitle = this.$t('__edit') + this.$t('__orderPaper')
         this.form.ID = this.order.ID
         this.form.OrderDate = this.order.OrderDate
         this.form.ProjectID = this.order.ProjectID
@@ -304,13 +322,6 @@ export default {
     this.projectHead.push(this.form)
 
     await this.preLoading()
-
-    // 如果有其他來源, 要做不同處理
-    if (this.$attrs.fromParams) {
-      if (this.$attrs.fromParams.fromType) {
-        await this.anzaOperation(this.$attrs.fromParams.fromType)
-      }
-    }
   },
   methods: {
     formatterMoney: function (row, column, cellValue, index) {
@@ -323,8 +334,8 @@ export default {
     preLoading: async function () {
       let response = this.$api.local.getDropdownList({ type: 'OrderStatus' })
       this.ddlOrderStatus = response
-      let response2 = await this.$api.orders.getDropdownList({ type: 'project' })
-      this.ddlProject = response2.data.result
+      response = await this.$api.orders.getDropdownList({ type: 'project' })
+      this.ddlProject = response.data.result
     },
     // 點擊"修改專案", 填入明細
     bringProject: async function () {
@@ -417,19 +428,17 @@ export default {
               return
             }
           }
-          if (this.projectFunctions.newAnzaOrder.Available) {
-            isSuccess = await this.$refs['anzaOrderNew'].checkValidate()
-            if (!isSuccess) {
-              this.checkFail()
-              return
-            }
-          }
           // 檢查明細資訊
           isSuccess = await this.$refs['orderDetail'].checkValidate()
           if (!isSuccess) {
             this.checkFail()
             return
           }
+
+          // 下一步檢查
+          // 過戶單特殊操作
+          await this.$refs['orderCustomer'].parentAssginData('CustomerID', '')
+          await this.$refs['orderCustomer'].parentAssginData('ModifyType', this.myTitle)
           break
         case 2:
           // 檢查客戶資訊
@@ -440,6 +449,8 @@ export default {
           }
           break
         case 3:
+        case 4:
+        case 5:
           isSuccess = true
           break
       }
@@ -449,10 +460,12 @@ export default {
           case 0:
           case 1:
           case 2:
+          case 3:
+          case 4:
             this.nowStep++
             this.tabClick({ name: this.tabActiveName }, null)
             break
-          case 3:
+          case 5:
             this.beforeSave()
             break
         }
@@ -499,9 +512,17 @@ export default {
       }
       if (this.projectFunctions.newAnzaOrder.Available) {
         if (isSuccess) {
-          saveStep = 'anzaOrderNew'
-          isSuccess = await this.$refs['anzaOrderNew'].beforeSave()
+          saveStep = 'anzaOrderList'
+          isSuccess = await this.$refs['anzaOrderList'].beforeSave()
         }
+      }
+
+      // 過戶單特有
+      // 供奉憑證: 停用舊單據，重新給予號碼
+      // 換狀證明: 變更持有人
+      if (isSuccess) {
+        saveStep = 'orderTransfer'
+        isSuccess = await this.save(saveStep)
       }
 
       // 全部完成
@@ -537,7 +558,7 @@ export default {
     save: async function (type) {
       let isSuccess = false
       switch (type) {
-        case 'new':
+        case 'new': // 新增
           let responseNew = await this.$api.orders.orderNew({ form: this.form })
           if (responseNew.headers['code'] === '200') {
             isSuccess = true
@@ -546,7 +567,7 @@ export default {
             this.updateMessage = responseNew.data.result[0].message
           }
           break
-        case 'edit':
+        case 'edit': // 修改
           let responseEdit = await this.$api.orders.orderEdit({ form: this.form })
           if (responseEdit.headers['code'] === '200') {
             isSuccess = true
@@ -555,18 +576,25 @@ export default {
             this.updateMessage = responseEdit.data.result[0].message
           }
           break
-        case 'delete':
+        case 'delete': // 刪除
           let responseDelete = await this.$api.orders.orderDelete({ form: this.form })
           if (responseDelete.headers['code'] === '200') {
             isSuccess = true
             this.updateMessage = responseDelete.data.result[0].message
           }
           break
-        case 'invalid':
+        case 'invalid': // 作廢
           let responseInvalid = await this.$api.orders.orderInvalid({ form: this.form })
           if (responseInvalid.headers['code'] === '200') {
             isSuccess = true
             this.updateMessage = responseInvalid.data.result[0].message
+          }
+          break
+        case 'orderTransfer': // 過戶
+          let responseOrderTransfer = await this.$api.orders.orderTransfer({ form: this.form })
+          if (responseOrderTransfer.headers['code'] === '200') {
+            isSuccess = true
+            this.updateMessage = responseOrderTransfer.data.result[0].message
           }
           break
       }
@@ -584,86 +612,6 @@ export default {
     // 客戶變更, 要回傳最終結果
     customerChange: function (result) {
       this.form.anzaForNew.CustomerID = result
-    },
-    // 從 安座作業 傳來的操作
-    anzaOperation: async function (fromType) {
-      // 決定標題
-      switch (fromType) {
-        case 'anzaRenew':
-          this.myTitle = this.$t('__anzaRenew') + this.$t('__anzaOrder')
-          await this.$refs['anzaOrderNew'].parentAssginData('ModifyType', this.$t('__anzaRenew'))
-          break
-        case 'anzaExtend':
-          this.myTitle = this.$t('__anzaExtend') + this.$t('__anzaOrder')
-          await this.$refs['anzaOrderNew'].parentAssginData('ModifyType', this.$t('__anzaExtend'))
-          break
-        case 'anzaTransfer':
-          this.myTitle = this.$t('__anzaTransfer') + this.$t('__anzaOrder')
-          await this.$refs['anzaOrderNew'].parentAssginData('ModifyType', this.$t('__anzaTransfer'))
-          break
-        case 'anzaInherit':
-          this.myTitle = this.$t('__anzaInherit') + this.$t('__anzaOrder')
-          await this.$refs['anzaOrderNew'].parentAssginData('ModifyType', this.$t('__anzaInherit'))
-          break
-      }
-      await this.$refs['anzaOrderNew'].parentAssginData('fromType', this.$attrs.fromParams.fromType)
-      await this.$refs['orderFunctions'].parentAssginData('fromType', this.$attrs.fromParams.fromType)
-
-      // 舊有契約單據資料
-      let oldOrderHead = this.$attrs.fromParams.fromOrder
-      this.form.anzaForNew.OldOrderID = oldOrderHead.ID
-      // 給數量
-      this.form.Qty = oldOrderHead.Qty
-
-      // 取得專案的Extend
-      let response1 = await this.$api.orders.getObject({ type: 'orderNewBringAnzaOrder', keyword: oldOrderHead.ID })
-      let oldOrderExtend = response1.data.result[0]
-
-      if (oldOrderExtend) {
-        let projectExtend = JSON.parse(oldOrderExtend.Extend)
-        if (projectExtend) {
-          this.form.anzaForNew.Extend = projectExtend
-        }
-
-        // 給專案編號(續約, 展延)
-        // 給專案日期(轉讓)
-        switch (fromType) {
-          case 'anzaRenew':
-          case 'anzaExtend':
-            this.form.ProjectID = projectExtend.nextProjectID
-            await this.ddlProjectChange(this.form.ProjectID)
-            // 給予orderFunction額外料
-            await this.$refs['orderFunctions'].parentAssginData('newAnzaOrder', oldOrderHead.ID)
-            break
-          case 'anzaTransfer':
-            let tempDate = new Date()
-            this.form.OrderDate = formatDate(tempDate.toISOString().slice(0, 10))
-            break
-          case 'anzaInherit':
-            // 修改狀態, 不用給號碼
-            break
-        }
-
-        // 給客戶代號(續約, 展延)
-        // 清除舊有客戶代號(轉讓, 繼承)
-        switch (fromType) {
-          case 'anzaRenew':
-          case 'anzaExtend':
-            await this.$refs['orderCustomer'].parentAssginData('CustomerID', oldOrderExtend.CustomerID)
-            break
-          case 'anzaTransfer':
-            await this.$refs['orderCustomer'].parentAssginData('CustomerID', '')
-            await this.$refs['orderCustomer'].parentAssginData('ModifyType', this.$t('__anzaTransfer'))
-            break
-          case 'anzaInherit':
-            await this.$refs['orderCustomer'].parentAssginData('CustomerID', '')
-            await this.$refs['orderCustomer'].parentAssginData('ModifyType', this.$t('__anzaInherit'))
-            break
-        }
-
-        // 代入舊的安座單清單
-        await this.$refs['anzaOrderNew'].parentAssginData('subList', this.$attrs.fromParams.fromAnzaList)
-      }
     },
     // ===== 頂部導覽 =====
     tabClick: function (tab, event) {

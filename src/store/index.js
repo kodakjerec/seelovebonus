@@ -132,7 +132,6 @@ export default new Vuex.Store({
         userName: state.userName,
         menuList: state.menuList,
         userProg: state.userProg,
-        version: state.version,
         globalSettings: state.globalSettings
       }
     }

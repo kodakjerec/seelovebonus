@@ -94,6 +94,19 @@ const routes = [
     name: 'Certificate2Show',
     component: () => import('@/views/Orders/certificate2Show')
   },
+  // Orders -> orderTransfer
+  {
+    path: '/Orders/OrderTransfer',
+    name: 'OrderTransfer',
+    component: () => import('@/views/Orders/components/orderTransfer/orderTransfer'),
+    props: true
+  },
+  {
+    path: '/Orders/OrderTransfer/Step1',
+    name: 'OrderTransferStep1',
+    component: () => import('@/views/Orders/components/orderTransfer/orderTransferStep1'),
+    props: true
+  },
   // Orders -> SignOff
   {
     path: '/Orders/OrderSignOffManual',

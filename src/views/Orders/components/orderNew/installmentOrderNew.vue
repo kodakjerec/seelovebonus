@@ -155,8 +155,6 @@ export default {
           InstallmentName: row.InstallmentName,
           ScheduledDate: row.ScheduledDate,
           ScheduledAmount: row.ScheduledAmount,
-          ReceivedDate: null,
-          PaidAmount: null,
           PaymentMethod: row.PaymentMethod,
           PaymentFrequency: row.PaymentFrequency,
           Memo: ''

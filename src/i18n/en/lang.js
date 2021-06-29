@@ -254,6 +254,12 @@ export default {
   __show: 'Show',
   __menu: 'Menu',
   __darkMode: 'Dark Mode',
+  __choose: 'Choose',
+  __complete: 'Complete',
+  __next: 'Next',
+  __prev: 'Prev',
+  __orderTransfer: 'Transfer',
+  __anzaChangeStorage: 'anza-ChgStorage',
   // 請在上方新增字串
   // 以下為長字串提醒
   __collectioRecordsDeleteNo: 'Can\'t delete record, please check ',
@@ -280,6 +286,8 @@ export default {
   __installmentBatchEditWarning: 'Change affets all installments(not including received details)',
   __storageAddressNewFormWarning: '(Estimate Qty, the actual saving will skip "4")',
   __orderDetailNotEqualInstallmentDetail: 'Amount: detail not equals installment',
+  __certificate1OrderNewWarning: 'The certificates not deactivated, equal number of new certificates will be given',
+  __certificate2OrderNewWarning: 'All certificates, will replace holder as the orderer',
   // 以下為錯誤處理專用
   __error400: 'Bad Request',
   __error401: 'Unauthorized',
@@ -293,6 +301,7 @@ export default {
   __versionError: 'Version Update, Please refresh web<br/>Windows: F5<br/>Mac: ⌘+R',
   __denyEditNoPermission: 'Can\'t edit, No permission',
   // 以下為驗證專用
+  __plzCheckAgain: 'Please Check Again',
   __plzChoice: 'Please Choice',
   __pleaseInputUserID: 'Please Input UserID',
   __pleaseInputPassword: 'Please Input Password',

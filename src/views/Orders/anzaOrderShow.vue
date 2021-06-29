@@ -1,5 +1,8 @@
 <template>
   <div>
+    <el-button-group class="defineCSS_LeftButtons">
+      <el-button v-show="buttonsShowUser.new" @click.prevent="anzaChangeStorage">{{$t('__anzaChangeStorage')}}</el-button>
+    </el-button-group>
     <el-button-group style="padding-bottom: 5px">
       <el-button class="hideButton" icon="el-icon-more"><!-- 排版用,避免沒按鈕跑版 --></el-button>
       <search-button @search="search">
@@ -23,48 +26,46 @@
             {{$t('__orderID')}}
             <table-sort-arrow :prop="'OrderID'" :sortable="sortable"></table-sort-arrow>
           </template>
-          <template slot-scope="scope">
+          <el-button-group slot-scope="scope">
             <div style="font-weight:1000">{{scope.row[scope.column.property]}}</div>
             <div>{{scope.row.ProjectName}}</div>
-            <el-button-group>
-              <el-button
-                v-if="buttonsShowUser.edit && scope.row.FlagRenew === 1"
-                size="mini" type="info"
-                @click.native.stop="operateRenew(scope.$index, scope.row, 'anzaRenew')">{{$t('__anzaRenew')}}</el-button>
-              <el-button
-                v-if="buttonsShowUser.edit && scope.row.FlagExtend === 1"
-                size="mini" type="info"
-                @click.native.stop="operateRenew(scope.$index, scope.row, 'anzaExtend')">{{$t('__anzaExtend')}}</el-button>
-              <el-button
-                v-if="buttonsShowUser.edit && scope.row.FlagTransfer === 1"
-                size="mini"
-                @click.native.stop="operateRenew(scope.$index, scope.row, 'anzaTransfer')">{{$t('__anzaTransfer')}}</el-button>
-              <el-button
-                v-if="buttonsShowUser.edit"
-                size="mini"
-                @click.native.stop="operateRenew(scope.$index, scope.row, 'anzaInherit')">{{$t('__anzaInherit')}}</el-button>
-            </el-button-group>
-          </template>
+            <el-button
+              v-if="buttonsShowUser.edit && scope.row.FlagRenew === 1"
+              size="mini" type="info"
+              @click.native.stop="operateRenew(scope.$index, scope.row, 'anzaRenew')">{{$t('__anzaRenew')}}</el-button>
+            <el-button
+              v-if="buttonsShowUser.edit && scope.row.FlagExtend === 1"
+              size="mini" type="info"
+              @click.native.stop="operateRenew(scope.$index, scope.row, 'anzaExtend')">{{$t('__anzaExtend')}}</el-button>
+            <el-button
+              v-if="buttonsShowUser.edit && scope.row.FlagTransfer === 1"
+              size="mini"
+              @click.native.stop="operateRenew(scope.$index, scope.row, 'anzaTransfer')">{{$t('__anzaTransfer')}}</el-button>
+            <el-button
+              v-if="buttonsShowUser.edit"
+              size="mini"
+              @click.native.stop="operateRenew(scope.$index, scope.row, 'anzaInherit')">{{$t('__anzaInherit')}}</el-button>
+          </el-button-group>
         </el-table-column>
-        <el-table-column
+        <!-- <el-table-column
           width="130px">
           <template slot-scope="scope">
-          <div v-for="item in scope.row.OrderIDList" :key="item.OrderID">
+          <div v-for="item in scope.row.OrderIDList" :key="item.Seq">
               {{item.OrderID}}<template v-if="item.ModifyType!==''">{{'('+item.ModifyType+')'}}</template>
             </div>
           </template>
-        </el-table-column>
+        </el-table-column> -->
         <!-- 安座作業 -->
         <el-table-column
-          width="160px">
+          width="100">
           <template slot="header">
             <el-button
             type="text"
             size="mini" @click.prevent="openSignOffManual">{{$t('__anzaOperation')}}</el-button>
           </template>
-          <template slot-scope="scope">
+          <el-button-group slot-scope="scope">
             <el-button
-              v-if="buttonsShowUser.edit && scope.row.canAnza === 1"
+              v-if="buttonsShowUser.edit"
               size="mini"
               @click.native.stop="operateModify(scope.$index, scope.row)">{{$t('__edit')}}</el-button>
             <el-button
@@ -75,11 +76,10 @@
               v-if="buttonsShowUser.edit && scope.row.Status === '2'"
               size="mini"
               @click.native.stop="operateComplete(scope.$index, scope.row)">{{$t('__yuanman')}}</el-button>
-          </template>
+            </el-button-group>
         </el-table-column>
         <el-table-column
-          prop="AnzaOrderID"
-          width="100px">
+          prop="AnzaOrderID">
           <template slot="header">
             {{$t('__anzaOrder')}}
             <table-sort-arrow :prop="'AnzaOrderID'" :sortable="sortable"></table-sort-arrow>
@@ -180,14 +180,14 @@
       :total="pagination.totalCount">
     </el-pagination>
     <!-- 安座作業 -->
-    <operate-anza-mode
+    <anza-operate-mode
       v-if="dialogShowAnza"
       :dialog-show="dialogShowAnza"
       :operateType="operateType"
       :fromAnzaOrder="anzaOrder"
       @dialog-cancel="dialogCancel"
       @dialog-save="dialogSave"
-      ></operate-anza-mode>
+      ></anza-operate-mode>
     <!-- 進階查詢選項 -->
     <orders-search-content
       :dialogShow="dialogShowSearchContent"
@@ -206,7 +206,7 @@
 </template>
 
 <script>
-import operateAnzaMode from './components/anza/operateAnza'
+import anzaOperateMode from './components/anza/anzaOperate'
 import searchButton from '@/components/searchButton'
 import ordersSearchContent from './components/ordersSearchContent'
 import { formatDate } from '@/setup/format.js'
@@ -215,7 +215,7 @@ import tableSortArrow from './components/tableSortArrow'
 export default {
   name: 'AnzaOrderShow',
   components: {
-    operateAnzaMode,
+    anzaOperateMode,
     searchButton,
     ordersSearchContent,
     tableSortArrow

@@ -100,10 +100,13 @@
       <template slot-scope="scope">
         <el-select
           v-if="scope.row.Inventory"
-          v-model="scope.row[scope.column.property]"
+          remote
           default-first-option filterable clearable
-          :placeholder="$t('__plzChoice')"
-          :disabled="!(buttonsShow.new === 1 && buttonsShowUser.new === 1 && scope.row.disableFromStorageID)">
+          v-model="scope.row[scope.column.property]"
+          :disabled="!(buttonsShow.new === 1 && buttonsShowUser.new === 1)"
+          :remote-method="(value)=>{remoteMethod_FromStorageID(value, scope.row)}"
+          @change="(value)=>{storageIDChange(value, scope.row)}"
+          :placeholder="$t('__plzChoice')">
           <el-option v-for="item in ddlFromStorageIDList[scope.row.Seq]" :key="item.ID" :label="item.ID+' '+item.Value" :value="item.ID">
             <span style="float: left">{{ item.Value }}</span>
             <span style="float: right; color: #8492a6; font-size: 13px">{{ item.ID }}</span>
@@ -119,10 +122,13 @@
       <template slot-scope="scope">
         <el-select
           v-if="scope.row.Inventory"
-          v-model="scope.row[scope.column.property]"
+          remote
           default-first-option filterable clearable
-          :placeholder="$t('__plzChoice')"
-          :disabled="!(buttonsShow.new === 1 && buttonsShowUser.new === 1 && scope.row.disableToStorageID)">
+          v-model="scope.row[scope.column.property]"
+          :disabled="!(buttonsShow.new === 1 && buttonsShowUser.new === 1)"
+          :remote-method="(value)=>{remoteMethod_ToStorageID(value, scope.row)}"
+          @change="(value)=>{storageIDChange(value, scope.row)}"
+          :placeholder="$t('__plzChoice')">
           <el-option v-for="item in ddlToStorageIDList[scope.row.Seq]" :key="item.ID" :label="item.ID+' '+item.Value" :value="item.ID">
             <span style="float: left">{{ item.Value }}</span>
             <span style="float: right; color: #8492a6; font-size: 13px">{{ item.ID }}</span>
@@ -174,6 +180,7 @@
 import { formatMoney } from '@/setup/format.js'
 import orderDetailFunctions from './detailFunctions/orderDetailFunctions'
 import openEditMode from '@/components/openEditMode'
+import validate from '@/setup/validate'
 
 export default {
   name: 'OrderDetail',
@@ -208,8 +215,6 @@ export default {
         // 以下為前端顯示用, 不會記錄進資料庫
         Status: 'New',
         Amount: 0,
-        disableFromStorageID: false,
-        disableToStorageID: false,
         Inventory: false,
         // 商品特殊功能顯示(不記錄進資料庫)
         showExpandFunctions: 0,
@@ -220,6 +225,7 @@ export default {
       subListDeleted: [],
       subListExpand: [], // 要展開的明細(給el-table展開用)
       productFunctionsList: [], // 特殊功能清單(所有商品)
+      inputTimeout: null,
       // 系統目前狀態權限
       buttonsShow: {
         new: 1,
@@ -336,7 +342,9 @@ export default {
       let isSuccess = false
 
       // 檢查主表單
-      this.subList.slice(0).forEach(row => {
+      for (let index = 0; index < this.subList.length; index++) {
+        let row = this.subList[index]
+
         if (this.$refs['orderDetailFunctions' + row.Seq]) {
           isSuccess = false
           isSuccess = this.$refs['orderDetailFunctions' + row.Seq].checkValidate()
@@ -354,6 +362,7 @@ export default {
           return isSuccess
         }
 
+        // 關係庫存
         if (row.Inventory === 1) {
           if (row.FromStorageID === '' || row.ToStorageID === '') {
             this.$message({
@@ -363,8 +372,38 @@ export default {
             isSuccess = false
             return isSuccess
           }
+
+          // 檢查庫存餘額是否足夠
+          // 明細狀態為 新增/修改 才檢查
+          if (row.Status === 'New' || row.Status === 'Modified') {
+            let checkValidate = null
+
+            // 移出
+            checkValidate = await validate.validateStorageIDNoCallback(row.ProductID, row.Purpose, 0 - row.Qty, row.FromStorageID)
+
+            if (checkValidate !== '') {
+              this.$message({
+                message: this.$t('__fromStorageID') + this.$t('__inventoryShortage'),
+                type: 'error'
+              })
+              isSuccess = false
+              return isSuccess
+            }
+
+            // 移入
+            checkValidate = await validate.validateStorageIDNoCallback(row.ProductID, row.Purpose, row.Qty, row.ToStorageID)
+
+            if (checkValidate !== '') {
+              this.$message({
+                message: this.$t('__tofromStorageID') + this.$t('__inventoryShortage'),
+                type: 'error'
+              })
+              isSuccess = false
+              return isSuccess
+            }
+          }
         }
-      })
+      }
 
       return isSuccess
     },
@@ -506,16 +545,6 @@ export default {
         row.Status = 'Modified'
       }
 
-      // (主約)儲位有預設帶入, 禁止修改
-      if (ItemType === 0) {
-        if (itemDetail.FromStorageID !== '') {
-          row.disableFromStorageID = true
-        }
-        if (itemDetail.ToStorageID !== '') {
-          row.disableToStorageID = true
-        }
-      }
-
       // TODO: 有BOM表, 另外顯示在小視窗
       // if (itemDetail.BOM === '1') {
       //   const resBomItemDetail = await this.$api.orders.getObject({ type: 'productBOMForOrderDetail', keyword: itemDetail.ProductID })
@@ -583,22 +612,12 @@ export default {
       // get
       // fromStorageID
       if (row.FromStorageID === '') {
-        let response = await this.$api.stock.findStorageID({ ProductID: row.ProductID, Purpose: row.Purpose, Qty: 0 - row.Qty, StorageID: '' })
-        let result = response.data.result
-        if (result.length > 0) {
-          this.ddlFromStorageIDList[row.Seq] = result
-          row.FromStorageID = this.ddlFromStorageIDList[row.Seq][0].ID
-        }
+        this.findStorageIDNow_FromStorageID(row)
       }
       // ToStorageID
 
       if (row.ToStorageID === '') {
-        let response = await this.$api.stock.findStorageID({ ProductID: row.ProductID, Purpose: row.Purpose, Qty: row.Qty, StorageID: '' })
-        let result = response.data.result
-        if (result.length > 0) {
-          this.ddlToStorageIDList[row.Seq] = result
-          row.ToStorageID = this.ddlToStorageIDList[row.Seq][0].ID
-        }
+        this.findStorageIDNow_ToStorageID(row)
       }
     },
     // ============== 明細特殊功能 ===============
@@ -680,6 +699,83 @@ export default {
     dialogShowEditModeSave: function () {
       this.dialogShowEditMode = false
       this.openEditMode = true
+    },
+    // ===== 表單功能 =====
+    // 即時查詢可用儲位
+    remoteMethod_ToStorageID: async function (value, row) {
+      if (value.length >= 3) {
+        // 強制轉為大寫
+        value = value.toUpperCase()
+
+        clearTimeout(this.inputTimeout)
+        this.inputTimeout = setTimeout(() => {
+          this.findStorageIDNow_ToStorageID(row, value)
+        }, 500)
+      }
+    },
+    // 安座單即時查詢庫存(注意要指定ToStorageID)
+    findStorageIDNow_ToStorageID: async function (row, storageID) {
+      if (storageID === undefined) {
+        storageID = row.ToStorageID
+      }
+
+      if (row.ProductID) {
+        let response2 = await this.$api.stock.findStorageID({
+          ProductID: row.ProductID,
+          Purpose: row.Purpose,
+          Qty: row.Qty,
+          StorageID: row.ToStorageID
+        })
+        this.ddlToStorageIDList[row.Seq] = response2.data.result
+        if (storageID) {
+          row.ToStorageID = storageID
+        } else {
+          if (this.ddlToStorageIDList[row.Seq].length > 0) {
+            row.ToStorageID = this.ddlToStorageIDList[row.Seq][0].ID
+          }
+        }
+      }
+    },
+    // 即時查詢可用儲位
+    remoteMethod_FromStorageID: async function (value, row) {
+      if (value.length >= 3) {
+        // 強制轉為大寫
+        value = value.toUpperCase()
+
+        clearTimeout(this.inputTimeout)
+        this.inputTimeout = setTimeout(() => {
+          this.findStorageIDNow_FromStorageID(row, value)
+        }, 500)
+      }
+    },
+    // 安座單即時查詢庫存(注意要指定ToStorageID)
+    findStorageIDNow_FromStorageID: async function (row, storageID) {
+      if (storageID === undefined) {
+        storageID = row.FromStorageID
+      }
+
+      if (row.ProductID) {
+        let response2 = await this.$api.stock.findStorageID({
+          ProductID: row.ProductID,
+          Purpose: row.Purpose,
+          Qty: 0 - row.Qty,
+          StorageID: row.FromStorageID
+        })
+        this.ddlFromStorageIDList[row.Seq] = response2.data.result
+        if (storageID) {
+          row.FromStorageID = storageID
+        } else {
+          if (this.ddlFromStorageIDList[row.Seq].length > 0) {
+            row.FromStorageID = this.ddlFromStorageIDList[row.Seq][0].ID
+          }
+        }
+      }
+    },
+    // 下拉選擇儲位
+    storageIDChange: function (selected, row) {
+      if (row.Status === '') {
+        row.Status = 'Modified'
+      }
     }
   }
 }

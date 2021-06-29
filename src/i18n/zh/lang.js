@@ -254,6 +254,12 @@ export default {
   __show: '顯示',
   __menu: '選單',
   __darkMode: '深色模式',
+  __choose: '選擇',
+  __complete: '完成',
+  __next: '下一步',
+  __prev: '上一步',
+  __orderTransfer: '過戶',
+  __anzaChangeStorage: '已安座異動',
   // 請在上方新增字串
   // 以下為長字串提醒
   __collectioRecordsDeleteNo: '無法刪除收款資訊，請檢查 ',
@@ -280,6 +286,8 @@ export default {
   __installmentBatchEditWarning: '變更影響所有分期(不含已收款明細)',
   __storageAddressNewFormWarning: '(粗估數量，實際存檔時會略過名稱含"4")',
   __orderDetailNotEqualInstallmentDetail: '明細總額不等於分期總額',
+  __certificate1OrderNewWarning: '未停用憑證，會給予等數量的新憑證號碼',
+  __certificate2OrderNewWarning: '所有證明，會更換持有人身分為訂購者',
   // 以下為錯誤處理專用
   __error400: '無法理解請求',
   __error401: '授權失敗，請重新登入',
@@ -293,6 +301,7 @@ export default {
   __versionError: '版本更新，請重新整理網頁<br/>Windows: F5<br/>Mac: ⌘+R',
   __denyEditNoPermission: '禁止修改，權限不足',
   // 以下為驗證專用
+  __plzCheckAgain: '請再次檢查',
   __plzChoice: '請選擇',
   __pleaseInputUserID: '請輸入帳號',
   __pleaseInputPassword: '請輸入密碼',

@@ -1,5 +1,8 @@
 <template>
   <el-form>
+    <el-button-group class="defineCSS_LeftButtons">
+      <el-button v-show="buttonsShowUser.new" @click.prevent="orderTransfer">{{$t('__orderTransfer')}}</el-button>
+    </el-button-group>
     <el-button-group style="padding-bottom: 5px">
       <el-button class="hideButton" icon="el-icon-more"><!-- 排版用,避免沒按鈕跑版 --></el-button>
       <el-button v-show="buttonsShowUser.new" type="primary" icon="el-icon-plus" @click.prevent="showForm('new')">{{$t('__new')}}</el-button>
@@ -472,6 +475,17 @@ export default {
         name: 'OrderSignOffLog',
         params: {
           ID: row.ID,
+          parent: 'Orders'
+        }
+      })
+    },
+    // 過戶
+    // 過戶按鈕
+    orderTransfer: function () {
+      this.$router.push({
+        name: 'OrderTransfer',
+        params: {
+          dialogType: 'edit',
           parent: 'Orders'
         }
       })
