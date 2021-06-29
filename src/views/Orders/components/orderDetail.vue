@@ -174,6 +174,7 @@
 import { formatMoney } from '@/setup/format.js'
 import orderDetailFunctions from './detailFunctions/orderDetailFunctions'
 import openEditMode from '@/components/openEditMode'
+import validate from '@/setup/validate'
 
 export default {
   name: 'OrderDetail',
@@ -208,8 +209,8 @@ export default {
         // 以下為前端顯示用, 不會記錄進資料庫
         Status: 'New',
         Amount: 0,
-        disableFromStorageID: false,
-        disableToStorageID: false,
+        disableFromStorageID: true,
+        disableToStorageID: true,
         Inventory: false,
         // 商品特殊功能顯示(不記錄進資料庫)
         showExpandFunctions: 0,
@@ -336,7 +337,9 @@ export default {
       let isSuccess = false
 
       // 檢查主表單
-      this.subList.slice(0).forEach(row => {
+      for (let index = 0; index < this.subList.length; index++) {
+        let row = this.subList[index]
+
         if (this.$refs['orderDetailFunctions' + row.Seq]) {
           isSuccess = false
           isSuccess = this.$refs['orderDetailFunctions' + row.Seq].checkValidate()
@@ -354,7 +357,7 @@ export default {
           return isSuccess
         }
 
-        // 有使用庫存才檢查
+        // 關係庫存
         if (row.Inventory === 1) {
           if (row.FromStorageID === '' || row.ToStorageID === '') {
             this.$message({
@@ -364,8 +367,35 @@ export default {
             isSuccess = false
             return isSuccess
           }
+
+          // 檢查庫存餘額是否足夠
+          let checkValidate = null
+
+          // 移出
+          checkValidate = await validate.validateStorageID(row.ProductID, row.Purpose, 0 - row.Qty, row.FromStorageID, null)
+
+          if (checkValidate !== '') {
+            this.$message({
+              message: this.$t('__fromStorageID') + this.$t('__inventoryShortage'),
+              type: 'error'
+            })
+            isSuccess = false
+            return isSuccess
+          }
+
+          // 移入
+          checkValidate = await validate.validateStorageID(row.ProductID, row.Purpose, row.Qty, row.ToStorageID, null)
+
+          if (checkValidate !== '') {
+            this.$message({
+              message: this.$t('__tofromStorageID') + this.$t('__inventoryShortage'),
+              type: 'error'
+            })
+            isSuccess = false
+            return isSuccess
+          }
         }
-      })
+      }
 
       return isSuccess
     },
@@ -510,10 +540,10 @@ export default {
       // (主約)儲位有預設帶入, 禁止修改
       if (ItemType === 0) {
         if (itemDetail.FromStorageID !== '') {
-          row.disableFromStorageID = true
+          row.disableFromStorageID = false
         }
         if (itemDetail.ToStorageID !== '') {
-          row.disableToStorageID = true
+          row.disableToStorageID = false
         }
       }
 
