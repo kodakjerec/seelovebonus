@@ -209,8 +209,8 @@ export default {
         // 以下為前端顯示用, 不會記錄進資料庫
         Status: 'New',
         Amount: 0,
-        disableFromStorageID: false,
-        disableToStorageID: false,
+        disableFromStorageID: true,
+        disableToStorageID: true,
         Inventory: false,
         // 商品特殊功能顯示(不記錄進資料庫)
         showExpandFunctions: 0,
@@ -540,10 +540,10 @@ export default {
       // (主約)儲位有預設帶入, 禁止修改
       if (ItemType === 0) {
         if (itemDetail.FromStorageID !== '') {
-          row.disableFromStorageID = true
+          row.disableFromStorageID = false
         }
         if (itemDetail.ToStorageID !== '') {
-          row.disableToStorageID = true
+          row.disableToStorageID = false
         }
       }
 

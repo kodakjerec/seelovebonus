@@ -1,5 +1,8 @@
 <template>
   <div>
+    <el-button-group class="defineCSS_LeftButtons">
+      <el-button v-show="buttonsShowUser.new" @click.prevent="anzaChangeStorage">{{$t('__anzaChangeStorage')}}</el-button>
+    </el-button-group>
     <el-button-group style="padding-bottom: 5px">
       <el-button class="hideButton" icon="el-icon-more"><!-- 排版用,避免沒按鈕跑版 --></el-button>
       <search-button @search="search">
@@ -178,14 +181,14 @@
       :total="pagination.totalCount">
     </el-pagination>
     <!-- 安座作業 -->
-    <operate-anza-mode
+    <anza-operate-mode
       v-if="dialogShowAnza"
       :dialog-show="dialogShowAnza"
       :operateType="operateType"
       :fromAnzaOrder="anzaOrder"
       @dialog-cancel="dialogCancel"
       @dialog-save="dialogSave"
-      ></operate-anza-mode>
+      ></anza-operate-mode>
     <!-- 進階查詢選項 -->
     <orders-search-content
       :dialogShow="dialogShowSearchContent"
@@ -204,7 +207,7 @@
 </template>
 
 <script>
-import operateAnzaMode from './components/anza/operateAnza'
+import anzaOperateMode from './components/anza/anzaOperate'
 import searchButton from '@/components/searchButton'
 import ordersSearchContent from './components/ordersSearchContent'
 import { formatDate } from '@/setup/format.js'
@@ -213,7 +216,7 @@ import tableSortArrow from './components/tableSortArrow'
 export default {
   name: 'AnzaOrderShow',
   components: {
-    operateAnzaMode,
+    anzaOperateMode,
     searchButton,
     ordersSearchContent,
     tableSortArrow

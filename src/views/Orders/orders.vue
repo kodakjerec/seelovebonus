@@ -482,9 +482,3 @@ export default {
   }
 }
 </script>
-<style lang="scss" scoped>
-.defineCSS_LeftButtons {
-  position: absolute;
-  left:10px;
-}
-</style>
