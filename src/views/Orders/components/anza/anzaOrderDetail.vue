@@ -121,7 +121,7 @@ export default {
           let checkValidate = null
 
           // 移出
-          checkValidate = await validate.validateStorageID(row.ProductID, row.Purpose, 0 - row.Qty, row.FromStorageID, null)
+          checkValidate = await validate.validateStorageIDNoCallback(row.ProductID, row.Purpose, 0 - row.Qty, row.FromStorageID)
 
           if (checkValidate !== '') {
             this.$message({
@@ -133,7 +133,7 @@ export default {
           }
 
           // 移入
-          checkValidate = await validate.validateStorageID(row.ProductID, row.Purpose, row.Qty, row.ToStorageID, null)
+          checkValidate = await validate.validateStorageIDNoCallback(row.ProductID, row.Purpose, row.Qty, row.ToStorageID)
 
           if (checkValidate !== '') {
             this.$message({

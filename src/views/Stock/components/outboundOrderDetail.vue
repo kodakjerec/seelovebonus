@@ -343,7 +343,7 @@ export default {
     // ============== 子結構 ===============
     // 儲位輸入立即查詢
     remoteMethod: async function (value, row) {
-      if (value.length >= 5) {
+      if (value.length >= 3) {
         // 強制轉為大寫
         value = value.toUpperCase()
 
