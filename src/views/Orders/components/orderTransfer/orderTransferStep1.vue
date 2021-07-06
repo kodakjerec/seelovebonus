@@ -510,12 +510,13 @@ export default {
           isSuccess = await this.$refs['orderFunctions'].beforeSave()
         }
       }
-      if (this.projectFunctions.newAnzaOrder.Available) {
-        if (isSuccess) {
-          saveStep = 'anzaOrderList'
-          isSuccess = await this.$refs['anzaOrderList'].beforeSave()
-        }
-      }
+      // 過戶行為, 安座單純瀏覽不修改
+      // if (this.projectFunctions.newAnzaOrder.Available) {
+      //   if (isSuccess) {
+      //     saveStep = 'anzaOrderList'
+      //     isSuccess = await this.$refs['anzaOrderList'].beforeSave()
+      //   }
+      // }
 
       // 過戶單特有
       // 供奉憑證: 停用舊單據，重新給予號碼

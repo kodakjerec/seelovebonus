@@ -336,8 +336,9 @@ export default {
       let response1 = await this.$api.orders.getObject({ type: 'anzaOrderDetail', keyword: this.fromAnzaOrder.AnzaOrderID })
       this.anzaOrderDetailList = response1.data.result
       // 取的唯一要入安座儲位的標的物
+      // 2021.07.06 目前指定為第一筆
       this.anzaOrderDetailList.forEach(row => {
-        if (row.ToStorageID === '') {
+        if (row.Seq === 1) {
           this.anzaOrderSpecificRow = row
         }
       })
@@ -454,9 +455,14 @@ export default {
       }
     },
     // 選好儲位編號後連動
+    // 沒有移入儲位或者為第一筆, 自動帶入儲位
     storageIDChange: function (selected) {
-      this.anzaOrderSpecificRow.ToStorageID = selected
-      this.anzaOrderSpecificRow.Status = 'Modified'
+      this.anzaOrderDetailList.forEach(row => {
+        if (row.ToStorageID === '' || row.Seq === 1) {
+          row.ToStorageID = selected
+          row.Status = 'Modified'
+        }
+      })
     },
     checkValidate: async function () {
       // 檢查明細(安座才檢查)
