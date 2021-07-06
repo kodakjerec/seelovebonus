@@ -249,6 +249,7 @@ export default {
       },
       anzaOrderDetailList: [],
       anzaOrderSpecificRow: '', // 特別需要關注 移入儲位 的row, 會一併連動anzaOrderDetail
+      anzaPreviousStorageID: '', // 判斷安座儲位是否有多次變更
       // 客戶基本資料 -- 抄襲 customerNewForm.vue
       form: {
         ID: '',
@@ -458,11 +459,12 @@ export default {
     // 沒有移入儲位或者為第一筆, 自動帶入儲位
     storageIDChange: function (selected) {
       this.anzaOrderDetailList.forEach(row => {
-        if (row.ToStorageID === '' || row.Seq === 1) {
+        if (row.ToStorageID === '' || row.ToStorageID === this.anzaPreviousStorageID) {
           row.ToStorageID = selected
           row.Status = 'Modified'
         }
       })
+      this.anzaPreviousStorageID = selected
     },
     checkValidate: async function () {
       // 檢查明細(安座才檢查)
