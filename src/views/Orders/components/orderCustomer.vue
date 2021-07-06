@@ -21,11 +21,41 @@
             </el-option>
           </el-select>
         </el-col>
+        <el-col :span="8">
+          <el-form-item :label="$t('__referrer')">
+            <el-select
+              v-model="form.Referrer"
+              remote
+              default-first-option filterable clearable
+              :placeholder="$t('__plzChoice')"
+              :remote-method="remoteMethod"
+              :loading="loading"
+              :disabled="!(buttonsShow.new === 1 && disableForm.CustomerID === false)"
+              @change="ddlReferrerChange">
+              <el-option v-for="item in ddlReferrer" :key="item.ID" :label="item.ID+' '+item.Value" :value="item.ID">
+                <span style="float: left">{{ item.Value }}</span>
+                <span style="float: right; color: #8492a6; font-size: 13px">{{ item.ID }}</span>
+              </el-option>
+            </el-select>
+          </el-form-item>
+        </el-col>
       </el-form-item>
       <!-- 身分證字號 -->
       <el-form-item :label="$t('__uniqueNumber')">
         <el-col :span="8">
           <el-input v-model="form.CustomerID" disabled></el-input>
+        </el-col>
+        <el-col :span="8">
+          <el-form-item :label="$t('__company')">
+            <el-select
+              v-model="form.CompanyID"
+              disabled>
+              <el-option v-for="item in ddlCompanies" :key="item.ID" :label="item.ID+' '+item.Value" :value="item.ID">
+                <span style="float: left">{{ item.Value }}</span>
+                <span style="float: right; color: #8492a6; font-size: 13px">{{ item.ID }}</span>
+              </el-option>
+            </el-select>
+          </el-form-item>
         </el-col>
       </el-form-item>
       <!-- 電話 -->
@@ -120,7 +150,9 @@ export default {
       ddlCity: [],
       ddlPost: [],
       ddlCustomerBefore: [],
-      ddlCustomer: []
+      ddlCustomer: [],
+      ddlReferrer: [],
+      ddlCompanies: []
     }
   },
   watch: {
@@ -171,6 +203,10 @@ export default {
       let response = await this.$api.basic.getDropdownList({ type: 'customers' })
       this.ddlCustomerBefore = response.data.result
       this.remoteMethod('')
+      response = await this.$api.basic.getDropdownList({ type: 'employees' })
+      this.ddlReferrer = response.data.result
+      response = await this.$api.basic.getDropdownList({ type: 'companies' })
+      this.ddlCompanies = response.data.result
 
       response = this.$api.local.getDropdownList({ type: 'District' })
       this.postData = response
@@ -212,6 +248,7 @@ export default {
       this.form.Referrer = row.Referrer
       this.form.EmployeeID = row.EmployeeID
       this.form.ModifyType = row.ModifyType
+      this.form.CompanyID = row.CompanyID
       this.form.Status = ''
 
       // 切換城市下拉式選單
@@ -268,6 +305,19 @@ export default {
     // 過濾郵遞區號
     ddlCityChange: function () {
       this.ddlPost = this.postData.filter(item => item.ParentID === this.form.City)
+    },
+    // 業務代表變更
+    ddlReferrerChange: function (selected) {
+      let findObject = this.ddlReferrer.find(item => { return item.ID === selected })
+      this.form.CompanyID = findObject.CompanyID
+
+      if (this.dialogType === 'new') {
+        this.form.Status = 'New'
+      } else {
+        if (this.form.Status === '') {
+          this.form.Status = 'Modified'
+        }
+      }
     },
     // 檢查輸入
     checkValidate: function () {
