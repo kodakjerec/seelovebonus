@@ -1,20 +1,22 @@
 <template>
   <el-form-item :label="label">
-    <el-select
-      v-model="CustomerID"
-      remote
-      filterable
-      default-first-option
-      :placeholder="$t('__plzChoice')"
-      :disabled="disabled"
-      :remote-method="remoteMethod"
-      :loading="loading"
-      @change="change">
-      <el-option v-for="item in ddlCustomer" :key="item.ID" :label="item.ID+' '+item.Value" :value="item.ID">
-        <span style="float: left">{{ item.Value }}</span>
-        <span style="float: right; color: #8492a6; font-size: 13px">{{ item.ID }}</span>
-      </el-option>
-    </el-select>
+    <el-col :span="customerWidth">
+      <el-select
+        v-model="CustomerID"
+        remote
+        filterable
+        default-first-option
+        :placeholder="$t('__plzChoice')"
+        :disabled="disabled"
+        :remote-method="remoteMethod"
+        :loading="loading"
+        @change="change">
+        <el-option v-for="item in ddlCustomer" :key="item.ID" :label="item.ID+' '+item.Value" :value="item.ID">
+          <span style="float: left">{{ item.Value }}</span>
+          <span style="float: right; color: #8492a6; font-size: 13px">{{ item.ID }}</span>
+        </el-option>
+      </el-select>
+    </el-col>
     <el-button-group>
       <el-button type="primary" @click="showSearch">{{$t('__search')}}</el-button>
       <el-button @click="showForm" :disabled="CustomerID === ''">{{$t('__edit')}}</el-button>
@@ -53,6 +55,8 @@ export default {
     label: { type: String },
     disabled: { type: Boolean },
     fromCustomerID: { type: String },
+    customerWidth: { type: Number, default: 24 },
+    // 新增屬性從上方新增
     parentObject: {
       type: Object,
       default: function () {

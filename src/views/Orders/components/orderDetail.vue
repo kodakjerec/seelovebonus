@@ -715,7 +715,7 @@ export default {
     },
     // 安座單即時查詢庫存(注意要指定ToStorageID)
     findStorageIDNow_ToStorageID: async function (row, storageID) {
-      if (storageID === undefined) {
+      if (!storageID) {
         storageID = row.ToStorageID
       }
 
@@ -750,7 +750,7 @@ export default {
     },
     // 安座單即時查詢庫存(注意要指定ToStorageID)
     findStorageIDNow_FromStorageID: async function (row, storageID) {
-      if (storageID === undefined) {
+      if (!storageID) {
         storageID = row.FromStorageID
       }
 

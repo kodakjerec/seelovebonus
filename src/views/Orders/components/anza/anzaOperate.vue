@@ -21,8 +21,6 @@
             </el-option>
           </el-select>
         </el-col>
-        <i v-show="storageIDCheck==='success'" style="color:green" class='el-icon-success'></i>
-        <i v-show="storageIDCheck==='error'" style="color:red" class='el-icon-error'></i>
         {{$t('__anzaOperateWarning')}}
       </el-form-item>
       <!-- 申請安座日 -->
@@ -56,6 +54,7 @@
         :label="$t('__anzaCustomer')"
         :disabled="disableForm.CustomerID"
         :fromCustomerID="anzaOrder.CustomerID"
+        :customerWidth="8"
         @findID="findID"></input-customer>
       <!-- 客戶名稱 -->
       <el-form-item
@@ -286,7 +285,6 @@ export default {
       },
       myTitle: '',
       postData: [],
-      storageIDCheck: '', // 驗證儲位正確性
       // 下拉是選單
       ddlStorageID: [],
       ddlLunarTime: [],
@@ -437,20 +435,23 @@ export default {
       if (query.length >= 3) {
         // 強制轉為大寫
         query = query.toUpperCase()
-
-        this.anzaOrderSpecificRow.ToStorageID = query
-
-        this.findStorageIDNow(this.anzaOrderSpecificRow)
+        this.findStorageIDNow(this.anzaOrderSpecificRow, query)
       }
     },
     // 安座單即時查詢庫存(注意要指定ToStorageID)
-    findStorageIDNow: async function (row) {
+    findStorageIDNow: async function (row, storageID) {
+      let queryStorageID = ''
+      if (storageID) {
+        queryStorageID = storageID
+      } else {
+        queryStorageID = row.ToStorageID
+      }
       if (row.ProductID) {
         let response2 = await this.$api.stock.findStorageID({
           ProductID: row.ProductID,
           Purpose: row.Purpose,
           Qty: row.Qty,
-          StorageID: row.ToStorageID
+          StorageID: queryStorageID
         })
         this.ddlStorageID = response2.data.result
       }

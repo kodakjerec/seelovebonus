@@ -282,7 +282,7 @@ export default {
   __retakeIDWarning: '重新取號會停用目前單據，並新增一張單據',
   __signOffWarning: '以下單據等待簽核',
   __anzaOrderNewWarning: '請選擇專案與客戶編號',
-  __anzaOperateWarning: '下拉選擇數值或輸入指定位別(5位以上自動搜尋合適位別)',
+  __anzaOperateWarning: '下拉選擇數值或輸入指定位別(3位以上自動搜尋合適位別)',
   __installmentBatchEditWarning: '變更影響所有分期(不含已收款明細)',
   __storageAddressNewFormWarning: '(粗估數量，實際存檔時會略過名稱含"4")',
   __orderDetailNotEqualInstallmentDetail: '明細總額不等於分期總額',

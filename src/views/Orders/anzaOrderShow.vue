@@ -565,6 +565,12 @@ export default {
             }
           })
       }
+    },
+    // 安座單位置異動
+    anzaChangeStorage: function () {
+      this.$router.push({
+        name: 'AnzaOrderChangeStorage'
+      })
     }
   }
 }
