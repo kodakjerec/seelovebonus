@@ -100,7 +100,8 @@
       <!-- 安座人 -->
       <el-table-column
         prop="CustomerID"
-        :label="$t('__anzaCustomer')">
+        :label="$t('__anzaCustomer')"
+        width="300">
         <template slot-scope="scope">
           <input-customer
             :fromCustomerID="scope.row.CustomerID"

@@ -138,6 +138,12 @@ const routes = [
     component: () => import('@/views/Orders/components/anza/anzaOrderRenew'),
     props: true
   },
+  {
+    path: '/Orders/AnzaOrderChangeStorage',
+    name: 'AnzaOrderChangeStorage',
+    component: () => import('@/views/Orders/components/anza/anzaChangeStorage'),
+    props: true
+  },
   // Reports
   {
     path: '/Reports',

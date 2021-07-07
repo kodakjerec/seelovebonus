@@ -88,7 +88,11 @@ export default {
 
         // 查找移出儲位
         if (row.FromStorageID === '') {
-          let response = await this.$api.stock.findStorageID({ ProductID: row.ProductID, Purpose: row.Purpose, Qty: 0 - row.Qty, StorageID: row.FromStorageID })
+          let response = await this.$api.stock.findStorageID({
+            ProductID: row.ProductID,
+            Purpose: row.Purpose,
+            Qty: 0 - row.Qty,
+            StorageID: row.FromStorageID })
           let result = response.data.result
           if (result.length > 0) {
             row.FromStorageID = result[0].ID
