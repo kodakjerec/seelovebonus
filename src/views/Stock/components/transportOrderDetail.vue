@@ -452,7 +452,7 @@ export default {
     },
     // 即時查詢可用儲位
     findStorageIDNow_To: async function (row, storageID) {
-      if (storageID === undefined) {
+      if (!storageID) {
         storageID = row.StorageID
       }
       if (row.ProductID) {
