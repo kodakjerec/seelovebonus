@@ -1,109 +1,90 @@
-/*
-專門用於新增訂單自動產生安座單
-*/
 <template>
   <el-form>
     <h2 class="alignLeft">{{$t('__anzaOrder')}}</h2>
     <p/>
     <span v-if="!fromType && parentAnzaData.CustomerID===''" v-html="$t('__anzaOrderNewWarning')"></span>
     <template v-else>
-      <!-- 提供給訂單新增專用 -->
+      <!-- 提供給安座單(續約, 展延, 轉讓, 繼承)專用 -->
       <el-table
       :data="subList"
       stripe
       border
       style="width: 100%">
-      <!-- 安座人 -->
-      <el-table-column
-        prop="CustomerID"
-        :label="$t('__anzaCustomer')"
-        width="300">
-        <template slot-scope="scope">
-          <input-customer
-            :fromCustomerID="scope.row.CustomerID"
-            :parent-object="scope.row"
-            @findID="findID"></input-customer>
-        </template>
-      </el-table-column>
-      <!-- 個資 -->
-      <el-table-column>
-        <template slot="header">
-          {{$t('__gender')}}<br/>
-          {{$t('__birth')+'('+$t('__solarCalendar')+')'}}<br/>
-          {{$t('__lunarDate')+'('+$t('__lunarCalendar')+')'+' '+$t('__lunarTime')}}
-        </template>
-        <template slot-scope="scope">
-          {{scope.row.GenderName}}<br/>
-          {{scope.row.Birth}}<br/>
-          {{scope.row.BirthLunarDate+' '+scope.row.BirthLunarTimeName}}
-        </template>
-      </el-table-column>
-      <el-table-column>
-        <template slot="header">
-          {{$t('__tel')}}<br/>
-          {{$t('__address')}}
-        </template>
-        <template slot-scope="scope">
-          {{scope.row.Tel}}<br/>
-          {{scope.row.AddressName}}
-        </template>
-      </el-table-column>
-      <!-- 數量 -->
-      <el-table-column
-        prop="qty"
-        :label="$t('__qty')">
-        <template slot-scope="scope">
-          <el-input-number :min="0" :max="parentQty" v-model="scope.row[scope.column.property]" @change="(currentValue, oldValue)=>{qtyChange(currentValue, oldValue, scope.row)}"></el-input-number>
-        </template>
-      </el-table-column>
-      <!-- 申請安座日 -->
-      <el-table-column
-        prop="ScheduledDate"
-        :label="$t('__anzaScheduledDate')">
-        <template slot-scope="scope">
-          <el-date-picker
-            v-model="scope.row[scope.column.property]"
-            :placeholder="$t('__plzChoice')+$t('__date')"
-            value-format="yyyy-MM-dd">
-          </el-date-picker>
-        </template>
-      </el-table-column>
-      <!-- 安座準備期 -->
-      <el-table-column
-        prop="PrepareDate"
-        :label="$t('__anzaPrepareDate')"
-        :formatter="formatterDate">
-      </el-table-column>
-      <!-- 到期日 -->
-      <el-table-column
-        prop="ExpirationDate"
-        :label="$t('__expire')+$t('__date')">
-        <template slot-scope="scope">
-          <el-date-picker
-            v-model="scope.row[scope.column.property]"
-            :placeholder="$t('__plzChoice')+$t('__date')"
-            value-format="yyyy-MM-dd">
-          </el-date-picker>
-        </template>
-      </el-table-column>
-      <!-- 操作 -->
-      <el-table-column
-        align="right"
-        width="95">
-        <template slot="header">
-          <el-button
-            type="primary"
-            size="large"
-            @click="handleNew()">{{$t('__new')}}</el-button>
-        </template>
-        <template slot-scope="scope">
-          <el-button
-            size="mini"
-            type="danger"
-            @click="handleDelete(scope.$index, scope.row)">{{$t('__delete')}}</el-button>
-        </template>
-      </el-table-column>
-    </el-table>
+        <!-- 單號 -->
+        <el-table-column
+          prop="AnzaOrderID"
+          :label="this.$t('__anzaOrder')">
+        </el-table-column>
+        <!-- 安座人 -->
+        <el-table-column
+          prop="CustomerID"
+          :label="$t('__customer')">
+          <template slot-scope="scope">
+            <input-customer
+              :fromCustomerID="scope.row.CustomerID"
+              :parent-object="scope.row"
+              @findID="findID"></input-customer>
+          </template>
+        </el-table-column>
+        <!-- 個資 -->
+        <el-table-column>
+          <template slot="header">
+            {{$t('__gender')}}<br/>
+            {{$t('__birth')+'('+$t('__solarCalendar')+')'}}<br/>
+            {{$t('__lunarDate')+'('+$t('__lunarCalendar')+')'+' '+$t('__lunarTime')}}
+          </template>
+          <template slot-scope="scope">
+            {{scope.row.GenderName}}<br/>
+            {{scope.row.Birth}}<br/>
+            {{scope.row.BirthLunarDate+' '+scope.row.BirthLunarTimeName}}
+          </template>
+        </el-table-column>
+        <el-table-column>
+          <template slot="header">
+            {{$t('__tel')}}<br/>
+            {{$t('__address')}}
+          </template>
+          <template slot-scope="scope">
+            {{scope.row.Tel}}<br/>
+            {{scope.row.AddressName}}
+          </template>
+        </el-table-column>
+        <!-- 申請安座日 -->
+        <el-table-column
+          prop="ScheduledDate"
+          :label="$t('__anzaScheduledDate')">
+          <template slot-scope="scope">
+            <el-date-picker
+              v-model="scope.row[scope.column.property]"
+              :placeholder="$t('__plzChoice')+$t('__date')"
+              value-format="yyyy-MM-dd">
+            </el-date-picker>
+          </template>
+        </el-table-column>
+        <!-- 安座準備期 -->
+        <el-table-column
+          prop="PrepareDate"
+          :label="$t('__anzaPrepareDate')"
+          :formatter="formatterDate">
+        </el-table-column>
+        <!-- 到期日 -->
+        <el-table-column
+          prop="ExpirationDate"
+          :label="$t('__expire')+$t('__date')">
+          <template slot-scope="scope">
+            <el-date-picker
+              v-model="scope.row[scope.column.property]"
+              :placeholder="$t('__plzChoice')+$t('__date')"
+              value-format="yyyy-MM-dd">
+            </el-date-picker>
+          </template>
+        </el-table-column>
+        <!-- 備註 -->
+        <el-table-column
+          prop="ModifyType"
+          :label="$t('__memo')">
+        </el-table-column>
+      </el-table>
     </template>
     <div style="color:red" v-show="isExceedQtyLimit">{{$t('__exceedQtyLimit')}}</div>
   </el-form>
@@ -253,6 +234,58 @@ export default {
         this.handleNew()
       }
       this.reCalDate(this.subList)
+    },
+    // 父視窗: 變更任意資料, 目前只有安座單會用到
+    parentAssginData: async function (type, fromObject) {
+      switch (type) {
+        case 'subList':
+          this.subList = []
+          fromObject.forEach(row => {
+            let newObj = JSON.parse(JSON.stringify(this.form))
+            newObj.OrderID = row.OrderID
+            newObj.AnzaOrderID = row.AnzaOrderID
+            newObj.CustomerID = row.CustomerID
+            newObj.ScheduledDate = row.ScheduledDate
+            newObj.PrepareDate = row.PrepareDate
+            newObj.RealDate = row.RealDate
+            newObj.ExpirationDate = row.ExpirationDate
+            newObj.Status = row.Status
+            newObj.ProductID = row.ProductID
+            newObj.ModifyType = this.form.ModifyType
+            newObj.qty = 1
+            this.subList.push(newObj)
+          })
+          this.qtyChange()
+          this.reCalDate(this.subList)
+
+          // 帶入客戶資訊(已有安座單)
+          for (let i = 0; i < this.subList.length; i++) {
+            let row = this.subList[i]
+            await this.bringCustomerData(row)
+            this.subList[i] = row
+          }
+          break
+        case 'fromType':
+          this.fromType = fromObject
+          switch (this.fromType) {
+            case 'anzaRenew':
+            case 'anzaExtend':
+              this.disableForm.CustomerID = true
+              break
+            case 'anzaTransfer':
+            case 'anzaInherit':
+              this.disableForm.CustomerID = false
+              break
+            default:
+              this.disableForm.CustomerID = false
+              break
+          }
+          break
+        case 'ModifyType':
+          this.fromModifyType = fromObject
+          this.form.ModifyType = fromObject
+          break
+      }
     },
     // 重新計算日期
     reCalDate: function (waitForReplaceList) {

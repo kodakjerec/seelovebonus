@@ -260,6 +260,12 @@ export default {
         return data
       })
     },
+    anzaChangeStorage: () => {
+      let rawData = {}
+      return postEncrypt('/orders/anzaChangeStorage', rawData).then(data => {
+        return data
+      })
+    },
     // Order Installment
     installmentDetailShow: ({ keyword }) => {
       let rawData = { keyword }

@@ -131,14 +131,14 @@
       :fromOrderStatus="form.Status"
       @customer-change="customerChange"></order-customer>
     <!-- 新增訂單專用 -->
-    <anza-order-new
+    <anza-order-list-update
       v-show="nowStep===2 || nowStep===3"
-      id="anzaOrderNew"
-      ref="anzaOrderNew"
+      id="anzaOrderListUpdate"
+      ref="anzaOrderListUpdate"
       :fromOrderID="form.ID"
       :parentOrderDate="form.OrderDate"
       :parentQty="form.Qty"
-      :parentAnzaData="form.anzaForNew"></anza-order-new>
+      :parentAnzaData="form.anzaForNew"></anza-order-list-update>
     <installment-order-new
       v-show="nowStep===1 || nowStep===3"
       id="installmentOrderNew"
@@ -162,7 +162,7 @@
 
 <script>
 // 新增訂單才有
-import anzaOrderNew from '@/views/Orders/components/orderNew/anzaOrderNew'
+import anzaOrderListUpdate from './anzaOrderListUpdate'
 import installmentOrderNew from '@/views/Orders/components/orderNew/installmentOrderNew'
 // 訂單固定內容
 import orderDetail from '@/views/Orders/components/orderDetail'
@@ -177,7 +177,7 @@ export default {
   name: 'AnzaOrderRenew',
   components: {
     // 新增訂單才有
-    anzaOrderNew,
+    anzaOrderListUpdate,
     installmentOrderNew,
     // 訂單固定內容
     orderDetail,
@@ -402,6 +402,13 @@ export default {
     },
     // 檢查輸入
     checkValidate: async function () {
+      let fromType = null
+      if (this.$attrs.fromParams) {
+        if (this.$attrs.fromParams.fromType) {
+          fromType = this.$attrs.fromParams.fromType
+        }
+      }
+
       let isSuccess = false
       switch (this.nowStep) {
         case 0:
@@ -417,19 +424,31 @@ export default {
               return
             }
           }
-          if (this.projectFunctions.newAnzaOrder.Available) {
-            isSuccess = await this.$refs['anzaOrderNew'].checkValidate()
-            if (!isSuccess) {
-              this.checkFail()
-              return
-            }
-          }
           // 檢查明細資訊
           isSuccess = await this.$refs['orderDetail'].checkValidate()
           if (!isSuccess) {
             this.checkFail()
             return
           }
+
+          // 給客戶代號(續約, 展延)
+          // 清除舊有客戶代號(轉讓, 繼承)
+          switch (fromType) {
+            case 'anzaRenew':
+            case 'anzaExtend':
+              break
+            case 'anzaTransfer':
+              await this.$refs['orderCustomer'].parentAssginData('CustomerID', '')
+              await this.$refs['orderCustomer'].parentAssginData('ModifyType', this.$t('__anzaTransfer'))
+              break
+            case 'anzaInherit':
+              await this.$refs['orderCustomer'].parentAssginData('CustomerID', '')
+              await this.$refs['orderCustomer'].parentAssginData('ModifyType', this.$t('__anzaInherit'))
+              break
+          }
+
+          // 代入舊的安座單清單
+          await this.$refs['anzaOrderListUpdate'].parentAssginData('subList', this.$attrs.fromParams.fromAnzaList)
           break
         case 2:
           // 檢查客戶資訊
@@ -437,6 +456,13 @@ export default {
           if (!isSuccess) {
             this.checkFail()
             return
+          }
+          if (this.projectFunctions.newAnzaOrder.Available) {
+            isSuccess = await this.$refs['anzaOrderListUpdate'].checkValidate()
+            if (!isSuccess) {
+              this.checkFail()
+              return
+            }
           }
           break
         case 3:
@@ -499,8 +525,8 @@ export default {
       }
       if (this.projectFunctions.newAnzaOrder.Available) {
         if (isSuccess) {
-          saveStep = 'anzaOrderNew'
-          isSuccess = await this.$refs['anzaOrderNew'].beforeSave()
+          saveStep = 'anzaOrderListUpdate'
+          isSuccess = await this.$refs['anzaOrderListUpdate'].beforeSave()
         }
       }
 
@@ -591,22 +617,22 @@ export default {
       switch (fromType) {
         case 'anzaRenew':
           this.myTitle = this.$t('__anzaRenew') + this.$t('__anzaOrder')
-          await this.$refs['anzaOrderNew'].parentAssginData('ModifyType', this.$t('__anzaRenew'))
+          await this.$refs['anzaOrderListUpdate'].parentAssginData('ModifyType', this.$t('__anzaRenew'))
           break
         case 'anzaExtend':
           this.myTitle = this.$t('__anzaExtend') + this.$t('__anzaOrder')
-          await this.$refs['anzaOrderNew'].parentAssginData('ModifyType', this.$t('__anzaExtend'))
+          await this.$refs['anzaOrderListUpdate'].parentAssginData('ModifyType', this.$t('__anzaExtend'))
           break
         case 'anzaTransfer':
           this.myTitle = this.$t('__anzaTransfer') + this.$t('__anzaOrder')
-          await this.$refs['anzaOrderNew'].parentAssginData('ModifyType', this.$t('__anzaTransfer'))
+          await this.$refs['anzaOrderListUpdate'].parentAssginData('ModifyType', this.$t('__anzaTransfer'))
           break
         case 'anzaInherit':
           this.myTitle = this.$t('__anzaInherit') + this.$t('__anzaOrder')
-          await this.$refs['anzaOrderNew'].parentAssginData('ModifyType', this.$t('__anzaInherit'))
+          await this.$refs['anzaOrderListUpdate'].parentAssginData('ModifyType', this.$t('__anzaInherit'))
           break
       }
-      await this.$refs['anzaOrderNew'].parentAssginData('fromType', this.$attrs.fromParams.fromType)
+      await this.$refs['anzaOrderListUpdate'].parentAssginData('fromType', this.$attrs.fromParams.fromType)
       await this.$refs['orderFunctions'].parentAssginData('fromType', this.$attrs.fromParams.fromType)
 
       // 舊有契約單據資料
@@ -643,26 +669,6 @@ export default {
             // 修改狀態, 不用給號碼
             break
         }
-
-        // 給客戶代號(續約, 展延)
-        // 清除舊有客戶代號(轉讓, 繼承)
-        switch (fromType) {
-          case 'anzaRenew':
-          case 'anzaExtend':
-            await this.$refs['orderCustomer'].parentAssginData('CustomerID', oldOrderExtend.CustomerID)
-            break
-          case 'anzaTransfer':
-            await this.$refs['orderCustomer'].parentAssginData('CustomerID', '')
-            await this.$refs['orderCustomer'].parentAssginData('ModifyType', this.$t('__anzaTransfer'))
-            break
-          case 'anzaInherit':
-            await this.$refs['orderCustomer'].parentAssginData('CustomerID', '')
-            await this.$refs['orderCustomer'].parentAssginData('ModifyType', this.$t('__anzaInherit'))
-            break
-        }
-
-        // 代入舊的安座單清單
-        await this.$refs['anzaOrderNew'].parentAssginData('subList', this.$attrs.fromParams.fromAnzaList)
       }
     },
     // ===== 頂部導覽 =====
