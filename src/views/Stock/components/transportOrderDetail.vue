@@ -68,7 +68,7 @@
         <el-input
           v-if="buttonsShow.new && buttonsShowUser.new"
           v-model="scope.row[scope.column.property]"
-          @change="(value)=>{purposeChange(value, scope.row)}">
+          @change="(value)=>{purposeChange_From(value, scope.row)}">
         </el-input>
         <div v-else>
           {{scope.row[scope.column.property]}}
@@ -108,7 +108,7 @@
         <el-input
           v-if="buttonsShow.new && buttonsShowUser.new"
           v-model="scope.row[scope.column.property]"
-          @change="(value)=>{purposeChange(value, scope.row)}">
+          @change="(value)=>{purposeChange_To(value, scope.row)}">
         </el-input>
         <div v-else>
           {{scope.row[scope.column.property]}}
@@ -444,7 +444,8 @@ export default {
           ProductID: row.ProductID,
           Purpose: row.FromPurpose,
           Qty: 0 - row.Qty,
-          StorageID: storageID
+          StorageID: storageID,
+          StorageType: '0'
         })
         this.ddlStorageID_From[row.Seq] = response2.data.result
         row.FromStorageID = storageID
@@ -460,7 +461,8 @@ export default {
           ProductID: row.ProductID,
           Purpose: row.ToPurpose,
           Qty: row.Qty,
-          StorageID: storageID
+          StorageID: storageID,
+          StorageType: '0'
         })
         this.ddlStorageID_To[row.Seq] = response2.data.result
         row.ToStorageID = storageID
@@ -488,13 +490,21 @@ export default {
       }
     },
     // 特殊原因變更
-    purposeChange: function (selected, row) {
+    purposeChange_From: function (selected, row) {
       if (row.Status === '') {
         row.Status = 'Modified'
       }
 
       // 即時查詢儲位
-      this.findStorageIDNow(row)
+      this.findStorageIDNow_From(row)
+    },
+    purposeChange_To: function (selected, row) {
+      if (row.Status === '') {
+        row.Status = 'Modified'
+      }
+
+      // 即時查詢儲位
+      this.findStorageIDNow_To(row)
     },
     // 填入選擇商品: 一般商品
     fillSubList: async function (row, itemDetail) {
