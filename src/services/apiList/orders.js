@@ -266,6 +266,13 @@ export default {
         return data
       })
     },
+    // Anza Order Detail
+    anzaOrderDetailUpdate: ({ form }) => {
+      let rawData = { form }
+      return postEncrypt('/orders/anzaOrderDetailUpdate', rawData).then(data => {
+        return data
+      })
+    },
     // Order Installment
     installmentDetailShow: ({ keyword }) => {
       let rawData = { keyword }
