@@ -260,11 +260,16 @@ export default {
         return data
       })
     },
+    anzaChangeStorage: () => {
+      let rawData = {}
+      return postEncrypt('/orders/anzaChangeStorage', rawData).then(data => {
+        return data
+      })
+    },
     // Anza Order Detail
     anzaOrderDetailUpdate: ({ form }) => {
       let rawData = { form }
       return postEncrypt('/orders/anzaOrderDetailUpdate', rawData).then(data => {
-        console.log(`%c <<< Response(/rest/orders/anzaOrderDetailUpdate)⤵ `, 'background-color: #E0455D; color: white; font-size: 14px; font-weight: bold;', data)
         return data
       })
     },

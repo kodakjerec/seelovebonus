@@ -39,7 +39,6 @@
             v-model="form.ToStorageID"
             :disabled="nowStep>2"
             :remote-method="remoteMethod"
-            @change="storageIDChange"
             :placeholder="$t('__plzChoice')"
             style="display:block">
             <el-option v-for="item in ddlStorageID" :key="item.ID" :label="item.ID+' '+item.Value" :value="item.ID">
@@ -142,17 +141,6 @@ export default {
         this.ddlStorageID = response2.data.result
       }
     },
-    // 選好儲位編號後連動
-    // 沒有移入儲位或者為第一筆, 自動帶入儲位
-    storageIDChange: function (selected) {
-      this.anzaOrderDetailList.forEach(row => {
-        if (row.ToStorageID === '' || row.ToStorageID === this.anzaPreviousStorageID) {
-          row.ToStorageID = selected
-          row.Status = 'Modified'
-        }
-      })
-      this.anzaPreviousStorageID = selected
-    },
     // 檢查輸入
     checkValidate: async function () {
       let isSuccess = false
@@ -173,6 +161,9 @@ export default {
             isSuccess = true
           }
           break
+        case 3:
+          isSuccess = true
+          break
       }
       if (!isSuccess) {
         this.checkFail()
@@ -184,8 +175,8 @@ export default {
             this.nowStep++
             this.tabClick({ name: this.tabActiveName }, null)
             break
-          case 5:
-            this.beforeSave()
+          case 3:
+            this.save()
             break
         }
       }
@@ -206,6 +197,16 @@ export default {
           returnType: 'cancel'
         }
       })
+    },
+    save: async function () {
+      let response2 = await this.$api.orders.anzaChangeStorage({ form: this.form })
+      if (response2.headers['code'] === '200') {
+        this.$message({
+          message: response2.data.result[0].message,
+          type: 'success'
+        })
+      }
+      this.$emit('dialog-save')
     },
     // ===== 頂部導覽 =====
     tabClick: function (tab, event) {

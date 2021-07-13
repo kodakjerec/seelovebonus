@@ -139,8 +139,8 @@ export default {
         return data
       })
     },
-    findStorageID: ({ ProductID, Purpose, Qty, StorageID }) => {
-      let rawData = { ProductID, Purpose, Qty, StorageID }
+    findStorageID: ({ ProductID, Purpose, Qty, StorageID, StorageType }) => {
+      let rawData = { ProductID, Purpose, Qty, StorageID, StorageType }
       return postEncrypt('/stock/findStorageID', rawData).then(data => {
         return data
       })
